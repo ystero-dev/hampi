@@ -5,14 +5,9 @@
 //! possibly other language(s) bindings from ASN.1 Specifications.
 
 mod base_types;
-pub mod error;
-mod parser;
-mod structs;
 
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
-}
+pub mod error;
+
+mod parser;
+
+mod structs;

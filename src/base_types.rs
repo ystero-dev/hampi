@@ -1,11 +1,25 @@
 //! ASN.1 Base Types
 
-pub struct IntegerType;
+pub struct IntegerType {
+    inner: i64,
+}
 
-pub struct BooleanType;
+pub struct BooleanType {
+    inner: bool,
+}
 
-pub struct NullType;
+pub struct NullType {
+    inner: (),
+}
 
 pub struct Asn1Constraint;
 
-pub struct EnumeratedType;
+enum EnumVariant {
+    Ellipsis,
+    Named(String, i64),
+}
+
+pub struct EnumeratedType {
+    variants: Vec<EnumVariant>,
+    ext_marker: usize,
+}

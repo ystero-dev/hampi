@@ -1,18 +1,56 @@
-//! A collection of structs used in [Hampi][crate] for ASN.1 compilation.
+//! A collection of structs used in [Hampi][`crate`] for ASN.1 compilation.
 
 use super::base_types::*;
 
-struct LineColumn {
+#[derive(Debug, PartialEq, Copy, Clone)]
+pub struct LineColumn {
     line: usize,
     column: usize,
 }
 
-struct Span {
+impl LineColumn {
+    pub fn new(line: usize, column: usize) -> Self {
+        LineColumn { line, column }
+    }
+}
+
+#[derive(Debug)]
+pub struct Span {
     start: LineColumn,
     end: LineColumn,
 }
 
-struct Token;
+impl Span {
+    pub fn new(start: LineColumn, end: LineColumn) -> Self {
+        Span { start, end }
+    }
+}
+
+#[derive(Debug)]
+pub enum TokenType {
+    CurlyBegin,        // "{"
+    CurlyEnd,          // "}"
+    RoundBegin,        // "("
+    RoundEnd,          // ")"
+    SquareBegin,       // "["
+    SquareEnd,         // "]"
+    DoubleSquareBegin, // "[["
+    DoubleSquareEnd,   // "]]"
+    Extension,         // "..."
+    RangeSeparator,    // ".."
+    Identifier,        // Identifiers and all references.
+    Assignment,        // "::="
+    Reserved,          // eg. "INTEGER", "ENUMERATED", "RELATIVE-OID", "TYPE-IDENTIFIER"
+    Comment,           // "-- and everything after up to newline
+    AndIdentifier,     // "&Attribute-Type", "&id" etc.
+}
+
+#[derive(Debug)]
+pub struct Token {
+    pub r#type: TokenType,
+    pub span: Span,
+    pub name: String,
+}
 
 struct ObjectIdentifier;
 
@@ -21,24 +59,24 @@ struct Asn1TagType;
 struct BaseTypeValue;
 
 enum Asn1BaseType {
-    Integer(IntegerType),
-    Enumerated(EnumeratedType),
-    Boolean(BooleanType),
-    Null(NullType),
+    Integer,
+    Enumerated,
+    Boolean,
+    Null,
 }
 
-struct BaseType {
+pub struct BaseType {
     base: Asn1BaseType,
-    constraints: Asn1Constraint,
+    constraints: Vec<Asn1Constraint>,
     identifier: String,
 }
 
-enum ResolvedType {
+pub enum ResolvedType {
     TypeRef(Box<ResolvedType>),
     Base(BaseType),
 }
 
-struct TypeDefinition {}
+pub struct TypeDefinition {}
 
 /// A Value definition in ASN.1 Syntax
 ///
