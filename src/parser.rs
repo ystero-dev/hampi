@@ -89,6 +89,38 @@ const KEYWORDS: &'static [&'static str] = &[
     "WITH",
 ];
 
+// Get at and component ID list something like @.id or @component.id
+fn get_at_component_id_list(
+    chars: &[char],
+    line: usize,
+    begin: usize,
+) -> Result<(Token, usize), Error> {
+    let mut consumed = 1;
+    let last = chars[1..]
+        .iter()
+        .position(|&x| !(x.is_ascii_alphanumeric() || x == '-' || x == '.'));
+    if last.is_none() {
+        consumed += chars[1..].len();
+    } else {
+        consumed += last.unwrap();
+    }
+
+    // Identifier should not end with a '-'
+    if ['.', '-'].iter().any(|&c| c == chars[consumed - 1]) {
+        return Err(Error::TokenizeError);
+    }
+    Ok((
+        Token {
+            r#type: TokenType::AtComponentIdList,
+            span: Span::new(
+                LineColumn::new(line, begin),
+                LineColumn::new(line, begin + consumed),
+            ),
+            text: chars[..consumed].iter().collect::<String>(), // include the sign as well
+        },
+        consumed,
+    ))
+}
 // Get token for a number Integer or Real
 fn get_number_token(chars: &[char], line: usize, begin: usize) -> Result<(Token, usize), Error> {
     let neg = (chars[0] == '-') as usize;
@@ -117,23 +149,30 @@ fn get_number_token(chars: &[char], line: usize, begin: usize) -> Result<(Token,
 //
 // This parses all types of identifiers including references and ASN.1 keywords. Returns the
 // appropriate type of the token and bytes consumed.
+// This also processes identifiers of the form `&identifer` or `&Identifier`.
 fn get_identifier_or_keyword_token(
     chars: &[char],
     line: usize,
     begin: usize,
 ) -> Result<(Token, usize), Error> {
-    let consumed;
-    let last = chars
+    let and = (chars[0] == '&') as usize;
+    let mut consumed = and;
+    let last = chars[and..]
         .iter()
         .position(|&x| !(x.is_ascii_alphanumeric() || x == '-'));
     if last.is_none() {
-        consumed = chars.len();
+        consumed += chars[and..].len();
     } else {
-        consumed = last.unwrap();
+        consumed += last.unwrap();
     }
 
     // Identifier should not end with a '-'
     if chars[consumed - 1] == '-' {
+        return Err(Error::TokenizeError);
+    }
+
+    // Free standing '&' this is an error.
+    if and > 0 && consumed == 1 {
         return Err(Error::TokenizeError);
     }
 
@@ -142,10 +181,14 @@ fn get_identifier_or_keyword_token(
         return Err(Error::TokenizeError);
     }
 
-    let token_type = if KEYWORDS.iter().any(|&kw| text == kw) {
-        TokenType::Keyword
+    let token_type = if and > 0 {
+        TokenType::AndIdentifier
     } else {
-        TokenType::Identifier
+        if KEYWORDS.iter().any(|&kw| text == kw) {
+            TokenType::Keyword
+        } else {
+            TokenType::Identifier
+        }
     };
 
     assert!(
@@ -179,7 +222,7 @@ fn get_range_or_extension_token(
             (TokenType::RangeSeparator, 2)
         }
     } else {
-        return Err(Error::TokenizeError);
+        (TokenType::Dot, 1)
     };
 
     Ok((
@@ -256,13 +299,14 @@ fn get_seq_extension_or_square_brackets_token(
 // Gets Begin/End of round/curly brackets.
 //
 // Note: square brackets need a special treatment due to "[[" and "]]"
-fn get_brackets_token(token: char, line: usize, start: usize) -> Result<Token, Error> {
+fn get_brackets_or_exception_token(token: char, line: usize, start: usize) -> Result<Token, Error> {
     let token_type: TokenType;
     match token {
         '{' => token_type = TokenType::CurlyBegin,
         '}' => token_type = TokenType::CurlyEnd,
         '(' => token_type = TokenType::RoundBegin,
         ')' => token_type = TokenType::RoundEnd,
+        '!' => token_type = TokenType::ExceptionMarker,
         _ => return Err(Error::TokenizeError),
     }
     Ok(Token {
@@ -378,8 +422,8 @@ where
                         column += consumed;
                     }
                 }
-                '{' | '}' | '(' | ')' => {
-                    let token = get_brackets_token(chars[column], line, column)?;
+                '{' | '}' | '(' | ')' | '!' => {
+                    let token = get_brackets_or_exception_token(chars[column], line, column)?;
                     tokens.push(token);
                     column += 1;
                 }
@@ -401,7 +445,7 @@ where
                     tokens.push(token);
                     column += consumed;
                 }
-                'a'..='z' | 'A'..='Z' => {
+                '&' | 'a'..='z' | 'A'..='Z' => {
                     let (token, consumed) =
                         get_identifier_or_keyword_token(&chars[column..], line, column)?;
                     tokens.push(token);
@@ -409,6 +453,12 @@ where
                 }
                 '0'..='9' => {
                     let (token, consumed) = get_number_token(&chars[column..], line, column)?;
+                    tokens.push(token);
+                    column += consumed;
+                }
+                '@' => {
+                    let (token, consumed) =
+                        get_at_component_id_list(&chars[column..], line, column)?;
                     tokens.push(token);
                     column += consumed;
                 }
@@ -426,8 +476,17 @@ where
 mod tests {
 
     #[test]
-    fn consume_tokens() {
+    fn tokenize_identifier_tokens() {
         let reader = std::io::BufReader::new(std::io::Cursor::new(b"Hello World!"));
+        let result = crate::parser::tokenize(reader);
+        assert!(result.is_ok());
+        let tokens = result.unwrap();
+        assert!(tokens.len() == 3, "{:#?}", tokens);
+    }
+
+    #[test]
+    fn tokenize_and_tokens() {
+        let reader = std::io::BufReader::new(std::io::Cursor::new(b"&Id &id-IDentifier"));
         let result = crate::parser::tokenize(reader);
         assert!(result.is_ok());
         let tokens = result.unwrap();
@@ -441,7 +500,7 @@ mod tests {
         let result = crate::parser::tokenize(reader);
         assert!(result.is_ok());
         let tokens = result.unwrap();
-        assert!(tokens.len() == 3, "{:#?}", tokens);
+        assert!(tokens.len() == 4, "{:#?}", tokens);
     }
 
     #[test]
@@ -466,12 +525,22 @@ mod tests {
 
     #[test]
     fn tokenize_keywords() {
-        let reader = std::io::BufReader::new(std::io::Cursor::new(b"  INTEGER ENUMERATED !"));
+        let reader = std::io::BufReader::new(std::io::Cursor::new(b"  INTEGER ENUMERATED "));
         let result = crate::parser::tokenize(reader);
         assert!(result.is_ok());
         let tokens = result.unwrap();
         assert!(tokens.len() == 2, "{:#?}", tokens);
         assert!(tokens.iter().all(|t| t.is_keyword()));
+    }
+
+    #[test]
+    fn tokenize_at_component_list() {
+        let reader =
+            std::io::BufReader::new(std::io::Cursor::new(b"@component.id-List @.another "));
+        let result = crate::parser::tokenize(reader);
+        assert!(result.is_ok());
+        let tokens = result.unwrap();
+        assert!(tokens.len() == 2, "{:#?}", tokens);
     }
 
     #[test]
@@ -482,6 +551,17 @@ mod tests {
         let tokens = result.unwrap();
         assert!(tokens.len() == 2, "{:#?}", tokens);
         assert!(tokens.iter().all(|t| t.is_numeric()), "{:#?}", tokens);
+    }
+
+    #[test]
+    fn tokenize_keyword_dot_andkeyword() {
+        let reader = std::io::BufReader::new(std::io::Cursor::new(
+            b"ATTRIBUTE.&equality-match.&AssertionType",
+        ));
+        let result = crate::parser::tokenize(reader);
+        assert!(result.is_ok());
+        let tokens = result.unwrap();
+        assert!(tokens.len() == 5, "{:#?}", tokens);
     }
 
     #[test]

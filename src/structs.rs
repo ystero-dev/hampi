@@ -38,6 +38,7 @@ pub enum TokenType {
     CurlyEnd,          // "}"
     RoundBegin,        // "("
     RoundEnd,          // ")"
+    ExceptionMarker,   // "!"
     SquareBegin,       // "["
     SquareEnd,         // "]"
     SeqExtensionBegin, // "[["
@@ -50,10 +51,11 @@ pub enum TokenType {
     Keyword,           // eg. "INTEGER", "ENUMERATED", "RELATIVE-OID", "TYPE-IDENTIFIER"
     Comment,           // "-- and everything after up to newline or EOF
     AndIdentifier,     // "&Attribute-Type", "&id" etc.
-    AtNotation,        // '@.'Identifier or '@'Identifier
     NumberInt,         // eg. 123456
     BitString,         // '010...'B
     HexString,         // 'FEEDBAC...'h
+    Dot,               // A single '.' usually in ATTRIBUTE.&id
+    AtComponentIdList, // @Component.Id.List form
 }
 
 /// A parsed token before AST is created.
