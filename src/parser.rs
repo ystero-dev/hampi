@@ -5,6 +5,90 @@
 use crate::error::Error;
 use crate::structs::{LineColumn, Span, Token, TokenType};
 
+// Keywords
+const KEYWORDS: &'static [&'static str] = &[
+    "ABSENT",
+    "ABSTRACT-SYNTAX",
+    "ALL",
+    "APPLICATION",
+    "AUTOMATIC",
+    "BEGIN",
+    "BIT",
+    "BMPString",
+    "BOOLEAN",
+    "BY",
+    "CHARACTER",
+    "CHOICE",
+    "CLASS",
+    "COMPONENT",
+    "COMPONENTS",
+    "CONSTRAINED",
+    "CONTAINING",
+    "DEFAULT",
+    "DEFINITIONS",
+    "EMBEDDED",
+    "ENCODED",
+    "END",
+    "ENUMERATED",
+    "EXCEPT",
+    "EXPLICIT",
+    "EXPORTS",
+    "EXTENSIBILITY",
+    "EXTERNAL",
+    "FALSE",
+    "FRom",
+    "GeneralizedTime",
+    "GeneralString",
+    "GraphicString",
+    "IA5String",
+    "IDENTIFIER",
+    "IMPLIED",
+    "IMPLICIT",
+    "IMPORTS",
+    "INCLUDES",
+    "INSTANCE",
+    "INTEGER",
+    "INTERSECTION",
+    "ISO646String",
+    "MAX",
+    "MIN",
+    "MINUS-INFINITY",
+    "NULL",
+    "NumericString",
+    "OBJECT",
+    "ObjectDescriptor",
+    "OCTET",
+    "OF",
+    "OPTIONAL",
+    "PATTERN",
+    "PDV",
+    "Plus-Infinity",
+    "PRESENT",
+    "PrintableString",
+    "PRIVATE",
+    "REAL",
+    "RELATIVE-OID",
+    "SEQUENCE",
+    "SET",
+    "SIZE",
+    "STRING",
+    "SYNTAX",
+    "T61String",
+    "TAGS",
+    "TeletexString",
+    "TRUE",
+    "TYPE-IDENTIFIER",
+    "UNION",
+    "UNIQUE",
+    "UNIVERSAL",
+    "UniversalString",
+    "UTCTime",
+    "UTF8String",
+    "VideotexString",
+    "VisibleString",
+    "WITH",
+];
+
 // Get token for Identifier or a Keyword
 //
 // This parses all types of identifiers including references and ASN.1 keywords. Returns the
@@ -14,7 +98,48 @@ fn get_identifier_or_keyword_token(
     line: usize,
     begin: usize,
 ) -> Result<(Token, usize), Error> {
-    Err(Error::TokenizeError)
+    let consumed;
+    let last = chars
+        .iter()
+        .position(|&x| !(x.is_ascii_alphanumeric() || x == '-'));
+    if last.is_none() {
+        consumed = chars.len();
+    } else {
+        consumed = last.unwrap();
+    }
+
+    // Identifier should not end with a '-'
+    if chars[consumed] == '-' {
+        return Err(Error::TokenizeError);
+    }
+
+    let text = chars[..consumed].iter().collect::<String>();
+    if text.find("--").is_some() {
+        return Err(Error::TokenizeError);
+    }
+
+    let token_type = if KEYWORDS.iter().any(|&kw| text == kw) {
+        TokenType::Keyword
+    } else {
+        TokenType::Identifier
+    };
+
+    assert!(
+        true,
+        "chars: {:?}, str: {}, consumed: {}",
+        chars, text, consumed
+    );
+    Ok((
+        Token {
+            r#type: token_type,
+            span: Span::new(
+                LineColumn::new(line, begin),
+                LineColumn::new(line, begin + consumed),
+            ),
+            text,
+        },
+        consumed,
+    ))
 }
 
 // Get token for Range ".." or Extension  "..."
@@ -250,6 +375,12 @@ where
                     tokens.push(token);
                     column += consumed;
                 }
+                'a'..='z' | 'A'..='Z' => {
+                    let (token, consumed) =
+                        get_identifier_or_keyword_token(&chars[column..], line, column)?;
+                    tokens.push(token);
+                    column += consumed;
+                }
                 _ => {
                     column += 1;
                 }
@@ -268,7 +399,8 @@ mod tests {
         let reader = std::io::BufReader::new(std::io::Cursor::new(b"Hello World!"));
         let result = crate::parser::tokenize(reader);
         assert!(result.is_ok());
-        assert!(result.unwrap().len() == 0);
+        let tokens = result.unwrap();
+        assert!(tokens.len() == 2, "{:#?}", tokens);
     }
 
     #[test]
@@ -277,7 +409,8 @@ mod tests {
             std::io::BufReader::new(std::io::Cursor::new(b"Hello World!\n-- Some comment --\n"));
         let result = crate::parser::tokenize(reader);
         assert!(result.is_ok());
-        assert!(result.unwrap().len() == 1);
+        let tokens = result.unwrap();
+        assert!(tokens.len() == 3, "{:#?}", tokens);
     }
 
     #[test]
@@ -298,6 +431,16 @@ mod tests {
         assert!(result.is_ok());
         let tokens = result.unwrap();
         assert!(tokens.len() == 1, "{:#?}", tokens);
+    }
+
+    #[test]
+    fn tokenize_keywords() {
+        let reader = std::io::BufReader::new(std::io::Cursor::new(b"  INTEGER ENUMERATED !"));
+        let result = crate::parser::tokenize(reader);
+        assert!(result.is_ok());
+        let tokens = result.unwrap();
+        assert!(tokens.len() == 2, "{:#?}", tokens);
+        assert!(tokens.iter().all(|t| t.r#type.is_keyword()));
     }
 
     #[test]

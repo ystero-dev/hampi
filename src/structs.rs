@@ -32,7 +32,7 @@ impl Span {
 /// Token Types
 ///
 /// Each parsed token should be of one of the following types.
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum TokenType {
     CurlyBegin,        // "{"
     CurlyEnd,          // "}"
@@ -53,6 +53,12 @@ pub enum TokenType {
     AtNotation,        // '@.'Identifier or '@'Identifier
     BitString,         // '010...'B
     HexString,         // 'FEEDBAC...'h
+}
+
+impl TokenType {
+    pub fn is_keyword(&self) -> bool {
+        self == &TokenType::Keyword
+    }
 }
 
 /// A parsed token before AST is created.
