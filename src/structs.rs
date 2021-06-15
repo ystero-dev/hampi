@@ -51,14 +51,9 @@ pub enum TokenType {
     Comment,           // "-- and everything after up to newline or EOF
     AndIdentifier,     // "&Attribute-Type", "&id" etc.
     AtNotation,        // '@.'Identifier or '@'Identifier
+    NumberInt,         // eg. 123456
     BitString,         // '010...'B
     HexString,         // 'FEEDBAC...'h
-}
-
-impl TokenType {
-    pub fn is_keyword(&self) -> bool {
-        self == &TokenType::Keyword
-    }
 }
 
 /// A parsed token before AST is created.
@@ -71,6 +66,20 @@ pub struct Token {
     pub r#type: TokenType,
     pub span: Span,
     pub text: String,
+}
+
+impl Token {
+    pub fn is_keyword(&self) -> bool {
+        self.r#type == TokenType::Keyword
+    }
+
+    pub fn is_numeric(&self) -> bool {
+        self.r#type == TokenType::NumberInt
+    }
+
+    pub fn is_range_separator(&self) -> bool {
+        self.r#type == TokenType::RangeSeparator
+    }
 }
 
 struct ObjectIdentifier;

@@ -89,6 +89,30 @@ const KEYWORDS: &'static [&'static str] = &[
     "WITH",
 ];
 
+// Get token for a number Integer or Real
+fn get_number_token(chars: &[char], line: usize, begin: usize) -> Result<(Token, usize), Error> {
+    let neg = (chars[0] == '-') as usize;
+    let mut consumed = neg;
+    let last = chars[neg..].iter().position(|&x| !x.is_numeric());
+    if last.is_none() {
+        consumed += chars[neg..].len();
+    } else {
+        consumed += last.unwrap();
+    }
+
+    Ok((
+        Token {
+            r#type: TokenType::NumberInt,
+            span: Span::new(
+                LineColumn::new(line, begin),
+                LineColumn::new(line, begin + consumed),
+            ),
+            text: chars[..consumed].iter().collect::<String>(), // include the sign as well
+        },
+        consumed,
+    ))
+}
+
 // Get token for Identifier or a Keyword
 //
 // This parses all types of identifiers including references and ASN.1 keywords. Returns the
@@ -109,7 +133,7 @@ fn get_identifier_or_keyword_token(
     }
 
     // Identifier should not end with a '-'
-    if chars[consumed] == '-' {
+    if chars[consumed - 1] == '-' {
         return Err(Error::TokenizeError);
     }
 
@@ -347,10 +371,12 @@ where
                         get_maybe_comment_token(&chars[column..], line, column)?;
                     if token.is_some() {
                         tokens.push(token.unwrap());
+                        column += consumed;
                     } else {
-                        // FIXME: Try parsing a negative number
+                        let (token, consumed) = get_number_token(&chars[column..], line, column)?;
+                        tokens.push(token);
+                        column += consumed;
                     }
-                    column += consumed;
                 }
                 '{' | '}' | '(' | ')' => {
                     let token = get_brackets_token(chars[column], line, column)?;
@@ -378,6 +404,11 @@ where
                 'a'..='z' | 'A'..='Z' => {
                     let (token, consumed) =
                         get_identifier_or_keyword_token(&chars[column..], line, column)?;
+                    tokens.push(token);
+                    column += consumed;
+                }
+                '0'..='9' => {
+                    let (token, consumed) = get_number_token(&chars[column..], line, column)?;
                     tokens.push(token);
                     column += consumed;
                 }
@@ -440,7 +471,29 @@ mod tests {
         assert!(result.is_ok());
         let tokens = result.unwrap();
         assert!(tokens.len() == 2, "{:#?}", tokens);
-        assert!(tokens.iter().all(|t| t.r#type.is_keyword()));
+        assert!(tokens.iter().all(|t| t.is_keyword()));
+    }
+
+    #[test]
+    fn tokenize_numbers() {
+        let reader = std::io::BufReader::new(std::io::Cursor::new(b" 123456789 -123"));
+        let result = crate::parser::tokenize(reader);
+        assert!(result.is_ok());
+        let tokens = result.unwrap();
+        assert!(tokens.len() == 2, "{:#?}", tokens);
+        assert!(tokens.iter().all(|t| t.is_numeric()), "{:#?}", tokens);
+    }
+
+    #[test]
+    fn tokenize_range() {
+        let reader = std::io::BufReader::new(std::io::Cursor::new(b" -123456789..-123"));
+        let result = crate::parser::tokenize(reader);
+        assert!(result.is_ok());
+        let tokens = result.unwrap();
+        assert!(tokens.len() == 3, "{:#?}", tokens);
+        assert!(tokens[0].is_numeric(), "{:#?}", tokens[0]);
+        assert!(tokens[1].is_range_separator(), "{:#?}", tokens[1]);
+        assert!(tokens[2].is_numeric(), "{:#?}", tokens[2]);
     }
 
     #[test]
