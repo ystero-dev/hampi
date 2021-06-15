@@ -2,6 +2,7 @@
 
 #[derive(Debug)]
 pub enum Error {
+    TokenizeError,
     ParseError,
 }
 

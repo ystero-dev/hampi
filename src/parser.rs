@@ -5,20 +5,20 @@
 use crate::error::Error;
 use crate::structs::{LineColumn, Span, Token, TokenType};
 
-// Parse Identifier or a Keyword
+// Get token for Identifier or a Keyword
 //
 // This parses all types of identifiers including references and ASN.1 keywords. Returns the
 // appropriate type of the token and bytes consumed.
-fn parse_identifier_or_keyword(
+fn get_identifier_or_keyword_token(
     chars: &[char],
     line: usize,
     begin: usize,
 ) -> Result<(Token, usize), Error> {
-    Err(Error::ParseError)
+    Err(Error::TokenizeError)
 }
 
-// Parse Range ".." or Extension  "..."
-fn parse_range_or_extension(
+// Get token for Range ".." or Extension  "..."
+fn get_range_or_extension_token(
     chars: &[char],
     line: usize,
     begin: usize,
@@ -30,7 +30,7 @@ fn parse_range_or_extension(
             (TokenType::RangeSeparator, 2)
         }
     } else {
-        return Err(Error::ParseError);
+        return Err(Error::TokenizeError);
     };
 
     Ok((
@@ -47,7 +47,7 @@ fn parse_range_or_extension(
 }
 
 // Parse either an assignment token "::=" pr a single ':'
-fn parse_assignment_or_colon(
+fn get_assignment_or_colon_token(
     chars: &[char],
     line: usize,
     begin: usize,
@@ -70,8 +70,10 @@ fn parse_assignment_or_colon(
     ))
 }
 
-// Parses either a Square bracket begin or Sequence Extension
-fn parse_seq_extension_or_square_brackets(
+// Gets either a Square bracket or Sequence Extension
+//
+// This gives all the tokens '[[' or ']]' or '[' or ']'
+fn get_seq_extension_or_square_brackets_token(
     chars: &[char],
     line: usize,
     begin: usize,
@@ -102,17 +104,17 @@ fn parse_seq_extension_or_square_brackets(
     ))
 }
 
-// Parses Begin/End of round curly brackets.
+// Gets Begin/End of round/curly brackets.
 //
 // Note: square brackets need a special treatment due to "[[" and "]]"
-fn parse_bracket_token(token: char, line: usize, start: usize) -> Result<Token, Error> {
+fn get_brackets_token(token: char, line: usize, start: usize) -> Result<Token, Error> {
     let token_type: TokenType;
     match token {
         '{' => token_type = TokenType::CurlyBegin,
         '}' => token_type = TokenType::CurlyEnd,
         '(' => token_type = TokenType::RoundBegin,
         ')' => token_type = TokenType::RoundEnd,
-        _ => return Err(Error::ParseError),
+        _ => return Err(Error::TokenizeError),
     }
     Ok(Token {
         r#type: token_type,
@@ -124,14 +126,14 @@ fn parse_bracket_token(token: char, line: usize, start: usize) -> Result<Token, 
     })
 }
 
-// Parses a comment. The comment will be of the form -
+// Gets a comment. The comment will be of the form -
 // -- Some Comment \n or
 // -- Some Comment -- or
 // -- Some Comment EOF (Note: last is a special case and not exactly confirming to standards.)
 //
-// A pathologically crafted line of size greater than usize could cause this function to panic.
+// A cleverly crafted pathologically long line could cause this function to panic.
 // Which we don't expect to see in real life normally.
-fn parse_maybe_comment(
+fn get_maybe_comment_token(
     chars: &[char], // From the first "--"
     line: usize,
     begin: usize,
@@ -192,7 +194,7 @@ fn parse_maybe_comment(
     ))
 }
 
-fn parse<T>(mut input: T) -> Result<Vec<Token>, Error>
+fn tokenize<T>(mut input: T) -> Result<Vec<Token>, Error>
 where
     T: std::io::BufRead,
 {
@@ -216,7 +218,8 @@ where
                     column += 1;
                 }
                 '-' => {
-                    let (token, consumed) = parse_maybe_comment(&chars[column..], line, column)?;
+                    let (token, consumed) =
+                        get_maybe_comment_token(&chars[column..], line, column)?;
                     if token.is_some() {
                         tokens.push(token.unwrap());
                     } else {
@@ -225,25 +228,25 @@ where
                     column += consumed;
                 }
                 '{' | '}' | '(' | ')' => {
-                    let token = parse_bracket_token(chars[column], line, column)?;
+                    let token = get_brackets_token(chars[column], line, column)?;
                     tokens.push(token);
                     column += 1;
                 }
                 '[' | ']' => {
                     let (token, consumed) =
-                        parse_seq_extension_or_square_brackets(&chars[column..], line, column)?;
+                        get_seq_extension_or_square_brackets_token(&chars[column..], line, column)?;
                     tokens.push(token);
                     column += consumed;
                 }
                 ':' => {
                     let (token, consumed) =
-                        parse_assignment_or_colon(&chars[column..], line, column)?;
+                        get_assignment_or_colon_token(&chars[column..], line, column)?;
                     tokens.push(token);
                     column += consumed;
                 }
                 '.' => {
                     let (token, consumed) =
-                        parse_range_or_extension(&chars[column..], line, column)?;
+                        get_range_or_extension_token(&chars[column..], line, column)?;
                     tokens.push(token);
                     column += consumed;
                 }
@@ -261,44 +264,44 @@ where
 mod tests {
 
     #[test]
-    fn consume_parse() {
+    fn consume_tokens() {
         let reader = std::io::BufReader::new(std::io::Cursor::new(b"Hello World!"));
-        let result = crate::parser::parse(reader);
+        let result = crate::parser::tokenize(reader);
         assert!(result.is_ok());
         assert!(result.unwrap().len() == 0);
     }
 
     #[test]
-    fn parse_comment_two_lines() {
+    fn tokenize_comment_two_lines() {
         let reader =
             std::io::BufReader::new(std::io::Cursor::new(b"Hello World!\n-- Some comment --\n"));
-        let result = crate::parser::parse(reader);
+        let result = crate::parser::tokenize(reader);
         assert!(result.is_ok());
         assert!(result.unwrap().len() == 1);
     }
 
     #[test]
-    fn parse_two_comments() {
+    fn tokenize_two_comments() {
         let reader = std::io::BufReader::new(std::io::Cursor::new(
             b" -- Hello World!\n-- Some comment --\n",
         ));
-        let result = crate::parser::parse(reader);
+        let result = crate::parser::tokenize(reader);
         assert!(result.is_ok());
         let tokens = result.unwrap();
         assert!(tokens.len() == 2, "{:#?}", tokens);
     }
 
     #[test]
-    fn parse_comment_no_trailing_newline() {
+    fn tokenize_comment_no_trailing_newline() {
         let reader = std::io::BufReader::new(std::io::Cursor::new(b" -- Hello World!"));
-        let result = crate::parser::parse(reader);
+        let result = crate::parser::tokenize(reader);
         assert!(result.is_ok());
         let tokens = result.unwrap();
         assert!(tokens.len() == 1, "{:#?}", tokens);
     }
 
     #[test]
-    fn parse_small_tokens() {
+    fn tokenize_small_tokens() {
         struct SmallTokenTestCase<'t> {
             input: &'t [u8],
             count: usize,
@@ -333,7 +336,7 @@ mod tests {
         ];
         for test_case in test_cases {
             let reader = std::io::BufReader::new(std::io::Cursor::new(test_case.input));
-            let result = crate::parser::parse(reader);
+            let result = crate::parser::tokenize(reader);
             assert_eq!(result.is_ok(), test_case.success);
             if result.is_ok() {
                 let tokens = result.unwrap();
