@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 //! ASN.1 Base Types
 
 pub struct IntegerType {

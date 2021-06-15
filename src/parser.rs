@@ -1,13 +1,112 @@
+#![allow(dead_code)]
+#![allow(unused_variables)]
 //! Parser for an ASN.1 module
 
 use crate::error::Error;
 use crate::structs::{LineColumn, Span, Token, TokenType};
 
+// Parse Identifier or a Keyword
+//
+// This parses all types of identifiers including references and ASN.1 keywords. Returns the
+// appropriate type of the token and bytes consumed.
+fn parse_identifier_or_keyword(
+    chars: &[char],
+    line: usize,
+    begin: usize,
+) -> Result<(Token, usize), Error> {
+    Err(Error::ParseError)
+}
+
+// Parse Range ".." or Extension  "..."
+fn parse_range_or_extension(
+    chars: &[char],
+    line: usize,
+    begin: usize,
+) -> Result<(Token, usize), Error> {
+    let (token_type, consumed) = if chars[1] == '.' {
+        if chars[2] == '.' {
+            (TokenType::Extension, 3)
+        } else {
+            (TokenType::RangeSeparator, 2)
+        }
+    } else {
+        return Err(Error::ParseError);
+    };
+
+    Ok((
+        Token {
+            r#type: token_type,
+            span: Span::new(
+                LineColumn::new(line, begin),
+                LineColumn::new(line, begin + consumed),
+            ),
+            text: chars[..consumed].iter().collect::<String>(),
+        },
+        consumed,
+    ))
+}
+
+// Parse either an assignment token "::=" pr a single ':'
+fn parse_assignment_or_colon(
+    chars: &[char],
+    line: usize,
+    begin: usize,
+) -> Result<(Token, usize), Error> {
+    let (token_type, consumed) = if chars[1] == ':' && chars[2] == '=' {
+        (TokenType::Assignment, 3)
+    } else {
+        (TokenType::Colon, 1)
+    };
+    Ok((
+        Token {
+            r#type: token_type,
+            span: Span::new(
+                LineColumn::new(line, begin),
+                LineColumn::new(line, begin + consumed),
+            ),
+            text: chars[..consumed].iter().collect::<String>(),
+        },
+        consumed,
+    ))
+}
+
+// Parses either a Square bracket begin or Sequence Extension
+fn parse_seq_extension_or_square_brackets(
+    chars: &[char],
+    line: usize,
+    begin: usize,
+) -> Result<(Token, usize), Error> {
+    let (token_type, consumed) = if chars[0] == '[' {
+        if chars[1] == '[' {
+            (TokenType::SeqExtensionBegin, 2)
+        } else {
+            (TokenType::SquareBegin, 1)
+        }
+    } else {
+        if chars[1] == ']' {
+            (TokenType::SeqExtensionEnd, 2)
+        } else {
+            (TokenType::SquareEnd, 1)
+        }
+    };
+    Ok((
+        Token {
+            r#type: token_type,
+            span: Span::new(
+                LineColumn::new(line, begin),
+                LineColumn::new(line, begin + consumed),
+            ),
+            text: chars[..consumed].iter().collect::<String>(),
+        },
+        consumed,
+    ))
+}
+
 // Parses Begin/End of round curly brackets.
 //
 // Note: square brackets need a special treatment due to "[[" and "]]"
 fn parse_bracket_token(token: char, line: usize, start: usize) -> Result<Token, Error> {
-    let mut token_type: TokenType;
+    let token_type: TokenType;
     match token {
         '{' => token_type = TokenType::CurlyBegin,
         '}' => token_type = TokenType::CurlyEnd,
@@ -98,8 +197,6 @@ where
     T: std::io::BufRead,
 {
     let mut line = 1;
-    let mut column = 0 as usize;
-    let mut last_columns = 0 as usize;
     let mut tokens: Vec<Token> = Vec::new();
     loop {
         let mut buffer = String::new();
@@ -108,10 +205,9 @@ where
             break;
         }
         let chars: Vec<char> = buffer.chars().collect();
-        column = 0;
+        let mut column = 0 as usize;
         loop {
             if column == chars.len() {
-                last_columns = column;
                 break;
             }
             let c = chars[column];
@@ -133,6 +229,24 @@ where
                     tokens.push(token);
                     column += 1;
                 }
+                '[' | ']' => {
+                    let (token, consumed) =
+                        parse_seq_extension_or_square_brackets(&chars[column..], line, column)?;
+                    tokens.push(token);
+                    column += consumed;
+                }
+                ':' => {
+                    let (token, consumed) =
+                        parse_assignment_or_colon(&chars[column..], line, column)?;
+                    tokens.push(token);
+                    column += consumed;
+                }
+                '.' => {
+                    let (token, consumed) =
+                        parse_range_or_extension(&chars[column..], line, column)?;
+                    tokens.push(token);
+                    column += consumed;
+                }
                 _ => {
                     column += 1;
                 }
@@ -145,8 +259,6 @@ where
 
 #[cfg(test)]
 mod tests {
-
-    use super::*;
 
     #[test]
     fn consume_parse() {
@@ -186,11 +298,47 @@ mod tests {
     }
 
     #[test]
-    fn parse_curly_braces() {
-        let reader = std::io::BufReader::new(std::io::Cursor::new(b"{}"));
-        let result = crate::parser::parse(reader);
-        assert!(result.is_ok());
-        let tokens = result.unwrap();
-        assert!(tokens.len() == 2, "{:#?}", tokens);
+    fn parse_small_tokens() {
+        struct SmallTokenTestCase<'t> {
+            input: &'t [u8],
+            count: usize,
+            success: bool,
+        }
+        let test_cases = vec![
+            SmallTokenTestCase {
+                input: b"{{}}",
+                count: 4,
+                success: true,
+            },
+            SmallTokenTestCase {
+                input: b"[[{}]}",
+                count: 5,
+                success: true,
+            },
+            SmallTokenTestCase {
+                input: b"[[]]",
+                count: 2,
+                success: true,
+            },
+            SmallTokenTestCase {
+                input: b"..{...}",
+                count: 4,
+                success: true,
+            },
+            SmallTokenTestCase {
+                input: b":(::=)",
+                count: 4,
+                success: true,
+            },
+        ];
+        for test_case in test_cases {
+            let reader = std::io::BufReader::new(std::io::Cursor::new(test_case.input));
+            let result = crate::parser::parse(reader);
+            assert_eq!(result.is_ok(), test_case.success);
+            if result.is_ok() {
+                let tokens = result.unwrap();
+                assert!(tokens.len() == test_case.count, "{:#?}", tokens);
+            }
+        }
     }
 }

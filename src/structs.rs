@@ -1,7 +1,9 @@
+#![allow(dead_code)]
 //! A collection of structs used in [Hampi][`crate`] for ASN.1 compilation.
 
 use super::base_types::*;
 
+/// Line and Column in the source where the token begins.
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct LineColumn {
     line: usize,
@@ -14,6 +16,7 @@ impl LineColumn {
     }
 }
 
+/// Span of a Token in the source.
 #[derive(Debug)]
 pub struct Span {
     start: LineColumn,
@@ -26,6 +29,9 @@ impl Span {
     }
 }
 
+/// Token Types
+///
+/// Each parsed token should be of one of the following types.
 #[derive(Debug)]
 pub enum TokenType {
     CurlyBegin,        // "{"
@@ -34,17 +40,26 @@ pub enum TokenType {
     RoundEnd,          // ")"
     SquareBegin,       // "["
     SquareEnd,         // "]"
-    DoubleSquareBegin, // "[["
-    DoubleSquareEnd,   // "]]"
+    SeqExtensionBegin, // "[["
+    SeqExtensionEnd,   // "]]"
     Extension,         // "..."
     RangeSeparator,    // ".."
-    Identifier,        // Identifiers and all references.
     Assignment,        // "::="
-    Reserved,          // eg. "INTEGER", "ENUMERATED", "RELATIVE-OID", "TYPE-IDENTIFIER"
-    Comment,           // "-- and everything after up to newline
+    Colon,             // ':'
+    Identifier,        // Identifiers and all references.
+    Keyword,           // eg. "INTEGER", "ENUMERATED", "RELATIVE-OID", "TYPE-IDENTIFIER"
+    Comment,           // "-- and everything after up to newline or EOF
     AndIdentifier,     // "&Attribute-Type", "&id" etc.
+    AtNotation,        // '@.'Identifier or '@'Identifier
+    BitString,         // '010...'B
+    HexString,         // 'FEEDBAC...'h
 }
 
+/// A parsed token before AST is created.
+///
+/// Going through an ASN.1 module source results in a vector of parsed tokens of appropriate types.
+/// The parsed tokens are then used to 'resolve' type and value definitions to obtain the instances
+/// of respective structures.
 #[derive(Debug)]
 pub struct Token {
     pub r#type: TokenType,
