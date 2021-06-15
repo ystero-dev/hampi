@@ -49,7 +49,7 @@ pub enum TokenType {
 pub struct Token {
     pub r#type: TokenType,
     pub span: Span,
-    pub name: String,
+    pub text: String,
 }
 
 struct ObjectIdentifier;

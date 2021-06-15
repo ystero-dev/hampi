@@ -2,7 +2,7 @@
 //!
 //! Goal of the project is to develop a compiler for ASN.1 specifications primarily for
 //! applicatoins in working with 3GPP standards. The idea is to be able to generate Rust (and
-//! possibly other language(s) bindings from ASN.1 Specifications.
+//! possibly other language(s)) bindings from ASN.1 Specifications.
 
 mod base_types;
 
