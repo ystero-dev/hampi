@@ -55,6 +55,7 @@ pub enum TokenType {
     RangeSeparator,    // ".."
     Assignment,        // "::="
     Colon,             // ':'
+    SemiColon,         // ';'
     Identifier,        // Identifiers and all references.
     Keyword,           // eg. "INTEGER", "ENUMERATED", "RELATIVE-OID", "TYPE-IDENTIFIER"
     Comment,           // "-- and everything after up to newline or EOF
@@ -62,6 +63,7 @@ pub enum TokenType {
     NumberInt,         // eg. 123456
     BitString,         // '010...'B
     HexString,         // 'FEEDBAC...'h
+    TString,           // " A string "
     Dot,               // A single '.' usually in ATTRIBUTE.&id
     AtComponentIdList, // @Component.Id.List form
 }

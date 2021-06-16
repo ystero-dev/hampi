@@ -89,12 +89,92 @@ const KEYWORDS: &'static [&'static str] = &[
     "WITH",
 ];
 
+// Get string token.
+fn get_string_token(
+    chars: &[char],
+    line: usize,
+    begin: usize,
+) -> Result<(Token, usize, usize, usize), Error> {
+    let mut last: Option<usize> = None;
+
+    if chars.len() == 1 {
+        return Err(Error::TokenizeError);
+    }
+
+    for (idx, window) in chars[1..].windows(2).enumerate() {
+        if window[0] == '"' {
+            if window[1] != '"' {
+                last = Some(idx + 1 + 1); // 1 for window 1 for starting with [1..]
+            }
+        }
+    }
+
+    // We came to the end of the chars[..] but couldn't find a '"'
+    if last.is_none() {
+        let last_char = chars.last();
+        if last_char.is_some() {
+            if last_char.unwrap() != &'"' {
+                return Err(Error::TokenizeError);
+            } else {
+                // last char of the string is '"' make sure both last - 1 and last -2 are '"'
+                let idx = chars.len() - 1;
+                if chars[idx - 1] == '"' {
+                    if idx == 1 {
+                        return Err(Error::TokenizeError);
+                    }
+                    if chars[idx - 2] != '"' {
+                        return Err(Error::TokenizeError);
+                    } else {
+                        if idx == 2 {
+                            return Err(Error::TokenizeError);
+                        }
+                    }
+                }
+                last = Some(chars.len());
+            }
+        }
+    }
+
+    if last.is_none() {
+        return Err(Error::TokenizeError);
+    }
+
+    let consumed = last.unwrap();
+
+    let mut text = chars[..consumed].iter().collect::<String>();
+    let lines = text.lines().count() - 1;
+    let last_line = text.lines().last().unwrap();
+    let end_column = if lines > 0 {
+        last_line.len()
+    } else {
+        begin + consumed
+    };
+    text = text.replace(char::is_whitespace, "");
+
+    Ok((
+        Token {
+            r#type: TokenType::TString,
+            span: Span::new(
+                LineColumn::new(line, begin),
+                LineColumn::new(line + lines, end_column), // FIXME: This span may be wrong, but ignore right now
+            ),
+            text,
+        },
+        consumed,
+        lines,
+        end_column,
+    ))
+}
 // Get bit string or hex string
 fn get_bit_or_hex_string_token(
     chars: &[char],
     line: usize,
     begin: usize,
 ) -> Result<(Token, usize, usize, usize), Error> {
+    if chars.len() == 1 {
+        return Err(Error::TokenizeError);
+    }
+
     let last = chars[1..].iter().position(|&c| c == '\'');
     if last.is_none() {
         // No matching '\'' found till the end of the string. Clearly an error.
@@ -122,7 +202,6 @@ fn get_bit_or_hex_string_token(
     let mut text = chars[..consumed].iter().collect::<String>();
     let lines = text.lines().count() - 1;
     let last_line = text.lines().last().unwrap();
-    eprintln!(" last: {}", last_line);
     let end_column = if lines > 0 {
         last_line.len()
     } else {
@@ -146,7 +225,7 @@ fn get_bit_or_hex_string_token(
 
     Ok((
         Token {
-            r#type: TokenType::AtComponentIdList,
+            r#type: token_type,
             span: Span::new(
                 LineColumn::new(line, begin),
                 LineColumn::new(line + lines, end_column), // FIXME: This span may be wrong, but ignore right now
@@ -165,6 +244,10 @@ fn get_at_component_id_list(
     line: usize,
     begin: usize,
 ) -> Result<(Token, usize), Error> {
+    if chars.len() == 1 {
+        return Err(Error::TokenizeError);
+    }
+
     let mut consumed = 1;
     let last = chars[1..]
         .iter()
@@ -194,6 +277,11 @@ fn get_at_component_id_list(
 // Get token for a number Integer or Real
 fn get_number_token(chars: &[char], line: usize, begin: usize) -> Result<(Token, usize), Error> {
     let neg = (chars[0] == '-') as usize;
+
+    if neg > 0 && chars.len() == 1 {
+        return Err(Error::TokenizeError);
+    }
+
     let mut consumed = neg;
     let last = chars[neg..].iter().position(|&x| !x.is_numeric());
     if last.is_none() {
@@ -226,6 +314,11 @@ fn get_identifier_or_keyword_token(
     begin: usize,
 ) -> Result<(Token, usize), Error> {
     let and = (chars[0] == '&') as usize;
+
+    if and > 0 && chars.len() == 1 {
+        return Err(Error::TokenizeError);
+    }
+
     let mut consumed = and;
     let last = chars[and..]
         .iter()
@@ -285,6 +378,7 @@ fn get_range_or_extension_token(
     line: usize,
     begin: usize,
 ) -> Result<(Token, usize), Error> {
+    // FIXME: handle cases where chars.len() can be less than 3
     let (token_type, consumed) = if chars[1] == '.' {
         if chars[2] == '.' {
             (TokenType::Extension, 3)
@@ -314,6 +408,10 @@ fn get_assignment_or_colon_token(
     line: usize,
     begin: usize,
 ) -> Result<(Token, usize), Error> {
+    if chars.len() == 2 {
+        return Err(Error::TokenizeError);
+    }
+
     let (token_type, consumed) = if chars[1] == ':' && chars[2] == '=' {
         (TokenType::Assignment, 3)
     } else {
@@ -369,7 +467,7 @@ fn get_seq_extension_or_square_brackets_token(
 // Gets Begin/End of round/curly brackets.
 //
 // Note: square brackets need a special treatment due to "[[" and "]]"
-fn get_brackets_or_exception_token(token: char, line: usize, start: usize) -> Result<Token, Error> {
+fn get_single_char_token(token: char, line: usize, start: usize) -> Result<Token, Error> {
     let token_type: TokenType;
     match token {
         '{' => token_type = TokenType::CurlyBegin,
@@ -377,6 +475,7 @@ fn get_brackets_or_exception_token(token: char, line: usize, start: usize) -> Re
         '(' => token_type = TokenType::RoundBegin,
         ')' => token_type = TokenType::RoundEnd,
         '!' => token_type = TokenType::ExceptionMarker,
+        ';' => token_type = TokenType::SemiColon,
         _ => return Err(Error::TokenizeError),
     }
     Ok(Token {
@@ -483,8 +582,8 @@ where
                     processed += consumed;
                 }
             }
-            '{' | '}' | '(' | ')' | '!' => {
-                let token = get_brackets_or_exception_token(chars[processed], line, column)?;
+            '{' | '}' | '(' | ')' | '!' | ';' => {
+                let token = get_single_char_token(chars[processed], line, column)?;
                 tokens.push(token);
                 column += 1;
                 processed += 1;
@@ -543,8 +642,24 @@ where
                 }
                 line += l;
             }
+            '"' => {
+                let (token, consumed, l, c) = get_string_token(&chars[processed..], line, column)?;
+                tokens.push(token);
+                processed += consumed;
+                if l > 0 {
+                    column = c;
+                } else {
+                    column += consumed;
+                }
+                line += l;
+            }
+
             _ => {
-                processed += 1;
+                // FIXME: may be panic?
+                panic!(
+                    "Unsupported First character for a token: '{}'",
+                    chars[processed]
+                );
             }
         }
         if processed == total_read {
@@ -708,6 +823,48 @@ mod tests {
         }
     }
 
+    #[test]
+    fn tokenize_string() {
+        struct TestTokenizeString<'t> {
+            input: &'t [u8],
+            success: bool,
+        }
+        let test_cases = vec![
+            TestTokenizeString {
+                input: b"\"Foo...Bar\"",
+                success: true,
+            },
+            TestTokenizeString {
+                input: b"\"",
+                success: false,
+            },
+            TestTokenizeString {
+                input: b"\"\"",
+                success: false,
+            },
+            TestTokenizeString {
+                input: b"\"\"\"",
+                success: false,
+            },
+            TestTokenizeString {
+                input: b"\"\"\"\" ",
+                success: true,
+            },
+            TestTokenizeString {
+                input: b"\"\"Some Quoted String\"\" ",
+                success: true,
+            },
+        ];
+        for test_case in test_cases {
+            let reader = std::io::BufReader::new(std::io::Cursor::new(test_case.input));
+            let result = crate::parser::tokenize(reader);
+            assert_eq!(result.is_ok(), test_case.success);
+            if result.is_ok() {
+                let tokens = result.unwrap();
+                assert!(tokens.len() == 1, "{:#?}", tokens);
+            }
+        }
+    }
     #[test]
     fn tokenize_small_tokens() {
         struct SmallTokenTestCase<'t> {
