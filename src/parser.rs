@@ -109,22 +109,29 @@ fn get_string_token(
         }
     }
 
-    // We came to the end of the chars[..] but couldn't find a '"'
+    // We came 'nearly' to the end of the chars[..] but couldn't find a '"'
+    // This part is not as ugly as it looks, we are trying to handle a number of edge cases for
+    // example all of the following are failures
+    // - a string with a single double quote '"'
+    // - a string with two double quotes '""'
+    // - a string with three double quotes '"""'
     if last.is_none() {
         let last_char = chars.last();
         if last_char.is_some() {
             if last_char.unwrap() != &'"' {
                 return Err(Error::TokenizeError);
             } else {
-                // last char of the string is '"' make sure both last - 1 and last -2 are '"'
                 let idx = chars.len() - 1;
                 if chars[idx - 1] == '"' {
+                    // string is '""'
                     if idx == 1 {
                         return Err(Error::TokenizeError);
                     }
+                    // String is '"...""'
                     if chars[idx - 2] != '"' {
                         return Err(Error::TokenizeError);
                     } else {
+                        // The entire string is '"""'
                         if idx == 2 {
                             return Err(Error::TokenizeError);
                         }
@@ -149,14 +156,18 @@ fn get_string_token(
     } else {
         begin + consumed
     };
-    text = text.replace(char::is_whitespace, "");
+    text = text
+        .lines()
+        .map(|line| line.trim())
+        .collect::<Vec<&str>>()
+        .join("");
 
     Ok((
         Token {
             r#type: TokenType::TString,
             span: Span::new(
                 LineColumn::new(line, begin),
-                LineColumn::new(line + lines, end_column), // FIXME: This span may be wrong, but ignore right now
+                LineColumn::new(line + lines, end_column),
             ),
             text,
         },
@@ -378,15 +389,24 @@ fn get_range_or_extension_token(
     line: usize,
     begin: usize,
 ) -> Result<(Token, usize), Error> {
-    // FIXME: handle cases where chars.len() can be less than 3
-    let (token_type, consumed) = if chars[1] == '.' {
-        if chars[2] == '.' {
-            (TokenType::Extension, 3)
-        } else {
+    let (token_type, consumed) = if chars.len() == 1 {
+        (TokenType::Dot, 1)
+    } else if chars.len() == 2 {
+        if chars[1] == '.' {
             (TokenType::RangeSeparator, 2)
+        } else {
+            (TokenType::Dot, 1)
         }
     } else {
-        (TokenType::Dot, 1)
+        if chars[1] == '.' {
+            if chars[2] == '.' {
+                (TokenType::Extension, 3)
+            } else {
+                (TokenType::RangeSeparator, 2)
+            }
+        } else {
+            (TokenType::Dot, 1)
+        }
     };
 
     Ok((
@@ -412,11 +432,18 @@ fn get_assignment_or_colon_token(
         return Err(Error::TokenizeError);
     }
 
-    let (token_type, consumed) = if chars[1] == ':' && chars[2] == '=' {
-        (TokenType::Assignment, 3)
+    let (token_type, consumed) = if chars.len() == 1 {
+        (TokenType::Colon, 1)
+    } else if chars[1] == ':' {
+        if chars[2] == '=' {
+            (TokenType::Assignment, 3)
+        } else {
+            return Err(Error::TokenizeError);
+        }
     } else {
         (TokenType::Colon, 1)
     };
+
     Ok((
         Token {
             r#type: token_type,
@@ -831,7 +858,7 @@ mod tests {
         }
         let test_cases = vec![
             TestTokenizeString {
-                input: b"\"Foo...Bar\"",
+                input: b"\"Foo Bar\n\tFoo-baz\"",
                 success: true,
             },
             TestTokenizeString {
@@ -896,6 +923,41 @@ mod tests {
             SmallTokenTestCase {
                 input: b":(::=)",
                 count: 4,
+                success: true,
+            },
+            SmallTokenTestCase {
+                input: b": ::=",
+                count: 2,
+                success: true,
+            },
+            SmallTokenTestCase {
+                input: b": :: ",
+                count: 2,
+                success: false,
+            },
+            SmallTokenTestCase {
+                input: b".",
+                count: 1,
+                success: true,
+            },
+            SmallTokenTestCase {
+                input: b"..",
+                count: 1,
+                success: true,
+            },
+            SmallTokenTestCase {
+                input: b". ",
+                count: 1,
+                success: true,
+            },
+            SmallTokenTestCase {
+                input: b". . .. ",
+                count: 3,
+                success: true,
+            },
+            SmallTokenTestCase {
+                input: b"...",
+                count: 1,
                 success: true,
             },
         ];
