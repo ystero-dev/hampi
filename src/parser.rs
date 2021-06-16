@@ -89,6 +89,76 @@ const KEYWORDS: &'static [&'static str] = &[
     "WITH",
 ];
 
+// Get bit string or hex string
+fn get_bit_or_hex_string_token(
+    chars: &[char],
+    line: usize,
+    begin: usize,
+) -> Result<(Token, usize, usize, usize), Error> {
+    let last = chars[1..].iter().position(|&c| c == '\'');
+    if last.is_none() {
+        // No matching '\'' found till the end of the string. Clearly an error.
+        eprintln!("0, chars: {:?}", chars);
+        return Err(Error::TokenizeError);
+    }
+    let mut consumed = last.unwrap() + 1 + 1;
+    eprintln!("consumed: {}", consumed);
+    if consumed == chars.len() {
+        // Matching'\'' found, but the string ends, Error.
+        eprintln!("1");
+        return Err(Error::TokenizeError);
+    }
+
+    let c = chars[consumed];
+    let token_type = match c.to_lowercase().to_string().as_str() {
+        "h" => TokenType::HexString,
+        "b" => TokenType::BitString,
+        _ => {
+            eprintln!("1:1");
+            return Err(Error::TokenizeError);
+        }
+    };
+
+    let mut text = chars[..consumed].iter().collect::<String>();
+    let lines = text.lines().count() - 1;
+    let last_line = text.lines().last().unwrap();
+    eprintln!(" last: {}", last_line);
+    let end_column = if lines > 0 {
+        last_line.len()
+    } else {
+        begin + consumed
+    };
+    text = text.replace(char::is_whitespace, "");
+
+    if token_type == TokenType::BitString && text.replace(&['0', '1', '\''][..], "").len() != 0 {
+        eprintln!("2: text: {}", text);
+        return Err(Error::TokenizeError);
+    }
+
+    if token_type == TokenType::HexString
+        && !text.chars().all(|c| c.is_ascii_hexdigit() || c == '\'')
+    {
+        eprintln!("3: text: {}", text);
+        return Err(Error::TokenizeError);
+    }
+
+    consumed += 1; // last 'h' or 'b'
+
+    Ok((
+        Token {
+            r#type: TokenType::AtComponentIdList,
+            span: Span::new(
+                LineColumn::new(line, begin),
+                LineColumn::new(line + lines, end_column), // FIXME: This span may be wrong, but ignore right now
+            ),
+            text,
+        },
+        consumed,
+        lines,
+        end_column,
+    ))
+}
+
 // Get at and component ID list something like @.id or @component.id
 fn get_at_component_id_list(
     chars: &[char],
@@ -331,15 +401,18 @@ fn get_maybe_comment_token(
     line: usize,
     begin: usize,
 ) -> Result<(Option<Token>, usize), Error> {
-    eprintln!("chars[0]: {}, chars[1]: {}", chars[0], chars[1]);
     if chars[1] != '-' {
         return Ok((None, 0));
     }
     let mut consumed = 2; // initial "--"
     let mut last_idx: Option<usize> = None;
 
-    // May be a comment like -- Comment --
+    // Search for Either '\n' or "--"
     for (idx, window) in chars[2..].windows(2).enumerate() {
+        if window[0] == '\n' {
+            last_idx = Some(idx);
+            consumed += idx + 1;
+        }
         if window[0] == '-' && window[1] == '-' {
             last_idx = Some(idx);
             consumed += idx + 2; // --123-- : idx: 3 consumed: 7
@@ -347,18 +420,9 @@ fn get_maybe_comment_token(
         }
     }
 
+    // Neither "--" nor '\n' found. consume everything. (may be last line.)
     if last_idx.is_none() {
-        // May be comment is like // Comment \n
-        last_idx = chars[2..].iter().position(|&x| x == '\n');
-        if last_idx.is_some() {
-            consumed += last_idx.unwrap() + 1; // --123\n : idx: 0 consumed: 6
-        }
-    }
-
-    if last_idx.is_none() {
-        // Neither "--" nor '\n' found. consume everything. (may be last line.)
         consumed = chars.len();
-        last_idx = Some(consumed);
     }
 
     let text = chars[..consumed]
@@ -368,12 +432,7 @@ fn get_maybe_comment_token(
         .trim_end_matches("--")
         .trim()
         .to_string();
-    eprintln!(
-        "last_idx: {}, text: {}, consumed: {}",
-        last_idx.unwrap(),
-        text,
-        consumed
-    );
+
     Ok((
         Some(Token {
             r#type: TokenType::Comment,
@@ -389,85 +448,108 @@ fn get_maybe_comment_token(
 
 fn tokenize<T>(mut input: T) -> Result<Vec<Token>, Error>
 where
-    T: std::io::BufRead,
+    T: std::io::Read,
 {
     let mut line = 1;
     let mut tokens: Vec<Token> = Vec::new();
+    let mut buffer = Vec::new();
+    let total_read = input.read_to_end(&mut buffer).unwrap();
+    let buffer = String::from_utf8(buffer).unwrap();
+    let chars: Vec<char> = buffer.chars().collect();
+    let mut column = 0 as usize;
+    let mut processed = 0;
     loop {
-        let mut buffer = String::new();
-        let read_line = input.read_line(&mut buffer).unwrap();
-        if read_line == 0 {
+        let c = chars[processed];
+        match c {
+            ' ' | '\t' => {
+                processed += 1;
+                column += 1;
+            }
+            '\n' => {
+                line += 1;
+                processed += 1;
+                column = 0;
+            }
+            '-' => {
+                let (token, consumed) = get_maybe_comment_token(&chars[processed..], line, column)?;
+                if token.is_some() {
+                    tokens.push(token.unwrap());
+                    column += consumed;
+                    processed += consumed;
+                } else {
+                    let (token, consumed) = get_number_token(&chars[processed..], line, column)?;
+                    tokens.push(token);
+                    column += consumed;
+                    processed += consumed;
+                }
+            }
+            '{' | '}' | '(' | ')' | '!' => {
+                let token = get_brackets_or_exception_token(chars[processed], line, column)?;
+                tokens.push(token);
+                column += 1;
+                processed += 1;
+            }
+            '[' | ']' => {
+                let (token, consumed) =
+                    get_seq_extension_or_square_brackets_token(&chars[processed..], line, column)?;
+                tokens.push(token);
+                column += consumed;
+                processed += consumed;
+            }
+            ':' => {
+                let (token, consumed) =
+                    get_assignment_or_colon_token(&chars[processed..], line, column)?;
+                tokens.push(token);
+                column += consumed;
+                processed += consumed;
+            }
+            '.' => {
+                let (token, consumed) =
+                    get_range_or_extension_token(&chars[processed..], line, column)?;
+                tokens.push(token);
+                column += consumed;
+                processed += consumed;
+            }
+            '&' | 'a'..='z' | 'A'..='Z' => {
+                let (token, consumed) =
+                    get_identifier_or_keyword_token(&chars[processed..], line, column)?;
+                tokens.push(token);
+
+                column += consumed;
+                processed += consumed;
+            }
+            '0'..='9' => {
+                let (token, consumed) = get_number_token(&chars[processed..], line, column)?;
+                tokens.push(token);
+                column += consumed;
+                processed += consumed;
+            }
+            '@' => {
+                let (token, consumed) =
+                    get_at_component_id_list(&chars[processed..], line, column)?;
+                tokens.push(token);
+                column += consumed;
+                processed += consumed;
+            }
+            '\'' => {
+                let (token, consumed, l, c) =
+                    get_bit_or_hex_string_token(&chars[processed..], line, column)?;
+                tokens.push(token);
+                processed += consumed;
+                if l > 0 {
+                    column = c;
+                } else {
+                    column += consumed;
+                }
+                line += l;
+            }
+            _ => {
+                processed += 1;
+            }
+        }
+        if processed == total_read {
             break;
         }
-        let chars: Vec<char> = buffer.chars().collect();
-        let mut column = 0 as usize;
-        loop {
-            if column == chars.len() {
-                break;
-            }
-            let c = chars[column];
-            match c {
-                ' ' | '\t' => {
-                    column += 1;
-                }
-                '-' => {
-                    let (token, consumed) =
-                        get_maybe_comment_token(&chars[column..], line, column)?;
-                    if token.is_some() {
-                        tokens.push(token.unwrap());
-                        column += consumed;
-                    } else {
-                        let (token, consumed) = get_number_token(&chars[column..], line, column)?;
-                        tokens.push(token);
-                        column += consumed;
-                    }
-                }
-                '{' | '}' | '(' | ')' | '!' => {
-                    let token = get_brackets_or_exception_token(chars[column], line, column)?;
-                    tokens.push(token);
-                    column += 1;
-                }
-                '[' | ']' => {
-                    let (token, consumed) =
-                        get_seq_extension_or_square_brackets_token(&chars[column..], line, column)?;
-                    tokens.push(token);
-                    column += consumed;
-                }
-                ':' => {
-                    let (token, consumed) =
-                        get_assignment_or_colon_token(&chars[column..], line, column)?;
-                    tokens.push(token);
-                    column += consumed;
-                }
-                '.' => {
-                    let (token, consumed) =
-                        get_range_or_extension_token(&chars[column..], line, column)?;
-                    tokens.push(token);
-                    column += consumed;
-                }
-                '&' | 'a'..='z' | 'A'..='Z' => {
-                    let (token, consumed) =
-                        get_identifier_or_keyword_token(&chars[column..], line, column)?;
-                    tokens.push(token);
-                    column += consumed;
-                }
-                '0'..='9' => {
-                    let (token, consumed) = get_number_token(&chars[column..], line, column)?;
-                    tokens.push(token);
-                    column += consumed;
-                }
-                '@' => {
-                    let (token, consumed) =
-                        get_at_component_id_list(&chars[column..], line, column)?;
-                    tokens.push(token);
-                    column += consumed;
-                }
-                _ => {
-                    column += 1;
-                }
-            }
-        }
-        line += 1
     }
     Ok(tokens)
 }
@@ -479,7 +561,7 @@ mod tests {
     fn tokenize_identifier_tokens() {
         let reader = std::io::BufReader::new(std::io::Cursor::new(b"Hello World!"));
         let result = crate::parser::tokenize(reader);
-        assert!(result.is_ok());
+        assert!(result.is_ok(), "{:#?}", result.err());
         let tokens = result.unwrap();
         assert!(tokens.len() == 3, "{:#?}", tokens);
     }
@@ -574,6 +656,56 @@ mod tests {
         assert!(tokens[0].is_numeric(), "{:#?}", tokens[0]);
         assert!(tokens[1].is_range_separator(), "{:#?}", tokens[1]);
         assert!(tokens[2].is_numeric(), "{:#?}", tokens[2]);
+    }
+
+    #[test]
+    fn tokenize_bitstring() {
+        struct BitHexStringTestCase<'t> {
+            input: &'t [u8],
+            success: bool,
+            span_end_line: usize,
+        }
+        let test_cases = vec![
+            BitHexStringTestCase {
+                input: b"'010101'b",
+                success: true,
+                span_end_line: 1,
+            },
+            BitHexStringTestCase {
+                input: b"'010101'",
+                success: false,
+                span_end_line: 1,
+            },
+            BitHexStringTestCase {
+                input: b"'010101'h",
+                success: true,
+                span_end_line: 1,
+            },
+            BitHexStringTestCase {
+                input: b"'01 0101'b",
+                success: true,
+                span_end_line: 1,
+            },
+            BitHexStringTestCase {
+                input: b"'01 0101'h",
+                success: true,
+                span_end_line: 1,
+            },
+            BitHexStringTestCase {
+                input: b"'01 0101\n\t0101\n00'h",
+                success: true,
+                span_end_line: 2,
+            },
+        ];
+        for t in test_cases {
+            let reader = std::io::BufReader::new(std::io::Cursor::new(t.input));
+            let result = crate::parser::tokenize(reader);
+            assert_eq!(result.is_ok(), t.success, "{:#?}", result.unwrap()[0]);
+            if result.is_ok() {
+                let tokens = result.unwrap();
+                assert!(tokens.len() == 1, "{:#?}", tokens[0]);
+            }
+        }
     }
 
     #[test]

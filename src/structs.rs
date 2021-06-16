@@ -14,6 +14,14 @@ impl LineColumn {
     pub fn new(line: usize, column: usize) -> Self {
         LineColumn { line, column }
     }
+
+    pub fn line(&self) -> usize {
+        self.line
+    }
+
+    pub fn column(&self) -> usize {
+        self.column
+    }
 }
 
 /// Span of a Token in the source.
