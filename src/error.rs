@@ -2,13 +2,20 @@
 
 #[derive(Debug)]
 pub enum Error {
-    TokenizeError,
+    TokenizeError(usize, usize),
     ParseError,
 }
 
 impl std::fmt::Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Error")
+        match self {
+            Error::TokenizeError(ref l, ref c) => {
+                write!(f, "Tokenize Error at Line: {}, Column: {}", l, c)
+            }
+            _ => {
+                write!(f, "ParseError")
+            }
+        }
     }
 }
 

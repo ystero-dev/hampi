@@ -98,7 +98,7 @@ fn get_string_token(
     let mut last: Option<usize> = None;
 
     if chars.len() == 1 {
-        return Err(Error::TokenizeError);
+        return Err(Error::TokenizeError(line, begin));
     }
 
     for (idx, window) in chars[1..].windows(2).enumerate() {
@@ -119,21 +119,21 @@ fn get_string_token(
         let last_char = chars.last();
         if last_char.is_some() {
             if last_char.unwrap() != &'"' {
-                return Err(Error::TokenizeError);
+                return Err(Error::TokenizeError(line, begin));
             } else {
                 let idx = chars.len() - 1;
                 if chars[idx - 1] == '"' {
                     // string is '""'
                     if idx == 1 {
-                        return Err(Error::TokenizeError);
+                        return Err(Error::TokenizeError(line, begin));
                     }
                     // String is '"...""'
                     if chars[idx - 2] != '"' {
-                        return Err(Error::TokenizeError);
+                        return Err(Error::TokenizeError(line, begin));
                     } else {
                         // The entire string is '"""'
                         if idx == 2 {
-                            return Err(Error::TokenizeError);
+                            return Err(Error::TokenizeError(line, begin));
                         }
                     }
                 }
@@ -143,7 +143,7 @@ fn get_string_token(
     }
 
     if last.is_none() {
-        return Err(Error::TokenizeError);
+        return Err(Error::TokenizeError(line, begin));
     }
 
     let consumed = last.unwrap();
@@ -183,21 +183,21 @@ fn get_bit_or_hex_string_token(
     begin: usize,
 ) -> Result<(Token, usize, usize, usize), Error> {
     if chars.len() == 1 {
-        return Err(Error::TokenizeError);
+        return Err(Error::TokenizeError(line, begin));
     }
 
     let last = chars[1..].iter().position(|&c| c == '\'');
     if last.is_none() {
         // No matching '\'' found till the end of the string. Clearly an error.
         eprintln!("0, chars: {:?}", chars);
-        return Err(Error::TokenizeError);
+        return Err(Error::TokenizeError(line, begin));
     }
     let mut consumed = last.unwrap() + 1 + 1;
     eprintln!("consumed: {}", consumed);
     if consumed == chars.len() {
         // Matching'\'' found, but the string ends, Error.
         eprintln!("1");
-        return Err(Error::TokenizeError);
+        return Err(Error::TokenizeError(line, begin));
     }
 
     let c = chars[consumed];
@@ -206,7 +206,7 @@ fn get_bit_or_hex_string_token(
         "b" => TokenType::BitString,
         _ => {
             eprintln!("1:1");
-            return Err(Error::TokenizeError);
+            return Err(Error::TokenizeError(line, begin));
         }
     };
 
@@ -222,14 +222,14 @@ fn get_bit_or_hex_string_token(
 
     if token_type == TokenType::BitString && text.replace(&['0', '1', '\''][..], "").len() != 0 {
         eprintln!("2: text: {}", text);
-        return Err(Error::TokenizeError);
+        return Err(Error::TokenizeError(line, begin));
     }
 
     if token_type == TokenType::HexString
         && !text.chars().all(|c| c.is_ascii_hexdigit() || c == '\'')
     {
         eprintln!("3: text: {}", text);
-        return Err(Error::TokenizeError);
+        return Err(Error::TokenizeError(line, begin));
     }
 
     consumed += 1; // last 'h' or 'b'
@@ -256,7 +256,7 @@ fn get_at_component_id_list(
     begin: usize,
 ) -> Result<(Token, usize), Error> {
     if chars.len() == 1 {
-        return Err(Error::TokenizeError);
+        return Err(Error::TokenizeError(line, begin));
     }
 
     let mut consumed = 1;
@@ -271,7 +271,7 @@ fn get_at_component_id_list(
 
     // Identifier should not end with a '-'
     if ['.', '-'].iter().any(|&c| c == chars[consumed - 1]) {
-        return Err(Error::TokenizeError);
+        return Err(Error::TokenizeError(line, begin));
     }
     Ok((
         Token {
@@ -290,7 +290,7 @@ fn get_number_token(chars: &[char], line: usize, begin: usize) -> Result<(Token,
     let neg = (chars[0] == '-') as usize;
 
     if neg > 0 && chars.len() == 1 {
-        return Err(Error::TokenizeError);
+        return Err(Error::TokenizeError(line, begin));
     }
 
     let mut consumed = neg;
@@ -327,7 +327,7 @@ fn get_identifier_or_keyword_token(
     let and = (chars[0] == '&') as usize;
 
     if and > 0 && chars.len() == 1 {
-        return Err(Error::TokenizeError);
+        return Err(Error::TokenizeError(line, begin));
     }
 
     let mut consumed = and;
@@ -342,17 +342,17 @@ fn get_identifier_or_keyword_token(
 
     // Identifier should not end with a '-'
     if chars[consumed - 1] == '-' {
-        return Err(Error::TokenizeError);
+        return Err(Error::TokenizeError(line, begin));
     }
 
     // Free standing '&' this is an error.
     if and > 0 && consumed == 1 {
-        return Err(Error::TokenizeError);
+        return Err(Error::TokenizeError(line, begin));
     }
 
     let text = chars[..consumed].iter().collect::<String>();
     if text.find("--").is_some() {
-        return Err(Error::TokenizeError);
+        return Err(Error::TokenizeError(line, begin));
     }
 
     let token_type = if and > 0 {
@@ -428,20 +428,24 @@ fn get_assignment_or_colon_token(
     line: usize,
     begin: usize,
 ) -> Result<(Token, usize), Error> {
-    if chars.len() == 2 {
-        return Err(Error::TokenizeError);
-    }
-
     let (token_type, consumed) = if chars.len() == 1 {
         (TokenType::Colon, 1)
-    } else if chars[1] == ':' {
-        if chars[2] == '=' {
-            (TokenType::Assignment, 3)
+    } else if chars.len() == 2 {
+        if chars[1] == ':' {
+            return Err(Error::TokenizeError(line, begin));
         } else {
-            return Err(Error::TokenizeError);
+            (TokenType::Colon, 1)
         }
     } else {
-        (TokenType::Colon, 1)
+        if chars[1] == ':' {
+            if chars[2] == '=' {
+                (TokenType::Assignment, 3)
+            } else {
+                return Err(Error::TokenizeError(line, begin));
+            }
+        } else {
+            (TokenType::Colon, 1)
+        }
     };
 
     Ok((
@@ -494,7 +498,7 @@ fn get_seq_extension_or_square_brackets_token(
 // Gets Begin/End of round/curly brackets.
 //
 // Note: square brackets need a special treatment due to "[[" and "]]"
-fn get_single_char_token(token: char, line: usize, start: usize) -> Result<Token, Error> {
+fn get_single_char_token(token: char, line: usize, begin: usize) -> Result<Token, Error> {
     let token_type: TokenType;
     match token {
         '{' => token_type = TokenType::CurlyBegin,
@@ -503,13 +507,13 @@ fn get_single_char_token(token: char, line: usize, start: usize) -> Result<Token
         ')' => token_type = TokenType::RoundEnd,
         '!' => token_type = TokenType::ExceptionMarker,
         ';' => token_type = TokenType::SemiColon,
-        _ => return Err(Error::TokenizeError),
+        _ => return Err(Error::TokenizeError(line, begin)),
     }
     Ok(Token {
         r#type: token_type,
         span: Span::new(
-            LineColumn::new(line, start),
-            LineColumn::new(line, start + 1),
+            LineColumn::new(line, begin),
+            LineColumn::new(line, begin + 1),
         ),
         text: token.to_string(),
     })
@@ -964,7 +968,12 @@ mod tests {
         for test_case in test_cases {
             let reader = std::io::BufReader::new(std::io::Cursor::new(test_case.input));
             let result = crate::parser::tokenize(reader);
-            assert_eq!(result.is_ok(), test_case.success);
+            assert_eq!(
+                result.is_ok(),
+                test_case.success,
+                "{}",
+                String::from_utf8(test_case.input.to_vec()).unwrap()
+            );
             if result.is_ok() {
                 let tokens = result.unwrap();
                 assert!(tokens.len() == test_case.count, "{:#?}", tokens);
