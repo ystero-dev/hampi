@@ -8,6 +8,6 @@ mod base_types;
 
 pub mod error;
 
-mod parser;
+pub mod parser;
 
 mod structs;

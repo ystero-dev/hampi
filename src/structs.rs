@@ -24,7 +24,7 @@ impl LineColumn {
     }
 }
 
-/// Span of a Token in the source.
+/// Span of a Token in the ASN Source file.
 #[derive(Debug)]
 pub struct Span {
     start: LineColumn,
@@ -65,14 +65,20 @@ pub enum TokenType {
     HexString,         // 'FEEDBAC...'h
     TString,           // " A string "
     Dot,               // A single '.' usually in ATTRIBUTE.&id
+    Comma,             // A single ','
+    SetUnion,          // A single '|'
+    SetIntersection,   // A single '^'
     AtComponentIdList, // @Component.Id.List form
 }
 
 /// A parsed token before AST is created.
 ///
 /// Going through an ASN.1 module source results in a vector of parsed tokens of appropriate types.
-/// The parsed tokens are then used to 'resolve' type and value definitions to obtain the instances
-/// of respective structures.
+/// Each parsed token contains the 'type', where it is found in the source ('span') and the actual
+/// token string. In the case of comments, the string is trimmed.
+///
+/// The tokens are then used by the Parser to 'resolve' type and value definitions that generates
+/// the AST.
 #[derive(Debug)]
 pub struct Token {
     pub r#type: TokenType,
