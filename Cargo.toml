@@ -11,4 +11,4 @@ edition = "2018"
 
 [[bin]]
 name = "tokenize-asn"
-path = "src/tokenize-asn.rs"
+path = "src/bin/tokenize-asn.rs"

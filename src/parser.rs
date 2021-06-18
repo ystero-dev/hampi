@@ -102,17 +102,21 @@ fn get_string_token(
     }
 
     let mut i = 1;
-    let mut maybe_last = false;
     loop {
         // " " " " .
         // 0 1 2 3 4 (len = 5)
-        // i = 1 maybe_last = false
+        // i = 1
         // i = 3
         //
         // " a " . .
-        // 0 1 2 3 4
-        // i = 1 maybe_last = false
+        // 0 1 2 3 4 (len = 5)
+        // i = 1
+        // i = 2
         //
+        // " " " .
+        // 0 1 2 3 (len = 4)
+        // i = 1
+        // i = 3
         if i >= chars.len() - 1 {
             if i == chars.len() - 1 {
                 if chars[i] == '"' {
@@ -123,19 +127,12 @@ fn get_string_token(
         }
         if chars[i] == '"' {
             if chars[i + 1] == '"' {
-                maybe_last = false;
                 i += 2;
             } else {
-                if maybe_last {
-                    last = Some(i);
-                    break;
-                }
-                maybe_last = true;
+                last = Some(i);
+                break;
             }
         } else {
-            if chars[i + 1] == '"' {
-                maybe_last = true;
-            }
             i += 1;
         }
     }
@@ -550,9 +547,9 @@ fn get_maybe_comment_token(
     let text = chars[..consumed]
         .iter()
         .collect::<String>()
-        .trim_start_matches("--")
-        .trim_end_matches("--")
-        .trim()
+        //.trim_start_matches("--")
+        //.trim_end_matches("--")
+        //.trim()
         .to_string();
 
     Ok((
@@ -687,7 +684,6 @@ where
                 processed += 1;
             }
             _ => {
-                // FIXME: may be panic?
                 panic!(
                     "Unsupported First character for a token: '{:?}'. Line: {}, Column: {}",
                     chars[processed], line, column
@@ -758,7 +754,7 @@ mod tests {
         let result = crate::parser::tokenize(reader);
         assert!(result.is_ok());
         let tokens = result.unwrap();
-        assert!(tokens.len() == 2, "{:#?}", tokens);
+        assert!(tokens.len() == 1, "{:#?}", tokens);
         assert!(tokens.iter().all(|t| t.is_keyword()));
     }
 

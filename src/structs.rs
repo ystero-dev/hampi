@@ -75,7 +75,7 @@ pub enum TokenType {
 ///
 /// Going through an ASN.1 module source results in a vector of parsed tokens of appropriate types.
 /// Each parsed token contains the 'type', where it is found in the source ('span') and the actual
-/// token string. In the case of comments, the string is trimmed.
+/// token string.
 ///
 /// The tokens are then used by the Parser to 'resolve' type and value definitions that generates
 /// the AST.
