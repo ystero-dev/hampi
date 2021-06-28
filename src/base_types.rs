@@ -13,6 +13,7 @@ pub struct NullType {
     inner: (),
 }
 
+#[derive(Debug)]
 pub struct Asn1Constraint;
 
 enum EnumVariant {

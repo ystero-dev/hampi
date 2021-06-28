@@ -86,12 +86,16 @@ impl Token {
     }
 }
 
-struct ObjectIdentifier;
+#[derive(Debug)]
+pub struct ObjectIdentifier;
 
-struct Asn1TagType;
+#[derive(Debug)]
+pub struct Asn1TagType;
 
+#[derive(Debug)]
 struct BaseTypeValue;
 
+#[derive(Debug)]
 enum Asn1BaseType {
     Integer,
     Enumerated,
@@ -99,17 +103,20 @@ enum Asn1BaseType {
     Null,
 }
 
+#[derive(Debug)]
 pub struct BaseType {
     base: Asn1BaseType,
     constraints: Vec<Asn1Constraint>,
     identifier: String,
 }
 
+#[derive(Debug)]
 pub enum ResolvedType {
     TypeRef(Box<ResolvedType>),
     Base(BaseType),
 }
 
+#[derive(Debug)]
 pub struct TypeDefinition {}
 
 /// A Value definition in ASN.1 Syntax
@@ -127,6 +134,7 @@ pub struct TypeDefinition {}
 /// (refering to a value of base ASN.1 Type. See [`base_types`]). Note: When the value is
 /// 'resolved', the actual value contains one of the base type values after all constraints are
 /// validated.
+#[derive(Debug)]
 pub struct ValueDefinition {
     identifier: String,
     r#type: ResolvedType,
@@ -135,6 +143,7 @@ pub struct ValueDefinition {
     resolved: bool,
 }
 
+#[derive(Debug)]
 pub enum Asn1Definition {
     Value(ValueDefinition),
     Type(TypeDefinition),
@@ -152,6 +161,7 @@ pub enum Asn1Definition {
 /// module may even 'export' some defintions. A module is uniquely identified by a name and object
 /// identifier. In addition a module may support 'tagging' internal sequence values differently, so
 /// information about it is kept as well.
+#[derive(Debug)]
 pub struct Asn1Module {
     imports: Option<Vec<Asn1Definition>>,
     exports: Option<Vec<Asn1Definition>>,
@@ -159,4 +169,22 @@ pub struct Asn1Module {
     oid: Option<ObjectIdentifier>,
     tags: Asn1TagType,
     definitions: Vec<Asn1Definition>,
+}
+
+impl Asn1Module {
+    pub fn empty(name: &str) -> Self {
+        Asn1Module {
+            imports: None,
+            exports: None,
+            name: name.to_string(),
+            oid: None,
+            tags: Asn1TagType {},
+            definitions: vec![],
+        }
+    }
+
+    pub fn oid(mut self, oid: Option<ObjectIdentifier>) -> Self {
+        self.oid = oid;
+        self
+    }
 }
