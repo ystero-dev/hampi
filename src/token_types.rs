@@ -41,7 +41,7 @@ macro_rules! create_is_tokentype_fns {
         }
     };
 
-    ($($tt:tt),*) => {
+    ($($tt:tt,)*) => {
         $(
         create_is_tokentype_fns!($tt);
         )+

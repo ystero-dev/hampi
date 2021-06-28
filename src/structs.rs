@@ -82,7 +82,7 @@ impl Token {
         (is_comman, TokenType::Comma),
         (is_set_union, TokenType::SetUnion),
         (is_set_intersection, TokenType::SetIntersection),
-        (is_at_component_list, TokenType::AtComponentIdList)
+        (is_at_component_list, TokenType::AtComponentIdList),
     }
 }
 

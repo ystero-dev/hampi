@@ -8,6 +8,8 @@ mod base_types;
 
 pub mod error;
 
+mod tokenizer;
+
 pub mod parser;
 
 #[macro_use]
