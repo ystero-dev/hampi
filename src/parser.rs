@@ -3,7 +3,8 @@
 //! Parser for an ASN.1 module
 
 use crate::error::Error;
-use crate::structs::{LineColumn, Span, Token, TokenType};
+use crate::structs::{LineColumn, Span, Token};
+use crate::token_types::TokenType;
 
 // Keywords
 const KEYWORDS: &'static [&'static str] = &[
@@ -754,7 +755,7 @@ mod tests {
         let result = crate::parser::tokenize(reader);
         assert!(result.is_ok());
         let tokens = result.unwrap();
-        assert!(tokens.len() == 1, "{:#?}", tokens);
+        assert!(tokens.len() == 2, "{:#?}", tokens);
         assert!(tokens.iter().all(|t| t.is_keyword()));
     }
 

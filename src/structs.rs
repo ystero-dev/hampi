@@ -3,6 +3,8 @@
 
 use super::base_types::*;
 
+use super::token_types::TokenType;
+
 /// Line and Column in the source where the token begins.
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct LineColumn {
@@ -37,40 +39,6 @@ impl Span {
     }
 }
 
-/// Token Types
-///
-/// Each parsed token should be of one of the following types.
-#[derive(Debug, PartialEq)]
-pub enum TokenType {
-    CurlyBegin,        // "{"
-    CurlyEnd,          // "}"
-    RoundBegin,        // "("
-    RoundEnd,          // ")"
-    ExceptionMarker,   // "!"
-    SquareBegin,       // "["
-    SquareEnd,         // "]"
-    SeqExtensionBegin, // "[["
-    SeqExtensionEnd,   // "]]"
-    Extension,         // "..."
-    RangeSeparator,    // ".."
-    Assignment,        // "::="
-    Colon,             // ':'
-    SemiColon,         // ';'
-    Identifier,        // Identifiers and all references.
-    Keyword,           // eg. "INTEGER", "ENUMERATED", "RELATIVE-OID", "TYPE-IDENTIFIER"
-    Comment,           // "-- and everything after up to newline or EOF
-    AndIdentifier,     // "&Attribute-Type", "&id" etc.
-    NumberInt,         // eg. 123456
-    BitString,         // '010...'B
-    HexString,         // 'FEEDBAC...'h
-    TString,           // " A string "
-    Dot,               // A single '.' usually in ATTRIBUTE.&id
-    Comma,             // A single ','
-    SetUnion,          // A single '|'
-    SetIntersection,   // A single '^'
-    AtComponentIdList, // @Component.Id.List form
-}
-
 /// A parsed token before AST is created.
 ///
 /// Going through an ASN.1 module source results in a vector of parsed tokens of appropriate types.
@@ -87,16 +55,34 @@ pub struct Token {
 }
 
 impl Token {
-    pub fn is_keyword(&self) -> bool {
-        self.r#type == TokenType::Keyword
-    }
-
-    pub fn is_numeric(&self) -> bool {
-        self.r#type == TokenType::NumberInt
-    }
-
-    pub fn is_range_separator(&self) -> bool {
-        self.r#type == TokenType::RangeSeparator
+    create_is_tokentype_fns! {
+        (is_curly_begin, TokenType::CurlyBegin),
+        (is_curly_end, TokenType::CurlyEnd),
+        (is_round_begin, TokenType::RoundBegin),
+        (is_round_end, TokenType::RoundEnd),
+        (is_exception_marker, TokenType::ExceptionMarker),
+        (is_square_begin, TokenType::SquareBegin),
+        (is_square_end, TokenType::SquareEnd),
+        (is_seq_extension_begin, TokenType::SeqExtensionBegin),
+        (is_seq_extension_end, TokenType::SeqExtensionEnd),
+        (is_extension, TokenType::Extension),
+        (is_range_separator, TokenType::RangeSeparator),
+        (is_assignment, TokenType::Assignment),
+        (is_colon, TokenType::Colon),
+        (is_semicolon, TokenType::SemiColon),
+        (is_identifier, TokenType::Identifier),
+        (is_keyword, TokenType::Keyword),
+        (is_comment, TokenType::Comment),
+        (is_and_identifier, TokenType::AndIdentifier),
+        (is_numeric, TokenType::NumberInt),
+        (is_bitstring, TokenType::BitString),
+        (is_hexstring, TokenType::HexString),
+        (is_tstring, TokenType::TString),
+        (is_dot, TokenType::Dot),
+        (is_comman, TokenType::Comma),
+        (is_set_union, TokenType::SetUnion),
+        (is_set_intersection, TokenType::SetIntersection),
+        (is_at_component_list, TokenType::AtComponentIdList)
     }
 }
 

@@ -10,4 +10,7 @@ pub mod error;
 
 pub mod parser;
 
+#[macro_use]
+pub mod token_types;
+
 mod structs;
