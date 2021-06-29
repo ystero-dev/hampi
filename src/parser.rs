@@ -1,3 +1,5 @@
+//! Main Parser module
+//!
 pub use crate::tokenizer::tokenize;
 
 use crate::error::Error;
