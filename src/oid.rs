@@ -129,7 +129,6 @@ fn parse_oid_component<'parser>(tokens: &'parser [Token]) -> Result<(OIDComponen
 
     let first = &tokens[0];
     if first.is_identifier() {
-        eprintln!("first: {:#?}", first);
         parse_named_oid_component(tokens)
     } else if first.is_numeric() {
         let number = first.text.parse::<u32>().map_err(|_| Error::ParseError)?;
@@ -147,7 +146,6 @@ pub(crate) fn parse_object_identifier<'parser>(
 
     t = &tokens[consumed];
     if !expect_token(t, Token::is_curly_begin) {
-        eprintln!("Not curly begin");
         return Err(Error::ParseError);
     }
     consumed += 1;
@@ -165,11 +163,117 @@ pub(crate) fn parse_object_identifier<'parser>(
                 if tok.is_curly_end() {
                     break;
                 } else {
-                    eprintln!("{:#?}", tok);
                     return Err(e);
                 }
             }
         }
     }
     Ok(ObjectIdentifier { components })
+}
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+    use crate::parser::tokenize;
+
+    struct OIDTestCase<'testcase> {
+        input: &'testcase str,
+        success: bool,
+        consumed: usize,
+        parse_component_only: bool,
+        components_count: usize,
+    }
+
+    #[test]
+    fn object_identifier_cases() {
+        let test_cases = vec![
+            OIDTestCase {
+                input: "{ iso }",
+                success: true,
+                consumed: 0,
+                parse_component_only: false,
+                components_count: 1,
+            },
+            OIDTestCase {
+                input: " iso ",
+                success: true,
+                consumed: 1,
+                parse_component_only: true,
+                components_count: 0,
+            },
+            OIDTestCase {
+                input: " foo ",
+                success: false,
+                consumed: 1,
+                parse_component_only: true,
+                components_count: 0,
+            },
+            OIDTestCase {
+                input: " something(3) ",
+                success: true,
+                consumed: 4,
+                parse_component_only: true,
+                components_count: 0,
+            },
+            OIDTestCase {
+                input: " something(-3) ",
+                success: false,
+                consumed: 4,
+                parse_component_only: true,
+                components_count: 0,
+            },
+            OIDTestCase {
+                input: " iso() ",
+                success: true,
+                consumed: 1,
+                parse_component_only: true,
+                components_count: 0,
+            },
+            OIDTestCase {
+                input: "{ iso() }",
+                success: false,
+                consumed: 4,
+                parse_component_only: false,
+                components_count: 0,
+            },
+            OIDTestCase {
+                input: "{ iso(1 }",
+                success: false,
+                consumed: 4,
+                parse_component_only: false,
+                components_count: 0,
+            },
+            OIDTestCase {
+                input: " { iso something(3) }",
+                success: true,
+                consumed: 0,
+                parse_component_only: false,
+                components_count: 2,
+            },
+        ];
+
+        for tc in test_cases {
+            let reader = std::io::BufReader::new(std::io::Cursor::new(tc.input));
+            let tokens = tokenize(reader);
+            assert!(tokens.is_ok());
+
+            let tokens = tokens.unwrap();
+            if tc.parse_component_only {
+                let oidcomp = parse_oid_component(&tokens);
+                assert_eq!(oidcomp.is_ok(), tc.success, "{:#?}", tc.input);
+                if tc.success {
+                    let (_oidcomp, consumed) = oidcomp.unwrap();
+                    assert_eq!(consumed, tc.consumed, "{:#?}", tc.input);
+                }
+            } else {
+                let oid = parse_object_identifier(&tokens);
+                assert_eq!(oid.is_ok(), tc.success, "{:#?}", tc.input);
+                if tc.success {
+                    let oid = oid.unwrap();
+                    assert_eq!(oid.components.len(), tc.components_count);
+                }
+            }
+        }
+    }
 }
