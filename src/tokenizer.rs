@@ -89,6 +89,8 @@ const KEYWORDS: &'static [&'static str] = &[
     "WITH",
 ];
 
+type TokenChecker = fn(&Token) -> bool;
+
 /// Line and Column in the source where the token begins.
 #[derive(Debug, PartialEq, Copy, Clone)]
 struct LineColumn {
@@ -776,6 +778,17 @@ where
         }
     }
     Ok(tokens)
+}
+
+pub(crate) fn expect_token<'parser>(token: &'parser Token, checker: TokenChecker) -> bool {
+    checker(token)
+}
+
+pub(crate) fn expect_one_of<'parser>(
+    token: &'parser Token,
+    checkers: &'parser [TokenChecker],
+) -> bool {
+    checkers.iter().any(|&c| expect_token(token, c))
 }
 
 #[cfg(test)]

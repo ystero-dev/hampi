@@ -5,8 +5,8 @@ use crate::oid::{parse_object_identifier, ObjectIdentifier};
 use crate::structs::Asn1Module;
 use crate::tokenizer::Token;
 
-fn maybe_parse_object_identifer(
-    tokens: &[Token],
+fn maybe_parse_object_identifer<'parser>(
+    tokens: &'parser [Token],
 ) -> Result<(Option<ObjectIdentifier>, usize), Error> {
     if tokens.is_empty() || !tokens[0].is_curly_begin() {
         return Ok((None, 0));
@@ -29,7 +29,7 @@ fn maybe_parse_object_identifer(
     Ok((Some(oid), idx + 1))
 }
 
-fn parse_module_name(token: &Token) -> Result<String, Error> {
+fn parse_module_name<'parser>(token: &'parser Token) -> Result<String, Error> {
     if token.is_identifier() && token.text.starts_with(char::is_uppercase) {
         Ok(token.text.clone())
     } else {
@@ -37,7 +37,7 @@ fn parse_module_name(token: &Token) -> Result<String, Error> {
     }
 }
 
-fn parse_internal(tokens: &[Token]) -> Result<(Asn1Module, usize), Error>
+fn parse_internal<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Module, usize), Error>
 where
 {
     let mut consumed = 0;
@@ -59,7 +59,7 @@ where
 /// Token obtained from running [`tokenize`][`crate::tokenizer::tokenize] on an ANS file are parsed
 /// into an internal representation of [`Asn1Module`][`crate::structs::Asn1Module`]. Semantic
 /// errors during parsing the tokens are returned as `ParseError`.
-pub fn parse(tokens: Vec<Token>) -> Result<Vec<Asn1Module>, Error> {
+pub fn parse<'parser>(tokens: &'parser Vec<Token>) -> Result<Vec<Asn1Module>, Error> {
     let mut modules = vec![];
     let mut total = 0;
     loop {
@@ -85,7 +85,7 @@ mod tests {
         assert!(tokens.is_ok());
 
         let tokens = tokens.unwrap();
-        let module = parse(tokens);
+        let module = parse(&tokens);
         assert!(module.is_ok(), "{:#?}", module.err());
     }
 
@@ -96,7 +96,7 @@ mod tests {
         assert!(tokens.is_ok());
 
         let tokens = tokens.unwrap();
-        let module = parse(tokens);
+        let module = parse(&tokens);
         assert!(module.is_err(), "{:#?}", module.ok());
     }
 
@@ -107,7 +107,7 @@ mod tests {
         assert!(tokens.is_ok());
 
         let tokens = tokens.unwrap();
-        let module = parse(tokens);
+        let module = parse(&tokens);
         assert!(module.is_ok(), "{:#?}", module.err());
         let modules = module.unwrap();
         assert!(modules.len() == 1);
