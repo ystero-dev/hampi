@@ -61,7 +61,10 @@ where
 /// Token obtained from running [`tokenize`][`crate::tokenizer::tokenize] on an ANS file are parsed
 /// into an internal representation of [`Asn1Module`][`crate::structs::Asn1Module`]. Semantic
 /// errors during parsing the tokens are returned as `ParseError`.
-pub fn parse<'parser>(tokens: &'parser Vec<Token>) -> Result<Vec<Asn1Module>, Error> {
+pub fn parse<'parser>(tokens: &'parser mut Vec<Token>) -> Result<Vec<Asn1Module>, Error> {
+    // Get rid of the comments, it complicates things
+    tokens.retain(|x| !x.is_comment());
+
     let mut modules = vec![];
     let mut total = 0;
     loop {
@@ -86,8 +89,8 @@ mod tests {
         let tokens = tokenize(reader);
         assert!(tokens.is_ok());
 
-        let tokens = tokens.unwrap();
-        let module = parse(&tokens);
+        let mut tokens = tokens.unwrap();
+        let module = parse(&mut tokens);
         assert!(module.is_ok(), "{:#?}", module.err());
     }
 
@@ -97,8 +100,8 @@ mod tests {
         let tokens = tokenize(reader);
         assert!(tokens.is_ok());
 
-        let tokens = tokens.unwrap();
-        let module = parse(&tokens);
+        let mut tokens = tokens.unwrap();
+        let module = parse(&mut tokens);
         assert!(module.is_err(), "{:#?}", module.ok());
     }
 
@@ -108,8 +111,8 @@ mod tests {
         let tokens = tokenize(reader);
         assert!(tokens.is_ok());
 
-        let tokens = tokens.unwrap();
-        let module = parse(&tokens);
+        let mut tokens = tokens.unwrap();
+        let module = parse(&mut tokens);
         assert!(module.is_ok(), "{:#?}", module.err());
         let modules = module.unwrap();
         assert!(modules.len() == 1);
