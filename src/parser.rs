@@ -1,11 +1,9 @@
 pub use crate::tokenizer::tokenize;
 
 use crate::error::Error;
-use crate::structs::{Asn1Module, ObjectIdentifier, Token};
-
-fn parse_object_identifier(_tokens: &[Token]) -> Result<ObjectIdentifier, Error> {
-    Ok(ObjectIdentifier {})
-}
+use crate::oid::{parse_object_identifier, ObjectIdentifier};
+use crate::structs::Asn1Module;
+use crate::tokenizer::Token;
 
 fn maybe_parse_object_identifer(
     tokens: &[Token],

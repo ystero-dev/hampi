@@ -3,7 +3,6 @@
 //! Parser for an ASN.1 module
 
 use crate::error::Error;
-use crate::structs::{LineColumn, Span, Token};
 use crate::token_types::TokenType;
 
 // Keywords
@@ -89,6 +88,87 @@ const KEYWORDS: &'static [&'static str] = &[
     "VisibleString",
     "WITH",
 ];
+
+/// Line and Column in the source where the token begins.
+#[derive(Debug, PartialEq, Copy, Clone)]
+struct LineColumn {
+    line: usize,
+    column: usize,
+}
+
+impl LineColumn {
+    fn new(line: usize, column: usize) -> Self {
+        LineColumn { line, column }
+    }
+
+    pub fn line(&self) -> usize {
+        self.line
+    }
+
+    pub fn column(&self) -> usize {
+        self.column
+    }
+}
+
+/// Span of a Token in the ASN Source file.
+#[derive(Debug)]
+pub struct Span {
+    start: LineColumn,
+    end: LineColumn,
+}
+
+impl Span {
+    fn new(start: LineColumn, end: LineColumn) -> Self {
+        Span { start, end }
+    }
+}
+
+/// A parsed token before AST is created.
+///
+/// Going through an ASN.1 module source results in a vector of parsed tokens of appropriate types.
+/// Each parsed token contains the 'type', where it is found in the source ('span') and the actual
+/// token string.
+///
+/// The tokens are then used by the Parser to 'resolve' type and value definitions that generates
+/// the AST.
+#[derive(Debug)]
+pub struct Token {
+    pub r#type: TokenType,
+    pub span: Span,
+    pub text: String,
+}
+
+impl Token {
+    create_is_tokentype_fns! {
+        (is_curly_begin, TokenType::CurlyBegin),
+        (is_curly_end, TokenType::CurlyEnd),
+        (is_round_begin, TokenType::RoundBegin),
+        (is_round_end, TokenType::RoundEnd),
+        (is_exception_marker, TokenType::ExceptionMarker),
+        (is_square_begin, TokenType::SquareBegin),
+        (is_square_end, TokenType::SquareEnd),
+        (is_seq_extension_begin, TokenType::SeqExtensionBegin),
+        (is_seq_extension_end, TokenType::SeqExtensionEnd),
+        (is_extension, TokenType::Extension),
+        (is_range_separator, TokenType::RangeSeparator),
+        (is_assignment, TokenType::Assignment),
+        (is_colon, TokenType::Colon),
+        (is_semicolon, TokenType::SemiColon),
+        (is_identifier, TokenType::Identifier),
+        (is_keyword, TokenType::Keyword),
+        (is_comment, TokenType::Comment),
+        (is_and_identifier, TokenType::AndIdentifier),
+        (is_numeric, TokenType::NumberInt),
+        (is_bitstring, TokenType::BitString),
+        (is_hexstring, TokenType::HexString),
+        (is_tstring, TokenType::TString),
+        (is_dot, TokenType::Dot),
+        (is_comman, TokenType::Comma),
+        (is_set_union, TokenType::SetUnion),
+        (is_set_intersection, TokenType::SetIntersection),
+        (is_at_component_list, TokenType::AtComponentIdList),
+    }
+}
 
 // Get string token.
 fn get_string_token(

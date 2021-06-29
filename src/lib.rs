@@ -8,11 +8,13 @@ mod base_types;
 
 pub mod error;
 
+#[macro_use]
+pub mod token_types;
+
 mod tokenizer;
 
 pub mod parser;
 
-#[macro_use]
-pub mod token_types;
+mod oid;
 
 mod structs;
