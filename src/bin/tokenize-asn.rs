@@ -10,8 +10,9 @@ fn main() -> io::Result<()> {
     for arg in &args[1..] {
         eprintln!("File: {}", arg);
         let file = File::open(arg)?;
-        let tokens = parser::tokenize(file)?;
-        println!("{:#?}", tokens);
+        let mut tokens = parser::tokenize(file)?;
+        let module = parser::parse(&mut tokens)?;
+        println!("{:#?}", module);
     }
     Ok(())
 }

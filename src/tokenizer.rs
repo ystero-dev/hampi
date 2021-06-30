@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 #![allow(unused_variables)]
-//! Parser for an ASN.1 module
+//! Tokenizer for an ASN.1 module
 
 use crate::error::Error;
 use crate::token_types::TokenType;
@@ -169,6 +169,10 @@ impl Token {
         (is_set_union, TokenType::SetUnion),
         (is_set_intersection, TokenType::SetIntersection),
         (is_at_component_list, TokenType::AtComponentIdList),
+    }
+
+    pub fn is_given_keyword(&self, keyword: &str) -> bool {
+        self.is_keyword() && self.text == keyword
     }
 }
 
@@ -780,15 +784,35 @@ where
     Ok(tokens)
 }
 
-pub(crate) fn expect_token<'parser>(token: &'parser Token, checker: TokenChecker) -> bool {
-    checker(token)
+pub(crate) fn expect_keyword<'parser>(tokens: &'parser [Token], keyword: &str) -> bool {
+    if tokens.len() == 0 {
+        false
+    } else {
+        tokens[0].is_keyword() && tokens[0].text == keyword
+    }
 }
 
-pub(crate) fn expect_one_of<'parser>(
-    token: &'parser Token,
+pub(crate) fn expect_one_of_keywords<'parser>(tokens: &'parser [Token], keywords: &[&str]) -> bool {
+    keywords.iter().any(|&k| expect_keyword(tokens, k))
+}
+
+pub(crate) fn expect_token<'parser>(tokens: &'parser [Token], checker: TokenChecker) -> bool {
+    if tokens.len() == 0 {
+        false
+    } else {
+        checker(&tokens[0])
+    }
+}
+
+pub(crate) fn expect_one_of_tokens<'parser>(
+    tokens: &'parser [Token],
     checkers: &'parser [TokenChecker],
 ) -> bool {
-    checkers.iter().any(|&c| expect_token(token, c))
+    if tokens.len() == 0 {
+        false
+    } else {
+        checkers.iter().any(|&c| expect_token(tokens, c))
+    }
 }
 
 #[cfg(test)]

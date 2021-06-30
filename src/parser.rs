@@ -1,11 +1,12 @@
 //! Main Parser module
 //!
+
 pub use crate::tokenizer::tokenize;
 
 use crate::error::Error;
 use crate::oid::{parse_object_identifier, ObjectIdentifier};
-use crate::structs::Asn1Module;
-use crate::tokenizer::Token;
+use crate::structs::{Asn1Module, Asn1ModuleTag};
+use crate::tokenizer::{expect_keyword, expect_one_of_keywords, expect_token, Token};
 
 fn maybe_parse_object_identifer<'parser>(
     tokens: &'parser [Token],
@@ -52,7 +53,51 @@ where
     let (oid, oid_consumed) = maybe_parse_object_identifer(&tokens[consumed..])?;
     consumed += oid_consumed;
 
-    let module = Asn1Module::empty(&name).oid(oid);
+    // DEFINITIONS Keywords
+    if expect_keyword(&tokens[consumed..], "DEFINITIONS") {
+        consumed += 1;
+    } else {
+        return Err(Error::ParseError);
+    }
+
+    let tags =
+        if expect_one_of_keywords(&tokens[consumed..], &["EXPLICIT", "IMPLICIT", "AUTOMATIC"]) {
+            let tag: Asn1ModuleTag;
+            match tokens[consumed].text.as_str() {
+                "EXPLICIT" => tag = Asn1ModuleTag::Explicit,
+                "IMPLICIT" => tag = Asn1ModuleTag::Implicit,
+                "AUTOMATIC" => tag = Asn1ModuleTag::Automatic,
+                _ => {
+                    // Will never reach
+                    return Err(Error::ParseError);
+                }
+            }
+            consumed += 1;
+            if expect_keyword(&tokens[consumed..], "TAGS") {
+                consumed += 1
+            } else {
+                return Err(Error::ParseError);
+            }
+            tag
+        } else {
+            Asn1ModuleTag::Explicit
+        };
+    if expect_token(&tokens[consumed..], Token::is_assignment) {
+        consumed += 1;
+    } else {
+        return Err(Error::ParseError);
+    }
+    if expect_keyword(&tokens[consumed..], "BEGIN") {
+        consumed += 1;
+    }
+    while !expect_keyword(&tokens[consumed..], "END") {
+        consumed += 1;
+    }
+
+    // Comes out of the loop when END is found. FIXME: If we never have END?
+    consumed += 1;
+
+    let module = Asn1Module::empty(&name).oid(oid).tags(tags);
     Ok((module, consumed))
 }
 
@@ -84,14 +129,26 @@ mod tests {
     use super::*;
 
     #[test]
-    fn name_empty_module() {
+    fn empty_basic_module_success() {
+        let input = "ModuleFoo DEFINITIONS ::= BEGIN END";
+        let reader = std::io::BufReader::new(std::io::Cursor::new(input));
+        let tokens = tokenize(reader);
+        assert!(tokens.is_ok());
+
+        let mut tokens = tokens.unwrap();
+        let module = parse(&mut tokens);
+        assert!(module.is_ok(), "{}: {:#?}", input, module.err());
+    }
+
+    #[test]
+    fn name_empty_module_failure() {
         let reader = std::io::BufReader::new(std::io::Cursor::new("ModuleFoo"));
         let tokens = tokenize(reader);
         assert!(tokens.is_ok());
 
         let mut tokens = tokens.unwrap();
         let module = parse(&mut tokens);
-        assert!(module.is_ok(), "{:#?}", module.err());
+        assert!(module.is_err(), "{:#?}", module.ok());
     }
 
     #[test]
@@ -106,15 +163,13 @@ mod tests {
     }
 
     #[test]
-    fn name_empty_oid() {
+    fn name_empty_oid_failure() {
         let reader = std::io::BufReader::new(std::io::Cursor::new("ModuleFoo { iso } "));
         let tokens = tokenize(reader);
         assert!(tokens.is_ok());
 
         let mut tokens = tokens.unwrap();
         let module = parse(&mut tokens);
-        assert!(module.is_ok(), "{:#?}", module.err());
-        let modules = module.unwrap();
-        assert!(modules.len() == 1);
+        assert!(module.is_err(), "{:#?}", module.ok());
     }
 }

@@ -141,11 +141,9 @@ fn parse_oid_component<'parser>(tokens: &'parser [Token]) -> Result<(OIDComponen
 pub(crate) fn parse_object_identifier<'parser>(
     tokens: &'parser [Token],
 ) -> Result<ObjectIdentifier, Error> {
-    let t: &Token;
     let mut consumed = 0;
 
-    t = &tokens[consumed];
-    if !expect_token(t, Token::is_curly_begin) {
+    if !expect_token(&tokens[consumed..], Token::is_curly_begin) {
         return Err(Error::ParseError);
     }
     consumed += 1;

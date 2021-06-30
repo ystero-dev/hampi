@@ -5,7 +5,11 @@ use super::base_types::*;
 use super::oid::ObjectIdentifier;
 
 #[derive(Debug)]
-pub struct Asn1TagType;
+pub enum Asn1ModuleTag {
+    Explicit,
+    Implicit,
+    Automatic,
+}
 
 #[derive(Debug)]
 struct BaseTypeValue;
@@ -82,7 +86,7 @@ pub struct Asn1Module {
     exports: Option<Vec<Asn1Definition>>,
     name: String,
     oid: Option<ObjectIdentifier>,
-    tags: Asn1TagType,
+    tags: Asn1ModuleTag,
     definitions: Vec<Asn1Definition>,
 }
 
@@ -93,13 +97,18 @@ impl Asn1Module {
             exports: None,
             name: name.to_string(),
             oid: None,
-            tags: Asn1TagType {},
+            tags: Asn1ModuleTag::Explicit,
             definitions: vec![],
         }
     }
 
     pub fn oid(mut self, oid: Option<ObjectIdentifier>) -> Self {
         self.oid = oid;
+        self
+    }
+
+    pub fn tags(mut self, tags: Asn1ModuleTag) -> Self {
+        self.tags = tags;
         self
     }
 }
