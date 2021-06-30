@@ -91,9 +91,15 @@ const KEYWORDS: &'static [&'static str] = &[
 
 /// Line and Column in the source where the token begins.
 #[derive(Debug, PartialEq, Copy, Clone)]
-struct LineColumn {
+pub(crate) struct LineColumn {
     line: usize,
     column: usize,
+}
+
+impl std::fmt::Display for LineColumn {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Line: {}, Column: {}", self.line, self.column)
+    }
 }
 
 impl LineColumn {
@@ -111,15 +117,29 @@ impl LineColumn {
 }
 
 /// Span of a Token in the ASN Source file.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Span {
     start: LineColumn,
     end: LineColumn,
 }
 
+impl std::fmt::Display for Span {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Start:: {}, End:: {}", self.start, self.end)
+    }
+}
+
 impl Span {
     fn new(start: LineColumn, end: LineColumn) -> Self {
         Span { start, end }
+    }
+
+    pub(crate) fn start(&self) -> LineColumn {
+        self.start
+    }
+
+    pub(crate) fn end(&self) -> LineColumn {
+        self.end
     }
 }
 
@@ -131,7 +151,7 @@ impl Span {
 ///
 /// The tokens are then used by the Parser to 'resolve' type and value definitions that generates
 /// the AST.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Token {
     pub r#type: TokenType,
     pub span: Span,
@@ -167,6 +187,10 @@ impl Token {
         (is_set_union, TokenType::SetUnion),
         (is_set_intersection, TokenType::SetIntersection),
         (is_at_component_list, TokenType::AtComponentIdList),
+    }
+
+    pub fn span(&self) -> Span {
+        self.span.clone()
     }
 
     pub fn is_given_keyword(&self, keyword: &str) -> bool {

@@ -1,9 +1,20 @@
 //! Errors
 
+use crate::tokenizer::Token;
+
 #[derive(Debug)]
 pub enum Error {
     TokenizeError(usize, usize, usize),
-    ParseError,
+
+    // Parsing specific errors.
+    UnexpectedEndOfTokens,
+    UnexpectedToken(String, Token),
+    InvalidToken(Token),
+
+    // Errors related to ASN.1 -
+    // Object Identifer
+    UnknownNamedIdentifier(String),
+    ParseError(String),
 }
 
 impl std::fmt::Display for Error {
@@ -16,8 +27,31 @@ impl std::fmt::Display for Error {
                     cause, l, c
                 )
             }
-            _ => {
-                write!(f, "ParseError")
+            Error::UnexpectedEndOfTokens => {
+                write!(f, "Unexpected end of tokens!")
+            }
+            Error::UnexpectedToken(ref un, ref tok) => {
+                write!(
+                    f,
+                    "Expected '{}'. Found '{}' at {}.",
+                    un,
+                    tok.text,
+                    tok.span().start()
+                )
+            }
+            Error::InvalidToken(ref tok) => {
+                write!(
+                    f,
+                    "Token Value '{}' is invalid at {}.",
+                    tok.text,
+                    tok.span().start()
+                )
+            }
+            Error::UnknownNamedIdentifier(ref id) => {
+                write!(f, "Named only Identifier '{}' in Object Identifier is not one of the well-known ones.", id)
+            }
+            Error::ParseError(ref errstr) => {
+                write!(f, "Parsing Error: {}", errstr)
             }
         }
     }

@@ -76,14 +76,14 @@ fn parse_named_oid_component<'parser>(
     tokens: &'parser [Token],
 ) -> Result<(OIDComponent, usize), Error> {
     if tokens.len() == 0 {
-        return Err(Error::ParseError);
+        return Err(Error::UnexpectedEndOfTokens);
     }
 
     if tokens.len() < 4 {
         let token = &tokens[0];
         let number = WELL_KNOWN_OID_NAMES.get(token.text.as_str());
         if number.is_none() {
-            return Err(Error::ParseError);
+            return Err(Error::UnknownNamedIdentifier(token.text.clone()));
         }
         let number = *number.unwrap();
         return Ok((
@@ -100,14 +100,17 @@ fn parse_named_oid_component<'parser>(
         return Ok((
             OIDComponent {
                 name: Some(tok1.text.clone()),
-                number: tok3.text.parse::<u32>().map_err(|_| Error::ParseError)?,
+                number: tok3
+                    .text
+                    .parse::<u32>()
+                    .map_err(|_| Error::InvalidToken(tok3.clone()))?,
             },
             4,
         ));
     } else {
         let number = WELL_KNOWN_OID_NAMES.get(tok1.text.as_str());
         if number.is_none() {
-            return Err(Error::ParseError);
+            return Err(Error::UnknownNamedIdentifier(tok1.text.clone()));
         }
         let number = *number.unwrap();
         return Ok((
@@ -125,17 +128,23 @@ fn parse_named_oid_component<'parser>(
 // Parses Either Numbered or Named/Numbered OID components
 fn parse_oid_component<'parser>(tokens: &'parser [Token]) -> Result<(OIDComponent, usize), Error> {
     if tokens.len() == 0 {
-        return Err(Error::ParseError);
+        return Err(Error::UnexpectedEndOfTokens);
     }
 
     let first = &tokens[0];
     if first.is_identifier() {
         parse_named_oid_component(tokens)
     } else if first.is_numeric() {
-        let number = first.text.parse::<u32>().map_err(|_| Error::ParseError)?;
+        let number = first
+            .text
+            .parse::<u32>()
+            .map_err(|_| Error::InvalidToken(first.clone()))?;
         Ok((OIDComponent { name: None, number }, 1))
     } else {
-        Err(Error::ParseError)
+        Err(Error::UnexpectedToken(
+            "Expected 'identifier' or 'number'".to_string(),
+            first.clone(),
+        ))
     }
 }
 
@@ -145,7 +154,10 @@ pub(crate) fn parse_object_identifier<'parser>(
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_curly_begin)? {
-        return Err(Error::ParseError);
+        return Err(Error::UnexpectedToken(
+            "{".to_string(),
+            tokens[consumed].clone(),
+        ));
     }
     consumed += 1;
 

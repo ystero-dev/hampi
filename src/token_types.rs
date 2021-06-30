@@ -3,7 +3,7 @@
 /// Token Types
 ///
 /// Each parsed token should be of one of the following types.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum TokenType {
     CurlyBegin,        // "{"
     CurlyEnd,          // "}"

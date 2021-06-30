@@ -26,7 +26,7 @@ fn maybe_parse_object_identifer<'parser>(
     }
 
     if curly_end.is_none() {
-        return Err(Error::ParseError);
+        return Err(Error::ParseError("Expected '}'. Never Found.".to_string()));
     }
     let idx = curly_end.unwrap();
 
@@ -39,7 +39,10 @@ fn parse_module_name<'parser>(token: &'parser Token) -> Result<String, Error> {
     if token.is_identifier() && token.text.starts_with(char::is_uppercase) {
         Ok(token.text.clone())
     } else {
-        Err(Error::ParseError)
+        Err(Error::ParseError(format!(
+            "Module Name '{}' should start with a Capital Letter.",
+            token.text
+        )))
     }
 }
 
@@ -60,7 +63,10 @@ where
     if expect_keyword(&tokens[consumed..], "DEFINITIONS")? {
         consumed += 1;
     } else {
-        return Err(Error::ParseError);
+        return Err(Error::UnexpectedToken(
+            "DEFINITIONS".to_string(),
+            tokens[consumed].clone(),
+        ));
     }
 
     let tags =
@@ -72,14 +78,17 @@ where
                 "AUTOMATIC" => tag = Asn1ModuleTag::Automatic,
                 _ => {
                     // Will never reach
-                    return Err(Error::ParseError);
+                    return Err(Error::ParseError("Should Never Reach".to_string()));
                 }
             }
             consumed += 1;
             if expect_keyword(&tokens[consumed..], "TAGS")? {
                 consumed += 1
             } else {
-                return Err(Error::ParseError);
+                return Err(Error::UnexpectedToken(
+                    "TAGS".to_string(),
+                    tokens[consumed].clone(),
+                ));
             }
             tag
         } else {
@@ -88,7 +97,10 @@ where
     if expect_token(&tokens[consumed..], Token::is_assignment)? {
         consumed += 1;
     } else {
-        return Err(Error::ParseError);
+        return Err(Error::UnexpectedToken(
+            "::=".to_string(),
+            tokens[consumed].clone(),
+        ));
     }
     if expect_keyword(&tokens[consumed..], "BEGIN")? {
         consumed += 1;
@@ -131,7 +143,7 @@ pub(crate) fn expect_keyword<'parser>(
     keyword: &str,
 ) -> Result<bool, Error> {
     if tokens.len() == 0 {
-        Err(Error::ParseError)
+        Err(Error::UnexpectedEndOfTokens)
     } else {
         Ok(tokens[0].is_keyword() && tokens[0].text == keyword)
     }
@@ -142,7 +154,7 @@ pub(crate) fn expect_one_of_keywords<'parser>(
     keywords: &[&str],
 ) -> Result<bool, Error> {
     if tokens.len() == 0 {
-        Err(Error::ParseError)
+        Err(Error::UnexpectedEndOfTokens)
     } else {
         Ok(keywords.iter().any(|&k| expect_keyword(tokens, k).unwrap()))
     }
@@ -153,7 +165,7 @@ pub(crate) fn expect_token<'parser>(
     checker: TokenChecker,
 ) -> Result<bool, Error> {
     if tokens.len() == 0 {
-        Err(Error::ParseError)
+        Err(Error::UnexpectedEndOfTokens)
     } else {
         Ok(checker(&tokens[0]))
     }
@@ -164,7 +176,7 @@ pub(crate) fn expect_one_of_tokens<'parser>(
     checkers: &'parser [TokenChecker],
 ) -> Result<bool, Error> {
     if tokens.len() == 0 {
-        Err(Error::ParseError)
+        Err(Error::UnexpectedEndOfTokens)
     } else {
         Ok(checkers.iter().any(|&c| expect_token(tokens, c).unwrap()))
     }
