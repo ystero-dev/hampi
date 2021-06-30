@@ -6,7 +6,10 @@ pub use crate::tokenizer::tokenize;
 use crate::error::Error;
 use crate::oid::{parse_object_identifier, ObjectIdentifier};
 use crate::structs::{Asn1Module, Asn1ModuleTag};
-use crate::tokenizer::{expect_keyword, expect_one_of_keywords, expect_token, Token};
+use crate::tokenizer::Token;
+
+// Required by `expect_*` functions
+type TokenChecker = fn(&Token) -> bool;
 
 fn maybe_parse_object_identifer<'parser>(
     tokens: &'parser [Token],
@@ -54,14 +57,14 @@ where
     consumed += oid_consumed;
 
     // DEFINITIONS Keywords
-    if expect_keyword(&tokens[consumed..], "DEFINITIONS") {
+    if expect_keyword(&tokens[consumed..], "DEFINITIONS")? {
         consumed += 1;
     } else {
         return Err(Error::ParseError);
     }
 
     let tags =
-        if expect_one_of_keywords(&tokens[consumed..], &["EXPLICIT", "IMPLICIT", "AUTOMATIC"]) {
+        if expect_one_of_keywords(&tokens[consumed..], &["EXPLICIT", "IMPLICIT", "AUTOMATIC"])? {
             let tag: Asn1ModuleTag;
             match tokens[consumed].text.as_str() {
                 "EXPLICIT" => tag = Asn1ModuleTag::Explicit,
@@ -73,7 +76,7 @@ where
                 }
             }
             consumed += 1;
-            if expect_keyword(&tokens[consumed..], "TAGS") {
+            if expect_keyword(&tokens[consumed..], "TAGS")? {
                 consumed += 1
             } else {
                 return Err(Error::ParseError);
@@ -82,15 +85,15 @@ where
         } else {
             Asn1ModuleTag::Explicit
         };
-    if expect_token(&tokens[consumed..], Token::is_assignment) {
+    if expect_token(&tokens[consumed..], Token::is_assignment)? {
         consumed += 1;
     } else {
         return Err(Error::ParseError);
     }
-    if expect_keyword(&tokens[consumed..], "BEGIN") {
+    if expect_keyword(&tokens[consumed..], "BEGIN")? {
         consumed += 1;
     }
-    while !expect_keyword(&tokens[consumed..], "END") {
+    while !expect_keyword(&tokens[consumed..], "END")? {
         consumed += 1;
     }
 
@@ -121,6 +124,50 @@ pub fn parse<'parser>(tokens: &'parser mut Vec<Token>) -> Result<Vec<Asn1Module>
         }
     }
     Ok(modules)
+}
+
+pub(crate) fn expect_keyword<'parser>(
+    tokens: &'parser [Token],
+    keyword: &str,
+) -> Result<bool, Error> {
+    if tokens.len() == 0 {
+        Err(Error::ParseError)
+    } else {
+        Ok(tokens[0].is_keyword() && tokens[0].text == keyword)
+    }
+}
+
+pub(crate) fn expect_one_of_keywords<'parser>(
+    tokens: &'parser [Token],
+    keywords: &[&str],
+) -> Result<bool, Error> {
+    if tokens.len() == 0 {
+        Err(Error::ParseError)
+    } else {
+        Ok(keywords.iter().any(|&k| expect_keyword(tokens, k).unwrap()))
+    }
+}
+
+pub(crate) fn expect_token<'parser>(
+    tokens: &'parser [Token],
+    checker: TokenChecker,
+) -> Result<bool, Error> {
+    if tokens.len() == 0 {
+        Err(Error::ParseError)
+    } else {
+        Ok(checker(&tokens[0]))
+    }
+}
+
+pub(crate) fn expect_one_of_tokens<'parser>(
+    tokens: &'parser [Token],
+    checkers: &'parser [TokenChecker],
+) -> Result<bool, Error> {
+    if tokens.len() == 0 {
+        Err(Error::ParseError)
+    } else {
+        Ok(checkers.iter().any(|&c| expect_token(tokens, c).unwrap()))
+    }
 }
 
 #[cfg(test)]

@@ -4,7 +4,8 @@ use std::collections::HashMap;
 use lazy_static::lazy_static;
 
 use crate::error::Error;
-use crate::tokenizer::{expect_token, Token};
+use crate::parser::expect_token;
+use crate::tokenizer::Token;
 
 lazy_static! {
     static ref WELL_KNOWN_OID_NAMES: HashMap<&'static str, u32> = {
@@ -143,7 +144,7 @@ pub(crate) fn parse_object_identifier<'parser>(
 ) -> Result<ObjectIdentifier, Error> {
     let mut consumed = 0;
 
-    if !expect_token(&tokens[consumed..], Token::is_curly_begin) {
+    if !expect_token(&tokens[consumed..], Token::is_curly_begin)? {
         return Err(Error::ParseError);
     }
     consumed += 1;
