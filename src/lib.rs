@@ -6,6 +6,7 @@
 
 mod base_types;
 
+#[macro_use]
 pub mod error;
 
 #[macro_use]

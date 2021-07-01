@@ -13,7 +13,8 @@ pub enum Error {
 
     // Errors related to ASN.1 -
     // Object Identifer
-    UnknownNamedIdentifier(String),
+    UnknownOIDName(Token),
+
     ParseError(String),
 }
 
@@ -47,8 +48,12 @@ impl std::fmt::Display for Error {
                     tok.span().start()
                 )
             }
-            Error::UnknownNamedIdentifier(ref id) => {
-                write!(f, "Named only Identifier '{}' in Object Identifier is not one of the well-known ones.", id)
+            Error::UnknownOIDName(ref tok) => {
+                write!(f,
+                    "Named only Identifier '{}' in Object Identifier is not one of the well-known one at {}",
+                    tok.text,
+                    tok.span().start()
+                )
             }
             Error::ParseError(ref errstr) => {
                 write!(f, "Parsing Error: {}", errstr)
@@ -63,4 +68,36 @@ impl From<Error> for std::io::Error {
     fn from(e: Error) -> Self {
         std::io::Error::new(std::io::ErrorKind::InvalidInput, format!("{}", e))
     }
+}
+
+// Macros: Use the Macros for returning Errors instead of creating the types inside any of the
+// routines. This allows us to later log inside the macros if needed.
+macro_rules! unexpected_token {
+    ($lit: literal, $tok: expr) => {
+        crate::error::Error::UnexpectedToken($lit.to_string(), $tok.clone())
+    };
+}
+
+macro_rules! parse_error {
+    ($($arg: tt)*) => {
+        crate::error::Error::ParseError(format!($($arg)*))
+    };
+}
+
+macro_rules! unexpected_end {
+    () => {
+        crate::error::Error::UnexpectedEndOfTokens
+    };
+}
+
+macro_rules! invalid_token {
+    ($tok: expr) => {
+        crate::error::Error::InvalidToken($tok.clone())
+    };
+}
+
+macro_rules! unknown_oid_name {
+    ($tok: expr) => {
+        crate::error::Error::UnknownOIDName($tok.clone())
+    };
 }

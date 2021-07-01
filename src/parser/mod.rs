@@ -28,10 +28,7 @@ where
     if expect_keyword(&tokens[consumed..], "DEFINITIONS")? {
         consumed += 1;
     } else {
-        return Err(Error::UnexpectedToken(
-            "DEFINITIONS".to_string(),
-            tokens[consumed].clone(),
-        ));
+        return Err(unexpected_token!("DEFINITIONS", tokens[consumed]));
     }
 
     let (tags, tags_consumed) = maybe_parse_tags(&tokens[consumed..])?;
@@ -42,18 +39,12 @@ where
     if expect_token(&tokens[consumed..], Token::is_assignment)? {
         consumed += 1;
     } else {
-        return Err(Error::UnexpectedToken(
-            "::=".to_string(),
-            tokens[consumed].clone(),
-        ));
+        return Err(unexpected_token!("::=", tokens[consumed]));
     }
     if expect_keyword(&tokens[consumed..], "BEGIN")? {
         consumed += 1;
     } else {
-        return Err(Error::UnexpectedToken(
-            "::=".to_string(),
-            tokens[consumed].clone(),
-        ));
+        return Err(unexpected_token!("BEGIN", tokens[consumed]));
     }
 
     // FIXME: Parse IMPORTS and EXPORTS
@@ -74,7 +65,7 @@ where
 ///
 /// Token obtained from running [`tokenize`][`crate::tokenizer::tokenize] on an ANS file are parsed
 /// into an internal representation of [`Asn1Module`][`crate::structs::Asn1Module`]. Semantic
-/// errors during parsing the tokens are returned as `ParseError`.
+/// errors during parsing the tokens are returned as appropriate variant of `Error`.
 pub fn parse<'parser>(tokens: &'parser mut Vec<Token>) -> Result<Vec<Asn1Module>, Error> {
     // Get rid of the comments, it complicates things
     tokens.retain(|x| !x.is_comment());

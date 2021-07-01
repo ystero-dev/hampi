@@ -37,14 +37,14 @@ fn parse_named_oid_component<'parser>(
     tokens: &'parser [Token],
 ) -> Result<(OIDComponent, usize), Error> {
     if tokens.len() == 0 {
-        return Err(Error::UnexpectedEndOfTokens);
+        return Err(unexpected_end!());
     }
 
     if tokens.len() < 4 {
         let token = &tokens[0];
         let number = WELL_KNOWN_OID_NAMES.get(token.text.as_str());
         if number.is_none() {
-            return Err(Error::UnknownNamedIdentifier(token.text.clone()));
+            return Err(unknown_oid_name!(token));
         }
         let number = *number.unwrap();
         return Ok((OIDComponent::new(Some(token.text.clone()), number), 1));
@@ -52,19 +52,12 @@ fn parse_named_oid_component<'parser>(
 
     let (tok1, tok2, tok3, tok4) = (&tokens[0], &tokens[1], &tokens[2], &tokens[3]);
     if tok2.is_round_begin() && tok3.is_numeric() && tok4.is_round_end() {
-        return Ok((
-            OIDComponent::new(
-                Some(tok1.text.clone()),
-                tok3.text
-                    .parse::<u32>()
-                    .map_err(|_| Error::InvalidToken(tok3.clone()))?,
-            ),
-            4,
-        ));
+        let number = tok3.text.parse::<u32>().map_err(|_| invalid_token!(tok3))?;
+        return Ok((OIDComponent::new(Some(tok1.text.clone()), number), 4));
     } else {
         let number = WELL_KNOWN_OID_NAMES.get(tok1.text.as_str());
         if number.is_none() {
-            return Err(Error::UnknownNamedIdentifier(tok1.text.clone()));
+            return Err(unknown_oid_name!(tok1));
         }
         let number = *number.unwrap();
         return Ok((OIDComponent::new(Some(tok1.text.clone()), number), 1));
@@ -76,7 +69,7 @@ fn parse_named_oid_component<'parser>(
 // Parses Either Numbered or Named/Numbered OID components
 fn parse_oid_component<'parser>(tokens: &'parser [Token]) -> Result<(OIDComponent, usize), Error> {
     if tokens.len() == 0 {
-        return Err(Error::UnexpectedEndOfTokens);
+        return Err(unexpected_end!());
     }
 
     let first = &tokens[0];
@@ -86,12 +79,12 @@ fn parse_oid_component<'parser>(tokens: &'parser [Token]) -> Result<(OIDComponen
         let number = first
             .text
             .parse::<u32>()
-            .map_err(|_| Error::InvalidToken(first.clone()))?;
+            .map_err(|_| invalid_token!(first))?;
         Ok((OIDComponent::new(None, number), 1))
     } else {
-        Err(Error::UnexpectedToken(
-            "Expected 'identifier' or 'number'".to_string(),
-            first.clone(),
+        Err(unexpected_token!(
+            "Expected 'identifier' or 'number'",
+            first
         ))
     }
 }
@@ -102,10 +95,7 @@ pub(crate) fn parse_object_identifier<'parser>(
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_curly_begin)? {
-        return Err(Error::UnexpectedToken(
-            "{".to_string(),
-            tokens[consumed].clone(),
-        ));
+        return Err(unexpected_token!("{", tokens[consumed]));
     }
     consumed += 1;
 
@@ -139,10 +129,10 @@ pub(super) fn parse_asn1_module_name<'parser>(
     let name = if expect_token(&tokens[consumed..], Token::is_module_reference)? {
         tokens[consumed].text.clone()
     } else {
-        return Err(Error::ParseError(format!(
+        return Err(parse_error!(
             "Module Name '{}' is not a valid Module Reference",
             tokens[consumed].text
-        )));
+        ));
     };
     consumed += 1;
 
@@ -169,7 +159,7 @@ fn maybe_parse_object_identifer<'parser>(
     }
 
     if curly_end.is_none() {
-        return Err(Error::ParseError("Expected '}'. Never Found.".to_string()));
+        return Err(parse_error!("Expected '}}'. Never Found."));
     }
     let idx = curly_end.unwrap();
 
