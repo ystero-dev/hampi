@@ -7,6 +7,7 @@ use crate::tokenizer::Token;
 // Required by `expect_*` functions
 type TokenChecker = fn(&Token) -> bool;
 
+// Returns true if the first `token`'s text is same as the passed `keyword`
 pub(crate) fn expect_keyword<'parser>(
     tokens: &'parser [Token],
     keyword: &str,
@@ -18,6 +19,7 @@ pub(crate) fn expect_keyword<'parser>(
     }
 }
 
+// Returns true if the first `token`'s text is one of the passed `keywords`.
 pub(crate) fn expect_one_of_keywords<'parser>(
     tokens: &'parser [Token],
     keywords: &[&str],
@@ -29,6 +31,7 @@ pub(crate) fn expect_one_of_keywords<'parser>(
     }
 }
 
+// Returns `checker(token)` for the first `token`.
 pub(crate) fn expect_token<'parser>(
     tokens: &'parser [Token],
     checker: TokenChecker,
@@ -40,7 +43,8 @@ pub(crate) fn expect_token<'parser>(
     }
 }
 
-pub(crate) fn expect_one_of_tokens<'parser>(
+// Returns if any of the `checker(token)` returns true (short-circuiting)
+pub(crate) fn expect_token_one_of<'parser>(
     tokens: &'parser [Token],
     checkers: &'parser [TokenChecker],
 ) -> Result<bool, Error> {
@@ -48,6 +52,19 @@ pub(crate) fn expect_one_of_tokens<'parser>(
         Err(unexpected_end!())
     } else {
         Ok(checkers.iter().any(|&c| expect_token(tokens, c).unwrap()))
+    }
+}
+
+// Returns success if 'all' the 'tokens' return 'true' for `checker(token)`.
+pub(crate) fn expect_tokens<'parser>(
+    tokens: &'parser [Token],
+    checkers: &'parser [TokenChecker],
+) -> Result<bool, Error> {
+    if tokens.len() != checkers.len() {
+        // Caller should ensure bound checks.
+        Ok(false)
+    } else {
+        Ok(tokens.iter().zip(checkers.iter()).all(|(t, c)| c(t)))
     }
 }
 

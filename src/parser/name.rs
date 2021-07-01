@@ -9,7 +9,7 @@ use std::collections::HashMap;
 use lazy_static::lazy_static;
 
 use crate::error::Error;
-use crate::parser::expect_token;
+use crate::parser::{expect_token, expect_token_one_of, expect_tokens};
 use crate::structs::{Asn1ModuleName, OIDComponent, ObjectIdentifier};
 use crate::tokenizer::Token;
 
@@ -36,55 +36,61 @@ lazy_static! {
 fn parse_named_oid_component<'parser>(
     tokens: &'parser [Token],
 ) -> Result<(OIDComponent, usize), Error> {
-    if tokens.len() == 0 {
-        return Err(unexpected_end!());
+    if !expect_token(&tokens, Token::is_value_reference)? {
+        return Err(unexpected_token!("'IDENTIFIER'", tokens[0]));
     }
-
-    if tokens.len() < 4 {
-        let token = &tokens[0];
-        let number = WELL_KNOWN_OID_NAMES.get(token.text.as_str());
-        if number.is_none() {
-            return Err(unknown_oid_name!(token));
-        }
-        let number = *number.unwrap();
-        return Ok((OIDComponent::new(Some(token.text.clone()), number), 1));
-    }
-
-    let (tok1, tok2, tok3, tok4) = (&tokens[0], &tokens[1], &tokens[2], &tokens[3]);
-    if tok2.is_round_begin() && tok3.is_numeric() && tok4.is_round_end() {
-        let number = tok3.text.parse::<u32>().map_err(|_| invalid_token!(tok3))?;
-        return Ok((OIDComponent::new(Some(tok1.text.clone()), number), 4));
+    let name_token = &tokens[0];
+    let name = &name_token.text;
+    let size = std::cmp::min(4, tokens.len());
+    let (number, consumed) = if expect_tokens(
+        &tokens[1..size],
+        &[
+            Token::is_round_begin,
+            Token::is_numeric,
+            Token::is_round_end,
+        ],
+    )? {
+        let number_token = &tokens[2];
+        let number = number_token
+            .text
+            .parse::<u32>()
+            .map_err(|_| invalid_token!(number_token))?;
+        (number, 4)
     } else {
-        let number = WELL_KNOWN_OID_NAMES.get(tok1.text.as_str());
+        let number = WELL_KNOWN_OID_NAMES.get(name.as_str());
         if number.is_none() {
-            return Err(unknown_oid_name!(tok1));
+            return Err(unknown_oid_name!(name_token));
         }
-        let number = *number.unwrap();
-        return Ok((OIDComponent::new(Some(tok1.text.clone()), number), 1));
-    }
+        (*number.unwrap(), 1)
+    };
+
+    Ok((OIDComponent::new(Some(name.clone()), number), consumed))
 }
 
 // Wrapper for Parsing an OID Component
 //
 // Parses Either Numbered or Named/Numbered OID components
 fn parse_oid_component<'parser>(tokens: &'parser [Token]) -> Result<(OIDComponent, usize), Error> {
-    if tokens.len() == 0 {
-        return Err(unexpected_end!());
-    }
+    let consumed = 0;
 
-    let first = &tokens[0];
-    if first.is_identifier() {
-        parse_named_oid_component(tokens)
-    } else if first.is_numeric() {
-        let number = first
-            .text
-            .parse::<u32>()
-            .map_err(|_| invalid_token!(first))?;
-        Ok((OIDComponent::new(None, number), 1))
+    if expect_token_one_of(
+        &tokens[consumed..],
+        &[Token::is_identifier, Token::is_numeric],
+    )? {
+        let first = &tokens[0];
+        if first.is_identifier() {
+            parse_named_oid_component(tokens)
+        } else {
+            let number = first
+                .text
+                .parse::<u32>()
+                .map_err(|_| invalid_token!(first))?;
+            Ok((OIDComponent::new(None, number), 1))
+        }
     } else {
         Err(unexpected_token!(
             "Expected 'identifier' or 'number'",
-            first
+            tokens[0]
         ))
     }
 }

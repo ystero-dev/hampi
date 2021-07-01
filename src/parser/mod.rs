@@ -13,7 +13,7 @@ mod name;
 mod utils;
 
 use name::parse_asn1_module_name;
-use utils::{expect_keyword, expect_token, maybe_parse_tags};
+use utils::{expect_keyword, expect_token, expect_token_one_of, expect_tokens, maybe_parse_tags};
 
 fn parse_module<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Module, usize), Error>
 where
