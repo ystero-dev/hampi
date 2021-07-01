@@ -1,10 +1,16 @@
-//! Structures and functions related to handling ASN.1 Object Identifier
+//! Structures and functions related to handling ASN.1 Module Names
+//!
+//! An ASN.1 Module name is an Identifier with optional 'OBJECT IDENTIFIER'. It is better that the
+//! module name is treated as such since this is required at several places (eg. while parsing
+//! Import definitions etc.)
+//!
 use std::collections::HashMap;
 
 use lazy_static::lazy_static;
 
 use crate::error::Error;
 use crate::parser::expect_token;
+use crate::structs::{Asn1ModuleName, OIDComponent, ObjectIdentifier};
 use crate::tokenizer::Token;
 
 lazy_static! {
@@ -24,51 +30,6 @@ lazy_static! {
     };
 }
 
-struct OIDComponent {
-    name: Option<String>,
-    number: u32,
-}
-
-impl std::fmt::Display for OIDComponent {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        if self.name.is_some() {
-            write!(f, "{}({})", self.name.as_ref().unwrap(), self.number)
-        } else {
-            write!(f, "{}", self.number)
-        }
-    }
-}
-
-impl std::fmt::Debug for OIDComponent {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self, f)
-    }
-}
-#[derive(Default)]
-pub struct ObjectIdentifier {
-    components: Vec<OIDComponent>,
-}
-
-impl std::fmt::Display for ObjectIdentifier {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        if let Some((first, rest)) = self.components.split_first() {
-            write!(f, "{}", first)?;
-            for c in rest {
-                write!(f, ".{}", c)?;
-            }
-        } else {
-            write!(f, "EMPTY")?;
-        }
-        write!(f, "")
-    }
-}
-
-impl std::fmt::Debug for ObjectIdentifier {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self, f)
-    }
-}
-
 // Parses a named OID component
 //
 // Parses named OID components of the form `iso` or `iso(1)`
@@ -86,25 +47,18 @@ fn parse_named_oid_component<'parser>(
             return Err(Error::UnknownNamedIdentifier(token.text.clone()));
         }
         let number = *number.unwrap();
-        return Ok((
-            OIDComponent {
-                name: Some(token.text.clone()),
-                number,
-            },
-            1,
-        ));
+        return Ok((OIDComponent::new(Some(token.text.clone()), number), 1));
     }
 
     let (tok1, tok2, tok3, tok4) = (&tokens[0], &tokens[1], &tokens[2], &tokens[3]);
     if tok2.is_round_begin() && tok3.is_numeric() && tok4.is_round_end() {
         return Ok((
-            OIDComponent {
-                name: Some(tok1.text.clone()),
-                number: tok3
-                    .text
+            OIDComponent::new(
+                Some(tok1.text.clone()),
+                tok3.text
                     .parse::<u32>()
                     .map_err(|_| Error::InvalidToken(tok3.clone()))?,
-            },
+            ),
             4,
         ));
     } else {
@@ -113,13 +67,7 @@ fn parse_named_oid_component<'parser>(
             return Err(Error::UnknownNamedIdentifier(tok1.text.clone()));
         }
         let number = *number.unwrap();
-        return Ok((
-            OIDComponent {
-                name: Some(tok1.text.clone()),
-                number,
-            },
-            1,
-        ));
+        return Ok((OIDComponent::new(Some(tok1.text.clone()), number), 1));
     }
 }
 
@@ -139,7 +87,7 @@ fn parse_oid_component<'parser>(tokens: &'parser [Token]) -> Result<(OIDComponen
             .text
             .parse::<u32>()
             .map_err(|_| Error::InvalidToken(first.clone()))?;
-        Ok((OIDComponent { name: None, number }, 1))
+        Ok((OIDComponent::new(None, number), 1))
     } else {
         Err(Error::UnexpectedToken(
             "Expected 'identifier' or 'number'".to_string(),
@@ -179,7 +127,55 @@ pub(crate) fn parse_object_identifier<'parser>(
             }
         }
     }
-    Ok(ObjectIdentifier { components })
+    Ok(ObjectIdentifier::new(components))
+}
+
+pub(super) fn parse_asn1_module_name<'parser>(
+    tokens: &'parser [Token],
+) -> Result<(Asn1ModuleName, usize), Error> {
+    let mut consumed = 0;
+    // First Name
+
+    let name = if expect_token(&tokens[consumed..], Token::is_module_reference)? {
+        tokens[consumed].text.clone()
+    } else {
+        return Err(Error::ParseError(format!(
+            "Module Name '{}' is not a valid Module Reference",
+            tokens[consumed].text
+        )));
+    };
+    consumed += 1;
+
+    // Now OID
+    // Optional Object Identifier
+    let (oid, oid_consumed) = maybe_parse_object_identifer(&tokens[consumed..])?;
+    consumed += oid_consumed;
+
+    Ok((Asn1ModuleName::new(name, oid), consumed))
+}
+
+fn maybe_parse_object_identifer<'parser>(
+    tokens: &'parser [Token],
+) -> Result<(Option<ObjectIdentifier>, usize), Error> {
+    if tokens.is_empty() || !tokens[0].is_curly_begin() {
+        return Ok((None, 0));
+    }
+    let mut curly_end: Option<usize> = None;
+    for (idx, token) in tokens.iter().enumerate() {
+        if token.is_curly_end() {
+            curly_end = Some(idx);
+            break;
+        }
+    }
+
+    if curly_end.is_none() {
+        return Err(Error::ParseError("Expected '}'. Never Found.".to_string()));
+    }
+    let idx = curly_end.unwrap();
+
+    let oid = parse_object_identifier(&tokens[..=idx])?;
+
+    Ok((Some(oid), idx + 1))
 }
 
 #[cfg(test)]
@@ -282,7 +278,7 @@ mod tests {
                 assert_eq!(oid.is_ok(), tc.success, "{:#?}", tc.input);
                 if tc.success {
                     let oid = oid.unwrap();
-                    assert_eq!(oid.components.len(), tc.components_count);
+                    assert_eq!(oid.len(), tc.components_count);
                 }
             }
         }

@@ -15,6 +15,4 @@ mod tokenizer;
 
 pub mod parser;
 
-mod oid;
-
 mod structs;

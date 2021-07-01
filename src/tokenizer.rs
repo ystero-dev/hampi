@@ -189,12 +189,60 @@ impl Token {
         (is_at_component_list, TokenType::AtComponentIdList),
     }
 
-    pub fn span(&self) -> Span {
-        self.span.clone()
+    // Checkers for ASN.1 Lexical Token types
+    //
+    /// Checks whether the current token is a 'valuereference'
+    pub fn is_value_reference(&self) -> bool {
+        self.is_identifier() && self.text.starts_with(char::is_lowercase)
     }
 
+    /// Checks whether the current token is a 'typereference'
+    pub fn is_type_reference(&self) -> bool {
+        self.is_identifier() && self.text.starts_with(char::is_uppercase)
+    }
+
+    /// Checks whether the given token is a 'modulereference'
+    pub fn is_module_reference(&self) -> bool {
+        self.is_type_reference()
+    }
+
+    /// Checks whether the given token is an Object Class Reference
+    pub fn is_object_class_reference(&self) -> bool {
+        self.is_type_reference()
+    }
+
+    /// Checks whether the given token is an Object Reference
+    pub fn is_object_reference(&self) -> bool {
+        self.is_value_reference()
+    }
+
+    /// Checks whether the given token is an Object Set Reference
+    pub fn is_object_set_reference(&self) -> bool {
+        self.is_type_reference()
+    }
+
+    /// Checks whether the given identifier is a Type Field Reference
+    pub fn is_type_field_reference(&self) -> bool {
+        self.is_and_identifier() && self.text[1..].starts_with(char::is_lowercase)
+    }
+    /// Checks whether the given token is an Object Field Reference
+    pub fn is_object_field_reference(&self) -> bool {
+        self.is_and_identifier() && self.text[1..].starts_with(char::is_lowercase)
+    }
+
+    /// Checks whether the given token is an Object Set Field Reference
+    pub fn is_object_set_field_reference(&self) -> bool {
+        self.is_type_field_reference()
+    }
+
+    /// Checks whether given token is a particular keyword.
     pub fn is_given_keyword(&self, keyword: &str) -> bool {
         self.is_keyword() && self.text == keyword
+    }
+
+    /// Returns the 'span' of the current token.
+    pub fn span(&self) -> Span {
+        self.span.clone()
     }
 }
 
