@@ -60,11 +60,10 @@ pub(crate) fn expect_tokens<'parser>(
     tokens: &'parser [Token],
     checkers: &'parser [TokenChecker],
 ) -> Result<bool, Error> {
-    if tokens.len() != checkers.len() {
-        // Caller should ensure bound checks.
-        Ok(false)
+    if tokens.len() < checkers.len() {
+        Err(unexpected_end!())
     } else {
-        Ok(tokens.iter().zip(checkers.iter()).all(|(t, c)| c(t)))
+        Ok(checkers.iter().zip(tokens.iter()).all(|(c, t)| c(t)))
     }
 }
 

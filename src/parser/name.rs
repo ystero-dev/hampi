@@ -41,27 +41,37 @@ fn parse_named_oid_component<'parser>(
     }
     let name_token = &tokens[0];
     let name = &name_token.text;
-    let size = std::cmp::min(4, tokens.len());
-    let (number, consumed) = if expect_tokens(
-        &tokens[1..size],
+    let (number, consumed) = match expect_tokens(
+        &tokens[1..],
         &[
             Token::is_round_begin,
             Token::is_numeric,
             Token::is_round_end,
         ],
-    )? {
-        let number_token = &tokens[2];
-        let number = number_token
-            .text
-            .parse::<u32>()
-            .map_err(|_| invalid_token!(number_token))?;
-        (number, 4)
-    } else {
-        let number = WELL_KNOWN_OID_NAMES.get(name.as_str());
-        if number.is_none() {
-            return Err(unknown_oid_name!(name_token));
+    ) {
+        Ok(success) => {
+            if success {
+                let number_token = &tokens[2];
+                let number = number_token
+                    .text
+                    .parse::<u32>()
+                    .map_err(|_| invalid_token!(number_token))?;
+                (number, 4)
+            } else {
+                let number = WELL_KNOWN_OID_NAMES.get(name.as_str());
+                if number.is_none() {
+                    return Err(unknown_oid_name!(name_token));
+                }
+                (*number.unwrap(), 1)
+            }
         }
-        (*number.unwrap(), 1)
+        Err(_) => {
+            let number = WELL_KNOWN_OID_NAMES.get(name.as_str());
+            if number.is_none() {
+                return Err(unknown_oid_name!(name_token));
+            }
+            (*number.unwrap(), 1)
+        }
     };
 
     Ok((OIDComponent::new(Some(name.clone()), number), consumed))
