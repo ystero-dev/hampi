@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 //! A collection of structs used in [Hampi][`crate`] for ASN.1 compilation.
+use std::collections::HashMap;
 
 use super::base_types::*;
 
@@ -43,6 +44,7 @@ pub enum ResolvedType {
 #[derive(Debug)]
 pub struct TypeDefinition {}
 
+#[derive(Clone)]
 pub struct OIDComponent {
     name: Option<String>,
     number: u32,
@@ -69,7 +71,7 @@ impl std::fmt::Debug for OIDComponent {
         std::fmt::Display::fmt(self, f)
     }
 }
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct ObjectIdentifier {
     components: Vec<OIDComponent>,
 }
@@ -138,7 +140,7 @@ pub enum Asn1Definition {
     //InfoObjectSetDefinition,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct Asn1ModuleName {
     name: String,
     oid: Option<ObjectIdentifier>,
@@ -160,11 +162,13 @@ impl Asn1ModuleName {
 /// information about it is kept as well.
 #[derive(Debug, Default)]
 pub struct Asn1Module {
-    imports: Option<Vec<Asn1Definition>>,
+    imports: HashMap<String, Asn1ModuleName>,
     exports: Option<Vec<Asn1Definition>>,
     name: Asn1ModuleName,
     tags: Asn1ModuleTag,
-    definitions: Vec<Asn1Definition>,
+    types: HashMap<String, Asn1Definition>,
+    values: HashMap<String, Asn1Definition>,
+    exports_all: bool,
 }
 
 impl Asn1Module {
@@ -175,6 +179,11 @@ impl Asn1Module {
 
     pub fn tags(mut self, tags: Asn1ModuleTag) -> Self {
         self.tags = tags;
+        self
+    }
+
+    pub fn imports(mut self, imports: HashMap<String, Asn1ModuleName>) -> Self {
+        self.imports = imports;
         self
     }
 }

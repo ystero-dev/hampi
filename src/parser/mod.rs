@@ -1,5 +1,6 @@
 //! Main Parser module
 //!
+use std::collections::HashMap;
 
 pub use crate::tokenizer::tokenize;
 
@@ -48,6 +49,39 @@ where
     }
 
     // FIXME: Parse IMPORTS and EXPORTS
+    let mut imports = HashMap::new();
+    if expect_keyword(&tokens[consumed..], "IMPORTS")? {
+        consumed += 1;
+
+        loop {
+            let mut definitions = vec![];
+            while !expect_keyword(&tokens[consumed..], "FROM")? {
+                if expect_token(&tokens[consumed..], Token::is_identifier)? {
+                    let definition = tokens[consumed].text.clone();
+                    definitions.push(definition);
+                    // FIXME: Handle Parameterized Definition Imports
+                }
+                consumed += 1;
+                if expect_token(&tokens[consumed..], Token::is_comma)? {
+                    consumed += 1;
+                }
+            }
+            consumed += 1;
+            let (module_name, module_name_consumed) = parse_asn1_module_name(&tokens[consumed..])?;
+            consumed += module_name_consumed;
+
+            for d in definitions {
+                if imports.contains_key(&d) {
+                    return Err(parse_error!("Definition '{}' is imported twice", d));
+                }
+                let _ = imports.insert(d, module_name.clone());
+            }
+
+            if expect_token(&tokens[consumed..], Token::is_semicolon)? {
+                break;
+            }
+        }
+    }
 
     while !expect_keyword(&tokens[consumed..], "END")? {
         consumed += 1;
@@ -57,7 +91,7 @@ where
     // If 'END' was never found we'd Error out at above 'while'
     consumed += 1;
 
-    let module = Asn1Module::default().name(name).tags(tags);
+    let module = Asn1Module::default().name(name).tags(tags).imports(imports);
     Ok((module, consumed))
 }
 
