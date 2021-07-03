@@ -44,9 +44,9 @@ fn parse_named_oid_component<'parser>(
     let (number, consumed) = match expect_tokens(
         &tokens[1..],
         &[
-            Token::is_round_begin,
-            Token::is_numeric,
-            Token::is_round_end,
+            &[Token::is_round_begin],
+            &[Token::is_numeric],
+            &[Token::is_round_end],
         ],
     ) {
         Ok(success) => {

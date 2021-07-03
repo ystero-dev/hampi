@@ -89,6 +89,17 @@ const KEYWORDS: &'static [&'static str] = &[
     "WITH",
 ];
 
+// FIXME: Add other types
+const BASE_TYPES: &'static [&'static str] = &[
+    "INTEGER",
+    "BOOLEAN",
+    "ENUMERATED",
+    "NULL",
+    "UTF8String",
+    "IA5String",
+    "PrintableString",
+];
+
 /// Line and Column in the source where the token begins.
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub(crate) struct LineColumn {
@@ -238,6 +249,11 @@ impl Token {
     /// Checks whether given token is a particular keyword.
     pub fn is_given_keyword(&self, keyword: &str) -> bool {
         self.is_keyword() && self.text == keyword
+    }
+
+    /// Checks whether the given token is a well-known type.
+    pub fn is_asn_base_type(&self) -> bool {
+        BASE_TYPES.iter().any(|&t| t == self.text.as_str())
     }
 
     /// Returns the 'span' of the current token.

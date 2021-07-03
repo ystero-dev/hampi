@@ -13,6 +13,9 @@ mod name;
 
 mod utils;
 
+mod definitions;
+
+use definitions::parse_definition;
 use name::parse_asn1_module_name;
 use utils::{expect_keyword, expect_token, expect_token_one_of, expect_tokens, maybe_parse_tags};
 
@@ -54,12 +57,11 @@ where
         consumed += 1;
 
         loop {
-            let mut definitions = vec![];
+            let mut defs = vec![];
             while !expect_keyword(&tokens[consumed..], "FROM")? {
                 if expect_token(&tokens[consumed..], Token::is_identifier)? {
                     let definition = tokens[consumed].text.clone();
-                    definitions.push(definition);
-                    // FIXME: Handle Parameterized Definition Imports
+                    defs.push(definition);
                 }
                 consumed += 1;
                 if expect_token(&tokens[consumed..], Token::is_comma)? {
@@ -70,7 +72,7 @@ where
             let (module_name, module_name_consumed) = parse_asn1_module_name(&tokens[consumed..])?;
             consumed += module_name_consumed;
 
-            for d in definitions {
+            for d in defs {
                 if imports.contains_key(&d) {
                     return Err(parse_error!("Definition '{}' is imported twice", d));
                 }
@@ -78,13 +80,15 @@ where
             }
 
             if expect_token(&tokens[consumed..], Token::is_semicolon)? {
+                consumed += 1;
                 break;
             }
         }
     }
 
     while !expect_keyword(&tokens[consumed..], "END")? {
-        consumed += 1;
+        let (_def, definition_consumed) = parse_definition(&tokens[consumed..])?;
+        consumed += definition_consumed;
     }
 
     // Comes out of the loop when END is found.

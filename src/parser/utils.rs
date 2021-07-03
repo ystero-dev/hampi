@@ -58,12 +58,15 @@ pub(crate) fn expect_token_one_of<'parser>(
 // Returns success if 'all' the 'tokens' return 'true' for `checker(token)`.
 pub(crate) fn expect_tokens<'parser>(
     tokens: &'parser [Token],
-    checkers: &'parser [TokenChecker],
+    checkers: &'parser [&'parser [TokenChecker]],
 ) -> Result<bool, Error> {
     if tokens.len() < checkers.len() {
         Err(unexpected_end!())
     } else {
-        Ok(checkers.iter().zip(tokens.iter()).all(|(c, t)| c(t)))
+        Ok(checkers
+            .iter()
+            .zip(tokens.iter())
+            .all(|(inner_tokens, t)| inner_tokens.iter().any(|c| c(t))))
     }
 }
 

@@ -17,3 +17,5 @@ mod tokenizer;
 pub mod parser;
 
 mod structs;
+
+mod compiler;

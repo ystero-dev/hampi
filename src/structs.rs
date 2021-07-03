@@ -21,27 +21,6 @@ impl Default for Asn1ModuleTag {
 struct BaseTypeValue;
 
 #[derive(Debug)]
-enum Asn1BaseType {
-    Integer,
-    Enumerated,
-    Boolean,
-    Null,
-}
-
-#[derive(Debug)]
-pub struct BaseType {
-    base: Asn1BaseType,
-    constraints: Vec<Asn1Constraint>,
-    identifier: String,
-}
-
-#[derive(Debug)]
-pub enum ResolvedType {
-    TypeRef(Box<ResolvedType>),
-    Base(BaseType),
-}
-
-#[derive(Debug)]
 pub struct TypeDefinition {}
 
 #[derive(Clone)]
@@ -106,6 +85,36 @@ impl std::fmt::Debug for ObjectIdentifier {
     }
 }
 
+#[derive(Debug)]
+pub struct Asn1TypeAssignment {
+    /// Type Identifier
+    pub id: String,
+
+    /// Name following the assignment
+    pub base: String,
+
+    /// Constraints applied to the type
+    pub constraints: Vec<Asn1Constraint>,
+
+    /// Is Parameterized?
+    pub is_parameterized: bool,
+
+    /// Module to which this type belongs?
+    pub module_name: Asn1ModuleName,
+
+    /// Type definition text (concatenated text of all tokens that define this type.)
+    pub definition: String,
+}
+
+#[derive(Debug)]
+pub struct Asn1ValueAssignment {
+    pub id: String,
+
+    pub typeref: String,
+
+    pub text: String,
+}
+
 /// A Value definition in ASN.1 Syntax
 ///
 /// A Value definition in ASN.1 Syntax may look like following -
@@ -124,20 +133,27 @@ impl std::fmt::Debug for ObjectIdentifier {
 #[derive(Debug)]
 pub struct ValueDefinition {
     identifier: String,
-    r#type: ResolvedType,
-    value: Option<BaseTypeValue>,
     name: Option<String>,
     resolved: bool,
 }
 
 #[derive(Debug)]
 pub enum Asn1Definition {
-    Value(ValueDefinition),
-    Type(TypeDefinition),
+    Value(Asn1ValueAssignment),
+    Type(Asn1TypeAssignment),
     //ValueSetDefinition,
     //InfoObjectClassDefinition,
     //InfoObjectDefinition,
     //InfoObjectSetDefinition,
+}
+
+impl Asn1Definition {
+    pub fn id(&self) -> String {
+        match self {
+            Self::Value(ref v) => v.id.clone(),
+            Self::Type(ref v) => v.id.clone(),
+        }
+    }
 }
 
 #[derive(Debug, Default, Clone)]
