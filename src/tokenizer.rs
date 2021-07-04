@@ -98,6 +98,11 @@ const BASE_TYPES: &'static [&'static str] = &[
     "UTF8String",
     "IA5String",
     "PrintableString",
+    // Spliced types (Note: actual ASN.1 Type names are different.
+    "OBJECT-IDENTIFIER",
+    "OCTET-STRING",
+    "BIT-STRING",
+    "CHARACTER-STRING",
 ];
 
 /// Line and Column in the source where the token begins.
@@ -259,6 +264,17 @@ impl Token {
     /// Returns the 'span' of the current token.
     pub fn span(&self) -> Span {
         self.span.clone()
+    }
+
+    // Private Functions
+    fn spliced(first: &Self, second: &Self) -> Self {
+        let text = format!("{}-{}", first.text, second.text);
+        let r#type = first.r#type.clone();
+        let span = Span {
+            start: first.span.start,
+            end: second.span.end,
+        };
+        Token { text, r#type, span }
     }
 }
 
@@ -867,7 +883,56 @@ where
             break;
         }
     }
-    Ok(tokens)
+    Ok(splice_tokens(tokens))
+}
+
+// Splice two tokens into one and return the vector.
+//
+// ASN has got certain built in types like "OBJECT IDENTIFIER", "OCTET STRING" etc. Since our
+// tokens are separated on a whitespace, these are two tokens and as such they cause an annoyance
+// when trying to work inside a parser. Instead we 'splice' these tokens into one token and
+// re-create the vector. Note: original vector is consumed
+//
+fn splice_tokens(tokens: Vec<Token>) -> Vec<Token> {
+    let pairs = &[
+        ("BIT", "STRING"),
+        ("CHARACTER", "STRING"),
+        ("OCTET", "STRING"),
+        ("OBJECT", "IDENTIFIER"),
+        ("EMBEDDED", "PDV"),
+    ];
+
+    let mut out_tokens = tokens;
+    loop {
+        let mut spliced_tokens: Vec<Token>;
+        let mut spliced: bool = false;
+        let mut idx: usize = 0;
+        for (i, window) in out_tokens.windows(2).enumerate() {
+            if pairs
+                .iter()
+                .any(|&t| t == (window[0].text.as_str(), window[1].text.as_str()))
+            {
+                idx = i;
+                spliced = true;
+                break;
+            }
+        }
+
+        if !spliced {
+            break;
+        } else {
+            let (first_part, second_part) = out_tokens.split_at(idx);
+            let (first, second) = (&out_tokens[idx], &out_tokens[idx + 1]);
+            let new_token = Token::spliced(first, second);
+
+            spliced_tokens = first_part.to_vec();
+            spliced_tokens.append(&mut [new_token].to_vec());
+            spliced_tokens.append(&mut second_part[2..].to_vec());
+
+            out_tokens = spliced_tokens;
+        }
+    }
+    out_tokens
 }
 
 #[cfg(test)]
@@ -1166,6 +1231,44 @@ mod tests {
                 let tokens = result.unwrap();
                 assert!(tokens.len() == test_case.count, "{:#?}", tokens);
             }
+        }
+    }
+
+    #[test]
+    fn tokenize_splice_tokens() {
+        struct SpliceTokenTestCase<'t> {
+            input: &'t str,
+            output_len: usize,
+        }
+
+        let test_cases = vec![
+            SpliceTokenTestCase {
+                input: "OBJECT IDENTIFIER",
+                output_len: 1,
+            },
+            SpliceTokenTestCase {
+                input: "CHARACTER STR",
+                output_len: 2,
+            },
+            SpliceTokenTestCase {
+                input: "OCTET STRING INTEGER",
+                output_len: 2,
+            },
+        ];
+
+        for tc in test_cases {
+            let reader = std::io::BufReader::new(std::io::Cursor::new(tc.input));
+            let result = crate::parser::tokenize(reader);
+            assert!(result.is_ok());
+
+            let result = result.unwrap();
+            assert_eq!(
+                result.len(),
+                tc.output_len,
+                "{:#?}: {:#?}",
+                tc.input,
+                result
+            );
         }
     }
 }

@@ -16,7 +16,7 @@ pub(crate) fn parse_definition<'parser>(
     )? {
         let next = &tokens[consumed];
         if next.is_value_reference() {
-            parse_value_definition(&tokens[consumed..])
+            parse_valueish_definition(&tokens[consumed..])
         } else {
             parse_typeish_definition(&tokens[consumed..])
         }
@@ -26,7 +26,7 @@ pub(crate) fn parse_definition<'parser>(
     }
 }
 
-fn parse_value_definition<'parser>(
+fn parse_valueish_definition<'parser>(
     tokens: &'parser [Token],
 ) -> Result<(Asn1Definition, usize), Error> {
     if expect_tokens(
