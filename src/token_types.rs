@@ -32,6 +32,7 @@ pub enum TokenType {
     SetUnion,          // A single '|'
     SetIntersection,   // A single '^'
     AtComponentIdList, // @Component.Id.List form
+    LessThan,          // A single '<' (Used in Ranges)
 }
 
 macro_rules! create_is_tokentype_fns {

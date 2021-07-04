@@ -684,6 +684,7 @@ fn get_single_char_token(token: char, line: usize, begin: usize) -> Result<Token
         ',' => token_type = TokenType::Comma,
         '|' => token_type = TokenType::SetUnion,
         '^' => token_type = TokenType::SetIntersection,
+        '<' => token_type = TokenType::LessThan,
         _ => return Err(Error::TokenizeError(21, line, begin)),
     }
     Ok(Token {
@@ -797,7 +798,7 @@ where
                     processed += consumed;
                 }
             }
-            '{' | '}' | '(' | ')' | '!' | ';' | ',' | '|' | '^' => {
+            '{' | '}' | '(' | ')' | '!' | ';' | ',' | '|' | '^' | '<' => {
                 let token = get_single_char_token(chars[processed], line, column)?;
                 tokens.push(token);
                 column += 1;
@@ -926,8 +927,8 @@ fn splice_tokens(tokens: Vec<Token>) -> Vec<Token> {
             let new_token = Token::spliced(first, second);
 
             spliced_tokens = first_part.to_vec();
-            spliced_tokens.append(&mut [new_token].to_vec());
-            spliced_tokens.append(&mut second_part[2..].to_vec());
+            spliced_tokens.extend_from_slice(&[new_token]);
+            spliced_tokens.extend_from_slice(&second_part[2..]);
 
             out_tokens = spliced_tokens;
         }
