@@ -4,8 +4,6 @@
 //! applicatoins in working with 3GPP standards. The idea is to be able to generate Rust (and
 //! possibly other language(s)) bindings from ASN.1 Specifications.
 
-mod base_types;
-
 #[macro_use]
 pub mod error;
 

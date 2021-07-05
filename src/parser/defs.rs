@@ -2,7 +2,7 @@
 
 use crate::error::Error;
 use crate::parser::{expect_token_one_of, expect_tokens};
-use crate::structs::{Asn1Definition, Asn1ValueAssignment};
+use crate::structs::defs::{Asn1Definition, Asn1ValueAssignment};
 use crate::tokenizer::Token;
 
 pub(crate) fn parse_definition<'parser>(

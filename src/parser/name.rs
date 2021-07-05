@@ -10,7 +10,10 @@ use lazy_static::lazy_static;
 
 use crate::error::Error;
 use crate::parser::{expect_token, expect_token_one_of, expect_tokens};
-use crate::structs::{Asn1ModuleName, OIDComponent, ObjectIdentifier};
+use crate::structs::{
+    module::Asn1ModuleName,
+    oid::{OIDComponent, ObjectIdentifier},
+};
 use crate::tokenizer::Token;
 
 lazy_static! {

@@ -5,7 +5,7 @@ use std::collections::HashMap;
 pub use crate::tokenizer::tokenize;
 
 use crate::error::Error;
-use crate::structs::Asn1Module;
+use crate::structs::module::Asn1Module;
 use crate::tokenizer::Token;
 
 // Internal module structures
@@ -13,9 +13,9 @@ mod name;
 
 mod utils;
 
-mod definitions;
+mod defs;
 
-use definitions::parse_definition;
+use defs::parse_definition;
 use name::parse_asn1_module_name;
 use utils::{expect_keyword, expect_token, expect_token_one_of, expect_tokens, maybe_parse_tags};
 
@@ -57,11 +57,11 @@ where
         consumed += 1;
 
         loop {
-            let mut defs = vec![];
+            let mut imported_defs = vec![];
             while !expect_keyword(&tokens[consumed..], "FROM")? {
                 if expect_token(&tokens[consumed..], Token::is_identifier)? {
                     let definition = tokens[consumed].text.clone();
-                    defs.push(definition);
+                    imported_defs.push(definition);
                 }
                 consumed += 1;
                 if expect_token(&tokens[consumed..], Token::is_comma)? {
@@ -72,7 +72,7 @@ where
             let (module_name, module_name_consumed) = parse_asn1_module_name(&tokens[consumed..])?;
             consumed += module_name_consumed;
 
-            for d in defs {
+            for d in imported_defs {
                 if imports.contains_key(&d) {
                     return Err(parse_error!("Definition '{}' is imported twice", d));
                 }

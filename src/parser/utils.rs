@@ -1,7 +1,7 @@
 //! Utility functions for the parser module
 
 use crate::error::Error;
-use crate::structs::Asn1ModuleTag;
+use crate::structs::module::Asn1ModuleTag;
 use crate::tokenizer::Token;
 
 // Required by `expect_*` functions
