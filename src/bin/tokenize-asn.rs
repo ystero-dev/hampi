@@ -11,7 +11,6 @@ fn main() -> io::Result<()> {
         eprintln!("File: {}", arg);
         let file = File::open(arg)?;
         let mut tokens = parser::tokenize(file)?;
-        eprintln!("{:#?}", tokens);
         let module = parser::parse(&mut tokens)?;
         println!("{:#?}", module);
     }

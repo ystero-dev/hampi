@@ -50,7 +50,7 @@ pub struct Asn1ValueAssignment {
     pub typeref: String,
 
     /// Value Text
-    pub text: String,
+    pub value: String,
 }
 
 #[allow(dead_code)]
@@ -62,4 +62,13 @@ pub enum Asn1Definition {
     //InfoObjectClassDefinition,
     //InfoObjectDefinition,
     //InfoObjectSetDefinition,
+}
+
+impl Asn1Definition {
+    pub fn id(&self) -> String {
+        match self {
+            Self::Value(ref v) => v.id.clone(),
+            Self::Type(ref t) => t.id.clone(),
+        }
+    }
 }

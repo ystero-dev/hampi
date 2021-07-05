@@ -2,10 +2,8 @@
 
 use crate::error::Error;
 use crate::structs::module::Asn1ModuleTag;
+use crate::token_types::TokenChecker;
 use crate::tokenizer::Token;
-
-// Required by `expect_*` functions
-type TokenChecker = fn(&Token) -> bool;
 
 // Returns true if the first `token`'s text is same as the passed `keyword`
 pub(crate) fn expect_keyword<'parser>(

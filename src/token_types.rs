@@ -1,5 +1,7 @@
 //! Token Types and related macros
 
+use crate::tokenizer::Token;
+
 /// Token Types
 ///
 /// Each parsed token should be of one of the following types.
@@ -34,6 +36,8 @@ pub enum TokenType {
     AtComponentIdList, // @Component.Id.List form
     LessThan,          // A single '<' (Used in Ranges)
 }
+
+pub type TokenChecker = fn(&Token) -> bool;
 
 macro_rules! create_is_tokentype_fns {
     (($fn:ident, $toktype: path)) => {

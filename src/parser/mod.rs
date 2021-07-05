@@ -15,9 +15,15 @@ mod utils;
 
 mod defs;
 
+mod types;
+
+mod values;
+
 use defs::parse_definition;
 use name::parse_asn1_module_name;
+use types::parse_type;
 use utils::{expect_keyword, expect_token, expect_token_one_of, expect_tokens, maybe_parse_tags};
+use values::parse_value;
 
 fn parse_module<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Module, usize), Error>
 where
@@ -86,8 +92,10 @@ where
         }
     }
 
+    let mut definitions = HashMap::new();
     while !expect_keyword(&tokens[consumed..], "END")? {
-        let (_def, definition_consumed) = parse_definition(&tokens[consumed..])?;
+        let (def, definition_consumed) = parse_definition(&tokens[consumed..])?;
+        definitions.insert(def.id(), def);
         consumed += definition_consumed;
     }
 
@@ -95,7 +103,11 @@ where
     // If 'END' was never found we'd Error out at above 'while'
     consumed += 1;
 
-    let module = Asn1Module::default().name(name).tags(tags).imports(imports);
+    let module = Asn1Module::default()
+        .name(name)
+        .tags(tags)
+        .imports(imports)
+        .definitions(definitions);
     Ok((module, consumed))
 }
 

@@ -43,24 +43,27 @@ pub struct Asn1Module {
     exports: Option<Vec<Asn1Definition>>,
     name: Asn1ModuleName,
     tags: Asn1ModuleTag,
-    types: HashMap<String, Asn1Definition>,
-    values: HashMap<String, Asn1Definition>,
+    definitions: HashMap<String, Asn1Definition>,
     exports_all: bool,
 }
 
 impl Asn1Module {
-    pub fn name(mut self, name: Asn1ModuleName) -> Self {
-        self.name = name;
-        self
+    pub fn name(self, name: Asn1ModuleName) -> Self {
+        Self { name, ..self }
     }
 
-    pub fn tags(mut self, tags: Asn1ModuleTag) -> Self {
-        self.tags = tags;
-        self
+    pub fn tags(self, tags: Asn1ModuleTag) -> Self {
+        Self { tags, ..self }
     }
 
-    pub fn imports(mut self, imports: HashMap<String, Asn1ModuleName>) -> Self {
-        self.imports = imports;
-        self
+    pub fn imports(self, imports: HashMap<String, Asn1ModuleName>) -> Self {
+        Self { imports, ..self }
+    }
+
+    pub fn definitions(self, definitions: HashMap<String, Asn1Definition>) -> Self {
+        Self {
+            definitions,
+            ..self
+        }
     }
 }

@@ -256,14 +256,23 @@ impl Token {
         self.is_keyword() && self.text == keyword
     }
 
-    /// Checks whether the given token is a well-known type.
-    pub fn is_asn_base_type(&self) -> bool {
+    /// Checks whether the given token is a builtin type.
+    pub fn is_asn_builtin_type(&self) -> bool {
         BASE_TYPES.iter().any(|&t| t == self.text.as_str())
     }
 
     /// Returns the 'span' of the current token.
     pub fn span(&self) -> Span {
         self.span.clone()
+    }
+
+    /// Returns the 'String' obtained by Concatenating tokens.
+    pub fn concat(tokens: &[Token]) -> String {
+        tokens
+            .iter()
+            .map(|x| x.text.clone())
+            .collect::<Vec<String>>()
+            .join(" ")
     }
 
     // Private Functions
