@@ -1,9 +1,12 @@
 //! Top level handling of definitions
 
 use crate::error::Error;
-use crate::parser::{expect_token, expect_token_one_of, parse_type, parse_value};
 use crate::structs::defs::{Asn1Definition, Asn1ValueAssignment};
 use crate::tokenizer::Token;
+
+use super::types::parse_type;
+use super::utils::{expect_token, expect_token_one_of};
+use super::values::parse_value;
 
 pub(crate) fn parse_definition<'parser>(
     tokens: &'parser [Token],

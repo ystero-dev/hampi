@@ -1,20 +1,14 @@
-//! Structures and functions related to handling ASN.1 Module Names
-//!
-//! An ASN.1 Module name is an Identifier with optional 'OBJECT IDENTIFIER'. It is better that the
-//! module name is treated as such since this is required at several places (eg. while parsing
-//! Import definitions etc.)
-//!
+//! Parsing functionality related to Object Identifier
+
 use std::collections::HashMap;
 
 use lazy_static::lazy_static;
 
 use crate::error::Error;
-use crate::parser::{expect_token, expect_token_one_of, expect_tokens};
-use crate::structs::{
-    module::Asn1ModuleName,
-    oid::{OIDComponent, ObjectIdentifier},
-};
+use crate::structs::oid::{OIDComponent, ObjectIdentifier};
 use crate::tokenizer::Token;
+
+use super::utils::{expect_token, expect_token_one_of, expect_tokens};
 
 lazy_static! {
     static ref WELL_KNOWN_OID_NAMES: HashMap<&'static str, u32> = {
@@ -137,54 +131,6 @@ pub(crate) fn parse_object_identifier<'parser>(
         }
     }
     Ok(ObjectIdentifier::new(components))
-}
-
-pub(super) fn parse_asn1_module_name<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Asn1ModuleName, usize), Error> {
-    let mut consumed = 0;
-    // First Name
-
-    let name = if expect_token(&tokens[consumed..], Token::is_module_reference)? {
-        tokens[consumed].text.clone()
-    } else {
-        return Err(parse_error!(
-            "Module Name '{}' is not a valid Module Reference",
-            tokens[consumed].text
-        ));
-    };
-    consumed += 1;
-
-    // Now OID
-    // Optional Object Identifier
-    let (oid, oid_consumed) = maybe_parse_object_identifer(&tokens[consumed..])?;
-    consumed += oid_consumed;
-
-    Ok((Asn1ModuleName::new(name, oid), consumed))
-}
-
-fn maybe_parse_object_identifer<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Option<ObjectIdentifier>, usize), Error> {
-    if tokens.is_empty() || !tokens[0].is_curly_begin() {
-        return Ok((None, 0));
-    }
-    let mut curly_end: Option<usize> = None;
-    for (idx, token) in tokens.iter().enumerate() {
-        if token.is_curly_end() {
-            curly_end = Some(idx);
-            break;
-        }
-    }
-
-    if curly_end.is_none() {
-        return Err(parse_error!("Expected '}}'. Never Found."));
-    }
-    let idx = curly_end.unwrap();
-
-    let oid = parse_object_identifier(&tokens[..=idx])?;
-
-    Ok((Some(oid), idx + 1))
 }
 
 #[cfg(test)]

@@ -1,7 +1,6 @@
 //! Utility functions for the parser module
 
 use crate::error::Error;
-use crate::structs::module::Asn1ModuleTag;
 use crate::token_types::TokenChecker;
 use crate::tokenizer::Token;
 
@@ -66,34 +65,4 @@ pub(crate) fn expect_tokens<'parser>(
             .zip(tokens.iter())
             .all(|(inner_tokens, t)| inner_tokens.iter().any(|c| c(t))))
     }
-}
-
-pub(crate) fn maybe_parse_tags<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Asn1ModuleTag, usize), Error> {
-    let mut consumed = 0;
-
-    let tag =
-        if expect_one_of_keywords(&tokens[consumed..], &["EXPLICIT", "IMPLICIT", "AUTOMATIC"])? {
-            let tag: Asn1ModuleTag;
-            match tokens[consumed].text.as_str() {
-                "EXPLICIT" => tag = Asn1ModuleTag::Explicit,
-                "IMPLICIT" => tag = Asn1ModuleTag::Implicit,
-                "AUTOMATIC" => tag = Asn1ModuleTag::Automatic,
-                _ => {
-                    // Will never reach
-                    return Err(parse_error!("Should Never Reach"));
-                }
-            }
-            consumed += 1;
-            if expect_keyword(&tokens[consumed..], "TAGS")? {
-                consumed += 1
-            } else {
-                return Err(unexpected_token!("TAGS", tokens[consumed]));
-            }
-            tag
-        } else {
-            Asn1ModuleTag::Explicit
-        };
-    Ok((tag, consumed))
 }
