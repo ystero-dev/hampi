@@ -20,7 +20,7 @@ where
     let mut consumed = 0;
 
     // Module Name and Object Identifier
-    let (name, name_consumed) = parse_asn1_module_name(&tokens[consumed..])?;
+    let (name, name_consumed) = parse_module_name(&tokens[consumed..])?;
     consumed += name_consumed;
 
     // DEFINITIONS Keywords
@@ -91,7 +91,7 @@ fn parse_module_imports<'parser>(
                 }
             }
             consumed += 1;
-            let (module_name, module_name_consumed) = parse_asn1_module_name(&tokens[consumed..])?;
+            let (module_name, module_name_consumed) = parse_module_name(&tokens[consumed..])?;
             consumed += module_name_consumed;
 
             for d in imported_defs {
@@ -141,9 +141,7 @@ fn maybe_parse_header_tags<'parser>(
     Ok((tag, consumed))
 }
 
-fn parse_asn1_module_name<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Asn1ModuleName, usize), Error> {
+fn parse_module_name<'parser>(tokens: &'parser [Token]) -> Result<(Asn1ModuleName, usize), Error> {
     let mut consumed = 0;
     // First Name
 
@@ -196,7 +194,7 @@ mod tests {
     use crate::parser::tokenize;
 
     #[test]
-    fn empty_basic_module_success() {
+    fn empty_module_success() {
         let input = "ModuleFoo DEFINITIONS ::= BEGIN END";
         let reader = std::io::BufReader::new(std::io::Cursor::new(input));
         let tokens = tokenize(reader);
@@ -205,38 +203,76 @@ mod tests {
         let mut tokens = tokens.unwrap();
         let module = parse_module(&mut tokens);
         assert!(module.is_ok(), "{}: {:#?}", input, module.err());
+
+        let (module, consumed) = module.unwrap();
+        assert_eq!(consumed, 5);
+
+        assert!(module.definitions.is_empty());
+        assert!(module.imports.is_empty());
+        assert_eq!(module.tags, Asn1ModuleTag::Explicit);
     }
+    // TODO: Test Cases for imports (count), Tags (type), Definitions (count))
+    // TODO: Test Cases for missing BEGIN, END, DEFINITIONS, ::=
 
     #[test]
-    fn name_empty_module_failure() {
-        let reader = std::io::BufReader::new(std::io::Cursor::new("ModuleFoo"));
-        let tokens = tokenize(reader);
-        assert!(tokens.is_ok());
+    fn parse_module_name_tests() {
+        struct ParseModuleNameTestCase<'tc> {
+            input: &'tc str,
+            success: bool,
+            consumed: usize,
+            oid_present: bool,
+        }
 
-        let mut tokens = tokens.unwrap();
-        let module = parse_module(&mut tokens);
-        assert!(module.is_err(), "{:#?}", module.ok());
-    }
+        let test_cases = vec![
+            ParseModuleNameTestCase {
+                input: "ModuleFoo",
+                success: true,
+                consumed: 1,
+                oid_present: false,
+            },
+            ParseModuleNameTestCase {
+                input: "moduleFoo",
+                success: false,
+                consumed: 0,
+                oid_present: false,
+            },
+            ParseModuleNameTestCase {
+                input: "ModuleFoo { iso }",
+                success: true,
+                consumed: 4,
+                oid_present: true,
+            },
+            ParseModuleNameTestCase {
+                input: "ModuleFoo { iso ",
+                success: false,
+                consumed: 0,
+                oid_present: false,
+            },
+            ParseModuleNameTestCase {
+                input: "ModuleFoo iso ", // This is success, 'iso' is ignored
+                success: true,
+                consumed: 1,
+                oid_present: false,
+            },
+            ParseModuleNameTestCase {
+                input: "NGAP-CommonDataTypes { itu-t (0) identified-organization (4) etsi (0) mobileDomain (0) ngran-Access (22) modules (3) ngap (1) version1 (1) ngap-CommonDataTypes (3) }", success: true, consumed: 39, oid_present: true,
+            }
+        ];
 
-    #[test]
-    fn name_lowercase_fail() {
-        let reader = std::io::BufReader::new(std::io::Cursor::new("moduleFoo"));
-        let tokens = tokenize(reader);
-        assert!(tokens.is_ok());
+        for tc in test_cases {
+            let reader = std::io::BufReader::new(std::io::Cursor::new(tc.input));
+            let tokens = tokenize(reader);
+            assert!(tokens.is_ok());
 
-        let mut tokens = tokens.unwrap();
-        let module = parse_module(&mut tokens);
-        assert!(module.is_err(), "{:#?}", module.ok());
-    }
+            let mut tokens = tokens.unwrap();
+            let module = parse_module_name(&mut tokens);
+            assert_eq!(module.is_ok(), tc.success, "{}", tc.input);
 
-    #[test]
-    fn name_oid_failure() {
-        let reader = std::io::BufReader::new(std::io::Cursor::new("ModuleFoo { iso } "));
-        let tokens = tokenize(reader);
-        assert!(tokens.is_ok());
-
-        let mut tokens = tokens.unwrap();
-        let module = parse_module(&mut tokens);
-        assert!(module.is_err(), "{:#?}", module.ok());
+            if tc.success {
+                let (module, consumed) = module.unwrap();
+                assert_eq!(consumed, tc.consumed);
+                assert_eq!(module.oid.is_some(), tc.oid_present);
+            }
+        }
     }
 }

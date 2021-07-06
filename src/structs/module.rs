@@ -4,7 +4,7 @@ use std::collections::HashMap;
 
 use crate::structs::{defs::Asn1Definition, oid::ObjectIdentifier};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Asn1ModuleTag {
     Explicit,
     Implicit,
@@ -19,8 +19,8 @@ impl Default for Asn1ModuleTag {
 
 #[derive(Debug, Default, Clone)]
 pub struct Asn1ModuleName {
-    name: String,
-    oid: Option<ObjectIdentifier>,
+    pub name: String,
+    pub oid: Option<ObjectIdentifier>,
 }
 
 impl Asn1ModuleName {
@@ -39,12 +39,12 @@ impl Asn1ModuleName {
 /// information about it is kept as well.
 #[derive(Debug, Default)]
 pub struct Asn1Module {
-    imports: HashMap<String, Asn1ModuleName>,
-    exports: Option<Vec<Asn1Definition>>,
-    name: Asn1ModuleName,
-    tags: Asn1ModuleTag,
-    definitions: HashMap<String, Asn1Definition>,
-    exports_all: bool,
+    pub(crate) imports: HashMap<String, Asn1ModuleName>,
+    pub(crate) exports: Option<Vec<Asn1Definition>>,
+    pub(crate) name: Asn1ModuleName,
+    pub(crate) tags: Asn1ModuleTag,
+    pub(crate) definitions: HashMap<String, Asn1Definition>,
+    pub(crate) exports_all: bool,
 }
 
 impl Asn1Module {

@@ -39,3 +39,5 @@ pub fn parse<'parser>(tokens: &'parser mut Vec<Token>) -> Result<Vec<Asn1Module>
     }
     Ok(modules)
 }
+
+// TODO: Test cases, at-least single-module, multiple modules etc.
