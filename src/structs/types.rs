@@ -11,6 +11,13 @@ pub enum Asn1BuiltInType {
     OctetString,
     ObjectIdentifier,
     RelativeOid,
+    Sequence,
+    Set,
+    Choice,
+    SequenceOf,
+    SetOf,
+
+    // Consumes a lot of String Types.
     CharacterString,
     // We don't know yet
     UnResolved,

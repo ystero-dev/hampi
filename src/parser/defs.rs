@@ -1,7 +1,7 @@
 //! Top level handling of definitions
 
 use crate::error::Error;
-use crate::structs::defs::{Asn1Definition, Asn1ValueAssignment};
+use crate::structs::defs::{Asn1Definition, Asn1TypeAssignment, Asn1ValueAssignment};
 use crate::tokenizer::Token;
 
 use super::types::parse_type;
@@ -65,8 +65,26 @@ fn parse_valueish_definition<'parser>(
 fn parse_typeish_definition<'parser>(
     tokens: &'parser [Token],
 ) -> Result<(Asn1Definition, usize), Error> {
-    eprintln!("Token: {:#?}", tokens[0]);
-    Err(parse_error!("Typeish Assignment Parsing Not Implemented"))
+    let mut consumed = 0;
+
+    if !expect_token(&tokens[consumed..], Token::is_type_reference)? {
+        return Err(unexpected_token!("Type Reference", tokens[consumed]));
+    }
+    let id = tokens[consumed].text.clone();
+    consumed += 1;
+
+    if !expect_token(&tokens[consumed..], Token::is_assignment)? {
+        return Err(unexpected_token!("::=", tokens[consumed]));
+    }
+    consumed += 1;
+
+    let (definition, definition_consumed) = parse_type(&tokens[consumed..])?;
+    consumed += definition_consumed;
+
+    Ok((
+        Asn1Definition::Type(Asn1TypeAssignment { id, definition }),
+        consumed,
+    ))
 }
 
 // TODO: Add Test cases

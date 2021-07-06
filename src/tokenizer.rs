@@ -105,6 +105,8 @@ const BASE_TYPES: &'static [&'static str] = &[
     "CHARACTER-STRING",
 ];
 
+const CONSTRUCTED_TYPES: &'static [&'static str] = &["SEQUENCE", "SET", "CHOICE"];
+
 /// Line and Column in the source where the token begins.
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub(crate) struct LineColumn {
@@ -259,6 +261,7 @@ impl Token {
     /// Checks whether the given token is a builtin type.
     pub fn is_asn_builtin_type(&self) -> bool {
         BASE_TYPES.iter().any(|&t| t == self.text.as_str())
+            || CONSTRUCTED_TYPES.iter().any(|&t| t == self.text.as_str())
     }
 
     /// Returns the 'span' of the current token.

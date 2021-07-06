@@ -67,4 +67,37 @@ pub(crate) fn expect_tokens<'parser>(
     }
 }
 
+// Consumes every thing between balanced "{" and "}" or "(" and ")".
+//
+// Unbalanced paranthesis is an error.
+pub(super) fn parse_set_ish_value<'parser>(
+    tokens: &'parser [Token],
+) -> Result<(String, usize), Error> {
+    let (begin_token, end_token): (TokenChecker, TokenChecker) =
+        if expect_token(tokens, Token::is_curly_begin)? {
+            (Token::is_curly_begin, Token::is_curly_end)
+        } else if expect_token(tokens, Token::is_round_begin)? {
+            (Token::is_round_begin, Token::is_round_end)
+        } else {
+            return Err(unexpected_token!("'(' or '}'", tokens[0]));
+        };
+
+    let mut level = 0;
+    let mut consumed = 0;
+
+    loop {
+        if expect_token(&tokens[consumed..], begin_token)? {
+            level += 1;
+        }
+        consumed += 1;
+        if expect_token(&tokens[consumed..], end_token)? {
+            level -= 1;
+            consumed += 1;
+            if level == 0 {
+                return Ok((Token::concat(&tokens[0..consumed]), consumed));
+            }
+        }
+    }
+}
+
 // TODO: Test Cases

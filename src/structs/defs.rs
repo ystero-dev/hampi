@@ -1,7 +1,5 @@
 //! ASN.1 Definitions relates Structs
 
-use crate::structs::module::Asn1ModuleName;
-
 #[derive(Debug)]
 pub struct Asn1Constraint;
 
@@ -9,18 +7,6 @@ pub struct Asn1Constraint;
 pub struct Asn1TypeAssignment {
     /// Type Identifier
     pub id: String,
-
-    /// Name following the assignment
-    pub base: String,
-
-    /// Constraints applied to the type
-    pub constraints: Vec<Asn1Constraint>,
-
-    /// Is Parameterized?
-    pub is_parameterized: bool,
-
-    /// Module to which this type belongs?
-    pub module_name: Asn1ModuleName,
 
     /// Type definition text (concatenated text of all tokens that define this type.)
     pub definition: String,
