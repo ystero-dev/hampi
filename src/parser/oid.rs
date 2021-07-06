@@ -104,7 +104,7 @@ fn parse_oid_component<'parser>(tokens: &'parser [Token]) -> Result<(OIDComponen
 
 pub(crate) fn parse_object_identifier<'parser>(
     tokens: &'parser [Token],
-) -> Result<ObjectIdentifier, Error> {
+) -> Result<(ObjectIdentifier, usize), Error> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_curly_begin)? {
@@ -113,24 +113,16 @@ pub(crate) fn parse_object_identifier<'parser>(
     consumed += 1;
 
     let mut components = vec![];
-    loop {
-        let result = parse_oid_component(&tokens[consumed..]);
-        match result {
-            Ok((comp, c)) => {
-                components.push(comp);
-                consumed += c;
-            }
-            Err(e) => {
-                let tok = &tokens[consumed];
-                if tok.is_curly_end() {
-                    break;
-                } else {
-                    return Err(e);
-                }
-            }
-        }
+    while !expect_token(&tokens[consumed..], Token::is_curly_end)? {
+        let (component, component_consumed) = parse_oid_component(&tokens[consumed..])?;
+        components.push(component);
+        consumed += component_consumed;
     }
-    Ok(ObjectIdentifier::new(components))
+    consumed += 1;
+
+    // FIXME: OID with empty components is an Error?
+
+    Ok((ObjectIdentifier::new(components), consumed))
 }
 
 #[cfg(test)]
@@ -150,13 +142,6 @@ mod tests {
     #[test]
     fn object_identifier_cases() {
         let test_cases = vec![
-            OIDTestCase {
-                input: "{ iso }",
-                success: true,
-                consumed: 0,
-                parse_component_only: false,
-                components_count: 1,
-            },
             OIDTestCase {
                 input: " iso ",
                 success: true,
@@ -209,9 +194,16 @@ mod tests {
             OIDTestCase {
                 input: " { iso something(3) }",
                 success: true,
-                consumed: 0,
+                consumed: 7,
                 parse_component_only: false,
                 components_count: 2,
+            },
+            OIDTestCase {
+                input: "{ iso }",
+                success: true,
+                consumed: 3,
+                parse_component_only: false,
+                components_count: 1,
             },
         ];
 
@@ -232,8 +224,9 @@ mod tests {
                 let oid = parse_object_identifier(&tokens);
                 assert_eq!(oid.is_ok(), tc.success, "{:#?}", tc.input);
                 if tc.success {
-                    let oid = oid.unwrap();
+                    let (oid, consumed) = oid.unwrap();
                     assert_eq!(oid.len(), tc.components_count);
+                    assert_eq!(consumed, tc.consumed);
                 }
             }
         }

@@ -166,25 +166,22 @@ fn parse_module_name<'parser>(tokens: &'parser [Token]) -> Result<(Asn1ModuleNam
 fn maybe_parse_object_identifer<'parser>(
     tokens: &'parser [Token],
 ) -> Result<(Option<ObjectIdentifier>, usize), Error> {
-    if tokens.is_empty() || !tokens[0].is_curly_begin() {
-        return Ok((None, 0));
-    }
-    let mut curly_end: Option<usize> = None;
-    for (idx, token) in tokens.iter().enumerate() {
-        if token.is_curly_end() {
-            curly_end = Some(idx);
-            break;
+    match expect_token(tokens, Token::is_curly_begin) {
+        Ok(success) => {
+            if success {
+                let out = match parse_object_identifier(tokens) {
+                    Ok((oid, consumed)) => Ok((Some(oid), consumed)),
+                    Err(e) => Err(e),
+                };
+                out
+            } else {
+                Ok((None, 0))
+            }
         }
+        // This can only `Err` when we've reached End of tokens, which is a `None` object
+        // Identifier.
+        Err(_) => Ok((None, 0)),
     }
-
-    if curly_end.is_none() {
-        return Err(parse_error!("Expected '}}'. Never Found."));
-    }
-    let idx = curly_end.unwrap();
-
-    let oid = parse_object_identifier(&tokens[..=idx])?;
-
-    Ok((Some(oid), idx + 1))
 }
 
 #[cfg(test)]
@@ -249,7 +246,7 @@ mod tests {
                 oid_present: false,
             },
             ParseModuleNameTestCase {
-                input: "ModuleFoo iso ", // This is success, 'iso' is ignored
+                input: "ModuleFoo iso ", // This is a success, 'iso' is ignored.
                 success: true,
                 consumed: 1,
                 oid_present: false,
