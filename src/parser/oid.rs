@@ -102,7 +102,7 @@ fn parse_oid_component<'parser>(tokens: &'parser [Token]) -> Result<(OIDComponen
     }
 }
 
-pub(crate) fn parse_object_identifier<'parser>(
+pub(super) fn parse_object_identifier<'parser>(
     tokens: &'parser [Token],
 ) -> Result<(ObjectIdentifier, usize), Error> {
     let mut consumed = 0;
@@ -129,7 +129,7 @@ pub(crate) fn parse_object_identifier<'parser>(
 mod tests {
 
     use super::*;
-    use crate::parser::tokenize;
+    use crate::tokenizer::tokenize;
 
     struct OIDTestCase<'testcase> {
         input: &'testcase str,

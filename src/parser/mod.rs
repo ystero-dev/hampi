@@ -1,7 +1,5 @@
 //! Main Parser module
 //!
-pub use crate::tokenizer::tokenize;
-
 use crate::error::Error;
 use crate::structs::module::Asn1Module;
 use crate::tokenizer::Token;

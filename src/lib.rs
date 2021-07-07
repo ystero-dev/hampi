@@ -7,11 +7,11 @@
 #[macro_use]
 pub mod error;
 
+/// ASN.1 Tokenizer and Related Types
 #[macro_use]
-pub mod token_types;
+pub mod tokenizer;
 
-mod tokenizer;
-
+/// ASN1. Parser and Related Types
 pub mod parser;
 
 mod structs;

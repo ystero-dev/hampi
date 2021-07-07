@@ -12,7 +12,7 @@ use super::defs::parse_definition;
 use super::oid::parse_object_identifier;
 use super::utils::{expect_keyword, expect_one_of_keywords, expect_token};
 
-pub(crate) fn parse_module<'parser>(
+pub(super) fn parse_module<'parser>(
     tokens: &'parser [Token],
 ) -> Result<(Asn1Module, usize), Error>
 where
@@ -188,7 +188,7 @@ fn maybe_parse_object_identifer<'parser>(
 mod tests {
 
     use super::*;
-    use crate::parser::tokenize;
+    use crate::tokenizer::tokenize;
 
     #[test]
     fn empty_module_success() {

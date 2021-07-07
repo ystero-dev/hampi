@@ -2,8 +2,12 @@
 #![allow(unused_variables)]
 //! Tokenizer for an ASN.1 module
 
+#[macro_use]
+pub mod types;
+
 use crate::error::Error;
-use crate::token_types::TokenType;
+
+use types::TokenType;
 
 // Keywords
 const KEYWORDS: &'static [&'static str] = &[
@@ -951,10 +955,12 @@ fn splice_tokens(tokens: Vec<Token>) -> Vec<Token> {
 #[cfg(test)]
 mod tests {
 
+    use super::*;
+
     #[test]
     fn tokenize_identifier_tokens() {
         let reader = std::io::BufReader::new(std::io::Cursor::new(b"Hello World!"));
-        let result = crate::parser::tokenize(reader);
+        let result = tokenize(reader);
         assert!(result.is_ok(), "{:#?}", result.err());
         let tokens = result.unwrap();
         assert!(tokens.len() == 3, "{:#?}", tokens);
@@ -963,7 +969,7 @@ mod tests {
     #[test]
     fn tokenize_and_tokens() {
         let reader = std::io::BufReader::new(std::io::Cursor::new(b"&Id &id-IDentifier"));
-        let result = crate::parser::tokenize(reader);
+        let result = tokenize(reader);
         assert!(result.is_ok());
         let tokens = result.unwrap();
         assert!(tokens.len() == 2, "{:#?}", tokens);
@@ -973,7 +979,7 @@ mod tests {
     fn tokenize_comment_two_lines() {
         let reader =
             std::io::BufReader::new(std::io::Cursor::new(b"Hello World!\n-- Some comment --\n"));
-        let result = crate::parser::tokenize(reader);
+        let result = tokenize(reader);
         assert!(result.is_ok());
         let tokens = result.unwrap();
         assert!(tokens.len() == 4, "{:#?}", tokens);
@@ -984,7 +990,7 @@ mod tests {
         let reader = std::io::BufReader::new(std::io::Cursor::new(
             b" -- Hello World!\n-- Some comment --\n",
         ));
-        let result = crate::parser::tokenize(reader);
+        let result = tokenize(reader);
         assert!(result.is_ok());
         let tokens = result.unwrap();
         assert!(tokens.len() == 2, "{:#?}", tokens);
@@ -993,7 +999,7 @@ mod tests {
     #[test]
     fn tokenize_comment_no_trailing_newline() {
         let reader = std::io::BufReader::new(std::io::Cursor::new(b" -- Hello World!"));
-        let result = crate::parser::tokenize(reader);
+        let result = tokenize(reader);
         assert!(result.is_ok());
         let tokens = result.unwrap();
         assert!(tokens.len() == 1, "{:#?}", tokens);
@@ -1002,7 +1008,7 @@ mod tests {
     #[test]
     fn tokenize_keywords() {
         let reader = std::io::BufReader::new(std::io::Cursor::new(b"  INTEGER ENUMERATED "));
-        let result = crate::parser::tokenize(reader);
+        let result = tokenize(reader);
         assert!(result.is_ok());
         let tokens = result.unwrap();
         assert!(tokens.len() == 2, "{:#?}", tokens);
@@ -1013,7 +1019,7 @@ mod tests {
     fn tokenize_at_component_list() {
         let reader =
             std::io::BufReader::new(std::io::Cursor::new(b"@component.id-List @.another "));
-        let result = crate::parser::tokenize(reader);
+        let result = tokenize(reader);
         assert!(result.is_ok());
         let tokens = result.unwrap();
         assert!(tokens.len() == 2, "{:#?}", tokens);
@@ -1022,7 +1028,7 @@ mod tests {
     #[test]
     fn tokenize_numbers() {
         let reader = std::io::BufReader::new(std::io::Cursor::new(b" 123456789 -123"));
-        let result = crate::parser::tokenize(reader);
+        let result = tokenize(reader);
         assert!(result.is_ok());
         let tokens = result.unwrap();
         assert!(tokens.len() == 2, "{:#?}", tokens);
@@ -1034,7 +1040,7 @@ mod tests {
         let reader = std::io::BufReader::new(std::io::Cursor::new(
             b"ATTRIBUTE.&equality-match.&AssertionType",
         ));
-        let result = crate::parser::tokenize(reader);
+        let result = tokenize(reader);
         assert!(result.is_ok());
         let tokens = result.unwrap();
         assert!(tokens.len() == 5, "{:#?}", tokens);
@@ -1043,7 +1049,7 @@ mod tests {
     #[test]
     fn tokenize_range() {
         let reader = std::io::BufReader::new(std::io::Cursor::new(b" -123456789..-123"));
-        let result = crate::parser::tokenize(reader);
+        let result = tokenize(reader);
         assert!(result.is_ok());
         let tokens = result.unwrap();
         assert!(tokens.len() == 3, "{:#?}", tokens);
@@ -1093,7 +1099,7 @@ mod tests {
         ];
         for t in test_cases {
             let reader = std::io::BufReader::new(std::io::Cursor::new(t.input));
-            let result = crate::parser::tokenize(reader);
+            let result = tokenize(reader);
             assert_eq!(result.is_ok(), t.success, "{:#?}", result.unwrap()[0]);
             if result.is_ok() {
                 let tokens = result.unwrap();
@@ -1149,7 +1155,7 @@ mod tests {
         ];
         for test_case in test_cases {
             let reader = std::io::BufReader::new(std::io::Cursor::new(test_case.input));
-            let result = crate::parser::tokenize(reader);
+            let result = tokenize(reader);
             assert_eq!(
                 result.is_ok(),
                 test_case.success,
@@ -1233,7 +1239,7 @@ mod tests {
         ];
         for test_case in test_cases {
             let reader = std::io::BufReader::new(std::io::Cursor::new(test_case.input));
-            let result = crate::parser::tokenize(reader);
+            let result = tokenize(reader);
             assert_eq!(
                 result.is_ok(),
                 test_case.success,
@@ -1271,7 +1277,7 @@ mod tests {
 
         for tc in test_cases {
             let reader = std::io::BufReader::new(std::io::Cursor::new(tc.input));
-            let result = crate::parser::tokenize(reader);
+            let result = tokenize(reader);
             assert!(result.is_ok());
 
             let result = result.unwrap();

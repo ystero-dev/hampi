@@ -1,8 +1,7 @@
 //! Functions related to parsing of various Values
 
 use crate::error::Error;
-use crate::token_types::TokenType;
-use crate::tokenizer::Token;
+use crate::tokenizer::{types::TokenType, Token};
 
 use super::utils::{expect_token_one_of, parse_set_ish_value};
 

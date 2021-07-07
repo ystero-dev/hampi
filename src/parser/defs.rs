@@ -8,7 +8,7 @@ use super::types::parse_type;
 use super::utils::{expect_token, expect_token_one_of};
 use super::values::parse_value;
 
-pub(crate) fn parse_definition<'parser>(
+pub(super) fn parse_definition<'parser>(
     tokens: &'parser [Token],
 ) -> Result<(Asn1Definition, usize), Error> {
     let consumed = 0;
