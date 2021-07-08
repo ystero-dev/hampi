@@ -209,6 +209,7 @@ impl Token {
         (is_set_union, TokenType::SetUnion),
         (is_set_intersection, TokenType::SetIntersection),
         (is_at_component_list, TokenType::AtComponentIdList),
+        (is_less_than, TokenType::LessThan),
     }
 
     // Checkers for ASN.1 Lexical Token types

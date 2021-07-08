@@ -1,9 +1,6 @@
 //! ASN.1 Definitions relates Structs
 
 #[derive(Debug)]
-pub struct Asn1Constraint;
-
-#[derive(Debug)]
 pub struct Asn1TypeAssignment {
     /// Type Identifier
     pub id: String,

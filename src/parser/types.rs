@@ -3,6 +3,7 @@
 use crate::error::Error;
 use crate::tokenizer::Token;
 
+use super::constraints::parse_constraints;
 use super::utils::{
     expect_keyword, expect_one_of_keywords, expect_token_one_of, parse_set_ish_value,
 };
@@ -38,17 +39,16 @@ pub(super) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(String, u
     consumed += type_str_consumed;
 
     // Now: Parse any constraints;
+    /*
     let (constraints_str, constraints_str_consumed) = match parse_constraints(&tokens[consumed..]) {
         Ok((s, c)) => (s, c),
         Err(_) => ("".to_string(), 0),
     };
     consumed += constraints_str_consumed;
+    */
+    let constraints_str = "".to_string();
 
     Ok(([type_str, constraints_str].to_vec().join(" "), consumed))
-}
-
-fn parse_constraints<'parser>(tokens: &'parser [Token]) -> Result<(String, usize), Error> {
-    parse_set_ish_value(tokens)
 }
 
 fn parse_bit_string_type<'parser>(_tokens: &'parser [Token]) -> Result<(String, usize), Error> {

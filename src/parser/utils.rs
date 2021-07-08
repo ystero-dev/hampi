@@ -56,6 +56,7 @@ pub(super) fn expect_tokens<'parser>(
     tokens: &'parser [Token],
     checkers: &'parser [&'parser [TokenChecker]],
 ) -> Result<bool, Error> {
+    eprintln!("expect_tokens");
     if tokens.len() < checkers.len() {
         Err(unexpected_end!())
     } else {
