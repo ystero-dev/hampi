@@ -7,6 +7,7 @@ use crate::structs::constraints::{
 };
 use crate::tokenizer::Token;
 
+use super::types::parse_type;
 use super::utils::{expect_keyword, expect_one_of_keywords, expect_token, expect_tokens};
 use super::values::parse_value;
 
@@ -82,7 +83,6 @@ fn parse_constraint<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Constraint
 fn parse_union_set<'parser>(tokens: &'parser [Token]) -> Result<(UnionSet, usize), Error> {
     let mut consumed = 0;
 
-    eprintln!("parse_union_set");
     let mut elements = vec![];
     // UnionSet Loop
     loop {
@@ -96,7 +96,6 @@ fn parse_union_set<'parser>(tokens: &'parser [Token]) -> Result<(UnionSet, usize
                     consumed += result.1;
                 }
                 Err(_) => {
-                    eprintln!("parse_intersection_set:Err");
                     if expecting_iset {
                         return Err(parse_error!("Expecting Interesection Set in a Constraint."));
                     }
@@ -104,7 +103,6 @@ fn parse_union_set<'parser>(tokens: &'parser [Token]) -> Result<(UnionSet, usize
             }
 
             if !expect_token(&tokens[consumed..], Token::is_set_intersection)? {
-                eprintln!("parse_intersection_set:break:IntersectionSet");
                 break; // Break intersection Set loop.
             } else {
                 expecting_iset = true;
@@ -118,7 +116,6 @@ fn parse_union_set<'parser>(tokens: &'parser [Token]) -> Result<(UnionSet, usize
         }
 
         if !expect_token(&tokens[consumed..], Token::is_set_union)? {
-            eprintln!("parse_intersection_set:break:UnionSet");
             break; // Break UnionSet loop.
         } else {
             consumed += 1;
@@ -131,7 +128,7 @@ fn parse_union_set<'parser>(tokens: &'parser [Token]) -> Result<(UnionSet, usize
 // Just like parse_union_set, except it consumes the wrapping `(` and `)`
 //
 // This avoid having to write a lot of boiler-plate code to check for `(` or `)` in a few
-// functions (typically inside `parse_intersection_set`.
+// functions (typically inside `parse_intersection_set`.)
 fn parse_enclosed_union_set<'parser>(tokens: &'parser [Token]) -> Result<(UnionSet, usize), Error> {
     let mut consumed = 0;
     if expect_token(&tokens[consumed..], Token::is_round_begin)? {
@@ -155,9 +152,7 @@ fn parse_intersection_set<'parser>(tokens: &'parser [Token]) -> Result<(Elements
     let mut consumed = 0;
 
     // First try to Parse a Size
-    eprintln!("parse_intersection_set");
     if expect_one_of_keywords(&tokens[consumed..], &["SIZE", "FROM"])? {
-        eprintln!("size_or_from");
         // If we come inside, following is guaranteed. to succeed.
         let variant = if expect_keyword(&tokens[consumed..], "SIZE").unwrap() {
             SubtypeElements::SizeConstraint
@@ -213,6 +208,21 @@ fn parse_intersection_set<'parser>(tokens: &'parser [Token]) -> Result<(Elements
         Err(_) => {}
     }
 
+    // Parse ContainedSubtype. Note: While the actual grammar specifies `Type` production, In
+    // reality, this should just be a TypeReference. But we parse it as a full Type regardless.
+    match parse_type(&tokens[consumed..]) {
+        Ok(result) => {
+            let parsed_type = result.0;
+            consumed += result.1;
+
+            return Ok((
+                Elements::Subtype(SubtypeElements::ConstrainedSubtype(parsed_type)),
+                consumed,
+            ));
+        }
+        Err(_) => {}
+    }
+
     Err(parse_error!("parse_intersection_set: Not Implmented"))
 }
 
@@ -224,7 +234,6 @@ fn parse_intersection_set<'parser>(tokens: &'parser [Token]) -> Result<(Elements
 fn parse_range_elements<'parser>(tokens: &'parser [Token]) -> Result<(RangeElement, usize), Error> {
     let consumed = 0;
 
-    eprintln!("parse_range_elements");
     fn is_min_max_keyword(token: &Token) -> bool {
         ["MIN", "MAX"]
             .iter()

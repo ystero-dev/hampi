@@ -38,7 +38,6 @@ pub(crate) struct Asn1ValueAssignment {
     pub(crate) value: String,
 }
 
-#[allow(dead_code)]
 #[derive(Debug)]
 pub(crate) enum Asn1Definition {
     Value(Asn1ValueAssignment),

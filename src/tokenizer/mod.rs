@@ -1,4 +1,3 @@
-#![allow(dead_code)]
 #![allow(unused_variables)]
 //! Tokenizer for an ASN.1 module
 
@@ -128,14 +127,6 @@ impl LineColumn {
     fn new(line: usize, column: usize) -> Self {
         LineColumn { line, column }
     }
-
-    pub fn line(&self) -> usize {
-        self.line
-    }
-
-    pub fn column(&self) -> usize {
-        self.column
-    }
 }
 
 /// Span of a Token in the ASN Source file.
@@ -158,10 +149,6 @@ impl Span {
 
     pub(crate) fn start(&self) -> LineColumn {
         self.start
-    }
-
-    pub(crate) fn end(&self) -> LineColumn {
-        self.end
     }
 }
 

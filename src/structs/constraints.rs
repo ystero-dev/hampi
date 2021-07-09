@@ -1,5 +1,7 @@
 //! Related to handling of ASN.1 Constraints
 
+use super::types::Asn1Type;
+
 #[derive(Debug)]
 pub(crate) struct RangeElement {
     pub(crate) lower: String,
@@ -11,11 +13,6 @@ pub(crate) struct RangeElement {
 #[derive(Debug)]
 pub(crate) struct ValueElement {
     pub(crate) value: String,
-}
-
-#[derive(Debug)]
-pub(crate) struct TypeElement {
-    pub(crate) reference: String,
 }
 
 #[derive(Debug)]
@@ -32,7 +29,7 @@ pub(crate) enum Elements {
 #[derive(Debug)]
 pub(crate) enum SubtypeElements {
     SingleValue(ValueElement),
-    ConstrainedSubtype(TypeElement),
+    ConstrainedSubtype(Asn1Type),
     ValueRange(RangeElement),
     SizeConstraint(UnionSetElement),
     PermittedAlphabet(UnionSetElement),
