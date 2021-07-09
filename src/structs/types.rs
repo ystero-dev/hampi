@@ -1,8 +1,10 @@
 //! Structures related to ASN.1 Type
 
+use super::constraints::Asn1Constraint;
+
 #[allow(dead_code)]
 #[derive(Debug)]
-pub enum Asn1BuiltInType {
+pub(crate) enum Asn1BuiltInType {
     Integer,
     Enumerated,
     Boolean,
@@ -20,17 +22,18 @@ pub enum Asn1BuiltInType {
     // Consumes a lot of String Types.
     CharacterString,
     // We don't know yet
-    UnResolved,
+    Unresolved,
 }
 
 impl Default for Asn1BuiltInType {
     fn default() -> Self {
-        Self::UnResolved
+        Self::Unresolved
     }
 }
 
-#[derive(Default)]
-pub struct Asn1Type {
-    pub kind: Asn1BuiltInType,
-    pub id: String,
+#[derive(Debug)]
+pub(crate) struct Asn1Type {
+    pub(crate) id: String,
+    pub(crate) kind: Asn1BuiltInType,
+    pub(crate) constraints: Option<Vec<Asn1Constraint>>,
 }

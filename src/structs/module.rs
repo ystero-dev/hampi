@@ -60,7 +60,7 @@ impl Asn1Module {
         Self { imports, ..self }
     }
 
-    pub fn definitions(self, definitions: HashMap<String, Asn1Definition>) -> Self {
+    pub(crate) fn definitions(self, definitions: HashMap<String, Asn1Definition>) -> Self {
         Self {
             definitions,
             ..self

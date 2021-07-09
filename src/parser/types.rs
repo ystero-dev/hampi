@@ -1,6 +1,7 @@
 //! Handling Parsing of ASN.1 Types
 
 use crate::error::Error;
+use crate::structs::types::{Asn1BuiltInType, Asn1Type};
 use crate::tokenizer::Token;
 
 use super::constraints::parse_constraints;
@@ -9,7 +10,7 @@ use super::utils::{
 };
 
 // Parses the `Type` Expansion in the ASN.1 Grammar.
-pub(super) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(String, usize), Error> {
+pub(super) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Type, usize), Error> {
     let mut consumed = 0;
 
     if !expect_one_of_tokens(
@@ -24,7 +25,7 @@ pub(super) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(String, u
 
     // Now: Parse The Type definition.
     let token = &tokens[0];
-    let (type_str, type_str_consumed) = match token.text.as_str() {
+    let (id, id_consumed) = match token.text.as_str() {
         "BIT-STRING" => parse_bit_string_type(tokens)?,
 
         "ENUMERATED" => parse_enumerated_type(tokens)?,
@@ -36,19 +37,23 @@ pub(super) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(String, u
 
         _ => (token.text.clone(), 1),
     };
-    consumed += type_str_consumed;
+    consumed += id_consumed;
 
-    // Now: Parse any constraints;
-    /*
-    let (constraints_str, constraints_str_consumed) = match parse_constraints(&tokens[consumed..]) {
-        Ok((s, c)) => (s, c),
-        Err(_) => ("".to_string(), 0),
+    let kind = Asn1BuiltInType::Unresolved;
+    let (constraints, constraints_str_consumed) = match parse_constraints(&tokens[consumed..]) {
+        Ok((s, c)) => (Some(s), c),
+        Err(_) => (None, 0),
     };
     consumed += constraints_str_consumed;
-    */
-    let constraints_str = "".to_string();
 
-    Ok(([type_str, constraints_str].to_vec().join(" "), consumed))
+    Ok((
+        Asn1Type {
+            id,
+            kind,
+            constraints,
+        },
+        consumed,
+    ))
 }
 
 fn parse_bit_string_type<'parser>(_tokens: &'parser [Token]) -> Result<(String, usize), Error> {

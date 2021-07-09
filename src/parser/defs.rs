@@ -78,11 +78,11 @@ fn parse_typeish_definition<'parser>(
     }
     consumed += 1;
 
-    let (definition, definition_consumed) = parse_type(&tokens[consumed..])?;
-    consumed += definition_consumed;
+    let (typeref, typeref_consumed) = parse_type(&tokens[consumed..])?;
+    consumed += typeref_consumed;
 
     Ok((
-        Asn1Definition::Type(Asn1TypeAssignment { id, definition }),
+        Asn1Definition::Type(Asn1TypeAssignment { id, typeref }),
         consumed,
     ))
 }

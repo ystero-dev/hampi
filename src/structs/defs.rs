@@ -1,12 +1,14 @@
 //! ASN.1 Definitions relates Structs
 
-#[derive(Debug)]
-pub struct Asn1TypeAssignment {
-    /// Type Identifier
-    pub id: String,
+use super::types::Asn1Type;
 
-    /// Type definition text (concatenated text of all tokens that define this type.)
-    pub definition: String,
+#[derive(Debug)]
+pub(crate) struct Asn1TypeAssignment {
+    /// Type Identifier
+    pub(crate) id: String,
+
+    /// Type Referred to on the RHS Side of Assignment
+    pub(crate) typeref: Asn1Type,
 }
 
 /// A Value Assignment in ASN.1 Module
@@ -25,20 +27,20 @@ pub struct Asn1TypeAssignment {
 /// 'resolved', the actual value contains one of the base type values after all constraints are
 /// validated.
 #[derive(Debug)]
-pub struct Asn1ValueAssignment {
+pub(crate) struct Asn1ValueAssignment {
     /// Identifier for the value
-    pub id: String,
+    pub(crate) id: String,
 
     /// Type Reference
-    pub typeref: String,
+    pub(crate) typeref: Asn1Type,
 
     /// Value Text
-    pub value: String,
+    pub(crate) value: String,
 }
 
 #[allow(dead_code)]
 #[derive(Debug)]
-pub enum Asn1Definition {
+pub(crate) enum Asn1Definition {
     Value(Asn1ValueAssignment),
     Type(Asn1TypeAssignment),
     //ValueSetDefinition,
