@@ -2,12 +2,14 @@
 
 use crate::error::Error;
 use crate::structs::constraints::{
-    Asn1Constraint, Elements, IntersectionSet, RangeElement, SizeElement, SubtypeElements,
-    UnionSet, ValueElement,
+    Asn1Constraint, Elements, IntersectionSet, RangeElement, SubtypeElements, UnionSet,
+    UnionSetElement, ValueElement,
 };
 use crate::tokenizer::Token;
 
-use super::utils::{expect_keyword, expect_token, expect_token_one_of, expect_tokens};
+use super::utils::{
+    expect_keyword, expect_one_of_keywords, expect_token, expect_token_one_of, expect_tokens,
+};
 use super::values::parse_value;
 
 pub(super) fn parse_constraints<'parser>(
@@ -132,17 +134,22 @@ fn parse_intersection_set<'parser>(tokens: &'parser [Token]) -> Result<(Elements
     let mut consumed = 0;
 
     eprintln!("parse_intersection_set");
-    if expect_keyword(&tokens[consumed..], "SIZE")? {
+    // First try to Parse a Size
+    if expect_one_of_keywords(&tokens[consumed..], &["SIZE", "FROM"])? {
+        let variant = if expect_keyword(&tokens[consumed..], "SIZE")? {
+            SubtypeElements::SizeConstraint
+        } else {
+            SubtypeElements::PermittedAlphabet
+        };
         consumed += 1;
-        let (size_elements, size_elements_consumed) = parse_size_elements(&tokens[consumed..])?;
+        let (size_elements, size_elements_consumed) =
+            parse_size_or_from_elements(&tokens[consumed..])?;
         consumed += size_elements_consumed;
 
-        return Ok((
-            Elements::Subtype(SubtypeElements::SizeConstraint(size_elements)),
-            consumed,
-        ));
+        return Ok((Elements::Subtype(variant(size_elements)), consumed));
     }
 
+    // Parse Range Value
     match parse_range_elements(&tokens[consumed..]) {
         Ok(result) => {
             let range_elements = result.0;
@@ -156,6 +163,7 @@ fn parse_intersection_set<'parser>(tokens: &'parser [Token]) -> Result<(Elements
         Err(_) => {}
     }
 
+    // Parse a simple `Value`
     match parse_value(&tokens[consumed..]) {
         Ok(result) => {
             let value = result.0;
@@ -172,11 +180,13 @@ fn parse_intersection_set<'parser>(tokens: &'parser [Token]) -> Result<(Elements
     Err(parse_error!("parse_intersection_set: Not Implmented"))
 }
 
-fn parse_size_elements<'parser>(tokens: &'parser [Token]) -> Result<(SizeElement, usize), Error> {
+fn parse_size_or_from_elements<'parser>(
+    tokens: &'parser [Token],
+) -> Result<(UnionSetElement, usize), Error> {
     let mut consumed = 0;
 
-    eprintln!("parse_size_elements");
-    if expect_keyword(&tokens[consumed..], "SIZE")? {
+    eprintln!("parse_size_or_from_elements");
+    if expect_one_of_keywords(&tokens[consumed..], &["SIZE", "FROM"])? {
         consumed += 1;
         let values: UnionSet;
         if expect_token(&tokens[consumed..], Token::is_round_begin)? {
@@ -190,7 +200,7 @@ fn parse_size_elements<'parser>(tokens: &'parser [Token]) -> Result<(SizeElement
             } else {
                 consumed += 1;
 
-                Ok((SizeElement { values }, consumed))
+                Ok((UnionSetElement { values }, consumed))
             }
         } else {
             Err(unexpected_token!("'('", tokens[consumed]))
@@ -200,6 +210,11 @@ fn parse_size_elements<'parser>(tokens: &'parser [Token]) -> Result<(SizeElement
     }
 }
 
+// Parses a Range Value, supports all possible formats.
+//
+// If parsing fails (tokens of not adequate length or tokens don't match) returns an Error. The
+// caller should do the error handling. Note: Typically caller will simply say Oh it didn't match,
+// let's try next.
 fn parse_range_elements<'parser>(tokens: &'parser [Token]) -> Result<(RangeElement, usize), Error> {
     let consumed = 0;
 
@@ -217,12 +232,14 @@ fn parse_range_elements<'parser>(tokens: &'parser [Token]) -> Result<(RangeEleme
             &[
                 Token::is_value_reference,
                 Token::is_numeric,
+                Token::is_tstring,
                 is_min_max_keyword,
             ],
             &[Token::is_range_separator],
             &[
                 Token::is_value_reference,
                 Token::is_numeric,
+                Token::is_tstring,
                 is_min_max_keyword,
             ],
         ],
@@ -243,6 +260,7 @@ fn parse_range_elements<'parser>(tokens: &'parser [Token]) -> Result<(RangeEleme
             &[
                 Token::is_value_reference,
                 Token::is_numeric,
+                Token::is_tstring,
                 is_min_max_keyword,
             ],
             &[Token::is_less_than],
@@ -250,6 +268,7 @@ fn parse_range_elements<'parser>(tokens: &'parser [Token]) -> Result<(RangeEleme
             &[
                 Token::is_value_reference,
                 Token::is_numeric,
+                Token::is_tstring,
                 is_min_max_keyword,
             ],
         ],
@@ -270,6 +289,7 @@ fn parse_range_elements<'parser>(tokens: &'parser [Token]) -> Result<(RangeEleme
             &[
                 Token::is_value_reference,
                 Token::is_numeric,
+                Token::is_tstring,
                 is_min_max_keyword,
             ],
             &[Token::is_range_separator],
@@ -277,6 +297,7 @@ fn parse_range_elements<'parser>(tokens: &'parser [Token]) -> Result<(RangeEleme
             &[
                 Token::is_value_reference,
                 Token::is_numeric,
+                Token::is_tstring,
                 is_min_max_keyword,
             ],
         ],
@@ -331,7 +352,7 @@ mod tests {
 
     #[test]
     fn parse_constraint_testcase() {
-        let input = "(1..3|10|11)";
+        let input = r#"("a".."b" ^ "c".."d" ^ foo|10^110|11,...)"#;
         let reader = std::io::BufReader::new(std::io::Cursor::new(input));
         let tokens = tokenize(reader);
         assert!(tokens.is_ok());

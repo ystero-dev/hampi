@@ -19,7 +19,7 @@ pub struct TypeElement {
 }
 
 #[derive(Debug)]
-pub struct SizeElement {
+pub struct UnionSetElement {
     pub values: UnionSet,
 }
 
@@ -34,7 +34,8 @@ pub enum SubtypeElements {
     SingleValue(ValueElement),
     ConstrainedSubtype(TypeElement),
     ValueRange(RangeElement),
-    SizeConstraint(SizeElement),
+    SizeConstraint(UnionSetElement),
+    PermittedAlphabet(UnionSetElement),
 }
 
 #[derive(Debug)]
