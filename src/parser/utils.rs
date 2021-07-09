@@ -40,7 +40,7 @@ pub(super) fn expect_token<'parser>(
 }
 
 // Returns if any of the `checker(token)` returns true (short-circuiting)
-pub(super) fn expect_token_one_of<'parser>(
+pub(super) fn expect_one_of_tokens<'parser>(
     tokens: &'parser [Token],
     checkers: &'parser [TokenChecker],
 ) -> Result<bool, Error> {

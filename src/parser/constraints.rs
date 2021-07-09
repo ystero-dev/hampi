@@ -7,9 +7,7 @@ use crate::structs::constraints::{
 };
 use crate::tokenizer::Token;
 
-use super::utils::{
-    expect_keyword, expect_one_of_keywords, expect_token, expect_token_one_of, expect_tokens,
-};
+use super::utils::{expect_keyword, expect_one_of_keywords, expect_token, expect_tokens};
 use super::values::parse_value;
 
 pub(super) fn parse_constraints<'parser>(

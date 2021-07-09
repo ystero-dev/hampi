@@ -8,7 +8,7 @@ use crate::error::Error;
 use crate::structs::oid::{OIDComponent, ObjectIdentifier};
 use crate::tokenizer::Token;
 
-use super::utils::{expect_token, expect_token_one_of, expect_tokens};
+use super::utils::{expect_one_of_tokens, expect_token, expect_tokens};
 
 lazy_static! {
     static ref WELL_KNOWN_OID_NAMES: HashMap<&'static str, u32> = {
@@ -80,7 +80,7 @@ fn parse_named_oid_component<'parser>(
 fn parse_oid_component<'parser>(tokens: &'parser [Token]) -> Result<(OIDComponent, usize), Error> {
     let consumed = 0;
 
-    if expect_token_one_of(
+    if expect_one_of_tokens(
         &tokens[consumed..],
         &[Token::is_identifier, Token::is_numeric],
     )? {

@@ -5,7 +5,7 @@ use crate::structs::defs::{Asn1Definition, Asn1TypeAssignment, Asn1ValueAssignme
 use crate::tokenizer::Token;
 
 use super::types::parse_type;
-use super::utils::{expect_token, expect_token_one_of};
+use super::utils::{expect_one_of_tokens, expect_token};
 use super::values::parse_value;
 
 pub(super) fn parse_definition<'parser>(
@@ -13,7 +13,7 @@ pub(super) fn parse_definition<'parser>(
 ) -> Result<(Asn1Definition, usize), Error> {
     let consumed = 0;
 
-    if expect_token_one_of(
+    if expect_one_of_tokens(
         &tokens[consumed..],
         &[Token::is_value_reference, Token::is_type_reference],
     )? {

@@ -5,14 +5,14 @@ use crate::tokenizer::Token;
 
 use super::constraints::parse_constraints;
 use super::utils::{
-    expect_keyword, expect_one_of_keywords, expect_token_one_of, parse_set_ish_value,
+    expect_keyword, expect_one_of_keywords, expect_one_of_tokens, parse_set_ish_value,
 };
 
 // Parses the `Type` Expansion in the ASN.1 Grammar.
 pub(super) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(String, usize), Error> {
     let mut consumed = 0;
 
-    if !expect_token_one_of(
+    if !expect_one_of_tokens(
         tokens,
         &[Token::is_type_reference, Token::is_asn_builtin_type],
     )? {
