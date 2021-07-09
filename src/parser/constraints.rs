@@ -128,23 +128,53 @@ fn parse_union_set<'parser>(tokens: &'parser [Token]) -> Result<(UnionSet, usize
     Ok((UnionSet { elements }, consumed))
 }
 
+// Just like parse_union_set, except it consumes the wrapping `(` and `)`
+//
+// This avoid having to write a lot of boiler-plate code to check for `(` or `)` in a few
+// functions (typically inside `parse_intersection_set`.
+fn parse_enclosed_union_set<'parser>(tokens: &'parser [Token]) -> Result<(UnionSet, usize), Error> {
+    let mut consumed = 0;
+    if expect_token(&tokens[consumed..], Token::is_round_begin)? {
+        consumed += 1;
+
+        let (union_set, union_set_consumed) = parse_union_set(&tokens[consumed..])?;
+        consumed += union_set_consumed;
+
+        if !expect_token(&tokens[consumed..], Token::is_round_end)? {
+            return Err(unexpected_token!("')'", tokens[consumed]));
+        } else {
+            consumed += 1;
+            return Ok((union_set, consumed));
+        }
+    } else {
+        return Err(unexpected_token!("'('", tokens[consumed]));
+    }
+}
+
 fn parse_intersection_set<'parser>(tokens: &'parser [Token]) -> Result<(Elements, usize), Error> {
     let mut consumed = 0;
 
-    eprintln!("parse_intersection_set");
     // First try to Parse a Size
+    eprintln!("parse_intersection_set");
     if expect_one_of_keywords(&tokens[consumed..], &["SIZE", "FROM"])? {
-        let variant = if expect_keyword(&tokens[consumed..], "SIZE")? {
+        eprintln!("size_or_from");
+        // If we come inside, following is guaranteed. to succeed.
+        let variant = if expect_keyword(&tokens[consumed..], "SIZE").unwrap() {
             SubtypeElements::SizeConstraint
         } else {
             SubtypeElements::PermittedAlphabet
         };
         consumed += 1;
-        let (size_elements, size_elements_consumed) =
-            parse_size_or_from_elements(&tokens[consumed..])?;
-        consumed += size_elements_consumed;
 
-        return Ok((Elements::Subtype(variant(size_elements)), consumed));
+        if expect_token(&tokens[consumed..], Token::is_round_begin)? {
+            let (values, values_consumed) = parse_enclosed_union_set(&tokens[consumed..])?;
+            consumed += values_consumed;
+
+            return Ok((
+                Elements::Subtype(variant(UnionSetElement { values })),
+                consumed,
+            ));
+        }
     }
 
     // Parse Range Value
@@ -159,6 +189,14 @@ fn parse_intersection_set<'parser>(tokens: &'parser [Token]) -> Result<(Elements
             ));
         }
         Err(_) => {}
+    }
+
+    // Parse nested UnionSet Constraint
+    if expect_token(&tokens[consumed..], Token::is_round_begin)? {
+        let (union_set, union_set_consumed) = parse_enclosed_union_set(&tokens[consumed..])?;
+        consumed += union_set_consumed;
+
+        return Ok((Elements::ElementSet(union_set), consumed));
     }
 
     // Parse a simple `Value`
@@ -178,36 +216,6 @@ fn parse_intersection_set<'parser>(tokens: &'parser [Token]) -> Result<(Elements
     Err(parse_error!("parse_intersection_set: Not Implmented"))
 }
 
-fn parse_size_or_from_elements<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(UnionSetElement, usize), Error> {
-    let mut consumed = 0;
-
-    eprintln!("parse_size_or_from_elements");
-    if expect_one_of_keywords(&tokens[consumed..], &["SIZE", "FROM"])? {
-        consumed += 1;
-        let values: UnionSet;
-        if expect_token(&tokens[consumed..], Token::is_round_begin)? {
-            consumed += 1;
-            let (uset, uset_consumed) = parse_union_set(&tokens[consumed..])?;
-            values = uset;
-            consumed += uset_consumed;
-
-            if !expect_token(&tokens[consumed..], Token::is_round_end)? {
-                Err(unexpected_token!("')'", tokens[consumed]))
-            } else {
-                consumed += 1;
-
-                Ok((UnionSetElement { values }, consumed))
-            }
-        } else {
-            Err(unexpected_token!("'('", tokens[consumed]))
-        }
-    } else {
-        Err(parse_error!("Parse Error in Size Constraint"))
-    }
-}
-
 // Parses a Range Value, supports all possible formats.
 //
 // If parsing fails (tokens of not adequate length or tokens don't match) returns an Error. The
@@ -216,13 +224,13 @@ fn parse_size_or_from_elements<'parser>(
 fn parse_range_elements<'parser>(tokens: &'parser [Token]) -> Result<(RangeElement, usize), Error> {
     let consumed = 0;
 
+    eprintln!("parse_range_elements");
     fn is_min_max_keyword(token: &Token) -> bool {
         ["MIN", "MAX"]
             .iter()
             .any(|k| Token::is_given_keyword(token, k))
     }
 
-    eprintln!("parse_range_elements");
     if expect_tokens(
         // MIN..MAX
         &tokens[consumed..],
@@ -350,7 +358,7 @@ mod tests {
 
     #[test]
     fn parse_constraint_testcase() {
-        let input = r#"("a".."b" ^ "c".."d" ^ foo|10^110|11,...)"#;
+        let input = r#"("a".."b" | "c".."d" |foo|10|11|SIZE(0..100) ^ FROM("a".."f")|(1|2),...)"#;
         let reader = std::io::BufReader::new(std::io::Cursor::new(input));
         let tokens = tokenize(reader);
         assert!(tokens.is_ok());

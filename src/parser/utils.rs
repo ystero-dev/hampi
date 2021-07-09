@@ -11,7 +11,7 @@ pub(super) fn expect_keyword<'parser>(
     if tokens.len() == 0 {
         Err(unexpected_end!())
     } else {
-        Ok(tokens[0].is_keyword() && tokens[0].text == keyword)
+        Ok(tokens[0].is_given_keyword(keyword))
     }
 }
 
@@ -56,7 +56,6 @@ pub(super) fn expect_tokens<'parser>(
     tokens: &'parser [Token],
     checkers: &'parser [&'parser [TokenChecker]],
 ) -> Result<bool, Error> {
-    eprintln!("expect_tokens");
     if tokens.len() < checkers.len() {
         Err(unexpected_end!())
     } else {

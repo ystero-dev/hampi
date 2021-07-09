@@ -206,8 +206,8 @@ impl Token {
         (is_tstring, TokenType::TString),
         (is_dot, TokenType::Dot),
         (is_comma, TokenType::Comma),
-        (is_set_union, TokenType::SetUnion),
-        (is_set_intersection, TokenType::SetIntersection),
+        (is_set_union_token, TokenType::SetUnionToken),
+        (is_set_intersection_token, TokenType::SetIntersectionToken),
         (is_at_component_list, TokenType::AtComponentIdList),
         (is_less_than, TokenType::LessThan),
     }
@@ -281,6 +281,16 @@ impl Token {
             .map(|x| x.text.clone())
             .collect::<Vec<String>>()
             .join(" ")
+    }
+
+    /// Returns if the given token is a Set 'intersection'
+    pub fn is_set_intersection(&self) -> bool {
+        self.is_set_intersection_token() || self.is_given_keyword("INTERSECTION")
+    }
+
+    /// Returns if the given token is a Set 'union'
+    pub fn is_set_union(&self) -> bool {
+        self.is_set_union_token() || self.is_given_keyword("UNION")
     }
 
     // Private Functions
@@ -699,8 +709,8 @@ fn get_single_char_token(token: char, line: usize, begin: usize) -> Result<Token
         '!' => token_type = TokenType::ExceptionMarker,
         ';' => token_type = TokenType::SemiColon,
         ',' => token_type = TokenType::Comma,
-        '|' => token_type = TokenType::SetUnion,
-        '^' => token_type = TokenType::SetIntersection,
+        '|' => token_type = TokenType::SetUnionToken,
+        '^' => token_type = TokenType::SetIntersectionToken,
         '<' => token_type = TokenType::LessThan,
         _ => return Err(Error::TokenizeError(21, line, begin)),
     }

@@ -1,36 +1,36 @@
 //! Related to handling of ASN.1 Constraints
 
 #[derive(Debug)]
-pub struct RangeElement {
-    pub lower: String,
-    pub lower_inclusive: bool,
-    pub upper: String,
-    pub upper_inclusive: bool,
+pub(crate) struct RangeElement {
+    pub(crate) lower: String,
+    pub(crate) lower_inclusive: bool,
+    pub(crate) upper: String,
+    pub(crate) upper_inclusive: bool,
 }
 
 #[derive(Debug)]
-pub struct ValueElement {
-    pub value: String,
+pub(crate) struct ValueElement {
+    pub(crate) value: String,
 }
 
 #[derive(Debug)]
-pub struct TypeElement {
-    pub reference: String,
+pub(crate) struct TypeElement {
+    pub(crate) reference: String,
 }
 
 #[derive(Debug)]
-pub struct UnionSetElement {
-    pub values: UnionSet,
+pub(crate) struct UnionSetElement {
+    pub(crate) values: UnionSet,
 }
 
 #[derive(Debug)]
-pub enum Elements {
+pub(crate) enum Elements {
     Subtype(SubtypeElements),
     ElementSet(UnionSet),
 }
 
 #[derive(Debug)]
-pub enum SubtypeElements {
+pub(crate) enum SubtypeElements {
     SingleValue(ValueElement),
     ConstrainedSubtype(TypeElement),
     ValueRange(RangeElement),
@@ -39,17 +39,17 @@ pub enum SubtypeElements {
 }
 
 #[derive(Debug)]
-pub struct UnionSet {
-    pub elements: Vec<IntersectionSet>,
+pub(crate) struct UnionSet {
+    pub(crate) elements: Vec<IntersectionSet>,
 }
 
 #[derive(Debug)]
-pub struct IntersectionSet {
-    pub elements: Vec<Elements>,
+pub(crate) struct IntersectionSet {
+    pub(crate) elements: Vec<Elements>,
 }
 
 #[derive(Debug)]
-pub struct Asn1Constraint {
-    pub root_elements: UnionSet,
-    pub additional_elements: Option<UnionSet>,
+pub(crate) struct Asn1Constraint {
+    pub(crate) root_elements: UnionSet,
+    pub(crate) additional_elements: Option<UnionSet>,
 }
