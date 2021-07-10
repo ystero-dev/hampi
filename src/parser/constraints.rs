@@ -8,7 +8,7 @@ use crate::structs::constraints::{
 use crate::tokenizer::Token;
 
 use super::types::parse_type;
-use super::utils::{expect_keyword, expect_one_of_keywords, expect_token, expect_tokens};
+use super::utils::{expect_keyword, expect_one_of_keywords, expect_one_of_tokens, expect_token};
 use super::values::parse_value;
 
 pub(super) fn parse_constraints<'parser>(
@@ -232,7 +232,7 @@ fn parse_intersection_set<'parser>(tokens: &'parser [Token]) -> Result<(Elements
 // caller should do the error handling. Note: Typically caller will simply say Oh it didn't match,
 // let's try next.
 fn parse_range_elements<'parser>(tokens: &'parser [Token]) -> Result<(RangeElement, usize), Error> {
-    let consumed = 0;
+    let mut consumed = 0;
 
     fn is_min_max_keyword(token: &Token) -> bool {
         ["MIN", "MAX"]
@@ -240,123 +240,67 @@ fn parse_range_elements<'parser>(tokens: &'parser [Token]) -> Result<(RangeEleme
             .any(|k| Token::is_given_keyword(token, k))
     }
 
-    if expect_tokens(
-        // MIN..MAX
+    let (lower, lower_consumed) = match parse_value(&tokens[consumed..]) {
+        Ok(result) => (result.0, result.1),
+        Err(_) => {
+            if expect_token(&tokens[consumed..], is_min_max_keyword)? {
+                (tokens[consumed].text.clone(), 1)
+            } else {
+                return Err(unexpected_token!(
+                    "'MIN', 'MAX' or 'Value'",
+                    tokens[consumed]
+                ));
+            }
+        }
+    };
+    consumed += lower_consumed;
+
+    if !expect_one_of_tokens(
         &tokens[consumed..],
-        &[
-            &[
-                Token::is_value_reference,
-                Token::is_numeric,
-                Token::is_tstring,
-                is_min_max_keyword,
-            ],
-            &[Token::is_range_separator],
-            &[
-                Token::is_value_reference,
-                Token::is_numeric,
-                Token::is_tstring,
-                is_min_max_keyword,
-            ],
-        ],
+        &[Token::is_less_than, Token::is_range_separator],
     )? {
-        Ok((
-            RangeElement {
-                lower: tokens[0].text.clone(),
-                lower_inclusive: true,
-                upper: tokens[2].text.clone(),
-                upper_inclusive: true,
-            },
-            3,
-        ))
-    } else if expect_tokens(
-        // MIN<..MAX
-        &tokens[consumed..],
-        &[
-            &[
-                Token::is_value_reference,
-                Token::is_numeric,
-                Token::is_tstring,
-                is_min_max_keyword,
-            ],
-            &[Token::is_less_than],
-            &[Token::is_range_separator],
-            &[
-                Token::is_value_reference,
-                Token::is_numeric,
-                Token::is_tstring,
-                is_min_max_keyword,
-            ],
-        ],
-    )? {
-        Ok((
-            RangeElement {
-                lower: tokens[0].text.clone(),
-                lower_inclusive: false,
-                upper: tokens[3].text.clone(),
-                upper_inclusive: true,
-            },
-            4,
-        ))
-    } else if expect_tokens(
-        // MIN..<MAX
-        &tokens[consumed..],
-        &[
-            &[
-                Token::is_value_reference,
-                Token::is_numeric,
-                Token::is_tstring,
-                is_min_max_keyword,
-            ],
-            &[Token::is_range_separator],
-            &[Token::is_less_than],
-            &[
-                Token::is_value_reference,
-                Token::is_numeric,
-                Token::is_tstring,
-                is_min_max_keyword,
-            ],
-        ],
-    )? {
-        Ok((
-            RangeElement {
-                lower: tokens[0].text.clone(),
-                lower_inclusive: true,
-                upper: tokens[3].text.clone(),
-                upper_inclusive: false,
-            },
-            4,
-        ))
-    } else if expect_tokens(
-        // MIN<..<MAX
-        &tokens[consumed..],
-        &[
-            &[
-                Token::is_value_reference,
-                Token::is_numeric,
-                is_min_max_keyword,
-            ],
-            &[Token::is_less_than],
-            &[Token::is_range_separator],
-            &[Token::is_less_than],
-            &[
-                Token::is_value_reference,
-                Token::is_numeric,
-                is_min_max_keyword,
-            ],
-        ],
-    )? {
-        Ok((
-            RangeElement {
-                lower: tokens[0].text.clone(),
-                lower_inclusive: false,
-                upper: tokens[4].text.clone(),
-                upper_inclusive: false,
-            },
-            5,
-        ))
-    } else {
-        Err(parse_error!("Don't care!"))
+        return Err(unexpected_token!("'<' or '..'", tokens[consumed]));
     }
+
+    let lower_inclusive = if expect_token(&tokens[consumed..], Token::is_less_than)? {
+        consumed += 1;
+        false
+    } else {
+        true
+    };
+    consumed += 1; // The '..' Token
+
+    let upper_inclusive = if expect_token(&tokens[consumed..], Token::is_less_than)? {
+        consumed += 1;
+        false
+    } else {
+        true
+    };
+
+    let (upper, upper_consumed) = match parse_value(&tokens[consumed..]) {
+        Ok(result) => (result.0, result.1),
+        Err(_) => {
+            if expect_token(&tokens[consumed..], is_min_max_keyword)? {
+                (tokens[consumed].text.clone(), 1)
+            } else {
+                return Err(unexpected_token!(
+                    "'MIN', 'MAX' or 'Value'",
+                    tokens[consumed]
+                ));
+            }
+        }
+    };
+    consumed += upper_consumed;
+
+    Ok((
+        RangeElement {
+            lower,
+            lower_inclusive,
+            upper,
+            upper_inclusive,
+        },
+        consumed,
+    ))
 }
 
 #[cfg(test)]
@@ -367,13 +311,84 @@ mod tests {
 
     #[test]
     fn parse_constraint_testcase() {
-        let input = r#"("a".."b" | "c".."d" |foo|10|11|SIZE(0..100) ^ FROM("a".."f")|(1|2),...)"#;
-        let reader = std::io::BufReader::new(std::io::Cursor::new(input));
-        let tokens = tokenize(reader);
-        assert!(tokens.is_ok());
-        let tokens = tokens.unwrap();
+        struct ParseConstraintTestCase<'tc> {
+            input: &'tc str,                   // Input String
+            success: bool,                     // Check whether the constraint result is `is_ok`
+            root_elements_count: usize,        // Members in root_elements
+            additional_elements_present: bool, // Are additional Elements present?
+            additional_elements_count: usize,  // Members in additional elements
+        }
 
-        let constraints = parse_constraint(&tokens);
-        assert!(constraints.is_ok(), "{:#?}", constraints.err());
+        let test_cases = vec![
+            ParseConstraintTestCase {
+                input: "(SIZE(1..10))",
+                success: true,
+                root_elements_count: 1,
+                additional_elements_present: false,
+                additional_elements_count: 0,
+            },
+            ParseConstraintTestCase {
+                input: r#"(FROM("a".."z"))"#,
+                success: true,
+                root_elements_count: 1,
+                additional_elements_present: false,
+                additional_elements_count: 0,
+            },
+            ParseConstraintTestCase {
+                input: r#"(FROM ({0, 0, 3, 112}..{0, 0, 3, 207}))"#,
+                success: true,
+                root_elements_count: 1,
+                additional_elements_present: false,
+                additional_elements_count: 0,
+            },
+        ];
+        for tc in test_cases {
+            let reader = std::io::BufReader::new(std::io::Cursor::new(tc.input));
+            let tokens = tokenize(reader);
+            assert!(tokens.is_ok());
+            let tokens = tokens.unwrap();
+
+            let constraint = parse_constraint(&tokens);
+            assert_eq!(
+                constraint.is_ok(),
+                tc.success,
+                "{:#?}, {:#?}",
+                tc.input,
+                constraint.err()
+            );
+
+            if tc.success {
+                let (constraint, consumed) = constraint.unwrap();
+
+                assert_eq!(consumed, tokens.len(), "{:#?}", constraint);
+                assert_eq!(
+                    constraint.root_elements.elements.len(),
+                    tc.root_elements_count,
+                    "{:#?}",
+                    constraint
+                );
+
+                assert_eq!(
+                    constraint.additional_elements.is_some(),
+                    tc.additional_elements_present,
+                    "{:#?}",
+                    constraint
+                );
+
+                if constraint.additional_elements.is_some() {
+                    assert_eq!(
+                        &constraint
+                            .additional_elements
+                            .as_ref()
+                            .unwrap()
+                            .elements
+                            .len(),
+                        &tc.additional_elements_count,
+                        "{:#?}",
+                        constraint
+                    );
+                }
+            }
+        }
     }
 }
