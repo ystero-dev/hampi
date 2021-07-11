@@ -1,0 +1,8 @@
+Copyright (c) 2021 Hampi Contributors
+
+This code is dual licensed as MIT Apache-2.0. See LICENSE-MIT and
+LICENSE-Apache2
+
+Parts of the code uses Test Packets from `gopacket`. See LICENSE-gopacket for
+the Copyright notice for gopacket (https://github.com/google/gopacket)
+
