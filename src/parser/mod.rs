@@ -18,6 +18,8 @@ mod oid;
 
 mod constraints;
 
+mod ioc;
+
 /// Parse the tokens into internal Asn1Module representation
 ///
 /// Token obtained from running [`tokenize`][`crate::tokenizer::tokenize] on an ANS file are parsed

@@ -2,6 +2,16 @@
 
 use super::types::Asn1Type;
 
+/// Struct representing an Object Class Assignment
+#[derive(Debug)]
+pub(crate) struct Asn1ObjectClassAssignment {
+    /// Class Identifier
+    pub(crate) id: String,
+
+    /// Definition
+    pub(crate) classref: String, // FIXME: For now should eventually have a proper Asn1ObjectClass
+}
+
 #[derive(Debug)]
 pub(crate) struct Asn1TypeAssignment {
     /// Type Identifier
@@ -42,6 +52,7 @@ pub(crate) struct Asn1ValueAssignment {
 pub(crate) enum Asn1Definition {
     Value(Asn1ValueAssignment),
     Type(Asn1TypeAssignment),
+    Class(Asn1ObjectClassAssignment),
     //ValueSetDefinition,
     //InfoObjectClassDefinition,
     //InfoObjectDefinition,
@@ -53,6 +64,7 @@ impl Asn1Definition {
         match self {
             Self::Value(ref v) => v.id.clone(),
             Self::Type(ref t) => t.id.clone(),
+            Self::Class(ref c) => c.id.clone(),
         }
     }
 }

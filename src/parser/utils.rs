@@ -15,6 +15,21 @@ pub(super) fn expect_keyword<'parser>(
     }
 }
 
+// Returns true if all the given keywords are matched.
+pub(super) fn expect_keywords<'parser>(
+    tokens: &'parser [Token],
+    keywords: &[&str],
+) -> Result<bool, Error> {
+    if tokens.len() < keywords.len() {
+        Err(unexpected_end!())
+    } else {
+        Ok(keywords
+            .iter()
+            .zip(tokens.iter())
+            .all(|(k, t)| t.is_given_keyword(k)))
+    }
+}
+
 // Returns true if the first `token`'s text is one of the passed `keywords`.
 pub(super) fn expect_one_of_keywords<'parser>(
     tokens: &'parser [Token],

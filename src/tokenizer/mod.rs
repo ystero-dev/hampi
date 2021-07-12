@@ -218,7 +218,7 @@ impl Token {
 
     /// Checks whether the given token is an Object Class Reference
     pub fn is_object_class_reference(&self) -> bool {
-        self.is_type_reference()
+        self.is_type_reference() && self.text.chars().all(|c| matches!(c, 'A'..='Z' | '-'))
     }
 
     /// Checks whether the given token is an Object Reference

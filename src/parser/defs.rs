@@ -1,11 +1,14 @@
 //! Top level handling of definitions
 
 use crate::error::Error;
-use crate::structs::defs::{Asn1Definition, Asn1TypeAssignment, Asn1ValueAssignment};
+use crate::structs::defs::{
+    Asn1Definition, Asn1ObjectClassAssignment, Asn1TypeAssignment, Asn1ValueAssignment,
+};
 use crate::tokenizer::Token;
 
+use super::ioc::parse_class;
 use super::types::parse_type;
-use super::utils::{expect_one_of_tokens, expect_token};
+use super::utils::{expect_keyword, expect_one_of_tokens, expect_token};
 use super::values::parse_value;
 
 pub(super) fn parse_definition<'parser>(
@@ -65,6 +68,30 @@ fn parse_valueish_definition<'parser>(
 fn parse_typeish_definition<'parser>(
     tokens: &'parser [Token],
 ) -> Result<(Asn1Definition, usize), Error> {
+    // Try to parse a type_definition
+    match parse_type_definition(tokens) {
+        Ok(x) => {
+            return Ok(x);
+        }
+        Err(_) => {}
+    }
+
+    match parse_class_definition(tokens) {
+        Ok(x) => {
+            return Ok(x);
+        }
+        Err(_) => {}
+    }
+
+    Err(parse_error!(
+        "Failed to parse a definition at Token: {:#?}",
+        tokens[0]
+    ))
+}
+
+fn parse_type_definition<'parser>(
+    tokens: &'parser [Token],
+) -> Result<(Asn1Definition, usize), Error> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_type_reference)? {
@@ -83,6 +110,35 @@ fn parse_typeish_definition<'parser>(
 
     Ok((
         Asn1Definition::Type(Asn1TypeAssignment { id, typeref }),
+        consumed,
+    ))
+}
+
+fn parse_class_definition<'parser>(
+    tokens: &'parser [Token],
+) -> Result<(Asn1Definition, usize), Error> {
+    let mut consumed = 0;
+    if !expect_token(&tokens[consumed..], Token::is_object_class_reference)? {
+        return Err(unexpected_token!("Type Reference", tokens[consumed]));
+    }
+    let id = tokens[consumed].text.clone();
+    consumed += 1;
+
+    if !expect_token(&tokens[consumed..], Token::is_assignment)? {
+        return Err(unexpected_token!("::=", tokens[consumed]));
+    }
+    consumed += 1;
+
+    if !expect_keyword(&tokens[consumed..], "CLASS")? {
+        return Err(unexpected_token!("::=", tokens[consumed]));
+    }
+    consumed += 1;
+
+    let (classref, classref_consumed) = parse_class(&tokens[consumed..])?;
+    consumed += classref_consumed;
+
+    Ok((
+        Asn1Definition::Class(Asn1ObjectClassAssignment { id, classref }),
         consumed,
     ))
 }
