@@ -1,7 +1,7 @@
 //! Handling Parsing of ASN.1 Types
 
 use crate::error::Error;
-use crate::structs::types::{Asn1BuiltInType, Asn1Type};
+use crate::structs::types::{Asn1ConstructedType, Asn1Type, Asn1TypeKind, ASN_BUILTIN_TYPE_KINDS};
 use crate::tokenizer::Token;
 
 use super::constraints::parse_constraints;
@@ -25,21 +25,39 @@ pub(super) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Type,
 
     // Now: Parse The Type definition.
     let token = &tokens[0];
-    let (id, id_consumed) = match token.text.as_str() {
-        "BIT-STRING" => parse_bit_string_type(tokens)?,
+    let typestr = token.text.as_str();
+    let (kind, id, id_consumed) = match typestr {
+        "BIT-STRING" => {
+            let (id, id_consumed) = parse_bit_string_type(tokens)?;
+            (
+                ASN_BUILTIN_TYPE_KINDS.get(typestr).unwrap().clone(),
+                id,
+                id_consumed,
+            )
+        }
 
-        "ENUMERATED" => parse_enumerated_type(tokens)?,
+        "ENUMERATED" => {
+            let (id, id_consumed) = parse_enumerated_type(tokens)?;
+            (
+                ASN_BUILTIN_TYPE_KINDS.get(typestr).unwrap().clone(),
+                id,
+                id_consumed,
+            )
+        }
 
         "INTEGER" | "BOOLEAN" | "NULL" | "OBJECT-IDENTIFIER" | "UTF8String" | "IA5String"
-        | "PrintableString" | "CHARACTER-STRING" => (token.text.clone(), 1),
+        | "PrintableString" | "CHARACTER-STRING" => (
+            ASN_BUILTIN_TYPE_KINDS.get(typestr).unwrap().clone(),
+            token.text.clone(),
+            1,
+        ),
 
         "SET" | "SEQUENCE" | "CHOICE" => parse_constructed_type(tokens)?,
 
-        _ => (token.text.clone(), 1),
+        _ => (Asn1TypeKind::default(), token.text.clone(), 1),
     };
     consumed += id_consumed;
 
-    let kind = Asn1BuiltInType::Unresolved;
     let (constraints, constraints_str_consumed) = match parse_constraints(&tokens[consumed..]) {
         Ok((s, c)) => (Some(s), c),
         Err(_) => (None, 0),
@@ -74,7 +92,9 @@ fn parse_enumerated_type<'parser>(tokens: &'parser [Token]) -> Result<(String, u
     Ok((["ENUMERATED".to_string(), def].to_vec().join(" "), consumed))
 }
 
-fn parse_constructed_type<'parser>(tokens: &'parser [Token]) -> Result<(String, usize), Error> {
+fn parse_constructed_type<'parser>(
+    tokens: &'parser [Token],
+) -> Result<(Asn1TypeKind, String, usize), Error> {
     let mut consumed = 0;
 
     if !expect_one_of_keywords(tokens, &["SEQUENCE", "SET", "CHOICE"])? {
@@ -86,7 +106,11 @@ fn parse_constructed_type<'parser>(tokens: &'parser [Token]) -> Result<(String, 
     let (def, def_consumed) = parse_set_ish_value(&tokens[consumed..])?;
     consumed += def_consumed;
 
-    Ok(([id, def].to_vec().join(" "), consumed))
+    Ok((
+        Asn1TypeKind::Constructed(Asn1ConstructedType::Sequence),
+        [id, def].to_vec().join(" "),
+        consumed,
+    ))
 }
 
 // TODO: Add test cases
