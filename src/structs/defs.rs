@@ -1,5 +1,6 @@
 //! ASN.1 Definitions relates Structs
 
+use super::ioc::Asn1ObjectClass;
 use super::types::Asn1Type;
 
 /// Struct representing an Object Class Assignment
@@ -9,7 +10,7 @@ pub(crate) struct Asn1ObjectClassAssignment {
     pub(crate) id: String,
 
     /// Definition
-    pub(crate) classref: String, // FIXME: For now should eventually have a proper Asn1ObjectClass
+    pub(crate) classref: Asn1ObjectClass, // FIXME: For now should eventually have a proper Asn1ObjectClass
 }
 
 #[derive(Debug)]
@@ -67,4 +68,13 @@ impl Asn1Definition {
             Self::Class(ref c) => c.id.clone(),
         }
     }
+}
+
+struct Asn1GovernerType;
+
+struct Asn1DummyReferenceType;
+
+pub(crate) struct DefinitionParam {
+    governer: Option<Asn1GovernerType>,
+    dummyref: Option<Asn1DummyReferenceType>,
 }

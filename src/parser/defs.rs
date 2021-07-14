@@ -132,7 +132,6 @@ fn parse_class_definition<'parser>(
     if !expect_keyword(&tokens[consumed..], "CLASS")? {
         return Err(unexpected_token!("::=", tokens[consumed]));
     }
-    consumed += 1;
 
     let (classref, classref_consumed) = parse_class(&tokens[consumed..])?;
     consumed += classref_consumed;

@@ -233,11 +233,21 @@ impl Token {
 
     /// Checks whether the given identifier is a Type Field Reference
     pub fn is_type_field_reference(&self) -> bool {
+        self.is_and_identifier() && self.text[1..].starts_with(char::is_uppercase)
+    }
+    /// Checks whether the given token is a Value Field Reference
+    pub fn is_value_field_reference(&self) -> bool {
         self.is_and_identifier() && self.text[1..].starts_with(char::is_lowercase)
     }
-    /// Checks whether the given token is an Object Field Reference
+
+    /// Checks whether the given token is a Value Set field reference (same as Type Field reference.)
+    pub fn is_value_set_field_reference(&self) -> bool {
+        self.is_type_field_reference()
+    }
+
+    /// Checks whether the given token is an Object Field Reference (same as Value Field Reference.)
     pub fn is_object_field_reference(&self) -> bool {
-        self.is_and_identifier() && self.text[1..].starts_with(char::is_lowercase)
+        self.is_value_field_reference()
     }
 
     /// Checks whether the given token is an Object Set Field Reference
