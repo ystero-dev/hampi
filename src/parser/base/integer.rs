@@ -1,56 +1,12 @@
-//! Parsing for Base types
+//! Parsing "INTEGER" ASN.1 Type
 
 use crate::error::Error;
 use crate::structs::base::{Asn1TypeInteger, NamedValue};
 use crate::tokenizer::Token;
 
-use super::utils::{expect_keyword, expect_token};
+use crate::parser::utils::{expect_keyword, expect_token};
 
-fn parse_named_maybe_value<'parser>(
-    tokens: &'parser [Token],
-) -> Result<((String, Option<NamedValue>), usize), Error> {
-    let mut consumed = 0;
-
-    if !expect_token(&tokens[consumed..], Token::is_value_reference)? {
-        return Err(unexpected_token!("'IDENTIFIER'", tokens[consumed]));
-    }
-    let identifier = tokens[consumed].text.clone();
-    consumed += 1;
-
-    let named_value = match expect_token(&tokens[consumed..], Token::is_round_begin) {
-        Ok(n) => {
-            if n {
-                consumed += 1;
-
-                let named_value = if expect_token(&tokens[consumed..], Token::is_numeric)? {
-                    let num = tokens[consumed].text.clone();
-                    consumed += 1;
-                    NamedValue::Number(num)
-                } else if expect_token(&tokens[consumed..], Token::is_value_reference)? {
-                    let valueref = tokens[consumed].text.clone();
-                    consumed += 1;
-                    NamedValue::ValueRef(valueref)
-                } else {
-                    return Err(unexpected_token!(
-                        "'Reference' or 'Number'",
-                        tokens[consumed]
-                    ));
-                };
-                if !expect_token(&tokens[consumed..], Token::is_round_end)? {
-                    return Err(unexpected_token!("')'", tokens[consumed]));
-                }
-                consumed += 1;
-
-                Some(named_value)
-            } else {
-                None
-            }
-        }
-        Err(_) => None,
-    };
-
-    Ok(((identifier, named_value), consumed))
-}
+use super::utils::parse_named_maybe_value;
 
 fn parse_named_values<'parser>(
     tokens: &'parser [Token],
@@ -104,7 +60,6 @@ pub(crate) fn parse_integer_type<'parser>(
     }
     consumed += 1;
 
-    let named_values: Option<NamedValue> = None;
     let named_values = match expect_token(&tokens[consumed..], Token::is_curly_begin) {
         Ok(c) => {
             if c {
@@ -135,6 +90,7 @@ mod tests {
             success: bool,
             named_values_present: bool,
             named_values_count: usize,
+            tokens_consumed: usize,
         }
 
         let test_cases = vec![
@@ -143,42 +99,56 @@ mod tests {
                 success: true,
                 named_values_present: false,
                 named_values_count: 0,
+                tokens_consumed: 1,
             },
             ParseIntegerTestCase {
                 input: "INTEGER {a(1)}",
                 success: true,
                 named_values_present: true,
                 named_values_count: 1,
+                tokens_consumed: 7,
             },
             ParseIntegerTestCase {
                 input: "INTEGER {a(1), b(-10) }",
                 success: true,
                 named_values_present: true,
                 named_values_count: 2,
+                tokens_consumed: 12,
             },
             ParseIntegerTestCase {
                 input: "INTEGER {a(1), b(c) }",
                 success: true,
                 named_values_present: true,
                 named_values_count: 2,
+                tokens_consumed: 12,
             },
             ParseIntegerTestCase {
                 input: "INTEGER {a(1)}, b", // Success the training ", b" is ignored
                 success: true,
                 named_values_present: true,
                 named_values_count: 1,
+                tokens_consumed: 7,
             },
             ParseIntegerTestCase {
                 input: "INTEGER {a()}",
                 success: false,
                 named_values_present: true,
                 named_values_count: 1,
+                tokens_consumed: 0,
             },
             ParseIntegerTestCase {
                 input: "INTEGER {a(1), b}",
                 success: false,
-                named_values_present: true,
-                named_values_count: 1,
+                named_values_present: false,
+                named_values_count: 0,
+                tokens_consumed: 0,
+            },
+            ParseIntegerTestCase {
+                input: "INTEGER {a(1)",
+                success: false,
+                named_values_present: false,
+                named_values_count: 0,
+                tokens_consumed: 0,
             },
         ];
 
@@ -192,12 +162,18 @@ mod tests {
             assert_eq!(int_type.is_ok(), tc.success, "{}", tc.input);
 
             if tc.success {
-                let (int_type, _) = int_type.unwrap();
-                assert_eq!(int_type.named_values.is_some(), tc.named_values_present);
+                let (int_type, int_type_consumed) = int_type.unwrap();
+                assert_eq!(int_type_consumed, tc.tokens_consumed, "{}", tc.input);
+                assert_eq!(
+                    int_type.named_values.is_some(),
+                    tc.named_values_present,
+                    "{}",
+                    tc.input
+                );
 
                 if tc.named_values_present {
                     let named_values = int_type.named_values.unwrap();
-                    assert_eq!(named_values.len(), tc.named_values_count);
+                    assert_eq!(named_values.len(), tc.named_values_count, "{}", tc.input);
                 }
             }
         }

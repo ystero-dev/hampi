@@ -6,7 +6,9 @@ use crate::structs::ioc::*;
 use crate::tokenizer::Token;
 
 use super::types::parse_type;
-use super::utils::{expect_keyword, expect_one_of_keywords, expect_token, parse_set_ish_value};
+use super::utils::{
+    expect_keyword, expect_keywords, expect_one_of_keywords, expect_token, parse_set_ish_value,
+};
 use super::values::parse_value;
 
 pub(crate) fn parse_class<'parser>(
@@ -53,12 +55,10 @@ pub(crate) fn parse_class<'parser>(
 fn parse_field_spec<'parser>(
     tokens: &'parser [Token],
 ) -> Result<(ObjectClassFieldSpec, usize), Error> {
-    let mut consumed = 0;
-
-    if expect_token(&tokens[consumed..], Token::is_value_field_reference)? {
-        parse_fixed_type_value_field_spec(&tokens[consumed..])
-    } else if expect_token(&tokens[consumed..], Token::is_type_field_reference)? {
-        parse_type_field_spec(&tokens[consumed..])
+    if expect_token(tokens, Token::is_value_field_reference)? {
+        parse_fixed_type_value_field_spec(tokens)
+    } else if expect_token(tokens, Token::is_type_field_reference)? {
+        parse_type_field_spec(tokens)
     } else {
         Err(parse_error!("Unsupported Field Spec in CLASS Definition"))
     }
@@ -203,18 +203,13 @@ fn parse_type_field_spec<'parser>(
 
 fn parse_with_syntax_for_fields<'parser>(
     tokens: &'parser [Token],
-    fields: &'parser mut HashMap<String, ObjectClassFieldSpec>,
+    _fields: &'parser mut HashMap<String, ObjectClassFieldSpec>,
 ) -> Result<usize, Error> {
     let mut consumed = 0;
-    if !expect_keyword(&tokens[consumed..], "WITH")? {
+    if !expect_keywords(&tokens[consumed..], &["WITH", "SYNTAX"])? {
         return Ok(consumed);
     }
-    consumed += 1;
-
-    if !expect_keyword(&tokens[consumed..], "SYNTAX")? {
-        return Err(unexpected_token!("'SYNTAX'", tokens[consumed]));
-    }
-    consumed += 1;
+    consumed += 2;
 
     if !expect_token(&tokens[consumed..], Token::is_curly_begin)? {
         return Err(unexpected_token!("'{'", tokens[consumed]));

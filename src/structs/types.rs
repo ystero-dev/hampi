@@ -3,16 +3,12 @@ use std::collections::HashMap;
 
 use lazy_static::lazy_static;
 
-use super::base::Asn1TypeInteger;
+use super::base::{Asn1TypeEnumerated, Asn1TypeInteger};
 use super::constraints::Asn1Constraint;
 
 lazy_static! {
     pub(crate) static ref ASN_BUILTIN_TYPE_KINDS: HashMap<&'static str, Asn1TypeKind> = {
         let mut m = HashMap::new();
-        m.insert(
-            "ENUMERATED",
-            Asn1TypeKind::Builtin(Asn1BuiltinType::Enumerated),
-        );
         m.insert("BOOLEAN", Asn1TypeKind::Builtin(Asn1BuiltinType::Boolean));
         m.insert("NULL", Asn1TypeKind::Builtin(Asn1BuiltinType::Null));
         m.insert(
@@ -51,7 +47,7 @@ lazy_static! {
 #[derive(Debug, Clone)]
 pub(crate) enum Asn1BuiltinType {
     Integer(Asn1TypeInteger),
-    Enumerated,
+    Enumerated(Asn1TypeEnumerated),
     Boolean,
     Null,
     BitString,
