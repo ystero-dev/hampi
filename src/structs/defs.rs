@@ -50,7 +50,7 @@ pub(crate) struct Asn1ValueAssignment {
 }
 
 #[derive(Debug)]
-pub(crate) enum Asn1Definition {
+pub(crate) enum Asn1AssignmentKind {
     Value(Asn1ValueAssignment),
     Type(Asn1TypeAssignment),
     Class(Asn1ObjectClassAssignment),
@@ -60,7 +60,7 @@ pub(crate) enum Asn1Definition {
     //InfoObjectSetDefinition,
 }
 
-impl Asn1Definition {
+impl Asn1AssignmentKind {
     pub fn id(&self) -> String {
         match self {
             Self::Value(ref v) => v.id.clone(),
@@ -70,11 +70,49 @@ impl Asn1Definition {
     }
 }
 
-struct Asn1GovernerType;
+#[derive(Debug)]
+pub(crate) struct Asn1Definition {
+    pub(crate) kind: Asn1AssignmentKind,
+    pub(crate) params: Option<Vec<DefinitionParam>>,
+}
 
-struct Asn1DummyReferenceType;
+// FIXME: Hack for now
+impl Asn1Definition {
+    pub fn id(&self) -> String {
+        self.kind.id()
+    }
+}
 
+#[derive(Debug, PartialEq)]
+pub(crate) enum GovernerKind {
+    Type,
+    Class,
+}
+
+#[derive(Debug, PartialEq)]
+pub(crate) struct ParamGoverner {
+    pub(crate) name: String,
+    pub(crate) kind: GovernerKind,
+}
+
+#[derive(Debug)]
+pub(crate) enum DummyReferenceKind {
+    Type,
+    Value,
+    ValueSet,
+    Class,
+    Object,
+    ObjectSet,
+}
+
+#[derive(Debug)]
+pub(crate) struct ParamDummyReference {
+    pub(crate) name: String,
+    pub(crate) kind: DummyReferenceKind,
+}
+
+#[derive(Debug)]
 pub(crate) struct DefinitionParam {
-    governer: Option<Asn1GovernerType>,
-    dummyref: Option<Asn1DummyReferenceType>,
+    pub(crate) governer: Option<ParamGoverner>,
+    pub(crate) dummyref: ParamDummyReference,
 }

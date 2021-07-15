@@ -19,7 +19,11 @@ pub(super) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Type,
 
     if !expect_one_of_tokens(
         tokens,
-        &[Token::is_type_reference, Token::is_asn_builtin_type],
+        &[
+            Token::is_type_reference,
+            Token::is_asn_builtin_type,
+            Token::is_object_class_reference,
+        ],
     )? {
         return Err(unexpected_token!(
             "'Type Reference' or 'Builtin Type'",
