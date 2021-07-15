@@ -2,7 +2,7 @@
 
 use super::types::Asn1Type;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct RangeElement {
     pub(crate) lower: String,
     pub(crate) lower_inclusive: bool,
@@ -10,23 +10,23 @@ pub(crate) struct RangeElement {
     pub(crate) upper_inclusive: bool,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct ValueElement {
     pub(crate) value: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct UnionSetElement {
     pub(crate) values: UnionSet,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) enum Elements {
     Subtype(SubtypeElements),
     ElementSet(UnionSet),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) enum SubtypeElements {
     SingleValue(ValueElement),
     ConstrainedSubtype(Asn1Type),
@@ -35,17 +35,17 @@ pub(crate) enum SubtypeElements {
     PermittedAlphabet(UnionSetElement),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct UnionSet {
     pub(crate) elements: Vec<IntersectionSet>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct IntersectionSet {
     pub(crate) elements: Vec<Elements>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct Asn1Constraint {
     pub(crate) root_elements: UnionSet,
     pub(crate) additional_elements: Option<UnionSet>,

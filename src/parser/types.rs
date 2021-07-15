@@ -7,7 +7,10 @@ use crate::structs::types::{
 use crate::tokenizer::Token;
 
 use super::base::{parse_enumerated_type, parse_integer_type};
+use super::constructed::parse_choice_type;
+
 use super::constraints::parse_constraints;
+
 use super::utils::{expect_one_of_keywords, expect_one_of_tokens, parse_set_ish_value};
 
 // Parses the `Type` Expansion in the ASN.1 Grammar.
@@ -57,7 +60,14 @@ pub(super) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Type,
             (ASN_BUILTIN_TYPE_KINDS.get(typestr).unwrap().clone(), 1)
         }
 
-        "SET" | "SEQUENCE" | "CHOICE" => parse_constructed_type(tokens)?,
+        "CHOICE" => {
+            let (choice_type, choice_type_consumed) = parse_choice_type(tokens)?;
+            (
+                Asn1TypeKind::Constructed(Asn1ConstructedType::Choice(choice_type)),
+                choice_type_consumed,
+            )
+        }
+        "SET" | "SEQUENCE" => parse_constructed_type(tokens)?,
 
         _ => (Asn1TypeKind::default(), 1),
     };

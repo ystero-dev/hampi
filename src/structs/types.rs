@@ -5,6 +5,7 @@ use lazy_static::lazy_static;
 
 use super::base::{Asn1TypeEnumerated, Asn1TypeInteger};
 use super::constraints::Asn1Constraint;
+use super::constructed::Asn1TypeChoice;
 
 lazy_static! {
     pub(crate) static ref ASN_BUILTIN_TYPE_KINDS: HashMap<&'static str, Asn1TypeKind> = {
@@ -59,7 +60,7 @@ pub(crate) enum Asn1BuiltinType {
     CharacterString,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct Asn1Type {
     pub(crate) kind: Asn1TypeKind,
     pub(crate) constraints: Option<Vec<Asn1Constraint>>,
@@ -89,7 +90,7 @@ pub(crate) enum Asn1TypeReference {
 #[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub(crate) enum Asn1ConstructedType {
-    Choice,
+    Choice(Asn1TypeChoice),
     Sequence,
     SequenceOf,
     Set,
