@@ -20,6 +20,8 @@ mod constraints;
 
 mod ioc;
 
+mod base;
+
 mod constructed;
 
 /// Parse the tokens into internal Asn1Module representation

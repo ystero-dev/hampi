@@ -3,12 +3,12 @@ use std::collections::HashMap;
 
 use lazy_static::lazy_static;
 
+use super::base::Asn1TypeInteger;
 use super::constraints::Asn1Constraint;
 
 lazy_static! {
     pub(crate) static ref ASN_BUILTIN_TYPE_KINDS: HashMap<&'static str, Asn1TypeKind> = {
         let mut m = HashMap::new();
-        m.insert("INTEGER", Asn1TypeKind::Builtin(Asn1BuiltinType::Integer));
         m.insert(
             "ENUMERATED",
             Asn1TypeKind::Builtin(Asn1BuiltinType::Enumerated),
@@ -50,7 +50,7 @@ lazy_static! {
 #[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub(crate) enum Asn1BuiltinType {
-    Integer,
+    Integer(Asn1TypeInteger),
     Enumerated,
     Boolean,
     Null,
@@ -65,7 +65,6 @@ pub(crate) enum Asn1BuiltinType {
 
 #[derive(Debug)]
 pub(crate) struct Asn1Type {
-    pub(crate) id: String,
     pub(crate) kind: Asn1TypeKind,
     pub(crate) constraints: Option<Vec<Asn1Constraint>>,
 }
@@ -79,16 +78,16 @@ pub(crate) enum Asn1TypeKind {
 
 impl Default for Asn1TypeKind {
     fn default() -> Self {
-        Self::Reference(Asn1TypeReference::InternalReference)
+        Self::Reference(Asn1TypeReference::Internal)
     }
 }
 
 #[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub(crate) enum Asn1TypeReference {
-    ExternalReference,
-    ClassFieldReference,
-    InternalReference,
+    External,
+    ClassField,
+    Internal,
 }
 
 #[allow(dead_code)]

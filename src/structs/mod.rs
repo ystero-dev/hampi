@@ -10,6 +10,8 @@ pub mod types;
 
 pub mod ioc;
 
+pub mod base;
+
 pub mod constructed;
 
 pub(crate) mod constraints;

@@ -1,9 +1,12 @@
 //! Handling Parsing of ASN.1 Types
 
 use crate::error::Error;
-use crate::structs::types::{Asn1ConstructedType, Asn1Type, Asn1TypeKind, ASN_BUILTIN_TYPE_KINDS};
+use crate::structs::types::{
+    Asn1BuiltinType, Asn1ConstructedType, Asn1Type, Asn1TypeKind, ASN_BUILTIN_TYPE_KINDS,
+};
 use crate::tokenizer::Token;
 
+use super::base::parse_integer_type;
 use super::constraints::parse_constraints;
 use super::utils::{
     expect_keyword, expect_one_of_keywords, expect_one_of_tokens, parse_set_ish_value,
@@ -45,6 +48,15 @@ pub(super) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Type,
             )
         }
 
+        "INTEGER" => {
+            let (int_type, int_type_consumed) = parse_integer_type(tokens)?;
+            (
+                Asn1TypeKind::Builtin(Asn1BuiltinType::Integer(int_type)),
+                "".to_string(), // FIXME
+                int_type_consumed,
+            )
+        }
+
         "INTEGER" | "BOOLEAN" | "NULL" | "OBJECT-IDENTIFIER" | "UTF8String" | "IA5String"
         | "PrintableString" | "CHARACTER-STRING" => (
             ASN_BUILTIN_TYPE_KINDS.get(typestr).unwrap().clone(),
@@ -64,14 +76,7 @@ pub(super) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Type,
     };
     consumed += constraints_str_consumed;
 
-    Ok((
-        Asn1Type {
-            id,
-            kind,
-            constraints,
-        },
-        consumed,
-    ))
+    Ok((Asn1Type { kind, constraints }, consumed))
 }
 
 fn parse_bit_string_type<'parser>(_tokens: &'parser [Token]) -> Result<(String, usize), Error> {
@@ -100,15 +105,13 @@ fn parse_constructed_type<'parser>(
     if !expect_one_of_keywords(tokens, &["SEQUENCE", "SET", "CHOICE"])? {
         return Err(unexpected_token!("'SEQUENCE', 'SET', 'CHOICE'", tokens[0]));
     }
-    let id = tokens[0].text.clone();
-    consumed += 1;
 
     let (def, def_consumed) = parse_set_ish_value(&tokens[consumed..])?;
     consumed += def_consumed;
 
     Ok((
         Asn1TypeKind::Constructed(Asn1ConstructedType::Sequence),
-        [id, def].to_vec().join(" "),
+        def,
         consumed,
     ))
 }

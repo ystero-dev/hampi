@@ -8,7 +8,7 @@ use crate::tokenizer::Token;
 
 use super::ioc::parse_class;
 use super::types::parse_type;
-use super::utils::{expect_keyword, expect_one_of_tokens, expect_token};
+use super::utils::{expect_keyword, expect_one_of_tokens, expect_token, parse_set_ish_value};
 use super::values::parse_value;
 
 pub(super) fn parse_definition<'parser>(
@@ -99,6 +99,12 @@ fn parse_type_definition<'parser>(
     }
     let id = tokens[consumed].text.clone();
     consumed += 1;
+
+    if expect_token(&tokens[consumed..], Token::is_curly_begin)? {
+        eprintln!("1");
+        let (_params, params_consumed) = parse_set_ish_value(&tokens[consumed..])?;
+        consumed += params_consumed;
+    }
 
     if !expect_token(&tokens[consumed..], Token::is_assignment)? {
         return Err(unexpected_token!("::=", tokens[consumed]));
