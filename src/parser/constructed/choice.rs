@@ -82,6 +82,15 @@ mod tests {
                 components_count: 3,
                 tokens_consumed: 18,
             },
+            ParseChoiceTestCase {
+                input: "CHOICE {
+        local                           INTEGER (0..65535),
+        global                          OBJECT IDENTIFIER
+}",
+                success: true,
+                components_count: 2,
+                tokens_consumed: 14,
+            },
         ];
 
         for tc in test_cases {
