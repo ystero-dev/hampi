@@ -2,16 +2,19 @@
 
 use crate::error::Error;
 use crate::structs::types::{
-    Asn1BuiltinType, Asn1ConstructedType, Asn1Type, Asn1TypeKind, ASN_BUILTIN_TYPE_KINDS,
+    Asn1BuiltinType, Asn1ConstructedType, Asn1Type, Asn1TypeKind, Asn1TypeReference,
+    ASN_BUILTIN_TYPE_KINDS,
 };
 use crate::tokenizer::Token;
 
 use super::base::{parse_enumerated_type, parse_integer_type};
-use super::constructed::parse_choice_type;
+use super::constructed::{parse_choice_type, parse_seq_or_seq_of_type};
 
 use super::constraints::parse_constraints;
 
-use super::utils::{expect_one_of_keywords, expect_one_of_tokens, parse_set_ish_value};
+use super::utils::{
+    expect_keywords, expect_one_of_tokens, expect_token, expect_tokens, parse_set_ish_value,
+};
 
 // Parses the `Type` Expansion in the ASN.1 Grammar.
 pub(super) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Type, usize), Error> {
@@ -59,21 +62,29 @@ pub(super) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Type,
             )
         }
 
-        "BOOLEAN" | "NULL" | "OBJECT-IDENTIFIER" | "UTF8String" | "IA5String"
-        | "PrintableString" | "CHARACTER-STRING" => {
-            (ASN_BUILTIN_TYPE_KINDS.get(typestr).unwrap().clone(), 1)
+        "OBJECT" => {
+            eprintln!("1111");
+            if !expect_keywords(&tokens[consumed..], &["OBJECT", "IDENTIFIER"])? {
+                return Err(unexpected_token!("'IDENTIFIER'", tokens[consumed + 1]));
+            }
+
+            (Asn1TypeKind::Builtin(Asn1BuiltinType::ObjectIdentifier), 2)
         }
+
+        "BOOLEAN" | "NULL" | "UTF8String" | "IA5String" | "PrintableString"
+        | "CHARACTER-STRING" => (ASN_BUILTIN_TYPE_KINDS.get(typestr).unwrap().clone(), 1),
 
         "CHOICE" => {
             let (choice_type, choice_type_consumed) = parse_choice_type(tokens)?;
+            eprintln!("choice: {}", choice_type_consumed);
             (
                 Asn1TypeKind::Constructed(Asn1ConstructedType::Choice(choice_type)),
                 choice_type_consumed,
             )
         }
-        "SET" | "SEQUENCE" => parse_constructed_type(tokens)?,
+        "SEQUENCE" => parse_seq_or_seq_of_type(tokens)?,
 
-        _ => (Asn1TypeKind::default(), 1),
+        _ => parse_referenced_type(tokens)?,
     };
     consumed += kind_consumed;
 
@@ -90,22 +101,101 @@ fn parse_bit_string_type<'parser>(_tokens: &'parser [Token]) -> Result<(String, 
     Err(parse_error!("Not Implemented yet!"))
 }
 
-fn parse_constructed_type<'parser>(
+fn parse_referenced_type<'parser>(
     tokens: &'parser [Token],
 ) -> Result<(Asn1TypeKind, usize), Error> {
     let mut consumed = 0;
 
-    if !expect_one_of_keywords(tokens, &["SEQUENCE", "SET", "CHOICE"])? {
-        return Err(unexpected_token!("'SEQUENCE', 'SET', 'CHOICE'", tokens[0]));
+    if expect_tokens(
+        &tokens[consumed..],
+        &[
+            &[Token::is_object_class_reference],
+            &[Token::is_dot],
+            &[Token::is_type_field_reference],
+        ],
+    )? {
+        Ok((
+            Asn1TypeKind::Reference(Asn1TypeReference::ClassField(Token::concat(
+                &tokens[consumed..consumed + 3],
+                "",
+            ))),
+            3,
+        ))
+    } else {
+        let (reference, reference_consumed) = if expect_tokens(
+            &tokens[consumed..],
+            &[
+                &[Token::is_module_reference],
+                &[Token::is_dot],
+                &[Token::is_type_reference],
+            ],
+        )? {
+            (Token::concat(&tokens[consumed..consumed + 3], ""), 3)
+        } else {
+            (tokens[consumed].text.clone(), 1)
+        };
+        consumed += reference_consumed;
+
+        let (actual_params, actual_params_consumed) =
+            if expect_token(&tokens[consumed..], Token::is_curly_begin)? {
+                parse_set_ish_value(&tokens[consumed..])?
+            } else {
+                ("".to_string(), 0)
+            };
+        consumed += actual_params_consumed;
+
+        let outref = reference + &actual_params;
+        if actual_params_consumed > 0 {
+            Ok((
+                Asn1TypeKind::Reference(Asn1TypeReference::Parameterized(outref)),
+                consumed,
+            ))
+        } else {
+            Ok((
+                Asn1TypeKind::Reference(Asn1TypeReference::Reference(outref)),
+                consumed,
+            ))
+        }
     }
-
-    let (_, def_consumed) = parse_set_ish_value(&tokens[consumed..])?;
-    consumed += def_consumed;
-
-    Ok((
-        Asn1TypeKind::Constructed(Asn1ConstructedType::Sequence),
-        consumed,
-    ))
 }
 
-// TODO: Add test cases
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::tokenizer::tokenize;
+
+    #[test]
+    fn parse_type_test() {
+        struct ParseTypeTestCase<'tc> {
+            input: &'tc str,
+            success: bool,
+            consumed: usize,
+        }
+
+        let test_cases = vec![ParseTypeTestCase {
+            input: "OBJECT IDENTIFIER",
+            success: true,
+            consumed: 2,
+        }];
+
+        for tc in test_cases {
+            let reader = std::io::BufReader::new(std::io::Cursor::new(tc.input));
+            let tokens = tokenize(reader);
+            assert!(tokens.is_ok());
+            let tokens = tokens.unwrap();
+
+            let ty = parse_type(&tokens);
+            assert_eq!(
+                ty.is_ok(),
+                tc.success,
+                "{}:{}",
+                tc.input,
+                if tc.success {
+                    format!("{:#?}", ty.err())
+                } else {
+                    format!("{:#?}", ty.ok())
+                }
+            );
+        }
+    }
+}

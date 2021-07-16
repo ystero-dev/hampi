@@ -31,7 +31,9 @@ pub(super) fn parse_constraints<'parser>(
     Ok((constraints, consumed))
 }
 
-fn parse_constraint<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Constraint, usize), Error> {
+pub(crate) fn parse_constraint<'parser>(
+    tokens: &'parser [Token],
+) -> Result<(Asn1Constraint, usize), Error> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_round_begin)? {

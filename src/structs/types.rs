@@ -5,7 +5,7 @@ use lazy_static::lazy_static;
 
 use super::base::{Asn1TypeEnumerated, Asn1TypeInteger};
 use super::constraints::Asn1Constraint;
-use super::constructed::Asn1TypeChoice;
+use super::constructed::{Asn1TypeChoice, Asn1TypeSequence, Asn1TypeSequenceOf};
 
 lazy_static! {
     pub(crate) static ref ASN_BUILTIN_TYPE_KINDS: HashMap<&'static str, Asn1TypeKind> = {
@@ -75,24 +75,24 @@ pub(crate) enum Asn1TypeKind {
 
 impl Default for Asn1TypeKind {
     fn default() -> Self {
-        Self::Reference(Asn1TypeReference::Internal)
+        Self::Reference(Asn1TypeReference::Reference("".to_string()))
     }
 }
 
 #[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub(crate) enum Asn1TypeReference {
-    External,
-    ClassField,
-    Internal,
+    ClassField(String),
+    Reference(String),
+    Parameterized(String), // FIXME: For now We can make it a struct
 }
 
 #[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub(crate) enum Asn1ConstructedType {
     Choice(Asn1TypeChoice),
-    Sequence,
-    SequenceOf,
+    Sequence(Asn1TypeSequence),
+    SequenceOf(Asn1TypeSequenceOf),
     Set,
     SetOf,
 }

@@ -1,5 +1,6 @@
 //! Structures Representing Constructed Types
 
+use super::constraints::Asn1Constraint;
 use super::types::Asn1Type;
 
 #[derive(Debug, Clone)]
@@ -30,4 +31,10 @@ pub(crate) struct Asn1TypeSequence {
 #[derive(Debug, Clone)]
 pub(crate) struct Asn1TypeChoice {
     pub(crate) components: Vec<Component>,
+}
+
+#[derive(Debug, Clone)]
+pub(crate) struct Asn1TypeSequenceOf {
+    pub(crate) size: Option<Asn1Constraint>,
+    pub(crate) ty: Box<Asn1Type>,
 }

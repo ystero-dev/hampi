@@ -106,9 +106,9 @@ pub(super) fn parse_set_ish_value<'parser>(
         consumed += 1;
         if expect_token(&tokens[consumed..], end_token)? {
             level -= 1;
-            consumed += 1;
             if level == 0 {
-                return Ok((Token::concat(&tokens[0..consumed]), consumed));
+                consumed += 1;
+                return Ok((Token::concat(&tokens[0..consumed], " "), consumed));
             }
         }
     }

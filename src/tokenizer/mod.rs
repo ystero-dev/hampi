@@ -102,10 +102,10 @@ const BASE_TYPES: &'static [&'static str] = &[
     "IA5String",
     "PrintableString",
     // Spliced types (Note: actual ASN.1 Type names are different.
-    "OBJECT-IDENTIFIER",
-    "OCTET-STRING",
-    "BIT-STRING",
-    "CHARACTER-STRING",
+    "OBJECT",
+    "OCTET",
+    "BIT",
+    "CHARACTER",
 ];
 
 const CONSTRUCTED_TYPES: &'static [&'static str] = &["SEQUENCE", "SET", "CHOICE"];
@@ -272,12 +272,12 @@ impl Token {
     }
 
     /// Returns the 'String' obtained by Concatenating tokens.
-    pub fn concat(tokens: &[Token]) -> String {
+    pub fn concat(tokens: &[Token], joinstr: &'static str) -> String {
         tokens
             .iter()
             .map(|x| x.text.clone())
             .collect::<Vec<String>>()
-            .join(" ")
+            .join(joinstr)
     }
 
     /// Returns if the given token is a Set 'intersection'
