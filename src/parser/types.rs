@@ -35,7 +35,7 @@ pub(super) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Type,
     let token = &tokens[0];
     let typestr = token.text.as_str();
     let (kind, kind_consumed) = match typestr {
-        "BIT-STRING" => {
+        "BIT" => {
             let (_, id_consumed) = parse_bit_string_type(tokens)?;
             (
                 ASN_BUILTIN_TYPE_KINDS.get(typestr).unwrap().clone(),
