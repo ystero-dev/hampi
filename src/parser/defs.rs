@@ -1,16 +1,21 @@
 //! Top level handling of definitions
 
 use crate::error::Error;
-use crate::structs::defs::{
-    Asn1AssignmentKind, Asn1Definition, Asn1ObjectClassAssignment, Asn1TypeAssignment,
-    Asn1ValueAssignment, DefinitionParam, DummyReferenceKind, GovernerKind, ParamDummyReference,
-    ParamGoverner,
+use crate::structs::{
+    defs::{
+        Asn1AssignmentKind, Asn1Definition, Asn1ObjectClassAssignment, Asn1ObjectSetAssignment,
+        Asn1TypeAssignment, Asn1ValueAssignment, DefinitionParam, DummyReferenceKind, GovernerKind,
+        ParamDummyReference, ParamGoverner,
+    },
+    ioc::Asn1ObjectSet,
 };
 use crate::tokenizer::Token;
 
 use super::ioc::parse_class;
 use super::types::parse_type;
-use super::utils::{expect_keyword, expect_one_of_tokens, expect_token, expect_tokens};
+use super::utils::{
+    expect_keyword, expect_one_of_tokens, expect_token, expect_tokens, parse_set_ish_value,
+};
 use super::values::parse_value;
 
 pub(super) fn parse_definition<'parser>(
@@ -29,7 +34,7 @@ pub(super) fn parse_definition<'parser>(
             parse_typeish_definition(&tokens[consumed..])
         }
     } else {
-        eprintln!("Token: {:#?})", tokens[consumed]);
+        eprintln!("Token: {:?}", tokens[consumed]);
         Err(parse_error!("Not Implemented!"))
     }
 }
@@ -88,6 +93,13 @@ fn parse_typeish_definition<'parser>(
         Err(_) => {}
     }
 
+    match parse_value_set_definition(tokens) {
+        Ok(x) => {
+            return Ok(x);
+        }
+        Err(_) => {}
+    }
+
     Err(parse_error!(
         "Failed to parse a definition at Token: {:#?}",
         tokens[0]
@@ -116,6 +128,7 @@ fn parse_type_definition<'parser>(
     }
     consumed += 1;
 
+    eprintln!("parse_type: {:#?}", tokens[consumed]);
     let (typeref, typeref_consumed) = parse_type(&tokens[consumed..])?;
     consumed += typeref_consumed;
 
@@ -133,7 +146,7 @@ fn parse_class_definition<'parser>(
 ) -> Result<(Asn1Definition, usize), Error> {
     let mut consumed = 0;
     if !expect_token(&tokens[consumed..], Token::is_object_class_reference)? {
-        return Err(unexpected_token!("Type Reference", tokens[consumed]));
+        return Err(unexpected_token!("CLASS Reference", tokens[consumed]));
     }
     let id = tokens[consumed].text.clone();
     consumed += 1;
@@ -144,7 +157,7 @@ fn parse_class_definition<'parser>(
     consumed += 1;
 
     if !expect_keyword(&tokens[consumed..], "CLASS")? {
-        return Err(unexpected_token!("::=", tokens[consumed]));
+        return Err(unexpected_token!("'CLASS'", tokens[consumed]));
     }
 
     let (classref, classref_consumed) = parse_class(&tokens[consumed..])?;
@@ -153,6 +166,77 @@ fn parse_class_definition<'parser>(
     Ok((
         Asn1Definition {
             kind: Asn1AssignmentKind::Class(Asn1ObjectClassAssignment { id, classref }),
+            params: None,
+        },
+        consumed,
+    ))
+}
+
+fn parse_value_set_definition<'parser>(
+    tokens: &'parser [Token],
+) -> Result<(Asn1Definition, usize), Error> {
+    let mut consumed = 0;
+
+    if !expect_token(&tokens[consumed..], Token::is_type_reference)? {
+        return Err(unexpected_token!("'Type Reference'", tokens[consumed]));
+    }
+    let id = tokens[consumed].text.clone();
+    consumed += 1;
+
+    if !expect_token(&tokens[consumed..], Token::is_object_class_reference)? {
+        return Err(unexpected_token!("'CLASS Reference'", tokens[consumed]));
+    }
+    let class = tokens[consumed].text.clone();
+    consumed += 1;
+
+    if !expect_token(&tokens[consumed..], Token::is_assignment)? {
+        return Err(unexpected_token!("'::='", tokens[consumed]));
+    }
+    consumed += 1;
+
+    if !expect_token(&tokens[consumed..], Token::is_curly_begin)? {
+        return Err(unexpected_token!("'{'", tokens[consumed]));
+    }
+    consumed += 1;
+
+    let mut objects = vec![];
+    loop {
+        if expect_token(&tokens[consumed..], Token::is_extension)? {
+            consumed += 1;
+            if expect_token(&tokens[consumed..], Token::is_extension)? {
+                consumed += 1;
+            }
+        }
+
+        match parse_set_ish_value(&tokens[consumed..]) {
+            Ok(result) => {
+                let (value, value_consumed) = result;
+                objects.push(value);
+                consumed += value_consumed;
+            }
+            Err(_) => {} // Empty Values permitted
+        }
+
+        if expect_token(&tokens[consumed..], Token::is_comma)? {
+            consumed += 1;
+        }
+
+        if expect_token(&tokens[consumed..], Token::is_set_union)? {
+            consumed += 1;
+        }
+
+        if expect_token(&tokens[consumed..], Token::is_curly_end)? {
+            consumed += 1;
+            break;
+        }
+    }
+
+    Ok((
+        Asn1Definition {
+            kind: Asn1AssignmentKind::ObjectSet(Asn1ObjectSetAssignment {
+                id,
+                set: Asn1ObjectSet { class, objects },
+            }),
             params: None,
         },
         consumed,
@@ -263,8 +347,7 @@ fn parse_params<'parser>(tokens: &'parser [Token]) -> Result<(Vec<DefinitionPara
         }
     }
 
-    eprintln!("params: {:#?}", params);
-
     Ok((params, consumed))
 }
+
 // TODO: Add Test cases
