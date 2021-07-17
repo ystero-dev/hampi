@@ -13,23 +13,11 @@ lazy_static! {
         m.insert("BOOLEAN", Asn1TypeKind::Builtin(Asn1BuiltinType::Boolean));
         m.insert("NULL", Asn1TypeKind::Builtin(Asn1BuiltinType::Null));
         m.insert(
-            "BIT-STRING",
-            Asn1TypeKind::Builtin(Asn1BuiltinType::BitString),
-        );
-        m.insert(
-            "OCTET-STRING",
-            Asn1TypeKind::Builtin(Asn1BuiltinType::OctetString),
-        );
-        m.insert(
-            "OBJECT-IDENTIFIER",
-            Asn1TypeKind::Builtin(Asn1BuiltinType::ObjectIdentifier),
-        );
-        m.insert(
             "RELATIVE-OID",
             Asn1TypeKind::Builtin(Asn1BuiltinType::RelativeOid),
         );
         m.insert(
-            "Printablestring",
+            "PrintableString",
             Asn1TypeKind::Builtin(Asn1BuiltinType::CharacterString),
         );
         m.insert(

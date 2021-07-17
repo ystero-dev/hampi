@@ -44,7 +44,7 @@ mod tests {
             ParseComponentTestCase {
                 input: "global                          OBJECT IDENTIFIER",
                 success: true,
-                consumed: 2,
+                consumed: 3,
             },
         ];
         for tc in test_cases {
@@ -55,6 +55,11 @@ mod tests {
 
             let component = parse_component(&tokens);
             assert_eq!(component.is_ok(), tc.success, "{}", tc.input);
+
+            if tc.success {
+                let (component, component_consumed) = component.unwrap();
+                assert_eq!(component_consumed, tc.consumed, "{}", tc.input);
+            }
         }
     }
 }

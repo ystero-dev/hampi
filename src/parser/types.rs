@@ -38,13 +38,11 @@ pub(super) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Type,
     let token = &tokens[0];
     let typestr = token.text.as_str();
     let (kind, kind_consumed) = match typestr {
-        "BIT" => {
-            let (_, id_consumed) = parse_bit_string_type(tokens)?;
-            (
-                ASN_BUILTIN_TYPE_KINDS.get(typestr).unwrap().clone(),
-                id_consumed,
-            )
-        }
+        "BIT" => (Asn1TypeKind::Builtin(Asn1BuiltinType::BitString), 2),
+
+        "OCTET" => (Asn1TypeKind::Builtin(Asn1BuiltinType::OctetString), 2),
+
+        "CHARACTER" => (Asn1TypeKind::Builtin(Asn1BuiltinType::CharacterString), 2),
 
         "ENUMERATED" => {
             let (enum_type, enum_type_consumed) = parse_enumerated_type(tokens)?;
@@ -63,7 +61,6 @@ pub(super) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Type,
         }
 
         "OBJECT" => {
-            eprintln!("1111");
             if !expect_keywords(&tokens[consumed..], &["OBJECT", "IDENTIFIER"])? {
                 return Err(unexpected_token!("'IDENTIFIER'", tokens[consumed + 1]));
             }
@@ -71,12 +68,12 @@ pub(super) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Type,
             (Asn1TypeKind::Builtin(Asn1BuiltinType::ObjectIdentifier), 2)
         }
 
-        "BOOLEAN" | "NULL" | "UTF8String" | "IA5String" | "PrintableString"
-        | "CHARACTER-STRING" => (ASN_BUILTIN_TYPE_KINDS.get(typestr).unwrap().clone(), 1),
+        "BOOLEAN" | "NULL" | "UTF8String" | "IA5String" | "PrintableString" => {
+            (ASN_BUILTIN_TYPE_KINDS.get(typestr).unwrap().clone(), 1)
+        }
 
         "CHOICE" => {
             let (choice_type, choice_type_consumed) = parse_choice_type(tokens)?;
-            eprintln!("choice: {}", choice_type_consumed);
             (
                 Asn1TypeKind::Constructed(Asn1ConstructedType::Choice(choice_type)),
                 choice_type_consumed,
@@ -95,10 +92,6 @@ pub(super) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Type,
     consumed += constraints_str_consumed;
 
     Ok((Asn1Type { kind, constraints }, consumed))
-}
-
-fn parse_bit_string_type<'parser>(_tokens: &'parser [Token]) -> Result<(String, usize), Error> {
-    Err(parse_error!("Not Implemented yet!"))
 }
 
 fn parse_referenced_type<'parser>(
@@ -199,6 +192,11 @@ mod tests {
                     format!("{:#?}", ty.ok())
                 }
             );
+
+            if tc.success {
+                let (_, ty_consumed) = ty.unwrap();
+                assert_eq!(ty_consumed, tc.consumed, "{}", tc.input);
+            }
         }
     }
 }

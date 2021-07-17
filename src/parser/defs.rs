@@ -34,7 +34,6 @@ pub(super) fn parse_definition<'parser>(
             parse_typeish_definition(&tokens[consumed..])
         }
     } else {
-        eprintln!("Token: {:?}", tokens[consumed]);
         Err(parse_error!("Not Implemented!"))
     }
 }
@@ -128,7 +127,6 @@ fn parse_type_definition<'parser>(
     }
     consumed += 1;
 
-    eprintln!("parse_type: {:#?}", tokens[consumed]);
     let (typeref, typeref_consumed) = parse_type(&tokens[consumed..])?;
     consumed += typeref_consumed;
 

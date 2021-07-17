@@ -27,10 +27,6 @@ fn parse_named_values<'parser>(
         }
         let named_value = named_value.unwrap();
 
-        eprintln!(
-            "identifier: {:#?}, named_value: {:#?}",
-            identifier, named_value
-        );
         values.push((identifier, named_value));
         consumed += named_value_consumed;
 
