@@ -1,14 +1,13 @@
 //! Parser for ASN.1 SubType Constraints
 
 use crate::error::Error;
-use crate::structs::constraints::{
-    Asn1Constraint, Elements, IntersectionSet, RangeElement, SubtypeElements, UnionSet,
-    UnionSetElement, ValueElement,
-};
+use crate::structs::constraints::*;
 use crate::tokenizer::Token;
 
 use super::types::parse_type;
-use super::utils::{expect_keyword, expect_one_of_keywords, expect_one_of_tokens, expect_token};
+use super::utils::{
+    expect_keyword, expect_one_of_keywords, expect_one_of_tokens, expect_token, expect_tokens,
+};
 use super::values::parse_value;
 
 pub(super) fn parse_constraints<'parser>(
@@ -34,6 +33,83 @@ pub(super) fn parse_constraints<'parser>(
 pub(crate) fn parse_constraint<'parser>(
     tokens: &'parser [Token],
 ) -> Result<(Asn1Constraint, usize), Error> {
+    if let Ok(subtype) = parse_subtype_constraint(tokens) {
+        Ok(subtype)
+    } else if let Ok(table) = parse_table_constraint(tokens) {
+        Ok(table)
+    } else {
+        Err(parse_error!(
+            "Parsing of this constraint not yet supported!"
+        ))
+    }
+}
+
+fn parse_table_constraint<'parser>(
+    tokens: &'parser [Token],
+) -> Result<(Asn1Constraint, usize), Error> {
+    let mut consumed = 0;
+
+    if !expect_token(&tokens[consumed..], Token::is_round_begin)? {
+        return Err(unexpected_token!("'('", tokens[0]));
+    }
+    consumed += 1;
+
+    // First Simple Table - Must succeed
+    let table = if expect_tokens(
+        &tokens[consumed..],
+        &[
+            &[Token::is_curly_begin],
+            &[Token::is_object_set_reference],
+            &[Token::is_curly_end],
+        ],
+    )? {
+        tokens[consumed + 1].text.clone()
+    } else {
+        return Err(parse_error!("Failed to parse Simple Table Constraint."));
+    };
+    consumed += 3;
+
+    let component = match expect_tokens(
+        &tokens[consumed..],
+        &[
+            &[Token::is_curly_begin],
+            &[Token::is_at_component_list],
+            &[Token::is_curly_end],
+        ],
+    ) {
+        Ok(result) => {
+            if result {
+                let c = tokens[consumed + 1].text.clone();
+                consumed += 3;
+                Some(c)
+            } else {
+                None
+            }
+        }
+        Err(_) => None,
+    };
+
+    let constraint = if component.is_some() {
+        Asn1Constraint::Table(TableConstraint::CompRel(ComponentRelation {
+            table,
+            component: component.unwrap(),
+        }))
+    } else {
+        Asn1Constraint::Table(TableConstraint::Simple(ObjectSet::DefinedObjectSet(table)))
+    };
+
+    if !expect_token(&tokens[consumed..], Token::is_round_end)? {
+        return Err(unexpected_token!("')'", tokens[consumed]));
+    }
+    consumed += 1;
+
+    eprintln!("constraint: {:#?}, consumed: {}", constraint, consumed);
+    Ok((constraint, consumed))
+}
+
+fn parse_subtype_constraint<'parser>(
+    tokens: &'parser [Token],
+) -> Result<(Asn1Constraint, usize), Error> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_round_begin)? {
@@ -56,9 +132,15 @@ pub(crate) fn parse_constraint<'parser>(
         if !expect_token(&tokens[consumed..], Token::is_extension)? {
             return Err(unexpected_token!("'...'", tokens[consumed]));
         }
+        consumed += 1;
+
+        // FIXME: "," missing?
+        if !expect_token(&tokens[consumed..], Token::is_comma)? {
+            return Err(unexpected_token!("','", tokens[consumed]));
+        }
+        consumed += 1;
 
         // Potentially Empty additional_elements
-        consumed += 1;
         match parse_union_set(&tokens[consumed..]) {
             Ok(result) => {
                 additional_elements = Some(result.0);
@@ -74,10 +156,10 @@ pub(crate) fn parse_constraint<'parser>(
     consumed += 1;
 
     Ok((
-        Asn1Constraint {
+        Asn1Constraint::Subtype(ElementSetConstraint {
             root_elements,
             additional_elements,
-        },
+        }),
         consumed,
     ))
 }
@@ -312,7 +394,7 @@ mod tests {
     use crate::tokenizer::tokenize;
 
     #[test]
-    fn parse_constraint_testcase() {
+    fn parse_subtype_constraint_testcase() {
         struct ParseConstraintTestCase<'tc> {
             input: &'tc str,                   // Input String
             success: bool,                     // Check whether the constraint result is `is_ok`
@@ -343,6 +425,7 @@ mod tests {
                 additional_elements_present: false,
                 additional_elements_count: 0,
             },
+            // FIXME: Add more test cases for subtype constraints
         ];
         for tc in test_cases {
             let reader = std::io::BufReader::new(std::io::Cursor::new(tc.input));
@@ -350,7 +433,7 @@ mod tests {
             assert!(tokens.is_ok());
             let tokens = tokens.unwrap();
 
-            let constraint = parse_constraint(&tokens);
+            let constraint = parse_subtype_constraint(&tokens);
             assert_eq!(
                 constraint.is_ok(),
                 tc.success,
@@ -360,37 +443,47 @@ mod tests {
             );
 
             if tc.success {
-                let (constraint, consumed) = constraint.unwrap();
+                let (elem_set, elem_set_consumed) = constraint.unwrap();
 
-                assert_eq!(consumed, tokens.len(), "{:#?}", constraint);
-                assert_eq!(
-                    constraint.root_elements.elements.len(),
-                    tc.root_elements_count,
-                    "{:#?}",
-                    constraint
-                );
-
-                assert_eq!(
-                    constraint.additional_elements.is_some(),
-                    tc.additional_elements_present,
-                    "{:#?}",
-                    constraint
-                );
-
-                if constraint.additional_elements.is_some() {
+                if let Asn1Constraint::Subtype(constraint) = elem_set {
+                    assert_eq!(elem_set_consumed, tokens.len(), "{:#?}", constraint);
                     assert_eq!(
-                        &constraint
-                            .additional_elements
-                            .as_ref()
-                            .unwrap()
-                            .elements
-                            .len(),
-                        &tc.additional_elements_count,
+                        constraint.root_elements.elements.len(),
+                        tc.root_elements_count,
                         "{:#?}",
                         constraint
                     );
+
+                    assert_eq!(
+                        constraint.additional_elements.is_some(),
+                        tc.additional_elements_present,
+                        "{:#?}",
+                        constraint
+                    );
+
+                    if constraint.additional_elements.is_some() {
+                        assert_eq!(
+                            &constraint
+                                .additional_elements
+                                .as_ref()
+                                .unwrap()
+                                .elements
+                                .len(),
+                            &tc.additional_elements_count,
+                            "{:#?}",
+                            constraint
+                        );
+                    }
+                } else {
+                    assert!(false, "Expected Subtype Constraint, Found {:#?}", elem_set);
                 }
             }
         }
+    }
+
+    #[test]
+    fn parse_table_constraint_testcases() {
+        // FIXME: Add test cases
+        assert!(true);
     }
 }

@@ -111,7 +111,10 @@ fn parse_referenced_type<'parser>(
         &[
             &[Token::is_object_class_reference],
             &[Token::is_dot],
-            &[Token::is_type_field_reference],
+            &[
+                Token::is_type_field_reference,
+                Token::is_value_field_reference,
+            ],
         ],
     )? {
         Ok((

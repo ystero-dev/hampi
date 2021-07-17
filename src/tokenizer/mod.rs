@@ -1116,6 +1116,18 @@ mod tests {
             }
         }
     }
+
+    #[test]
+    fn tokenizer_test_object_class_reference() {
+        let reader = std::io::BufReader::new(std::io::Cursor::new("SOME-OBJECT-CLASS"));
+        let result = tokenize(reader);
+        assert!(result.is_ok());
+        let result = result.unwrap();
+        assert!(result.len() == 1);
+
+        assert!(result[0].is_object_class_reference());
+    }
+
     #[test]
     fn tokenize_small_tokens() {
         struct SmallTokenTestCase<'t> {

@@ -173,7 +173,11 @@ fn parse_params<'parser>(tokens: &'parser [Token]) -> Result<(Vec<DefinitionPara
         let (governer, dummyref) = if expect_tokens(
             &tokens[consumed..],
             &[
-                &[Token::is_type_reference, Token::is_object_class_reference],
+                &[
+                    Token::is_type_reference,
+                    Token::is_asn_builtin_type,
+                    Token::is_object_class_reference,
+                ],
                 &[Token::is_colon],
                 &[Token::is_value_reference, Token::is_type_reference],
             ],
@@ -258,6 +262,8 @@ fn parse_params<'parser>(tokens: &'parser [Token]) -> Result<(Vec<DefinitionPara
             break;
         }
     }
+
+    eprintln!("params: {:#?}", params);
 
     Ok((params, consumed))
 }
