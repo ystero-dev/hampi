@@ -24,7 +24,7 @@ pub(crate) struct UnionSetElement {
 #[derive(Debug, Clone)]
 pub(crate) enum Elements {
     Subtype(SubtypeElements),
-    ElementSet(UnionSet),
+    Set(ElementSet),
 }
 
 #[derive(Debug, Clone)]
@@ -32,8 +32,8 @@ pub(crate) enum SubtypeElements {
     SingleValue(ValueElement),
     ConstrainedSubtype(Asn1Type),
     ValueRange(RangeElement),
-    SizeConstraint(UnionSetElement),
-    PermittedAlphabet(UnionSetElement),
+    SizeConstraint(ElementSet),
+    PermittedAlphabet(ElementSet),
 }
 
 #[derive(Debug, Clone)]
@@ -47,7 +47,7 @@ pub(crate) struct IntersectionSet {
 }
 
 #[derive(Debug, Clone)]
-pub(crate) struct ElementSetConstraint {
+pub(crate) struct ElementSet {
     pub(crate) root_elements: UnionSet,
     pub(crate) additional_elements: Option<UnionSet>,
 }
@@ -77,7 +77,7 @@ pub(crate) struct ContentsConstraint {
 
 #[derive(Debug, Clone)]
 pub(crate) enum Asn1Constraint {
-    Subtype(ElementSetConstraint),
+    Subtype(ElementSet),
     Table(TableConstraint),
     Contents(ContentsConstraint),
 }

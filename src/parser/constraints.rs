@@ -103,13 +103,17 @@ fn parse_table_constraint<'parser>(
     }
     consumed += 1;
 
-    eprintln!("constraint: {:#?}, consumed: {}", constraint, consumed);
     Ok((constraint, consumed))
 }
 
 fn parse_subtype_constraint<'parser>(
     tokens: &'parser [Token],
 ) -> Result<(Asn1Constraint, usize), Error> {
+    let (element_set, element_set_consumed) = parse_element_set(tokens)?;
+    Ok((Asn1Constraint::Subtype(element_set), element_set_consumed))
+}
+
+fn parse_element_set<'parser>(tokens: &'parser [Token]) -> Result<(ElementSet, usize), Error> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_round_begin)? {
@@ -134,12 +138,6 @@ fn parse_subtype_constraint<'parser>(
         }
         consumed += 1;
 
-        // FIXME: "," missing?
-        if !expect_token(&tokens[consumed..], Token::is_comma)? {
-            return Err(unexpected_token!("','", tokens[consumed]));
-        }
-        consumed += 1;
-
         // Potentially Empty additional_elements
         match parse_union_set(&tokens[consumed..]) {
             Ok(result) => {
@@ -156,10 +154,10 @@ fn parse_subtype_constraint<'parser>(
     consumed += 1;
 
     Ok((
-        Asn1Constraint::Subtype(ElementSetConstraint {
+        ElementSet {
             root_elements,
             additional_elements,
-        }),
+        },
         consumed,
     ))
 }
@@ -213,25 +211,6 @@ fn parse_union_set<'parser>(tokens: &'parser [Token]) -> Result<(UnionSet, usize
 //
 // This avoid having to write a lot of boiler-plate code to check for `(` or `)` in a few
 // functions (typically inside `parse_intersection_set`.)
-fn parse_enclosed_union_set<'parser>(tokens: &'parser [Token]) -> Result<(UnionSet, usize), Error> {
-    let mut consumed = 0;
-    if expect_token(&tokens[consumed..], Token::is_round_begin)? {
-        consumed += 1;
-
-        let (union_set, union_set_consumed) = parse_union_set(&tokens[consumed..])?;
-        consumed += union_set_consumed;
-
-        if !expect_token(&tokens[consumed..], Token::is_round_end)? {
-            return Err(unexpected_token!("')'", tokens[consumed]));
-        } else {
-            consumed += 1;
-            return Ok((union_set, consumed));
-        }
-    } else {
-        return Err(unexpected_token!("'('", tokens[consumed]));
-    }
-}
-
 fn parse_intersection_set<'parser>(tokens: &'parser [Token]) -> Result<(Elements, usize), Error> {
     let mut consumed = 0;
 
@@ -246,13 +225,10 @@ fn parse_intersection_set<'parser>(tokens: &'parser [Token]) -> Result<(Elements
         consumed += 1;
 
         if expect_token(&tokens[consumed..], Token::is_round_begin)? {
-            let (values, values_consumed) = parse_enclosed_union_set(&tokens[consumed..])?;
-            consumed += values_consumed;
+            let (element_set, element_set_consumed) = parse_element_set(&tokens[consumed..])?;
+            consumed += element_set_consumed;
 
-            return Ok((
-                Elements::Subtype(variant(UnionSetElement { values })),
-                consumed,
-            ));
+            return Ok((Elements::Subtype(variant(element_set)), consumed));
         }
     }
 
@@ -272,10 +248,10 @@ fn parse_intersection_set<'parser>(tokens: &'parser [Token]) -> Result<(Elements
 
     // Parse nested UnionSet Constraint
     if expect_token(&tokens[consumed..], Token::is_round_begin)? {
-        let (union_set, union_set_consumed) = parse_enclosed_union_set(&tokens[consumed..])?;
-        consumed += union_set_consumed;
+        let (element_set, element_set_consumed) = parse_element_set(&tokens[consumed..])?;
+        consumed += element_set_consumed;
 
-        return Ok((Elements::ElementSet(union_set), consumed));
+        return Ok((Elements::Set(element_set), consumed));
     }
 
     // Parse a simple `Value`
@@ -406,6 +382,13 @@ mod tests {
         let test_cases = vec![
             ParseConstraintTestCase {
                 input: "(SIZE(1..10))",
+                success: true,
+                root_elements_count: 1,
+                additional_elements_present: false,
+                additional_elements_count: 0,
+            },
+            ParseConstraintTestCase {
+                input: "(SIZE(1..150, ...))",
                 success: true,
                 root_elements_count: 1,
                 additional_elements_present: false,
