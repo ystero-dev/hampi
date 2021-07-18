@@ -52,6 +52,7 @@ fn parse_sequence_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1TypeKin
         };
 
         let default = if expect_keyword(&tokens[consumed..], "DEFAULT")? {
+            consumed += 1;
             let (value, value_consumed) = parse_value(&tokens[consumed..])?;
             consumed += value_consumed;
             Some(value)

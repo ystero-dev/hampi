@@ -92,7 +92,7 @@ fn parse_typeish_definition<'parser>(
         Err(_) => {}
     }
 
-    match parse_value_set_definition(tokens) {
+    match parse_object_set_definition(tokens) {
         Ok(x) => {
             return Ok(x);
         }
@@ -170,7 +170,7 @@ fn parse_class_definition<'parser>(
     ))
 }
 
-fn parse_value_set_definition<'parser>(
+fn parse_object_set_definition<'parser>(
     tokens: &'parser [Token],
 ) -> Result<(Asn1Definition, usize), Error> {
     let mut consumed = 0;
@@ -212,7 +212,16 @@ fn parse_value_set_definition<'parser>(
                 objects.push(value);
                 consumed += value_consumed;
             }
-            Err(_) => {} // Empty Values permitted
+            Err(_) => {
+                // It may be a reference to an object set, allowed
+                if expect_one_of_tokens(
+                    &tokens[consumed..],
+                    &[Token::is_object_set_reference, Token::is_object_reference],
+                )? {
+                    objects.push(tokens[consumed].text.clone());
+                    consumed += 1;
+                }
+            } // Empty Values permitted
         }
 
         if expect_token(&tokens[consumed..], Token::is_comma)? {
@@ -348,4 +357,54 @@ fn parse_params<'parser>(tokens: &'parser [Token]) -> Result<(Vec<DefinitionPara
     Ok((params, consumed))
 }
 
-// TODO: Add Test cases
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+    use crate::tokenizer::tokenize;
+
+    #[test]
+    fn parse_definition_tests() {
+        struct ParseDefinitionTestCase<'tc> {
+            input: &'tc str,
+            success: bool,
+        }
+
+        let test_cases = vec![ParseDefinitionTestCase {
+            input: r#"
+PDCP-Capability-r4-ext ::=                      SEQUENCE {
+        supportForRfc3095                               CHOICE {
+                notSupported                                            NULL,
+                supported                                                       SEQUENCE {
+                        maxROHC-ContextSessions                         MaxROHC-ContextSessions-r4      DEFAULT s16,
+                        reverseCompressionDepth                         INTEGER (0..65535)                      DEFAULT 0
+                }
+        }
+}
+                    "#,
+            success: true,
+        }];
+
+        for tc in test_cases {
+            let reader = std::io::BufReader::new(std::io::Cursor::new(tc.input));
+            let tokens = tokenize(reader);
+            assert!(tokens.is_ok());
+            let tokens = tokens.unwrap();
+
+            let def = parse_definition(&tokens);
+            assert_eq!(
+                def.is_ok(),
+                tc.success,
+                "{}:{}",
+                tc.input,
+                if tc.success {
+                    format!("{:#?}", def.err())
+                } else {
+                    format!("{:#?}", def.ok())
+                }
+            );
+        }
+
+        assert!(true);
+    }
+}

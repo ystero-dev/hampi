@@ -383,7 +383,6 @@ fn parse_contents_constraint<'parser>(
     let containing = if expect_token(&tokens[consumed..], Token::is_type_reference)? {
         tokens[consumed].text.clone()
     } else {
-        eprintln!("11115");
         return Err(unexpected_token!("'TYPE Reference'", tokens[consumed]));
     };
     consumed += 1;
@@ -394,7 +393,6 @@ fn parse_contents_constraint<'parser>(
     consumed += 1;
 
     let encodedby = None;
-    eprintln!("11114");
     Ok((
         Asn1Constraint::Contents(ContentsConstraint {
             containing,
