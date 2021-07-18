@@ -370,8 +370,9 @@ mod tests {
             success: bool,
         }
 
-        let test_cases = vec![ParseDefinitionTestCase {
-            input: r#"
+        let test_cases = vec![
+            ParseDefinitionTestCase {
+                input: r#"
 PDCP-Capability-r4-ext ::=                      SEQUENCE {
         supportForRfc3095                               CHOICE {
                 notSupported                                            NULL,
@@ -382,8 +383,26 @@ PDCP-Capability-r4-ext ::=                      SEQUENCE {
         }
 }
                     "#,
-            success: true,
-        }];
+                success: true,
+            },
+            ParseDefinitionTestCase {
+                input: r#"
+                    S1AP-PROTOCOL-IES ::= CLASS {
+        &id                             ProtocolIE-ID                                   UNIQUE,
+        &criticality    Criticality,
+        &Value,
+        &presence               Presence
+}
+WITH SYNTAX {
+        ID                              &id
+        CRITICALITY             &criticality
+        TYPE                    &Value
+        PRESENCE                &presence
+}
+                    "#,
+                success: true,
+            },
+        ];
 
         for tc in test_cases {
             let reader = std::io::BufReader::new(std::io::Cursor::new(tc.input));

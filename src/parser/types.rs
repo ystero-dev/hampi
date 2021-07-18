@@ -68,7 +68,7 @@ pub(super) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Type,
             (Asn1TypeKind::Builtin(Asn1BuiltinType::ObjectIdentifier), 2)
         }
 
-        "BOOLEAN" | "NULL" | "UTF8String" | "IA5String" | "PrintableString" => {
+        "BOOLEAN" | "NULL" | "VisibleString" | "UTF8String" | "IA5String" | "PrintableString" => {
             (ASN_BUILTIN_TYPE_KINDS.get(typestr).unwrap().clone(), 1)
         }
 
@@ -99,7 +99,7 @@ fn parse_referenced_type<'parser>(
 ) -> Result<(Asn1TypeKind, usize), Error> {
     let mut consumed = 0;
 
-    if expect_tokens(
+    match expect_tokens(
         &tokens[consumed..],
         &[
             &[Token::is_object_class_reference],
@@ -109,49 +109,64 @@ fn parse_referenced_type<'parser>(
                 Token::is_value_field_reference,
             ],
         ],
-    )? {
+    ) {
+        Ok(success) => {
+            if success {
+                return Ok((
+                    Asn1TypeKind::Reference(Asn1TypeReference::ClassField(Token::concat(
+                        &tokens[consumed..consumed + 3],
+                        "",
+                    ))),
+                    3,
+                ));
+            }
+        }
+        Err(_) => {}
+    }
+
+    let (reference, reference_consumed) = match expect_tokens(
+        &tokens[consumed..],
+        &[
+            &[Token::is_module_reference],
+            &[Token::is_dot],
+            &[Token::is_type_reference],
+        ],
+    ) {
+        Ok(success) => {
+            if success {
+                (Token::concat(&tokens[consumed..consumed + 3], ""), 3)
+            } else {
+                (tokens[consumed].text.clone(), 1)
+            }
+        }
+        Err(_) => (tokens[consumed].text.clone(), 1),
+    };
+    consumed += reference_consumed;
+
+    let (actual_params, actual_params_consumed) =
+        match expect_token(&tokens[consumed..], Token::is_curly_begin) {
+            Ok(x) => {
+                if x {
+                    parse_set_ish_value(&tokens[consumed..])?
+                } else {
+                    ("".to_string(), 0)
+                }
+            }
+            Err(_) => ("".to_string(), 0),
+        };
+    consumed += actual_params_consumed;
+
+    let outref = reference + &actual_params;
+    if actual_params_consumed > 0 {
         Ok((
-            Asn1TypeKind::Reference(Asn1TypeReference::ClassField(Token::concat(
-                &tokens[consumed..consumed + 3],
-                "",
-            ))),
-            3,
+            Asn1TypeKind::Reference(Asn1TypeReference::Parameterized(outref)),
+            consumed,
         ))
     } else {
-        let (reference, reference_consumed) = if expect_tokens(
-            &tokens[consumed..],
-            &[
-                &[Token::is_module_reference],
-                &[Token::is_dot],
-                &[Token::is_type_reference],
-            ],
-        )? {
-            (Token::concat(&tokens[consumed..consumed + 3], ""), 3)
-        } else {
-            (tokens[consumed].text.clone(), 1)
-        };
-        consumed += reference_consumed;
-
-        let (actual_params, actual_params_consumed) =
-            if expect_token(&tokens[consumed..], Token::is_curly_begin)? {
-                parse_set_ish_value(&tokens[consumed..])?
-            } else {
-                ("".to_string(), 0)
-            };
-        consumed += actual_params_consumed;
-
-        let outref = reference + &actual_params;
-        if actual_params_consumed > 0 {
-            Ok((
-                Asn1TypeKind::Reference(Asn1TypeReference::Parameterized(outref)),
-                consumed,
-            ))
-        } else {
-            Ok((
-                Asn1TypeKind::Reference(Asn1TypeReference::Reference(outref)),
-                consumed,
-            ))
-        }
+        Ok((
+            Asn1TypeKind::Reference(Asn1TypeReference::Reference(outref)),
+            consumed,
+        ))
     }
 }
 

@@ -101,6 +101,7 @@ const BASE_TYPES: &'static [&'static str] = &[
     "UTF8String",
     "IA5String",
     "PrintableString",
+    "VisibleString",
     // Spliced types (Note: actual ASN.1 Type names are different.
     "OBJECT",
     "OCTET",
@@ -218,7 +219,11 @@ impl Token {
 
     /// Checks whether the given token is an Object Class Reference
     pub fn is_object_class_reference(&self) -> bool {
-        self.is_type_reference() && self.text.chars().all(|c| matches!(c, 'A'..='Z' | '-'))
+        self.is_type_reference()
+            && self
+                .text
+                .chars()
+                .all(|c| matches!(c, 'A'..='Z' | '0'..='9' | '-'))
     }
 
     /// Checks whether the given token is an Object Reference

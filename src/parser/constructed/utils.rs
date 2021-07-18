@@ -57,7 +57,7 @@ mod tests {
             assert_eq!(component.is_ok(), tc.success, "{}", tc.input);
 
             if tc.success {
-                let (component, component_consumed) = component.unwrap();
+                let (_, component_consumed) = component.unwrap();
                 assert_eq!(component_consumed, tc.consumed, "{}", tc.input);
             }
         }

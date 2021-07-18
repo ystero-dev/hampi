@@ -168,6 +168,13 @@ mod tests {
                 additional_components_count: 0,
                 consumed_tokens: 21,
             },
+            ParseSequenceTestCase {
+                input: " SEQUENCE (SIZE(1..maxnoofeNBX2TLAs)) OF TransportLayerAddress",
+                success: true,
+                root_components_count: 3,
+                additional_components_count: 0,
+                consumed_tokens: 21,
+            },
         ];
 
         for tc in test_cases {
@@ -177,7 +184,17 @@ mod tests {
             let tokens = tokens.unwrap();
 
             let sequence = parse_seq_or_seq_of_type(&tokens);
-            assert_eq!(sequence.is_ok(), tc.success, "{}", tc.input);
+            assert_eq!(
+                sequence.is_ok(),
+                tc.success,
+                "{}:{}",
+                tc.input,
+                if tc.success {
+                    format!("{:#?}", sequence.err())
+                } else {
+                    format!("{:#?}", sequence.ok())
+                }
+            );
 
             if tc.success {
                 let (seq, seq_consumed) = sequence.unwrap();

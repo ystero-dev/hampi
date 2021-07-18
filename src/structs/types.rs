@@ -21,6 +21,10 @@ lazy_static! {
             Asn1TypeKind::Builtin(Asn1BuiltinType::CharacterString),
         );
         m.insert(
+            "VisibleString",
+            Asn1TypeKind::Builtin(Asn1BuiltinType::CharacterString),
+        );
+        m.insert(
             "IA5String",
             Asn1TypeKind::Builtin(Asn1BuiltinType::CharacterString),
         );
