@@ -37,6 +37,8 @@ pub(crate) fn parse_constraint<'parser>(
         Ok(subtype)
     } else if let Ok(table) = parse_table_constraint(tokens) {
         Ok(table)
+    } else if let Ok(containing) = parse_contents_constraint(tokens) {
+        Ok(containing)
     } else {
         Err(parse_error!(
             "Parsing of this constraint not yet supported!"
@@ -359,6 +361,45 @@ fn parse_range_elements<'parser>(tokens: &'parser [Token]) -> Result<(RangeEleme
             upper,
             upper_inclusive,
         },
+        consumed,
+    ))
+}
+
+fn parse_contents_constraint<'parser>(
+    tokens: &'parser [Token],
+) -> Result<(Asn1Constraint, usize), Error> {
+    let mut consumed = 0;
+
+    if !expect_token(&tokens[consumed..], Token::is_round_begin)? {
+        return Err(unexpected_token!("'('", tokens[consumed]));
+    }
+    consumed += 1;
+
+    if !expect_keyword(&tokens[consumed..], "CONTAINING")? {
+        return Err(unexpected_token!("'CONTAINING'", tokens[consumed]));
+    }
+    consumed += 1;
+
+    let containing = if expect_token(&tokens[consumed..], Token::is_type_reference)? {
+        tokens[consumed].text.clone()
+    } else {
+        eprintln!("11115");
+        return Err(unexpected_token!("'TYPE Reference'", tokens[consumed]));
+    };
+    consumed += 1;
+
+    if !expect_token(&tokens[consumed..], Token::is_round_end)? {
+        return Err(unexpected_token!("')'", tokens[consumed]));
+    }
+    consumed += 1;
+
+    let encodedby = None;
+    eprintln!("11114");
+    Ok((
+        Asn1Constraint::Contents(ContentsConstraint {
+            containing,
+            encodedby,
+        }),
         consumed,
     ))
 }
