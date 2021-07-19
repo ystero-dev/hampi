@@ -370,36 +370,57 @@ mod tests {
             success: bool,
         }
 
+        // This
         let test_cases = vec![
             ParseDefinitionTestCase {
                 input: r#"
-PDCP-Capability-r4-ext ::=                      SEQUENCE {
-        supportForRfc3095                               CHOICE {
-                notSupported                                            NULL,
-                supported                                                       SEQUENCE {
-                        maxROHC-ContextSessions                         MaxROHC-ContextSessions-r4      DEFAULT s16,
-                        reverseCompressionDepth                         INTEGER (0..65535)                      DEFAULT 0
-                }
+PDCP-Capability-r4-ext ::=  SEQUENCE {
+    supportForRfc3095   CHOICE {
+        notSupported    NULL,
+        supported SEQUENCE {
+            maxROHC-ContextSessions     MaxROHC-ContextSessions-r4  DEFAULT s16,
+            reverseCompressionDepth     INTEGER (0..65535)          DEFAULT 0
         }
+    }
 }
-                    "#,
+"#,
                 success: true,
             },
             ParseDefinitionTestCase {
                 input: r#"
-                    S1AP-PROTOCOL-IES ::= CLASS {
-        &id                             ProtocolIE-ID                                   UNIQUE,
-        &criticality    Criticality,
-        &Value,
-        &presence               Presence
+S1AP-PROTOCOL-IES ::= CLASS {
+    &id             ProtocolIE-ID   UNIQUE,
+    &criticality    Criticality,
+    &Value,
+    &presence       Presence
 }
 WITH SYNTAX {
-        ID                              &id
-        CRITICALITY             &criticality
-        TYPE                    &Value
-        PRESENCE                &presence
+    ID          &id
+    CRITICALITY &criticality
+    TYPE        &Value
+    PRESENCE    &presence
 }
-                    "#,
+"#,
+                success: true,
+            },
+            ParseDefinitionTestCase {
+                input: r#"
+UE-RadioAccessCapability-LaterNonCriticalExtensions ::= SEQUENCE {
+    v9c0NonCriticalExtensions   SEQUENCE {
+        ue-RadioAccessCapability-v9c0ext    UE-RadioAccessCapability-v9c0ext-IEs,
+        vaa0NonCriticalExtensions           SEQUENCE    {
+            ue-RadioAccessCapability-vaa0ext    UE-RadioAccessCapability-vaa0ext-IEs,
+            vb50NonCriticalExtensions           SEQUENCE {
+                ue-RadioAccessCapability-vb50ext    UE-RadioAccessCapability-vb50ext-IEs,
+                vb70NonCriticalExtensions   SEQUENCE {
+                    ue-RadioAccessCapability-vb70ext    UE-RadioAccessCapability-vb70ext-IEs,
+                    nonCriticalExtensions  SEQUENCE {}  OPTIONAL
+                }   OPTIONAL
+            }   OPTIONAL
+        }   OPTIONAL
+    }
+}
+"#,
                 success: true,
             },
         ];

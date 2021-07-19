@@ -41,36 +41,41 @@ fn parse_sequence_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1TypeKin
     let mut root_components = vec![];
     let additions = vec![];
     loop {
-        let (component, component_consumed) = parse_component(&tokens[consumed..])?;
+        let (component, component_consumed) = match parse_component(&tokens[consumed..]) {
+            Ok(result) => (Some(result.0), result.1),
+            Err(_) => (None, 0),
+        };
         consumed += component_consumed;
 
-        let optional = if expect_keyword(&tokens[consumed..], "OPTIONAL")? {
-            consumed += 1;
-            true
-        } else {
-            false
-        };
+        if let Some(component) = component {
+            let optional = if expect_keyword(&tokens[consumed..], "OPTIONAL")? {
+                consumed += 1;
+                true
+            } else {
+                false
+            };
 
-        let default = if expect_keyword(&tokens[consumed..], "DEFAULT")? {
-            consumed += 1;
-            let (value, value_consumed) = parse_value(&tokens[consumed..])?;
-            consumed += value_consumed;
-            Some(value)
-        } else {
-            None
-        };
+            let default = if expect_keyword(&tokens[consumed..], "DEFAULT")? {
+                consumed += 1;
+                let (value, value_consumed) = parse_value(&tokens[consumed..])?;
+                consumed += value_consumed;
+                Some(value)
+            } else {
+                None
+            };
 
-        if default.is_some() && optional {
-            return Err(parse_error!(
-                "Both OPTIONAL and DEFAULT not allowed for a value!"
-            ));
+            if default.is_some() && optional {
+                return Err(parse_error!(
+                    "Both OPTIONAL and DEFAULT not allowed for a value!"
+                ));
+            }
+
+            root_components.push(SeqComponent {
+                component,
+                optional,
+                default,
+            });
         }
-
-        root_components.push(SeqComponent {
-            component,
-            optional,
-            default,
-        });
 
         if expect_token(&tokens[consumed..], Token::is_comma)? {
             consumed += 1;
@@ -147,6 +152,13 @@ mod tests {
         }
 
         let test_cases = vec![
+            ParseSequenceTestCase {
+                input: " SEQUENCE {} ",
+                success: true,
+                root_components_count: 0,
+                additional_components_count: 0,
+                consumed_tokens: 3,
+            },
             ParseSequenceTestCase {
                 input: " SEQUENCE { a INTEGER, b BOOLEAN } ",
                 success: true,
