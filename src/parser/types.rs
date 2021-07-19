@@ -7,7 +7,7 @@ use crate::structs::types::{
 };
 use crate::tokenizer::Token;
 
-use super::base::{parse_enumerated_type, parse_integer_type};
+use super::base::{parse_bitstring_type, parse_enumerated_type, parse_integer_type};
 use super::constructed::{parse_choice_type, parse_seq_or_seq_of_type};
 
 use super::constraints::parse_constraints;
@@ -38,7 +38,13 @@ pub(super) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Type,
     let token = &tokens[0];
     let typestr = token.text.as_str();
     let (kind, kind_consumed) = match typestr {
-        "BIT" => (Asn1TypeKind::Builtin(Asn1BuiltinType::BitString), 2),
+        "BIT" => {
+            let (bitstr_type, bitstr_type_consumed) = parse_bitstring_type(tokens)?;
+            (
+                Asn1TypeKind::Builtin(Asn1BuiltinType::BitString(bitstr_type)),
+                bitstr_type_consumed,
+            )
+        }
 
         "OCTET" => (Asn1TypeKind::Builtin(Asn1BuiltinType::OctetString), 2),
 

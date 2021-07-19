@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 use lazy_static::lazy_static;
 
-use super::base::{Asn1TypeEnumerated, Asn1TypeInteger};
+use super::base::{Asn1TypeBitString, Asn1TypeEnumerated, Asn1TypeInteger};
 use super::constraints::Asn1Constraint;
 use super::constructed::{Asn1TypeChoice, Asn1TypeSequence, Asn1TypeSequenceOf};
 
@@ -41,9 +41,9 @@ lazy_static! {
 pub(crate) enum Asn1BuiltinType {
     Integer(Asn1TypeInteger),
     Enumerated(Asn1TypeEnumerated),
+    BitString(Asn1TypeBitString),
     Boolean,
     Null,
-    BitString,
     OctetString,
     ObjectIdentifier,
     RelativeOid,

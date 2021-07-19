@@ -24,3 +24,8 @@ pub(crate) struct Asn1TypeEnumerated {
     pub(crate) ext_marker_index: Option<usize>,
     pub(crate) ext_values: Vec<EnumValue>,
 }
+
+#[derive(Debug, Clone)]
+pub(crate) struct Asn1TypeBitString {
+    pub(crate) named_bits: Option<Vec<(String, NamedValue)>>,
+}

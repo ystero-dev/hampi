@@ -1,50 +1,12 @@
 //! Parsing "INTEGER" ASN.1 Type
 
 use crate::error::Error;
-use crate::structs::base::{Asn1TypeInteger, NamedValue};
+use crate::structs::base::Asn1TypeInteger;
 use crate::tokenizer::Token;
 
 use crate::parser::utils::{expect_keyword, expect_token};
 
-use super::utils::parse_named_maybe_value;
-
-fn parse_named_values<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Vec<(String, NamedValue)>, usize), Error> {
-    let mut consumed = 0;
-
-    if !expect_token(&tokens[consumed..], Token::is_curly_begin)? {
-        return Err(unexpected_token!("'{", tokens[consumed]));
-    }
-    consumed += 1;
-    let mut values = vec![];
-    loop {
-        let ((identifier, named_value), named_value_consumed) =
-            parse_named_maybe_value(&tokens[consumed..])?;
-
-        if named_value.is_none() {
-            return Err(parse_error!("Name(Value) expected, Value missing!"));
-        }
-        let named_value = named_value.unwrap();
-
-        values.push((identifier, named_value));
-        consumed += named_value_consumed;
-
-        if expect_token(&tokens[consumed..], Token::is_comma)? {
-            consumed += 1;
-        } else if expect_token(&tokens[consumed..], Token::is_curly_end)? {
-            consumed += 1;
-            break;
-        } else {
-            return Err(unexpected_token!(
-                "'Reference' or 'Number'",
-                tokens[consumed]
-            ));
-        }
-    }
-
-    Ok((values, consumed))
-}
+use super::utils::parse_named_values;
 
 pub(crate) fn parse_integer_type<'parser>(
     tokens: &'parser [Token],
