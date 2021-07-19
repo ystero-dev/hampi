@@ -34,6 +34,7 @@ pub(super) fn parse_definition<'parser>(
             parse_typeish_definition(&tokens[consumed..])
         }
     } else {
+        eprintln!("token: {:#?}", tokens[consumed]);
         Err(parse_error!("Not Implemented!"))
     }
 }

@@ -140,6 +140,10 @@ fn parse_element_set<'parser>(tokens: &'parser [Token]) -> Result<(ElementSet, u
         }
         consumed += 1;
 
+        if expect_token(&tokens[consumed..], Token::is_comma)? {
+            consumed += 1;
+        }
+
         // Potentially Empty additional_elements
         match parse_union_set(&tokens[consumed..]) {
             Ok(result) => {
@@ -446,6 +450,13 @@ mod tests {
                 root_elements_count: 1,
                 additional_elements_present: false,
                 additional_elements_count: 0,
+            },
+            ParseConstraintTestCase {
+                input: r#"(0..4095, ..., 4096.. 2000000)"#,
+                success: true,
+                root_elements_count: 1,
+                additional_elements_present: true,
+                additional_elements_count: 1,
             },
             // FIXME: Add more test cases for subtype constraints
         ];
