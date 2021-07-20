@@ -55,3 +55,9 @@ pub(crate) struct Asn1ObjectSet {
     pub(crate) class: String, // Class for which this Object Set is defined
     pub(crate) objects: Vec<String>, // For now just a vec of strings,
 }
+
+#[derive(Debug)]
+pub(crate) struct Asn1Object {
+    pub(crate) class: String, // Class for which this Object Set is defined
+    pub(crate) value: String, // For now just a string,
+}

@@ -1,6 +1,6 @@
 //! ASN.1 Definitions relates Structs
 
-use super::ioc::{Asn1ObjectClass, Asn1ObjectSet};
+use super::ioc::{Asn1Object, Asn1ObjectClass, Asn1ObjectSet};
 use super::types::Asn1Type;
 
 /// Struct representing an Object Class Assignment
@@ -13,13 +13,21 @@ pub(crate) struct Asn1ObjectClassAssignment {
     pub(crate) classref: Asn1ObjectClass,
 }
 
-/// Struct representing a Object Set Assignment
+/// Struct representing Object Set Assignment
 #[derive(Debug)]
 pub(crate) struct Asn1ObjectSetAssignment {
     /// Identifier
     pub(crate) id: String,
 
     pub(crate) set: Asn1ObjectSet,
+}
+
+/// Struct representing an Object Assignment
+#[derive(Debug)]
+pub(crate) struct Asn1ObjectAssignment {
+    ///Identifier
+    pub(crate) id: String,
+    pub(crate) object: Asn1Object,
 }
 
 #[derive(Debug)]
@@ -64,6 +72,7 @@ pub(crate) enum Asn1AssignmentKind {
     Type(Asn1TypeAssignment),
     Class(Asn1ObjectClassAssignment),
     ObjectSet(Asn1ObjectSetAssignment),
+    Object(Asn1ObjectAssignment),
     //InfoObjectClassDefinition,
     //InfoObjectDefinition,
     //InfoObjectSetDefinition,
@@ -76,6 +85,7 @@ impl Asn1AssignmentKind {
             Self::Type(ref t) => t.id.clone(),
             Self::Class(ref c) => c.id.clone(),
             Self::ObjectSet(ref s) => s.id.clone(),
+            Self::Object(ref o) => o.id.clone(),
         }
     }
 }

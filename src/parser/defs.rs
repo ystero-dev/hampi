@@ -3,11 +3,11 @@
 use crate::error::Error;
 use crate::structs::{
     defs::{
-        Asn1AssignmentKind, Asn1Definition, Asn1ObjectClassAssignment, Asn1ObjectSetAssignment,
-        Asn1TypeAssignment, Asn1ValueAssignment, DefinitionParam, DummyReferenceKind, GovernerKind,
-        ParamDummyReference, ParamGoverner,
+        Asn1AssignmentKind, Asn1Definition, Asn1ObjectAssignment, Asn1ObjectClassAssignment,
+        Asn1ObjectSetAssignment, Asn1TypeAssignment, Asn1ValueAssignment, DefinitionParam,
+        DummyReferenceKind, GovernerKind, ParamDummyReference, ParamGoverner,
     },
-    ioc::Asn1ObjectSet,
+    ioc::{Asn1Object, Asn1ObjectSet},
 };
 use crate::tokenizer::Token;
 
@@ -18,6 +18,13 @@ use super::utils::{
 };
 use super::values::parse_value;
 
+// Parse a definition into an `Assignment` type.
+//
+// This function is called by the Module parser to parse each definition. A definition will be one
+// of the following assignment kinds - `ValueAssignment`, `TypeAssignment`, `ObjectClassAssignment`
+// or `ObjectAssigmnet` or `ObjectSetAssignment`
+//
+// `ParameterizedAssignment` is supported for only `TypeAssignment`.
 pub(super) fn parse_definition<'parser>(
     tokens: &'parser [Token],
 ) -> Result<(Asn1Definition, usize), Error> {
@@ -39,12 +46,85 @@ pub(super) fn parse_definition<'parser>(
     }
 }
 
-// Parse `ValueAssignment`, `ObjectAssignment` and `ParameterizedValueAssignment` etc.
+// Parse `ValueAssignment` and `ObjectAssignment`
 //
 // All the above assignments start with a lowe-case letter and will have to be parsed into their
 // respective 'values'. Returns the corresponding variant of the `Asn1Definition` and  the number
 // of tokens consumed or error.
 fn parse_valueish_definition<'parser>(
+    tokens: &'parser [Token],
+) -> Result<(Asn1Definition, usize), Error> {
+    match parse_object_assignment(tokens) {
+        Ok(x) => {
+            return Ok(x);
+        }
+        Err(_) => {}
+    }
+
+    match parse_value_assignment(tokens) {
+        Ok(x) => {
+            return Ok(x);
+        }
+        Err(_) => {}
+    }
+
+    Err(parse_error!(
+        "Failed to parse a definition at Token: {:#?}",
+        tokens[0]
+    ))
+}
+
+// Parse object Assginemtnt
+//
+// object CLASS ::= { ... -- Object Defined Syntax -- }
+fn parse_object_assignment<'parser>(
+    tokens: &'parser [Token],
+) -> Result<(Asn1Definition, usize), Error> {
+    let mut consumed = 0;
+
+    if !expect_tokens(
+        &tokens[consumed..],
+        &[
+            &[Token::is_object_reference],
+            &[Token::is_object_class_reference],
+        ],
+    )? {
+        return Err(unexpected_token!(
+            "'object', 'CLASS' Reference",
+            tokens[consumed]
+        ));
+    }
+    let id = tokens[consumed].text.clone();
+    consumed += 1;
+
+    let class = tokens[consumed].text.clone();
+    consumed += 1;
+
+    if !expect_token(&tokens[consumed..], Token::is_assignment)? {
+        return Err(unexpected_token!("::=", tokens[consumed]));
+    }
+    consumed += 1;
+
+    let (value, value_consumed) = parse_set_ish_value(&tokens[consumed..])?;
+    consumed += value_consumed;
+
+    Ok((
+        Asn1Definition {
+            kind: Asn1AssignmentKind::Object(Asn1ObjectAssignment {
+                id,
+                object: Asn1Object { class, value },
+            }),
+            params: None,
+            resolved: false,
+        },
+        consumed,
+    ))
+}
+
+// Parse object Assginemtnt
+//
+// value Type ::= ValueDefinition -- Value Definition can be anything for now.
+fn parse_value_assignment<'parser>(
     tokens: &'parser [Token],
 ) -> Result<(Asn1Definition, usize), Error> {
     let mut consumed = 0;
@@ -76,25 +156,30 @@ fn parse_valueish_definition<'parser>(
     ))
 }
 
+// Parse A `TypeAssignment`, a `ObjectClassAssignement or `ObjectSetAssignment`
+//
+// All the above assignments start with a lowe-case letter and will have to be parsed into their
+// respective 'values'. Returns the corresponding variant of the `Asn1Definition` and  the number
+// of tokens consumed or error.
 fn parse_typeish_definition<'parser>(
     tokens: &'parser [Token],
 ) -> Result<(Asn1Definition, usize), Error> {
     // Try to parse a type_definition
-    match parse_type_definition(tokens) {
+    match parse_type_assignment(tokens) {
         Ok(x) => {
             return Ok(x);
         }
         Err(_) => {}
     }
 
-    match parse_class_definition(tokens) {
+    match parse_class_assignment(tokens) {
         Ok(x) => {
             return Ok(x);
         }
         Err(_) => {}
     }
 
-    match parse_object_set_definition(tokens) {
+    match parse_object_set_assignment(tokens) {
         Ok(x) => {
             return Ok(x);
         }
@@ -107,7 +192,10 @@ fn parse_typeish_definition<'parser>(
     ))
 }
 
-fn parse_type_definition<'parser>(
+// Parse a Type Assignment
+//
+// Identifier [{Params}] :== {Type|Refere} [(Constraints)]
+fn parse_type_assignment<'parser>(
     tokens: &'parser [Token],
 ) -> Result<(Asn1Definition, usize), Error> {
     let mut consumed = 0;
@@ -118,6 +206,7 @@ fn parse_type_definition<'parser>(
     let id = tokens[consumed].text.clone();
     consumed += 1;
 
+    // Parse Optional Params
     let (params, params_consumed) = match parse_params(&tokens[consumed..]) {
         Ok(result) => (Some(result.0), result.1),
         Err(_) => (None, 0),
@@ -142,7 +231,11 @@ fn parse_type_definition<'parser>(
     ))
 }
 
-fn parse_class_definition<'parser>(
+// Parse An Object CLASS Assignment
+//
+// CLASS-NAME :== CLASS { .... -- CLASS DEFINITION -- }
+// Parameterized Class assignment not supported.
+fn parse_class_assignment<'parser>(
     tokens: &'parser [Token],
 ) -> Result<(Asn1Definition, usize), Error> {
     let mut consumed = 0;
@@ -174,7 +267,10 @@ fn parse_class_definition<'parser>(
     ))
 }
 
-fn parse_object_set_definition<'parser>(
+// Parse an Object Set Assignment
+//
+// ObjectSetName CLASS ::= { Objects } -- Where Objects can be an Object/ObjectSet/Reference
+fn parse_object_set_assignment<'parser>(
     tokens: &'parser [Token],
 ) -> Result<(Asn1Definition, usize), Error> {
     let mut consumed = 0;
