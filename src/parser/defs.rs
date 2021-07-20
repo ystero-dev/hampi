@@ -70,6 +70,7 @@ fn parse_valueish_definition<'parser>(
         Asn1Definition {
             kind: Asn1AssignmentKind::Value(Asn1ValueAssignment { id, typeref, value }),
             params: None,
+            resolved: false,
         },
         consumed,
     ))
@@ -135,6 +136,7 @@ fn parse_type_definition<'parser>(
         Asn1Definition {
             kind: Asn1AssignmentKind::Type(Asn1TypeAssignment { id, typeref }),
             params,
+            resolved: false,
         },
         consumed,
     ))
@@ -166,6 +168,7 @@ fn parse_class_definition<'parser>(
         Asn1Definition {
             kind: Asn1AssignmentKind::Class(Asn1ObjectClassAssignment { id, classref }),
             params: None,
+            resolved: false,
         },
         consumed,
     ))
@@ -246,6 +249,7 @@ fn parse_object_set_definition<'parser>(
                 set: Asn1ObjectSet { class, objects },
             }),
             params: None,
+            resolved: false,
         },
         consumed,
     ))

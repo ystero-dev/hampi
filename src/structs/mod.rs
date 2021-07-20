@@ -15,3 +15,5 @@ pub mod base;
 pub mod constructed;
 
 pub(crate) mod constraints;
+
+pub mod compiler;

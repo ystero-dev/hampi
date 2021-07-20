@@ -16,6 +16,9 @@ pub enum Error {
     UnknownOIDName(Token),
 
     ParseError(String),
+
+    /// Compilation Errors
+    ResolveError(String),
 }
 
 impl std::fmt::Display for Error {
@@ -58,6 +61,9 @@ impl std::fmt::Display for Error {
             Error::ParseError(ref errstr) => {
                 write!(f, "Parsing Error: {}", errstr)
             }
+            Error::ResolveError(ref errstr) => {
+                write!(f, "Compilation Error: {}", errstr)
+            }
         }
     }
 }
@@ -99,5 +105,11 @@ macro_rules! invalid_token {
 macro_rules! unknown_oid_name {
     ($tok: expr) => {
         crate::error::Error::UnknownOIDName($tok.clone())
+    };
+}
+
+macro_rules! resolve_error {
+    ($($arg: tt)*) => {
+        crate::error::Error::ResolveError(format!($($arg)*))
     };
 }

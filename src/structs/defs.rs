@@ -84,6 +84,7 @@ impl Asn1AssignmentKind {
 pub(crate) struct Asn1Definition {
     pub(crate) kind: Asn1AssignmentKind,
     pub(crate) params: Option<Vec<DefinitionParam>>,
+    pub(crate) resolved: bool,
 }
 
 // FIXME: Hack for now

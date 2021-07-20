@@ -15,5 +15,4 @@ pub mod tokenizer;
 pub mod parser;
 
 mod structs;
-
-mod compiler;
+pub use structs::compiler::Asn1Compiler;
