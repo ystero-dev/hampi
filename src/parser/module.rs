@@ -51,6 +51,7 @@ where
 
     let mut definitions = HashMap::new();
     while !expect_keyword(&tokens[consumed..], "END")? {
+        eprintln!("definition: {:#?}", tokens[consumed]);
         let (def, definition_consumed) = parse_definition(&tokens[consumed..])?;
         definitions.insert(def.id(), def);
         consumed += definition_consumed;

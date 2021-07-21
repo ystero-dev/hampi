@@ -7,7 +7,9 @@ use crate::parser::{
     utils::{expect_keyword, expect_token},
     values::parse_value,
 };
-use crate::structs::constructed::{Asn1TypeSequence, Asn1TypeSequenceOf, SeqComponent};
+use crate::structs::constructed::{
+    Asn1TypeSequence, Asn1TypeSequenceOf, SeqAdditionGroup, SeqComponent,
+};
 use crate::structs::types::{Asn1ConstructedType, Asn1TypeKind};
 use crate::tokenizer::Token;
 
@@ -39,42 +41,32 @@ fn parse_sequence_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1TypeKin
     consumed += 1;
 
     let mut root_components = vec![];
-    let additions = vec![];
+    let mut additions = vec![];
+    let mut ext_marker_found = 0;
     loop {
-        let (component, component_consumed) = match parse_component(&tokens[consumed..]) {
-            Ok(result) => (Some(result.0), result.1),
+        let (component, component_consumed) = match parse_seq_component(&tokens[consumed..]) {
+            Ok(result) => result,
             Err(_) => (None, 0),
         };
+        if component.is_some() {
+            let component = component.unwrap();
+            root_components.push(component);
+        }
         consumed += component_consumed;
 
-        if let Some(component) = component {
-            let optional = if expect_keyword(&tokens[consumed..], "OPTIONAL")? {
-                consumed += 1;
-                true
+        // Add to additional group only if first extension marker is found.
+        // after second extension marker, we cannot add additional groups.
+        if expect_token(&tokens[consumed..], Token::is_seq_extension_begin)? {
+            if ext_marker_found == 1 {
+                let (ext_group, ext_group_consumed) =
+                    parse_seq_addition_group(&tokens[consumed..])?;
+                consumed += ext_group_consumed;
+                additions.push(ext_group);
             } else {
-                false
-            };
-
-            let default = if expect_keyword(&tokens[consumed..], "DEFAULT")? {
-                consumed += 1;
-                let (value, value_consumed) = parse_value(&tokens[consumed..])?;
-                consumed += value_consumed;
-                Some(value)
-            } else {
-                None
-            };
-
-            if default.is_some() && optional {
                 return Err(parse_error!(
-                    "Both OPTIONAL and DEFAULT not allowed for a value!"
+                    "Addition groups can only be added between first and second extension markers!"
                 ));
             }
-
-            root_components.push(SeqComponent {
-                component,
-                optional,
-                default,
-            });
         }
 
         if expect_token(&tokens[consumed..], Token::is_comma)? {
@@ -82,6 +74,7 @@ fn parse_sequence_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1TypeKin
         }
 
         if expect_token(&tokens[consumed..], Token::is_extension)? {
+            ext_marker_found += 1;
             consumed += 1;
             if expect_token(&tokens[consumed..], Token::is_comma)? {
                 consumed += 1;
@@ -135,6 +128,112 @@ fn parse_sequence_of_type<'parser>(
     ))
 }
 
+fn parse_seq_component<'parser>(
+    tokens: &'parser [Token],
+) -> Result<(Option<SeqComponent>, usize), Error> {
+    let mut consumed = 0;
+
+    let (component, component_consumed) = match parse_component(&tokens[consumed..]) {
+        Ok(result) => (Some(result.0), result.1),
+        Err(_) => (None, 0),
+    };
+    consumed += component_consumed;
+
+    if let Some(component) = component {
+        let optional = if expect_keyword(&tokens[consumed..], "OPTIONAL")? {
+            consumed += 1;
+            true
+        } else {
+            false
+        };
+
+        let default = if expect_keyword(&tokens[consumed..], "DEFAULT")? {
+            consumed += 1;
+            let (value, value_consumed) = parse_value(&tokens[consumed..])?;
+            consumed += value_consumed;
+            Some(value)
+        } else {
+            None
+        };
+
+        if default.is_some() && optional {
+            return Err(parse_error!(
+                "Both OPTIONAL and DEFAULT not allowed for a value!"
+            ));
+        }
+
+        Ok((
+            Some(SeqComponent {
+                component,
+                optional,
+                default,
+            }),
+            consumed,
+        ))
+    } else {
+        Ok((None, 0))
+    }
+}
+
+fn parse_seq_addition_group<'parser>(
+    tokens: &'parser [Token],
+) -> Result<(SeqAdditionGroup, usize), Error> {
+    let mut consumed = 0;
+
+    if !expect_token(&tokens[consumed..], Token::is_seq_extension_begin)? {
+        return Err(unexpected_token!("'[['", tokens[consumed]));
+    }
+    consumed += 1;
+
+    let version = match expect_token(&tokens[consumed..], Token::is_numeric) {
+        Ok(success) => {
+            if success {
+                let version = tokens[consumed].text.clone();
+                consumed += 1;
+                if !expect_token(&tokens[consumed..], Token::is_colon)? {
+                    return Err(unexpected_token!("'[['", tokens[consumed]));
+                }
+                consumed += 1;
+                Some(version)
+            } else {
+                None
+            }
+        }
+        Err(_) => None,
+    };
+
+    let mut components = vec![];
+    loop {
+        let (component, component_consumed) = parse_seq_component(&tokens[consumed..])?;
+        if component.is_none() {
+            break;
+        }
+        components.push(component.unwrap());
+        consumed += component_consumed;
+
+        if expect_token(&tokens[consumed..], Token::is_comma)? {
+            consumed += 1;
+        }
+    }
+
+    if components.is_empty() {
+        Err(parse_error!("Empty Addition Groups not allowed!"))
+    } else {
+        if expect_token(&tokens[consumed..], Token::is_seq_extension_end)? {
+            consumed += 1;
+            Ok((
+                SeqAdditionGroup {
+                    version,
+                    components,
+                },
+                consumed,
+            ))
+        } else {
+            Err(unexpected_token!("']]'", tokens[consumed]))
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
 
@@ -179,6 +278,41 @@ mod tests {
                 root_components_count: 3,
                 additional_components_count: 0,
                 consumed_tokens: 21,
+            },
+            ParseSequenceTestCase {
+                input: " SEQUENCE { a INTEGER, b BOOLEAN OPTIONAL, ..., [[ c CHOICE { d INTEGER, e Enum} ]] } ",
+                success: true,
+                root_components_count: 2,
+                additional_components_count: 1,
+                consumed_tokens: 23,
+            },
+            ParseSequenceTestCase {
+                input: " SEQUENCE { a INTEGER, b BOOLEAN OPTIONAL, ..., [[  d INTEGER, e Enum ]] } ",
+                success: true,
+                root_components_count: 2,
+                additional_components_count: 1,
+                consumed_tokens: 19,
+            },
+            ParseSequenceTestCase {
+                input: " SEQUENCE { a INTEGER, b BOOLEAN OPTIONAL, ..., [[  d INTEGER, e Enum ]], [[ f INTEGER ]] } ",
+                success: true,
+                root_components_count: 2,
+                additional_components_count: 2,
+                consumed_tokens: 24,
+            },
+            ParseSequenceTestCase {
+                input: " SEQUENCE { a INTEGER, b BOOLEAN OPTIONAL, ..., [[  d INTEGER, e Enum ]], ..., [[ f INTEGER ]] } ",
+                success: false,
+                root_components_count: 0,
+                additional_components_count: 0,
+                consumed_tokens: 0,
+            },
+            ParseSequenceTestCase {
+                input: " SEQUENCE { a INTEGER, b BOOLEAN OPTIONAL, ..., [[  d INTEGER, e Enum ]], ...,  f INTEGER  } ",
+                success: true,
+                root_components_count: 3,
+                additional_components_count: 1,
+                consumed_tokens: 24,
             },
             ParseSequenceTestCase {
                 input: " SEQUENCE (SIZE(1..maxnoofeNBX2TLAs)) OF TransportLayerAddress",

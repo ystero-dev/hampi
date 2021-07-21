@@ -5,6 +5,9 @@ use crate::error::Error;
 use crate::structs::module::Asn1Module;
 
 #[derive(Debug)]
+pub struct ResolvedDefinition;
+
+#[derive(Debug)]
 pub struct Asn1Compiler {
     /// Modules belonging to this 'invocation' of compiler.
     modules: HashMap<String, Asn1Module>,

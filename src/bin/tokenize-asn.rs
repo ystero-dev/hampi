@@ -14,6 +14,7 @@ fn main() -> io::Result<()> {
         eprintln!("File: {}", arg);
         let file = File::open(arg)?;
         let mut tokens = hampi::tokenizer::tokenize(file)?;
+        eprintln!("tokens: {}", tokens.len());
         let mut modules = hampi::parser::parse(&mut tokens)?;
 
         loop {
