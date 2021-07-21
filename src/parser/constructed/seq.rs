@@ -56,7 +56,7 @@ fn parse_sequence_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1TypeKin
 
         // Add to additional group only if first extension marker is found.
         // after second extension marker, we cannot add additional groups.
-        if expect_token(&tokens[consumed..], Token::is_seq_extension_begin)? {
+        if expect_token(&tokens[consumed..], Token::is_addition_groups_begin)? {
             if ext_marker_found == 1 {
                 let (ext_group, ext_group_consumed) =
                     parse_seq_addition_group(&tokens[consumed..])?;
@@ -180,7 +180,7 @@ fn parse_seq_addition_group<'parser>(
 ) -> Result<(SeqAdditionGroup, usize), Error> {
     let mut consumed = 0;
 
-    if !expect_token(&tokens[consumed..], Token::is_seq_extension_begin)? {
+    if !expect_token(&tokens[consumed..], Token::is_addition_groups_begin)? {
         return Err(unexpected_token!("'[['", tokens[consumed]));
     }
     consumed += 1;
@@ -219,7 +219,7 @@ fn parse_seq_addition_group<'parser>(
     if components.is_empty() {
         Err(parse_error!("Empty Addition Groups not allowed!"))
     } else {
-        if expect_token(&tokens[consumed..], Token::is_seq_extension_end)? {
+        if expect_token(&tokens[consumed..], Token::is_addition_groups_end)? {
             consumed += 1;
             Ok((
                 SeqAdditionGroup {
@@ -257,6 +257,13 @@ mod tests {
                 root_components_count: 0,
                 additional_components_count: 0,
                 consumed_tokens: 3,
+            },
+            ParseSequenceTestCase {
+                input: " SEQUENCE {...} ",
+                success: true,
+                root_components_count: 0,
+                additional_components_count: 0,
+                consumed_tokens: 4,
             },
             ParseSequenceTestCase {
                 input: " SEQUENCE { a INTEGER, b BOOLEAN } ",
@@ -313,6 +320,13 @@ mod tests {
                 root_components_count: 3,
                 additional_components_count: 1,
                 consumed_tokens: 24,
+            },
+            ParseSequenceTestCase {
+                input: " SEQUENCE { a INTEGER, b BOOLEAN OPTIONAL, ..., [[  ]], ...,  f INTEGER  } ",
+                success: false,
+                root_components_count: 0,
+                additional_components_count: 0,
+                consumed_tokens: 0,
             },
             ParseSequenceTestCase {
                 input: " SEQUENCE (SIZE(1..maxnoofeNBX2TLAs)) OF TransportLayerAddress",

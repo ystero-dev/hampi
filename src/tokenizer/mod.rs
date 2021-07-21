@@ -177,8 +177,8 @@ impl Token {
         (is_exception_marker, TokenType::ExceptionMarker),
         (is_square_begin, TokenType::SquareBegin),
         (is_square_end, TokenType::SquareEnd),
-        (is_seq_extension_begin, TokenType::SeqExtensionBegin),
-        (is_seq_extension_end, TokenType::SeqExtensionEnd),
+        (is_addition_groups_begin, TokenType::AdditionGroupsBegin),
+        (is_addition_groups_end, TokenType::AdditionGroupsEnd),
         (is_extension, TokenType::Extension),
         (is_range_separator, TokenType::RangeSeparator),
         (is_assignment, TokenType::Assignment),
@@ -663,13 +663,13 @@ fn get_seq_extension_or_square_brackets_token(
 ) -> Result<(Token, usize), Error> {
     let (token_type, consumed) = if chars[0] == '[' {
         if chars[1] == '[' {
-            (TokenType::SeqExtensionBegin, 2)
+            (TokenType::AdditionGroupsBegin, 2)
         } else {
             (TokenType::SquareBegin, 1)
         }
     } else {
         if chars[1] == ']' {
-            (TokenType::SeqExtensionEnd, 2)
+            (TokenType::AdditionGroupsEnd, 2)
         } else {
             (TokenType::SquareEnd, 1)
         }

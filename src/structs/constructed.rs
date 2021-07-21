@@ -23,6 +23,12 @@ pub(crate) struct SeqAdditionGroup {
 }
 
 #[derive(Debug, Clone)]
+pub(crate) struct ChoiceAdditionGroup {
+    pub(crate) version: Option<String>,
+    pub(crate) components: Vec<Component>,
+}
+
+#[derive(Debug, Clone)]
 pub(crate) struct Asn1TypeSequence {
     pub(crate) root_components: Vec<SeqComponent>,
     pub(crate) additions: Vec<SeqAdditionGroup>,
@@ -31,6 +37,7 @@ pub(crate) struct Asn1TypeSequence {
 #[derive(Debug, Clone)]
 pub(crate) struct Asn1TypeChoice {
     pub(crate) components: Vec<Component>,
+    pub(crate) additions: Vec<ChoiceAdditionGroup>,
 }
 
 #[derive(Debug, Clone)]
