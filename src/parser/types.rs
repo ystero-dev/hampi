@@ -3,7 +3,6 @@
 use crate::error::Error;
 use crate::structs::types::{
     Asn1BuiltinType, Asn1ConstructedType, Asn1Type, Asn1TypeKind, Asn1TypeReference,
-    ASN_BUILTIN_TYPE_KINDS,
 };
 use crate::tokenizer::Token;
 
@@ -74,8 +73,10 @@ pub(super) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Type,
             (Asn1TypeKind::Builtin(Asn1BuiltinType::ObjectIdentifier), 2)
         }
 
-        "BOOLEAN" | "NULL" | "VisibleString" | "UTF8String" | "IA5String" | "PrintableString" => {
-            (ASN_BUILTIN_TYPE_KINDS.get(typestr).unwrap().clone(), 1)
+        "BOOLEAN" => (Asn1TypeKind::Builtin(Asn1BuiltinType::Boolean), 1),
+        "NULL" => (Asn1TypeKind::Builtin(Asn1BuiltinType::Boolean), 1),
+        "VisibleString" | "UTF8String" | "IA5String" | "PrintableString" => {
+            (Asn1TypeKind::Builtin(Asn1BuiltinType::CharacterString), 1)
         }
 
         "CHOICE" => {
@@ -86,6 +87,8 @@ pub(super) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Type,
             )
         }
         "SEQUENCE" => parse_seq_or_seq_of_type(tokens)?,
+
+        "RELATIVE-OID" => (Asn1TypeKind::Builtin(Asn1BuiltinType::RelativeOid), 1),
 
         _ => parse_referenced_type(tokens)?,
     };

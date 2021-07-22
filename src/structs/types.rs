@@ -1,40 +1,8 @@
 //! Structures related to ASN.1 Type
-use std::collections::HashMap;
-
-use lazy_static::lazy_static;
 
 use super::base::{Asn1TypeBitString, Asn1TypeEnumerated, Asn1TypeInteger};
 use super::constraints::Asn1Constraint;
 use super::constructed::{Asn1TypeChoice, Asn1TypeSequence, Asn1TypeSequenceOf};
-
-lazy_static! {
-    pub(crate) static ref ASN_BUILTIN_TYPE_KINDS: HashMap<&'static str, Asn1TypeKind> = {
-        let mut m = HashMap::new();
-        m.insert("BOOLEAN", Asn1TypeKind::Builtin(Asn1BuiltinType::Boolean));
-        m.insert("NULL", Asn1TypeKind::Builtin(Asn1BuiltinType::Null));
-        m.insert(
-            "RELATIVE-OID",
-            Asn1TypeKind::Builtin(Asn1BuiltinType::RelativeOid),
-        );
-        m.insert(
-            "PrintableString",
-            Asn1TypeKind::Builtin(Asn1BuiltinType::CharacterString),
-        );
-        m.insert(
-            "VisibleString",
-            Asn1TypeKind::Builtin(Asn1BuiltinType::CharacterString),
-        );
-        m.insert(
-            "IA5String",
-            Asn1TypeKind::Builtin(Asn1BuiltinType::CharacterString),
-        );
-        m.insert(
-            "UTF8String",
-            Asn1TypeKind::Builtin(Asn1BuiltinType::CharacterString),
-        );
-        m
-    };
-}
 
 #[allow(dead_code)]
 #[derive(Debug, Clone)]
