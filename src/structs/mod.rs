@@ -17,3 +17,5 @@ pub mod constructed;
 pub(crate) mod constraints;
 
 pub mod compiler;
+
+pub mod resolver;

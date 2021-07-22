@@ -28,5 +28,6 @@ fn main() -> io::Result<()> {
         }
     }
     compiler.resolve_imports()?;
+    compiler.resolve_definitions()?;
     Ok(())
 }

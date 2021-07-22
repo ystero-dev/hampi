@@ -1,4 +1,4 @@
-//! ASN.1 Definitions relates Structs
+//! ASN.1 Definitions related Structs
 
 use super::ioc::{Asn1Object, Asn1ObjectClass, Asn1ObjectSet};
 use super::types::Asn1Type;

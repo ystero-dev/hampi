@@ -66,4 +66,9 @@ impl Asn1Module {
             ..self
         }
     }
+
+    // Resolves a definitions in the given module.
+    pub(crate) fn definitions_mut(&mut self) -> &mut HashMap<String, Asn1Definition> {
+        &mut self.definitions
+    }
 }
