@@ -4,15 +4,11 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 
 use crate::error::Error;
-use crate::structs::parser::defs::{
-    Asn1AssignmentKind, Asn1Definition, Asn1TypeAssignment, Asn1ValueAssignment,
-};
+
 use crate::structs::parser::module::Asn1Module;
-use crate::structs::parser::types::{Asn1BuiltinType, Asn1TypeKind};
-use crate::structs::resolver::{
-    base::{Asn1ResolvedInteger, ResolvedBaseType},
-    Asn1ResolvedDefinition, Asn1ResolvedType,
-};
+use crate::structs::resolver::defs::Asn1ResolvedDefinition;
+
+use crate::resolver::defs::resolve_definition;
 
 #[derive(Debug)]
 pub struct Asn1Compiler {
@@ -59,38 +55,13 @@ impl Asn1Compiler {
         for cell in self.modules.values() {
             let mut module = cell.borrow_mut();
             let module_definitions = module.definitions_mut();
-            for (k, def) in module_definitions.iter_mut() {
-                let definition = self.resolve_definition(def)?;
-                self.all_definitions.insert(k.clone(), definition);
+            for (k, parsed_def) in module_definitions.iter_mut() {
+                let resolved_def = resolve_definition(parsed_def, &self.all_definitions)?;
+                self.all_definitions.insert(k.clone(), resolved_def);
+                parsed_def.resolved = true;
             }
         }
+        eprintln!("Resolved: {:#?}", self.all_definitions);
         Ok(())
-    }
-
-    fn resolve_definition(
-        &self,
-        definition: &mut Asn1Definition,
-    ) -> Result<Asn1ResolvedDefinition, Error> {
-        match definition.kind {
-            Asn1AssignmentKind::Value(ref v) => self.resolve_value_definition(v),
-            Asn1AssignmentKind::Type(ref t) => self.resolve_type_definition(t),
-            _ => Err(resolve_error!("Not Implemented!")),
-        }
-    }
-
-    fn resolve_type_definition(
-        &self,
-        ty: &Asn1TypeAssignment,
-    ) -> Result<Asn1ResolvedDefinition, Error> {
-        eprintln!("{:#?}", ty);
-        Err(resolve_error!("Resolve Type Definition: Not Implemented!"))
-    }
-
-    fn resolve_value_definition(
-        &self,
-        value: &Asn1ValueAssignment,
-    ) -> Result<Asn1ResolvedDefinition, Error> {
-        eprintln!("{:#?}", value);
-        Err(resolve_error!("Resolve Value Definition: Not Implemented!"))
     }
 }

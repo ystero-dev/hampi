@@ -16,3 +16,5 @@ pub mod parser;
 
 mod structs;
 pub use structs::compiler::Asn1Compiler;
+
+pub mod resolver;

@@ -1,5 +1,4 @@
-#![allow(dead_code)]
-//! Structures for the 'Resolved' Types
+//! Resolver module
 
 pub(crate) mod defs;
 
