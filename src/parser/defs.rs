@@ -1,18 +1,18 @@
 //! Top level handling of definitions
 
 use crate::error::Error;
-use crate::structs::{
+use crate::tokenizer::Token;
+
+use crate::structs::parser::{
     defs::{
         Asn1AssignmentKind, Asn1Definition, Asn1ObjectAssignment, Asn1ObjectClassAssignment,
         Asn1ObjectSetAssignment, Asn1TypeAssignment, Asn1ValueAssignment, DefinitionParam,
         DummyReferenceKind, GovernerKind, ParamDummyReference, ParamGoverner,
     },
-    ioc::{Asn1Object, Asn1ObjectSet},
+    types::ioc::{Asn1Object, Asn1ObjectSet},
 };
-use crate::tokenizer::Token;
 
-use super::ioc::parse_class;
-use super::types::parse_type;
+use super::types::{ioc::parse_class, parse_type};
 use super::utils::{
     expect_keyword, expect_one_of_tokens, expect_token, expect_tokens, parse_set_ish_value,
 };

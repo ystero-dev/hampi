@@ -1,9 +1,10 @@
 //! Parser for bitstring type.
 
 use crate::error::Error;
-use crate::parser::utils::{expect_keywords, expect_token};
-use crate::structs::base::Asn1TypeBitString;
 use crate::tokenizer::Token;
+
+use crate::parser::utils::{expect_keywords, expect_token};
+use crate::structs::parser::types::base::Asn1TypeBitString;
 
 use super::utils::parse_named_values;
 

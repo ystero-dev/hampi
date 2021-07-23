@@ -1,7 +1,7 @@
 //! Main Parser module
 //!
 use crate::error::Error;
-use crate::structs::module::Asn1Module;
+use crate::structs::parser::module::Asn1Module;
 use crate::tokenizer::Token;
 
 mod module;
@@ -15,14 +15,6 @@ mod types;
 mod values;
 
 mod oid;
-
-mod constraints;
-
-mod ioc;
-
-mod base;
-
-mod constructed;
 
 /// Parse the tokens into internal Asn1Module representation
 ///

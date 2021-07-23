@@ -1,10 +1,10 @@
 //! Utility functions for Parsing Constructed types
 
 use crate::error::Error;
-use crate::parser::{types::parse_type, utils::expect_token};
 use crate::tokenizer::Token;
 
-use crate::structs::constructed::Component;
+use crate::parser::{types::parse_type, utils::expect_token};
+use crate::structs::parser::types::constructed::Component;
 
 pub(crate) fn parse_component<'parser>(
     tokens: &'parser [Token],

@@ -2,7 +2,7 @@
 
 use std::collections::HashMap;
 
-use crate::structs::{defs::Asn1Definition, oid::ObjectIdentifier};
+use crate::structs::parser::{defs::Asn1Definition, oid::ObjectIdentifier};
 
 #[derive(Debug, PartialEq)]
 pub enum Asn1ModuleTag {

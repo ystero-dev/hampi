@@ -2,7 +2,7 @@
 use std::collections::HashMap;
 
 use crate::error::Error;
-use crate::structs::{
+use crate::structs::parser::{
     module::{Asn1Module, Asn1ModuleName, Asn1ModuleTag},
     oid::ObjectIdentifier,
 };

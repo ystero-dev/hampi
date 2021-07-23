@@ -1,14 +1,18 @@
 //! Parser for ASN.1 SubType Constraints
 
 use crate::error::Error;
-use crate::structs::constraints::*;
 use crate::tokenizer::Token;
 
-use super::types::parse_type;
-use super::utils::{
-    expect_keyword, expect_one_of_keywords, expect_one_of_tokens, expect_token, expect_tokens,
+use crate::parser::{
+    utils::{
+        expect_keyword, expect_one_of_keywords, expect_one_of_tokens, expect_token, expect_tokens,
+    },
+    values::parse_value,
 };
-use super::values::parse_value;
+
+use crate::structs::parser::types::constraints::*;
+
+use super::parse_type;
 
 pub(super) fn parse_constraints<'parser>(
     tokens: &'parser [Token],

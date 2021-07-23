@@ -2,14 +2,17 @@
 use std::collections::HashMap;
 
 use crate::error::Error;
-use crate::structs::ioc::*;
 use crate::tokenizer::Token;
 
-use super::types::parse_type;
-use super::utils::{
-    expect_keyword, expect_keywords, expect_one_of_keywords, expect_token, parse_set_ish_value,
+use crate::parser::{
+    utils::{
+        expect_keyword, expect_keywords, expect_one_of_keywords, expect_token, parse_set_ish_value,
+    },
+    values::parse_value,
 };
-use super::values::parse_value;
+use crate::structs::parser::types::ioc::*;
+
+use super::parse_type;
 
 pub(crate) fn parse_class<'parser>(
     tokens: &'parser [Token],

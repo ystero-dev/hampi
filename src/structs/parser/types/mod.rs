@@ -1,11 +1,15 @@
 //! Structures related to ASN.1 Type
 
-use crate::error::Error;
+pub(crate) mod base;
+use base::{Asn1TypeBitString, Asn1TypeEnumerated, Asn1TypeInteger};
 
-use super::base::{Asn1TypeBitString, Asn1TypeEnumerated, Asn1TypeInteger};
-use super::constraints::Asn1Constraint;
-use super::constructed::{Asn1TypeChoice, Asn1TypeSequence, Asn1TypeSequenceOf};
-use super::resolver::Asn1ResolvedType;
+pub(crate) mod constraints;
+use constraints::Asn1Constraint;
+
+pub(crate) mod constructed;
+use constructed::{Asn1TypeChoice, Asn1TypeSequence, Asn1TypeSequenceOf};
+
+pub(crate) mod ioc;
 
 #[allow(dead_code)]
 #[derive(Debug, Clone)]
@@ -27,12 +31,6 @@ pub(crate) enum Asn1BuiltinType {
 pub(crate) struct Asn1Type {
     pub(crate) kind: Asn1TypeKind,
     pub(crate) constraints: Option<Vec<Asn1Constraint>>,
-}
-
-impl Asn1Type {
-    pub(crate) fn _resolve(&self) -> Result<Asn1ResolvedType, Error> {
-        Err(resolve_error!("Not Implemented!"))
-    }
 }
 
 #[derive(Debug, Clone)]

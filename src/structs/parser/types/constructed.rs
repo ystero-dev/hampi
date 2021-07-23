@@ -1,7 +1,7 @@
 //! Structures Representing Constructed Types
 
 use super::constraints::Asn1Constraint;
-use super::types::Asn1Type;
+use super::Asn1Type;
 
 #[derive(Debug, Clone)]
 pub(crate) struct Component {

@@ -1,17 +1,18 @@
 //! Handling of Sequence and Sequence Of Type
 
 use crate::error::Error;
+use crate::tokenizer::Token;
+
 use crate::parser::{
-    constraints::parse_constraint,
+    types::constraints::parse_constraint,
     types::parse_type,
     utils::{expect_keyword, expect_token},
     values::parse_value,
 };
-use crate::structs::constructed::{
+use crate::structs::parser::types::constructed::{
     Asn1TypeSequence, Asn1TypeSequenceOf, SeqAdditionGroup, SeqComponent,
 };
-use crate::structs::types::{Asn1ConstructedType, Asn1TypeKind};
-use crate::tokenizer::Token;
+use crate::structs::parser::types::{Asn1ConstructedType, Asn1TypeKind};
 
 use super::utils::parse_component;
 

@@ -1,10 +1,10 @@
 //! Utility functions used by base types
 
 use crate::error::Error;
-use crate::structs::base::NamedValue;
 use crate::tokenizer::Token;
 
 use crate::parser::utils::expect_token;
+use crate::structs::parser::types::base::NamedValue;
 
 // Parse a name(value). `(value)` component is optional
 pub(crate) fn parse_named_maybe_value<'parser>(

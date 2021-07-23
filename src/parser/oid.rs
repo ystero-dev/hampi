@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use lazy_static::lazy_static;
 
 use crate::error::Error;
-use crate::structs::oid::{OIDComponent, ObjectIdentifier};
+use crate::structs::parser::oid::{OIDComponent, ObjectIdentifier};
 use crate::tokenizer::Token;
 
 use super::utils::{expect_one_of_tokens, expect_token, expect_tokens};

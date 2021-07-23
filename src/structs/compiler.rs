@@ -4,11 +4,15 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 
 use crate::error::Error;
-use crate::structs::defs::{
+use crate::structs::parser::defs::{
     Asn1AssignmentKind, Asn1Definition, Asn1TypeAssignment, Asn1ValueAssignment,
 };
-use crate::structs::module::Asn1Module;
-use crate::structs::resolver::Asn1ResolvedDefinition;
+use crate::structs::parser::module::Asn1Module;
+use crate::structs::parser::types::{Asn1BuiltinType, Asn1TypeKind};
+use crate::structs::resolver::{
+    base::{Asn1ResolvedInteger, ResolvedBaseType},
+    Asn1ResolvedDefinition, Asn1ResolvedType,
+};
 
 #[derive(Debug)]
 pub struct Asn1Compiler {

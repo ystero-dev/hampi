@@ -1,15 +1,22 @@
 //! Handling Parsing of ASN.1 Types
 
 use crate::error::Error;
-use crate::structs::types::{
-    Asn1BuiltinType, Asn1ConstructedType, Asn1Type, Asn1TypeKind, Asn1TypeReference,
-};
 use crate::tokenizer::Token;
 
-use super::base::{parse_bitstring_type, parse_enumerated_type, parse_integer_type};
-use super::constructed::{parse_choice_type, parse_seq_or_seq_of_type};
+use crate::structs::parser::types::{
+    Asn1BuiltinType, Asn1ConstructedType, Asn1Type, Asn1TypeKind, Asn1TypeReference,
+};
 
-use super::constraints::parse_constraints;
+pub mod ioc;
+
+mod base;
+use base::{parse_bitstring_type, parse_enumerated_type, parse_integer_type};
+
+mod constructed;
+use constructed::{parse_choice_type, parse_seq_or_seq_of_type};
+
+pub(crate) mod constraints;
+use constraints::parse_constraints;
 
 use super::utils::{
     expect_keywords, expect_one_of_tokens, expect_token, expect_tokens, parse_set_ish_value,

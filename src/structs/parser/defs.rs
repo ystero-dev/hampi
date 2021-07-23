@@ -1,7 +1,9 @@
 //! ASN.1 Definitions related Structs
 
-use super::ioc::{Asn1Object, Asn1ObjectClass, Asn1ObjectSet};
-use super::types::Asn1Type;
+use super::types::{
+    ioc::{Asn1Object, Asn1ObjectClass, Asn1ObjectSet},
+    Asn1Type,
+};
 
 /// Struct representing an Object Class Assignment
 #[derive(Debug)]

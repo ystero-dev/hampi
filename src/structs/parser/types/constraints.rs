@@ -1,7 +1,8 @@
 //! Related to handling of ASN.1 Constraints
 
-use super::oid::ObjectIdentifier;
-use super::types::Asn1Type;
+use crate::structs::parser::oid::ObjectIdentifier;
+
+use super::Asn1Type;
 
 #[derive(Debug, Clone)]
 pub(crate) struct RangeElement {

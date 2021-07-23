@@ -2,7 +2,7 @@
 
 use crate::error::Error;
 use crate::parser::utils::{expect_keyword, expect_token};
-use crate::structs::constructed::{Asn1TypeChoice, ChoiceAdditionGroup};
+use crate::structs::parser::types::constructed::{Asn1TypeChoice, ChoiceAdditionGroup};
 use crate::tokenizer::Token;
 
 use super::utils::parse_component;

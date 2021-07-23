@@ -2,7 +2,7 @@
 
 use std::collections::HashMap;
 
-use super::types::Asn1Type;
+use super::Asn1Type;
 
 #[derive(Debug)]
 pub(crate) struct FixedTypeValueFieldSpec {
