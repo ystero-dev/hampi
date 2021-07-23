@@ -1,9 +1,9 @@
 //! Structs for the resolved Base Types
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) enum ResolvedConstructedType {
     Choice(Asn1ResolvedChoice),
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub(crate) struct Asn1ResolvedChoice;

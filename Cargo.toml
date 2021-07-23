@@ -12,6 +12,7 @@ readme = "README.md"
 
 [dependencies]
 lazy_static = { version = "1.4.0" }
+topological-sort = { version = "0.1" }
 
 
 [[bin]]

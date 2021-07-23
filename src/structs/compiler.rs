@@ -3,6 +3,8 @@
 use std::cell::RefCell;
 use std::collections::HashMap;
 
+use topological_sort::TopologicalSort;
+
 use crate::error::Error;
 
 use crate::structs::parser::module::Asn1Module;
@@ -51,9 +53,35 @@ impl Asn1Compiler {
         Ok(true)
     }
 
-    pub fn resolve_definitions(&mut self) -> Result<(), Error> {
+    fn sorted_modules(&self) -> Vec<String> {
+        let mut ts = TopologicalSort::<String>::new();
+
         for cell in self.modules.values() {
-            let mut module = cell.borrow_mut();
+            let module = cell.borrow();
+            let imports = &module.imports;
+            for m in imports.values() {
+                ts.add_dependency(m.name.clone(), module.name.name.clone());
+            }
+            ts.insert(module.name.name.clone());
+        }
+        let mut out_vec = vec![];
+
+        loop {
+            let popped = ts.pop_all();
+            if popped.is_empty() {
+                break;
+            } else {
+                out_vec.extend(popped);
+            }
+        }
+        out_vec
+    }
+
+    pub fn resolve_definitions(&mut self) -> Result<(), Error> {
+        let module_names = self.sorted_modules();
+        eprintln!("sorted_modules: {:#?}", module_names);
+        for name in module_names {
+            let mut module = self.modules.get(&name).unwrap().borrow_mut();
             let module_definitions = module.definitions_mut();
             for (k, parsed_def) in module_definitions.iter_mut() {
                 let resolved_def = resolve_definition(parsed_def, &self.all_definitions)?;

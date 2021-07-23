@@ -1,7 +1,7 @@
 //! Structs for the resolved Base Types
 use std::collections::{BTreeSet, HashMap};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) enum ResolvedBaseType {
     Integer(Asn1ResolvedInteger),
     Enum(Asn1ResolvedEnumerated),
@@ -11,7 +11,7 @@ pub(crate) enum ResolvedBaseType {
 //
 // This structure is obtained when all the 'Constraints' in a give definition are applied.
 // Information from this structure can be directly used for code generation.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct Asn1ResolvedInteger {
     bytes: u8,
     signed: bool,
@@ -32,7 +32,7 @@ impl Default for Asn1ResolvedInteger {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct Asn1ResolvedEnumerated {
     bytes: u8,
     signed: bool,
