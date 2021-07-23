@@ -17,14 +17,14 @@ pub(crate) type BaseOctetSTring = Vec<u8>;
 
 #[derive(Debug)]
 pub(crate) struct Asn1ResolvedIntegerValue {
-    typeref: Asn1ResolvedType,
-    value: BaseInteger,
+    pub(crate) typeref: Asn1ResolvedType,
+    pub(crate) value: BaseInteger,
 }
 
 #[derive(Debug)]
 pub(crate) struct Asn1ResolvedEnumValue {
-    typeref: Asn1ResolvedType,
-    value: BaseEnum,
+    pub(crate) typeref: Asn1ResolvedType,
+    pub(crate) value: BaseEnum,
 }
 
 #[derive(Debug)]

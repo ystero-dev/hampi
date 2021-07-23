@@ -1,17 +1,33 @@
 //! Resolved 'values' implementation
 
-use std::collections::HashMap;
-
 use crate::error::Error;
 
-use crate::structs::parser::defs::Asn1ValueAssignment;
-use crate::structs::resolver::defs::Asn1ResolvedDefinition;
+use crate::structs::resolver::types::{base::ResolvedBaseType, Asn1ResolvedType};
+use crate::structs::resolver::values::{
+    Asn1ResolvedEnumValue, Asn1ResolvedIntegerValue, Asn1ResolvedValue, BaseEnum, BaseInteger,
+};
 
-pub(crate) fn resolve_value_definition(
-    value: &Asn1ValueAssignment,
-    _table: &HashMap<String, Asn1ResolvedDefinition>,
-) -> Result<Asn1ResolvedDefinition, Error> {
-    match value.typeref.kind {
-        _ => Err(resolve_error!("{:#?}", value.typeref.kind)),
+pub(crate) fn resolve_value(
+    value: &str,
+    typeref: Asn1ResolvedType,
+) -> Result<Asn1ResolvedValue, Error> {
+    match typeref {
+        Asn1ResolvedType::Base(ref b) => match b {
+            ResolvedBaseType::Integer(ref _i) => {
+                let value = value.parse::<BaseInteger>().unwrap();
+                Ok(Asn1ResolvedValue::Integer(Asn1ResolvedIntegerValue {
+                    typeref,
+                    value,
+                }))
+            }
+            ResolvedBaseType::Enum(ref _e) => {
+                let value = value.parse::<BaseEnum>().unwrap();
+                Ok(Asn1ResolvedValue::Enum(Asn1ResolvedEnumValue {
+                    typeref,
+                    value,
+                }))
+            }
+        },
+        _ => Err(resolve_error!("resolve_value: Not Implemented!")),
     }
 }
