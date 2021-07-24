@@ -27,6 +27,10 @@ pub(crate) fn resolve_value(
                     value,
                 }))
             }
+            _ => Err(resolve_error!(
+                "resolve_value: Not Supported Yet! {:#?}",
+                typeref
+            )),
         },
         _ => Err(resolve_error!("resolve_value: Not Implemented!")),
     }

@@ -5,6 +5,10 @@ use std::collections::{BTreeSet, HashMap};
 pub(crate) enum ResolvedBaseType {
     Integer(Asn1ResolvedInteger),
     Enum(Asn1ResolvedEnumerated),
+    BitString(Asn1ResolvedBitString),
+    Boolean(Asn1ResolvedBoolean),
+    OctetString(Asn1ResolvedOctetString),
+    CharacterString(Asn1ResolvedCharacterString),
 }
 
 // An intermediate representation for a Resolved Integer Type
@@ -52,3 +56,15 @@ impl Default for Asn1ResolvedEnumerated {
         }
     }
 }
+
+#[derive(Debug, Default, Clone)]
+pub(crate) struct Asn1ResolvedBitString;
+
+#[derive(Debug, Default, Clone)]
+pub(crate) struct Asn1ResolvedBoolean;
+
+#[derive(Debug, Default, Clone)]
+pub(crate) struct Asn1ResolvedOctetString;
+
+#[derive(Debug, Default, Clone)]
+pub(crate) struct Asn1ResolvedCharacterString;
