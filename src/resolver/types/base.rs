@@ -21,6 +21,9 @@ pub(crate) fn resolve_base_type(
             let resolved = ResolvedBaseType::Enum(Asn1ResolvedEnumerated::default());
             Ok(resolved)
         }
-        _ => Err(resolve_error!("Not Implemented!")),
+        _ => Err(resolve_error!(
+            "parse_base_type: Not Implemented! {:#?}",
+            ty
+        )),
     }
 }

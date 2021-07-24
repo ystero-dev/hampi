@@ -8,6 +8,7 @@ use crate::structs::resolver::types::Asn1ResolvedType;
 
 pub(crate) mod base;
 pub(crate) mod constructed;
+pub(crate) mod ioc;
 
 use base::resolve_base_type;
 use constructed::resolve_constructed_type;

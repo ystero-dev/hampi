@@ -110,7 +110,12 @@ impl Asn1Compiler {
                 } else if let Asn1AssignmentKind::Class(ref c) = parsed_def.kind {
                     self.object_classes.insert(k.to_string(), c.clone());
                 } else {
-                    let resolved_def = resolve_definition(parsed_def, &self.resolved_defs)?;
+                    let resolved_def = resolve_definition(
+                        parsed_def,
+                        &self.resolved_defs,
+                        &self.parameterized_defs,
+                        &self.object_classes,
+                    )?;
                     self.resolved_defs.insert(k.clone(), resolved_def);
                 }
                 parsed_def.resolved = true;
