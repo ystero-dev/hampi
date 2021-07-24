@@ -4,7 +4,7 @@ use std::collections::HashMap;
 
 use super::Asn1Type;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct FixedTypeValueFieldSpec {
     pub(crate) id: String,
 
@@ -15,7 +15,7 @@ pub(crate) struct FixedTypeValueFieldSpec {
     pub(crate) with_syntax: Option<String>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct TypeFieldSpec {
     pub(crate) id: String,
     pub(crate) optional: bool,
@@ -23,7 +23,7 @@ pub(crate) struct TypeFieldSpec {
     pub(crate) with_syntax: Option<String>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) enum ObjectClassFieldSpec {
     Type(TypeFieldSpec),
 
@@ -45,18 +45,18 @@ impl ObjectClassFieldSpec {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct Asn1ObjectClass {
     pub(crate) fields: HashMap<String, ObjectClassFieldSpec>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct Asn1ObjectSet {
     pub(crate) class: String, // Class for which this Object Set is defined
     pub(crate) objects: Vec<String>, // For now just a vec of strings,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct Asn1Object {
     pub(crate) class: String, // Class for which this Object Set is defined
     pub(crate) value: String, // For now just a string,

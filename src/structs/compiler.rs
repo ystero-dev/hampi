@@ -7,28 +7,48 @@ use topological_sort::TopologicalSort;
 
 use crate::error::Error;
 
-use crate::structs::parser::module::Asn1Module;
+use crate::structs::parser::{
+    defs::{Asn1AssignmentKind, Asn1Definition, Asn1ObjectClassAssignment},
+    module::Asn1Module,
+};
 use crate::structs::resolver::defs::Asn1ResolvedDefinition;
 
 use crate::resolver::defs::resolve_definition;
 
 #[derive(Debug)]
 pub struct Asn1Compiler {
-    /// Modules belonging to this 'invocation' of compiler.
+    // Modules belonging to this 'invocation' of compiler. Modules are maintined inside a `RefCell`
+    // because we need Interior Mutability with the modules (for example to 'resolve' definitions
+    // within the modules.
     modules: HashMap<String, RefCell<Asn1Module>>,
-    all_definitions: HashMap<String, Asn1ResolvedDefinition>,
+
+    // Resolved definitions: Definitions that we know about and are resolved into built-in or
+    // Constructed types made up entirely of built-in types. We'll be using "Type" definitions from
+    // this Map for code generation eventually.
+    resolved_defs: HashMap<String, Asn1ResolvedDefinition>,
+
+    // parameterized_defs are never 'resolved' In fact a given definition can be 'resolved' using
+    // information from the Parameterized Definition. Note: Right now only `ParameterizedType` is
+    // supported, but it should not change a whole lot if we support other `Parameterized*`.
+    parameterized_defs: HashMap<String, Asn1Definition>,
+
+    // object_classes similarly are never `resolved`. Information from the object classes can be
+    // used to 'create' objects, which in turn can be used to create `Types`/`Values` (Usually
+    // Constructed Sequence types, using CLASSREF.
+    object_classes: HashMap<String, Asn1ObjectClassAssignment>,
 }
 
 impl Asn1Compiler {
     pub fn new() -> Self {
         Asn1Compiler {
             modules: HashMap::new(),
-            all_definitions: HashMap::new(),
+            resolved_defs: HashMap::new(),
+            parameterized_defs: HashMap::new(),
+            object_classes: HashMap::new(),
         }
     }
 
     pub fn add_module(&mut self, module: Asn1Module) -> bool {
-        eprintln!("Adding Module!");
         let old = self
             .modules
             .insert(module.name.name.clone(), RefCell::new(module));
@@ -84,12 +104,21 @@ impl Asn1Compiler {
             let mut module = self.modules.get(&name).unwrap().borrow_mut();
             let module_definitions = module.definitions_mut();
             for (k, parsed_def) in module_definitions.iter_mut() {
-                let resolved_def = resolve_definition(parsed_def, &self.all_definitions)?;
-                self.all_definitions.insert(k.clone(), resolved_def);
+                if parsed_def.params.is_some() {
+                    self.parameterized_defs
+                        .insert(k.to_string(), parsed_def.clone());
+                } else if let Asn1AssignmentKind::Class(ref c) = parsed_def.kind {
+                    self.object_classes.insert(k.to_string(), c.clone());
+                } else {
+                    let resolved_def = resolve_definition(parsed_def, &self.resolved_defs)?;
+                    self.resolved_defs.insert(k.clone(), resolved_def);
+                }
                 parsed_def.resolved = true;
             }
         }
-        eprintln!("Resolved: {:#?}", self.all_definitions);
+        eprintln!("Resolved: {:#?}", self.resolved_defs.keys());
+        eprintln!("Parameterized: {:#?}", self.parameterized_defs.keys());
+        eprintln!("Object Classes: {:#?}", self.object_classes.keys());
         Ok(())
     }
 }

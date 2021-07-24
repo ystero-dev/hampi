@@ -6,7 +6,7 @@ use super::types::{
 };
 
 /// Struct representing an Object Class Assignment
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct Asn1ObjectClassAssignment {
     /// Class Identifier
     pub(crate) id: String,
@@ -16,7 +16,7 @@ pub(crate) struct Asn1ObjectClassAssignment {
 }
 
 /// Struct representing Object Set Assignment
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct Asn1ObjectSetAssignment {
     /// Identifier
     pub(crate) id: String,
@@ -25,14 +25,14 @@ pub(crate) struct Asn1ObjectSetAssignment {
 }
 
 /// Struct representing an Object Assignment
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct Asn1ObjectAssignment {
     ///Identifier
     pub(crate) id: String,
     pub(crate) object: Asn1Object,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct Asn1TypeAssignment {
     /// Type Identifier
     pub(crate) id: String,
@@ -56,7 +56,7 @@ pub(crate) struct Asn1TypeAssignment {
 /// (refering to a value of base ASN.1 Type. See [`base_types`]). Note: When the value is
 /// 'resolved', the actual value contains one of the base type values after all constraints are
 /// validated.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct Asn1ValueAssignment {
     /// Identifier for the value
     pub(crate) id: String,
@@ -68,7 +68,7 @@ pub(crate) struct Asn1ValueAssignment {
     pub(crate) value: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) enum Asn1AssignmentKind {
     Value(Asn1ValueAssignment),
     Type(Asn1TypeAssignment),
@@ -92,7 +92,7 @@ impl Asn1AssignmentKind {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct Asn1Definition {
     pub(crate) kind: Asn1AssignmentKind,
     pub(crate) params: Option<Vec<DefinitionParam>>,
@@ -106,19 +106,19 @@ impl Asn1Definition {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub(crate) enum GovernerKind {
     Type,
     Class,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub(crate) struct ParamGoverner {
     pub(crate) name: String,
     pub(crate) kind: GovernerKind,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) enum DummyReferenceKind {
     Type,
     Value,
@@ -128,13 +128,13 @@ pub(crate) enum DummyReferenceKind {
     ObjectSet,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct ParamDummyReference {
     pub(crate) name: String,
     pub(crate) kind: DummyReferenceKind,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct DefinitionParam {
     pub(crate) governer: Option<ParamGoverner>,
     pub(crate) dummyref: ParamDummyReference,

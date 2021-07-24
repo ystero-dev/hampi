@@ -21,7 +21,10 @@ pub(crate) fn resolve_definition(
     match definition.kind {
         Asn1AssignmentKind::Value(ref v) => resolve_value_definition(v, table),
         Asn1AssignmentKind::Type(ref t) => resolve_type_definition(t, table),
-        _ => Err(resolve_error!("Not Implemented!")),
+        _ => Err(resolve_error!(
+            "asn_resolve_def: Not Implemented! {:#?}",
+            definition
+        )),
     }
 }
 
