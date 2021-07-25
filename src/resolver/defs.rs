@@ -42,23 +42,33 @@ pub(crate) fn resolve_definition(
     }
 }
 
-fn resolve_type_definition(
+pub(crate) fn resolve_type_definition(
     def: &Asn1TypeAssignment,
     resolved_defs: &HashMap<String, Asn1ResolvedDefinition>,
-    _parameterized_defs: &HashMap<String, Asn1Definition>,
-    _object_classes: &HashMap<String, Asn1ObjectClassAssignment>,
+    parameterized_defs: &HashMap<String, Asn1Definition>,
+    object_classes: &HashMap<String, Asn1ObjectClassAssignment>,
 ) -> Result<Asn1ResolvedDefinition, Error> {
-    let typeref = resolve_type(&def.typeref, resolved_defs)?;
+    let typeref = resolve_type(
+        &def.typeref,
+        resolved_defs,
+        parameterized_defs,
+        object_classes,
+    )?;
     Ok(Asn1ResolvedDefinition::Type(typeref))
 }
 
 fn resolve_value_definition(
     value: &Asn1ValueAssignment,
     resolved_defs: &HashMap<String, Asn1ResolvedDefinition>,
-    _parameterized_defs: &HashMap<String, Asn1Definition>,
-    _object_classes: &HashMap<String, Asn1ObjectClassAssignment>,
+    parameterized_defs: &HashMap<String, Asn1Definition>,
+    object_classes: &HashMap<String, Asn1ObjectClassAssignment>,
 ) -> Result<Asn1ResolvedDefinition, Error> {
-    let typeref = resolve_type(&value.typeref, resolved_defs)?;
+    let typeref = resolve_type(
+        &value.typeref,
+        resolved_defs,
+        parameterized_defs,
+        object_classes,
+    )?;
     let value = resolve_value(&value.value, typeref)?;
     Ok(Asn1ResolvedDefinition::Value(value))
 }

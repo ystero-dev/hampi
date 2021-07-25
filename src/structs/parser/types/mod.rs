@@ -61,12 +61,18 @@ impl Default for Asn1TypeKind {
     }
 }
 
+#[derive(Debug, Clone)]
+pub(crate) struct Asn1ParameterizedType {
+    pub(crate) typeref: String,
+    pub(crate) params: String, // FIXME: Make an ActualParams Kind struct
+}
+
 #[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub(crate) enum Asn1TypeReference {
     ClassField(String),
     Reference(String),
-    Parameterized(String), // FIXME: For now We can make it a struct
+    Parameterized(Asn1ParameterizedType), // FIXME: For now We can make it a struct
 }
 
 impl Asn1TypeReference {
@@ -74,7 +80,7 @@ impl Asn1TypeReference {
         match self {
             Self::ClassField(ref c) => vec![c.split(".").next().unwrap().to_string()],
             Self::Reference(ref r) => vec![r.clone()],
-            Self::Parameterized(ref p) => vec![p.split("{").next().unwrap().to_string()],
+            Self::Parameterized(ref p) => vec![p.typeref.clone()],
         }
     }
 }

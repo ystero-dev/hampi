@@ -103,6 +103,7 @@ impl Asn1Compiler {
             let mut module = self.modules.get(&name).unwrap().borrow_mut();
             //let module_definitions = module.definitions_sorted();
             for k in module.definitions_sorted() {
+                eprintln!("k: {:#?}", k);
                 let parsed_def = module.definitions.get_mut(&k).unwrap();
                 if parsed_def.params.is_some() {
                     self.parameterized_defs

@@ -4,7 +4,8 @@ use crate::error::Error;
 use crate::tokenizer::Token;
 
 use crate::structs::parser::types::{
-    Asn1BuiltinType, Asn1ConstructedType, Asn1Type, Asn1TypeKind, Asn1TypeReference,
+    Asn1BuiltinType, Asn1ConstructedType, Asn1ParameterizedType, Asn1Type, Asn1TypeKind,
+    Asn1TypeReference,
 };
 
 pub mod ioc;
@@ -172,15 +173,17 @@ fn parse_referenced_type<'parser>(
         };
     consumed += actual_params_consumed;
 
-    let outref = reference + &actual_params;
     if actual_params_consumed > 0 {
         Ok((
-            Asn1TypeKind::Reference(Asn1TypeReference::Parameterized(outref)),
+            Asn1TypeKind::Reference(Asn1TypeReference::Parameterized(Asn1ParameterizedType {
+                typeref: reference,
+                params: actual_params,
+            })),
             consumed,
         ))
     } else {
         Ok((
-            Asn1TypeKind::Reference(Asn1TypeReference::Reference(outref)),
+            Asn1TypeKind::Reference(Asn1TypeReference::Reference(reference)),
             consumed,
         ))
     }
