@@ -84,8 +84,8 @@ impl Asn1Compiler {
             }
             ts.insert(module.name.name.clone());
         }
-        let mut out_vec = vec![];
 
+        let mut out_vec = vec![];
         loop {
             let popped = ts.pop_all();
             if popped.is_empty() {
@@ -99,11 +99,11 @@ impl Asn1Compiler {
 
     pub fn resolve_definitions(&mut self) -> Result<(), Error> {
         let module_names = self.sorted_modules();
-        eprintln!("sorted_modules: {:#?}", module_names);
         for name in module_names {
             let mut module = self.modules.get(&name).unwrap().borrow_mut();
-            let module_definitions = module.definitions_mut();
-            for (k, parsed_def) in module_definitions.iter_mut() {
+            //let module_definitions = module.definitions_sorted();
+            for k in module.definitions_sorted() {
+                let parsed_def = module.definitions.get_mut(&k).unwrap();
                 if parsed_def.params.is_some() {
                     self.parameterized_defs
                         .insert(k.to_string(), parsed_def.clone());

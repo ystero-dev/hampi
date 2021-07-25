@@ -90,6 +90,16 @@ impl Asn1AssignmentKind {
             Self::Object(ref o) => o.id.clone(),
         }
     }
+
+    pub fn dependent_references(&self) -> Vec<String> {
+        match self {
+            Self::Value(ref v) => v.typeref.dependent_references(),
+            Self::Type(ref t) => t.typeref.dependent_references(),
+            Self::Object(ref o) => vec![o.object.class.clone()],
+            Self::ObjectSet(ref s) => vec![s.set.class.clone()],
+            _ => vec![],
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -103,6 +113,12 @@ pub(crate) struct Asn1Definition {
 impl Asn1Definition {
     pub fn id(&self) -> String {
         self.kind.id()
+    }
+    // Returns a list of dependent references for a given defintion. These will be used to sort the
+    // definitions topologically, which would make error handling considerably easier when
+    // resolving those definitions
+    pub fn dependent_references(&self) -> Vec<String> {
+        self.kind.dependent_references()
     }
 }
 
