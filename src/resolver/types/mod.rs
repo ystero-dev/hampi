@@ -1,11 +1,10 @@
-use std::collections::HashMap;
-
 use crate::error::Error;
 
-use crate::structs::parser::defs::{Asn1AssignmentKind, Asn1Definition, Asn1ObjectClassAssignment};
-use crate::structs::parser::types::{Asn1Type, Asn1TypeKind, Asn1TypeReference};
-use crate::structs::resolver::defs::Asn1ResolvedDefinition;
-use crate::structs::resolver::types::Asn1ResolvedType;
+use crate::structs::parser::{
+    defs::Asn1AssignmentKind,
+    types::{Asn1Type, Asn1TypeKind, Asn1TypeReference},
+};
+use crate::structs::resolver::{defs::Asn1ResolvedDefinition, types::Asn1ResolvedType, Resolver};
 
 pub(crate) mod base;
 pub(crate) mod constructed;
@@ -14,34 +13,23 @@ pub(crate) mod ioc;
 use base::resolve_base_type;
 use constructed::resolve_constructed_type;
 
-pub(crate) fn resolve_type(
-    ty: &Asn1Type,
-    resolved_defs: &HashMap<String, Asn1ResolvedDefinition>,
-    parameterized_defs: &HashMap<String, Asn1Definition>,
-    object_classes: &HashMap<String, Asn1ObjectClassAssignment>,
-) -> Result<Asn1ResolvedType, Error> {
+pub(crate) fn resolve_type(ty: &Asn1Type, resolver: &Resolver) -> Result<Asn1ResolvedType, Error> {
     match ty.kind {
-        Asn1TypeKind::Builtin(ref b) => {
-            Ok(Asn1ResolvedType::Base(resolve_base_type(b, resolved_defs)?))
-        }
+        Asn1TypeKind::Builtin(ref b) => Ok(Asn1ResolvedType::Base(resolve_base_type(b, resolver)?)),
         Asn1TypeKind::Constructed(ref c) => Ok(Asn1ResolvedType::Constructed(
-            resolve_constructed_type(c, resolved_defs)?,
+            resolve_constructed_type(c, resolver)?,
         )),
-        Asn1TypeKind::Reference(ref r) => {
-            resolve_reference_type(r, resolved_defs, parameterized_defs, object_classes)
-        }
+        Asn1TypeKind::Reference(ref r) => resolve_reference_type(r, resolver),
     }
 }
 
 fn resolve_reference_type(
     reference: &Asn1TypeReference,
-    resolved_defs: &HashMap<String, Asn1ResolvedDefinition>,
-    parameterized_defs: &HashMap<String, Asn1Definition>,
-    object_classes: &HashMap<String, Asn1ObjectClassAssignment>,
+    resolver: &Resolver,
 ) -> Result<Asn1ResolvedType, Error> {
     match reference {
         Asn1TypeReference::Reference(ref r) => {
-            let resolved = resolved_defs.get(r);
+            let resolved = resolver.resolved_defs.get(r);
             if resolved.is_some() {
                 let resolved = resolved.unwrap();
                 match resolved {
@@ -59,17 +47,12 @@ fn resolve_reference_type(
             }
         }
         Asn1TypeReference::Parameterized(ref p) => {
-            let def = parameterized_defs.get(&p.typeref);
+            let def = resolver.parameterized_defs.get(&p.typeref);
             if def.is_some() {
-                let def = def.unwrap();
+                let def = def.unwrap().clone();
                 match def.kind {
                     // FIXME : This is not exactly 'Right' but for now we'd go ahead with it.
-                    Asn1AssignmentKind::Type(ref t) => resolve_type(
-                        &t.typeref,
-                        resolved_defs,
-                        parameterized_defs,
-                        object_classes,
-                    ),
+                    Asn1AssignmentKind::Type(ref t) => resolve_type(&t.typeref, resolver),
                     _ => Err(resolve_error!(
                         "parameterized_type of {:#?} kind not supported.",
                         def.kind

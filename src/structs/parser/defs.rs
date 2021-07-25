@@ -122,6 +122,36 @@ impl Asn1Definition {
     }
 }
 
+macro_rules! is_assignment_kind {
+
+    (($fn:ident, $variant: path)) => {
+        #[allow(dead_code)]
+        impl Asn1Definition {
+            pub fn $fn(&self) -> bool {
+                if let $variant(ref _x) = self.kind {
+                    true
+                } else {
+                false
+                }
+            }
+        }
+    };
+
+    ($($tt:tt,)*) => {
+        $(
+        is_assignment_kind!($tt);
+        )+
+    };
+}
+
+is_assignment_kind! {
+    (is_value_assignment, Asn1AssignmentKind::Value),
+    (is_type_assignment, Asn1AssignmentKind::Type),
+    (is_class_assignment, Asn1AssignmentKind::Class),
+    (is_object_set_assignment, Asn1AssignmentKind::ObjectSet),
+    (is_object_assignment, Asn1AssignmentKind::Object),
+}
+
 #[derive(Debug, PartialEq, Clone)]
 pub(crate) enum GovernerKind {
     Type,

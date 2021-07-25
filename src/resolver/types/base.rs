@@ -1,19 +1,17 @@
-use std::collections::HashMap;
-
 use crate::error::Error;
 
 use crate::structs::parser::types::Asn1BuiltinType;
 use crate::structs::resolver::{
-    defs::Asn1ResolvedDefinition,
     types::base::{
         Asn1ResolvedBitString, Asn1ResolvedBoolean, Asn1ResolvedCharacterString,
         Asn1ResolvedEnumerated, Asn1ResolvedInteger, Asn1ResolvedOctetString, ResolvedBaseType,
     },
+    Resolver,
 };
 
 pub(crate) fn resolve_base_type(
     ty: &Asn1BuiltinType,
-    _table: &HashMap<String, Asn1ResolvedDefinition>,
+    _resolver: &Resolver,
 ) -> Result<ResolvedBaseType, Error> {
     match ty {
         Asn1BuiltinType::Integer(ref _i) => {

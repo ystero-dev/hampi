@@ -15,19 +15,19 @@ pub(crate) type BaseCharString = bool;
 /// Any OCTET STRING value will be represente by a BaseOctetString type when 'Resolved'.
 pub(crate) type BaseOctetSTring = Vec<u8>;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct Asn1ResolvedIntegerValue {
     pub(crate) typeref: Asn1ResolvedType,
     pub(crate) value: BaseInteger,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct Asn1ResolvedEnumValue {
     pub(crate) typeref: Asn1ResolvedType,
     pub(crate) value: BaseEnum,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) enum Asn1ResolvedValue {
     Integer(Asn1ResolvedIntegerValue),
     Enum(Asn1ResolvedEnumValue),

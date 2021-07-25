@@ -1,18 +1,16 @@
-use std::collections::HashMap;
-
 use crate::error::Error;
 
 use crate::structs::parser::types::Asn1ConstructedType;
 use crate::structs::resolver::{
-    defs::Asn1ResolvedDefinition,
     types::constructed::{
         Asn1ResolvedChoice, Asn1ResolvedSequence, Asn1ResolvedSequenceOf, ResolvedConstructedType,
     },
+    Resolver,
 };
 
 pub(crate) fn resolve_constructed_type(
     ty: &Asn1ConstructedType,
-    _table: &HashMap<String, Asn1ResolvedDefinition>,
+    _resolver: &Resolver,
 ) -> Result<ResolvedConstructedType, Error> {
     match ty {
         Asn1ConstructedType::Choice(ref _i) => {

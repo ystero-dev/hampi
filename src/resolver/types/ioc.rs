@@ -1,20 +1,17 @@
 //! Handling of Information Object Classes, ObjectSets, Objects etc
 
-use std::collections::HashMap;
-
 use crate::error::Error;
-use crate::structs::parser::defs::{Asn1Definition, Asn1ObjectClassAssignment};
 use crate::structs::parser::types::ioc::{Asn1Object, Asn1ObjectSet};
-use crate::structs::resolver::defs::Asn1ResolvedDefinition;
-use crate::structs::resolver::types::ioc::{Asn1ResolvedObject, Asn1ResolvedObjectSet};
+use crate::structs::resolver::{
+    types::ioc::{Asn1ResolvedObject, Asn1ResolvedObjectSet},
+    Resolver,
+};
 
 pub(crate) fn resolve_object_set(
     objectset: &Asn1ObjectSet,
-    _resolved_defs: &HashMap<String, Asn1ResolvedDefinition>,
-    _parameterized_defs: &HashMap<String, Asn1Definition>,
-    object_classes: &HashMap<String, Asn1ObjectClassAssignment>,
+    resolver: &Resolver,
 ) -> Result<Asn1ResolvedObjectSet, Error> {
-    let class = object_classes.get(&objectset.class);
+    let class = resolver.classes.get(&objectset.class);
     if class.is_none() {
         Err(resolve_error!(
             "Class '{}' definition not found to resolve object set!",
@@ -27,11 +24,9 @@ pub(crate) fn resolve_object_set(
 
 pub(crate) fn resolve_object(
     object: &Asn1Object,
-    _resolved_defs: &HashMap<String, Asn1ResolvedDefinition>,
-    _parameterized_defs: &HashMap<String, Asn1Definition>,
-    object_classes: &HashMap<String, Asn1ObjectClassAssignment>,
+    resolver: &Resolver,
 ) -> Result<Asn1ResolvedObject, Error> {
-    let class = object_classes.get(&object.class);
+    let class = resolver.classes.get(&object.class);
     if class.is_none() {
         Err(resolve_error!(
             "Class '{}' definition not found to resolve object!",
