@@ -14,7 +14,7 @@ pub mod tokenizer;
 /// ASN1. Parser and Related Types
 pub mod parser;
 
-mod structs;
-pub use structs::compiler::Asn1Compiler;
+mod compiler;
+pub use compiler::Asn1Compiler;
 
 pub mod resolver;

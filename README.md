@@ -10,4 +10,4 @@ Right now specifications in the `specs/` directory can be parsed correctly(hopef
 
 ## Getting Started
 
-Right now only a few test cases can be run through `cargo test`. Or one can checkout the AST for the protocols using `cargo run specs/ngap/*asn`.
+Test cases can be run through `cargo test`. Or one can checkout the AST for the protocols using `cargo run specs/ngap/*asn`.

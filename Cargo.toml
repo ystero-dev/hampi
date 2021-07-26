@@ -16,5 +16,5 @@ topological-sort = { version = "0.1" }
 
 
 [[bin]]
-name = "tokenize-asn"
-path = "src/bin/tokenize-asn.rs"
+name = "hampi-asn1c"
+path = "src/bin/hampi-asn1c.rs"
