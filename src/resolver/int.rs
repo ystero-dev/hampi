@@ -6,9 +6,9 @@ use crate::error::Error;
 
 use crate::parser::asn::structs::{defs::Asn1Definition, module::Asn1Module};
 
-use crate::structs::resolver::defs::Asn1ResolvedDefinition;
+use crate::resolver::asn::structs::defs::Asn1ResolvedDefinition;
 
-use crate::resolver::defs::resolve_definition;
+use crate::resolver::asn::defs::resolve_definition;
 
 #[derive(Debug, Clone)]
 pub(crate) struct Resolver {

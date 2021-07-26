@@ -8,7 +8,7 @@ use crate::error::Error;
 
 use crate::parser::asn::structs::module::Asn1Module;
 
-use crate::structs::resolver::Resolver;
+use crate::resolver::Resolver;
 
 /// ASN.1 Compiler Struct.
 ///

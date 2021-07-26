@@ -5,14 +5,13 @@ use crate::parser::asn::structs::{
     types::{Asn1Type, Asn1TypeKind, Asn1TypeReference},
 };
 
-use crate::structs::resolver::{defs::Asn1ResolvedDefinition, types::Asn1ResolvedType, Resolver};
-
-pub(crate) mod base;
-pub(crate) mod constructed;
-pub(crate) mod ioc;
-
-use base::resolve_base_type;
-use constructed::resolve_constructed_type;
+use crate::resolver::{
+    asn::{
+        structs::{defs::Asn1ResolvedDefinition, types::Asn1ResolvedType},
+        types::{base::resolve_base_type, constructed::resolve_constructed_type},
+    },
+    Resolver,
+};
 
 pub(crate) fn resolve_type(ty: &Asn1Type, resolver: &Resolver) -> Result<Asn1ResolvedType, Error> {
     match ty.kind {

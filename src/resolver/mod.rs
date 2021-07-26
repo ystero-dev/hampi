@@ -1,7 +1,6 @@
 //! Resolver module
 
-pub(crate) mod defs;
+mod int;
+pub(crate) use int::Resolver;
 
-pub(crate) mod types;
-
-pub(crate) mod values;
+mod asn;

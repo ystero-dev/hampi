@@ -2,9 +2,11 @@
 
 use crate::error::Error;
 
-use crate::structs::resolver::types::{base::ResolvedBaseType, Asn1ResolvedType};
-use crate::structs::resolver::values::{
-    Asn1ResolvedEnumValue, Asn1ResolvedIntegerValue, Asn1ResolvedValue, BaseEnum, BaseInteger,
+use crate::resolver::asn::structs::{
+    types::{base::ResolvedBaseType, Asn1ResolvedType},
+    values::{
+        Asn1ResolvedEnumValue, Asn1ResolvedIntegerValue, Asn1ResolvedValue, BaseEnum, BaseInteger,
+    },
 };
 
 pub(crate) fn resolve_value(

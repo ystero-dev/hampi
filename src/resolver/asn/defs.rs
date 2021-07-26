@@ -6,7 +6,7 @@ use crate::parser::asn::structs::defs::{
     Asn1AssignmentKind, Asn1Definition, Asn1ObjectAssignment, Asn1ObjectSetAssignment,
     Asn1TypeAssignment, Asn1ValueAssignment,
 };
-use crate::structs::resolver::{defs::Asn1ResolvedDefinition, Resolver};
+use crate::resolver::{asn::structs::defs::Asn1ResolvedDefinition, Resolver};
 
 use super::types::ioc::{resolve_object, resolve_object_set};
 use super::types::resolve_type;
