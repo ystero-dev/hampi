@@ -1,9 +1,11 @@
 //! 'parser' Inernal module, API functions from this module are exported.
 use crate::error::Error;
-use crate::structs::parser::module::Asn1Module;
 use crate::tokenizer::Token;
 
-use super::module::parse_module;
+use crate::parser::asn::structs::module::Asn1Module;
+
+use super::asn::parse_module;
+
 /// Parse the tokens into internal Asn1Module representation
 ///
 /// Token obtained from running [`tokenize`][`crate::tokenizer::tokenize] on an ANS file are parsed

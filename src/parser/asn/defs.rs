@@ -3,19 +3,21 @@
 use crate::error::Error;
 use crate::tokenizer::Token;
 
-use crate::structs::parser::{
-    defs::{
-        Asn1AssignmentKind, Asn1Definition, Asn1ObjectAssignment, Asn1ObjectClassAssignment,
-        Asn1ObjectSetAssignment, Asn1TypeAssignment, Asn1ValueAssignment, DefinitionParam,
-        DummyReferenceKind, GovernerKind, ParamDummyReference, ParamGoverner,
+use crate::parser::{
+    asn::structs::{
+        defs::{
+            Asn1AssignmentKind, Asn1Definition, Asn1ObjectAssignment, Asn1ObjectClassAssignment,
+            Asn1ObjectSetAssignment, Asn1TypeAssignment, Asn1ValueAssignment, DefinitionParam,
+            DummyReferenceKind, GovernerKind, ParamDummyReference, ParamGoverner,
+        },
+        types::ioc::{Asn1Object, Asn1ObjectSet},
     },
-    types::ioc::{Asn1Object, Asn1ObjectSet},
+    utils::{
+        expect_keyword, expect_one_of_tokens, expect_token, expect_tokens, parse_set_ish_value,
+    },
 };
 
 use super::types::{ioc::parse_class, parse_type};
-use super::utils::{
-    expect_keyword, expect_one_of_tokens, expect_token, expect_tokens, parse_set_ish_value,
-};
 use super::values::parse_value;
 
 // Parse a definition into an `Assignment` type.

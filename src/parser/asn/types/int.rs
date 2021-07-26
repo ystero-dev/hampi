@@ -1,30 +1,23 @@
-//! Handling Parsing of ASN.1 Types
-
 use crate::error::Error;
 use crate::tokenizer::Token;
 
-use crate::structs::parser::types::{
+use crate::parser::asn::structs::types::{
     Asn1BuiltinType, Asn1ConstructedType, Asn1ParameterizedType, Asn1Type, Asn1TypeKind,
     Asn1TypeReference,
 };
 
-pub mod ioc;
-
-mod base;
-use base::{parse_bitstring_type, parse_enumerated_type, parse_integer_type};
-
-mod constructed;
-use constructed::{parse_choice_type, parse_seq_or_seq_of_type};
-
-pub(crate) mod constraints;
-use constraints::parse_constraints;
-
-use super::utils::{
+use crate::parser::utils::{
     expect_keywords, expect_one_of_tokens, expect_token, expect_tokens, parse_set_ish_value,
 };
 
+use super::{
+    base::{parse_bitstring_type, parse_enumerated_type, parse_integer_type},
+    constraints::parse_constraints,
+    constructed::{parse_choice_type, parse_seq_or_seq_of_type},
+};
+
 // Parses the `Type` Expansion in the ASN.1 Grammar.
-pub(super) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Type, usize), Error> {
+pub(crate) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Type, usize), Error> {
     let mut consumed = 0;
 
     if !expect_one_of_tokens(

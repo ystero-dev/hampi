@@ -1,6 +1,7 @@
 use crate::error::Error;
 
-use crate::structs::parser::types::Asn1BuiltinType;
+use crate::parser::asn::structs::types::Asn1BuiltinType;
+
 use crate::structs::resolver::{
     types::base::{
         Asn1ResolvedBitString, Asn1ResolvedBoolean, Asn1ResolvedCharacterString,

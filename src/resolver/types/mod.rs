@@ -1,9 +1,10 @@
 use crate::error::Error;
 
-use crate::structs::parser::{
+use crate::parser::asn::structs::{
     defs::Asn1AssignmentKind,
     types::{Asn1Type, Asn1TypeKind, Asn1TypeReference},
 };
+
 use crate::structs::resolver::{defs::Asn1ResolvedDefinition, types::Asn1ResolvedType, Resolver};
 
 pub(crate) mod base;

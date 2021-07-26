@@ -6,9 +6,14 @@ use topological_sort::TopologicalSort;
 
 use crate::error::Error;
 
-use crate::structs::parser::module::Asn1Module;
+use crate::parser::asn::structs::module::Asn1Module;
+
 use crate::structs::resolver::Resolver;
 
+/// ASN.1 Compiler Struct.
+///
+/// An application should create a Compiler Structure and will call Public API functions on the
+/// compiler.
 #[derive(Debug)]
 pub struct Asn1Compiler {
     // Modules belonging to this 'invocation' of compiler. Modules are maintined inside a `RefCell`
@@ -28,36 +33,49 @@ impl Asn1Compiler {
     }
 
     pub fn add_module(&mut self, module: Asn1Module) -> bool {
-        let old = self.modules.insert(module.name.name.clone(), module);
+        let old = self.modules.insert(module.get_module_name(), module);
         !old.is_none()
     }
 
-    pub fn resolve_imports(&self) -> Result<bool, Error> {
+    /// Resolve Modules order and definitions within those modules.
+    ///
+    /// First Makes sure that all the modules that have IMPORTs are indeed added to us. Then
+    /// definitions in each of the modules are 'resolved'. Calls the `Resolver` functions to do
+    /// that. Modules are Topologically Sorted before they are resolved and definitions within
+    /// modules are topologically sorted as well. This makes Error handling for undefined
+    /// definitions much easier.
+    // FIXME: Support the case where module is imported by a name different from it's actual name.
+    pub fn resolve_modules(&mut self) -> Result<(), Error> {
+        self.resolve_imports()?;
+        self.resolve_definitions()
+    }
+
+    fn resolve_imports(&self) -> Result<(), Error> {
         for (_, module) in self.modules.iter() {
-            for (import, module_name) in module.imports.iter() {
-                let target = self.modules.get(&module_name.name);
+            for (import, module_name) in module.get_imported_defs() {
+                let target = self.modules.get(module_name.name_as_str());
                 if target.is_none() {
                     return Err(resolve_error!(
                         "Module '{}', corresponding to definition '{}' not found!",
-                        module_name.name,
+                        module_name.name_as_str(),
                         import
                     ));
                 }
             }
         }
         eprintln!("All IMPORTS in All Modules Resolved!");
-        Ok(true)
+        Ok(())
     }
 
     fn sorted_modules(&self) -> Vec<String> {
         let mut ts = TopologicalSort::<String>::new();
 
         for module in self.modules.values() {
-            let imports = &module.imports;
-            for m in imports.values() {
-                ts.add_dependency(m.name.clone(), module.name.name.clone());
+            let imports = module.get_imported_defs();
+            for (_, m) in imports {
+                ts.add_dependency(m.name(), module.get_module_name())
             }
-            ts.insert(module.name.name.clone());
+            ts.insert(module.get_module_name());
         }
 
         let mut out_vec = vec![];
@@ -72,7 +90,7 @@ impl Asn1Compiler {
         out_vec
     }
 
-    pub fn resolve_definitions(&mut self) -> Result<(), Error> {
+    fn resolve_definitions(&mut self) -> Result<(), Error> {
         let module_names = self.sorted_modules();
         for name in module_names {
             let mut module = self.modules.get_mut(&name).unwrap();

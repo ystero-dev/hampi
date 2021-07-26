@@ -4,7 +4,8 @@ use crate::error::Error;
 use crate::tokenizer::Token;
 
 use crate::parser::utils::{expect_keyword, expect_token};
-use crate::structs::parser::types::base::Asn1TypeInteger;
+
+use crate::parser::asn::structs::types::base::Asn1TypeInteger;
 
 use super::utils::parse_named_values;
 

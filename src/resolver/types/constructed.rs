@@ -1,6 +1,7 @@
 use crate::error::Error;
 
-use crate::structs::parser::types::Asn1ConstructedType;
+use crate::parser::asn::structs::types::Asn1ConstructedType;
+
 use crate::structs::resolver::{
     types::constructed::{
         Asn1ResolvedChoice, Asn1ResolvedSequence, Asn1ResolvedSequenceOf, ResolvedConstructedType,

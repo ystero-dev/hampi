@@ -2,17 +2,20 @@
 use std::collections::HashMap;
 
 use crate::error::Error;
-use crate::structs::parser::{
-    module::{Asn1Module, Asn1ModuleName, Asn1ModuleTag},
-    oid::ObjectIdentifier,
-};
 use crate::tokenizer::Token;
 
-use super::defs::parse_definition;
-use super::oid::parse_object_identifier;
-use super::utils::{expect_keyword, expect_one_of_keywords, expect_token};
+use crate::parser::utils::{expect_keyword, expect_one_of_keywords, expect_token};
 
-pub(super) fn parse_module<'parser>(
+use super::{
+    defs::parse_definition,
+    oid::parse_object_identifier,
+    structs::{
+        module::{Asn1Module, Asn1ModuleName, Asn1ModuleTag},
+        oid::ObjectIdentifier,
+    },
+};
+
+pub(in crate::parser) fn parse_module<'parser>(
     tokens: &'parser [Token],
 ) -> Result<(Asn1Module, usize), Error>
 where

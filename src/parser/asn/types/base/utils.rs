@@ -4,7 +4,8 @@ use crate::error::Error;
 use crate::tokenizer::Token;
 
 use crate::parser::utils::expect_token;
-use crate::structs::parser::types::base::NamedValue;
+
+use crate::parser::asn::structs::types::base::NamedValue;
 
 // Parse a name(value). `(value)` component is optional
 pub(crate) fn parse_named_maybe_value<'parser>(

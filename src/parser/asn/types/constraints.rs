@@ -4,13 +4,13 @@ use crate::error::Error;
 use crate::tokenizer::Token;
 
 use crate::parser::{
+    asn::values::parse_value,
     utils::{
         expect_keyword, expect_one_of_keywords, expect_one_of_tokens, expect_token, expect_tokens,
     },
-    values::parse_value,
 };
 
-use crate::structs::parser::types::constraints::*;
+use crate::parser::asn::structs::types::constraints::*;
 
 use super::parse_type;
 

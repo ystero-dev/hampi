@@ -1,7 +1,9 @@
 //! Handling of Information Object Classes, ObjectSets, Objects etc
 
 use crate::error::Error;
-use crate::structs::parser::types::ioc::{Asn1Object, Asn1ObjectSet};
+
+use crate::parser::asn::structs::types::ioc::{Asn1Object, Asn1ObjectSet};
+
 use crate::structs::resolver::{
     types::ioc::{Asn1ResolvedObject, Asn1ResolvedObjectSet},
     Resolver,

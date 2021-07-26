@@ -3,8 +3,9 @@
 use crate::error::Error;
 use crate::tokenizer::Token;
 
-use crate::parser::{types::parse_type, utils::expect_token};
-use crate::structs::parser::types::constructed::Component;
+use crate::parser::{asn::types::parse_type, utils::expect_token};
+
+use crate::parser::asn::structs::types::constructed::Component;
 
 pub(crate) fn parse_component<'parser>(
     tokens: &'parser [Token],

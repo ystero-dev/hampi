@@ -1,9 +1,11 @@
 //! Parsing related to "CHOICE" Type
 
 use crate::error::Error;
-use crate::parser::utils::{expect_keyword, expect_token};
-use crate::structs::parser::types::constructed::{Asn1TypeChoice, ChoiceAdditionGroup};
 use crate::tokenizer::Token;
+
+use crate::parser::utils::{expect_keyword, expect_token};
+
+use crate::parser::asn::structs::types::constructed::{Asn1TypeChoice, ChoiceAdditionGroup};
 
 use super::utils::parse_component;
 

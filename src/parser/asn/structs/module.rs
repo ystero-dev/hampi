@@ -1,10 +1,10 @@
 //! ASN.1 Module Level Structures and other functionality
 
-use std::collections::HashMap;
+use std::collections::{hash_map::Iter, HashMap};
 
 use topological_sort::TopologicalSort;
 
-use crate::structs::parser::{defs::Asn1Definition, oid::ObjectIdentifier};
+use crate::parser::asn::structs::{defs::Asn1Definition, oid::ObjectIdentifier};
 
 #[derive(Debug, PartialEq)]
 pub enum Asn1ModuleTag {
@@ -21,13 +21,25 @@ impl Default for Asn1ModuleTag {
 
 #[derive(Debug, Default, Clone)]
 pub struct Asn1ModuleName {
-    pub name: String,
-    pub oid: Option<ObjectIdentifier>,
+    pub(in crate::parser) name: String,
+    pub(in crate::parser) oid: Option<ObjectIdentifier>,
 }
 
 impl Asn1ModuleName {
     pub fn new(name: String, oid: Option<ObjectIdentifier>) -> Self {
         Self { name, oid }
+    }
+
+    pub fn name(&self) -> String {
+        self.name.clone()
+    }
+
+    pub fn name_as_str(&self) -> &str {
+        &self.name
+    }
+
+    pub fn oid(&self) -> Option<ObjectIdentifier> {
+        self.oid.clone()
     }
 }
 
@@ -41,12 +53,12 @@ impl Asn1ModuleName {
 /// information about it is kept as well.
 #[derive(Debug, Default)]
 pub struct Asn1Module {
-    pub(crate) imports: HashMap<String, Asn1ModuleName>,
-    pub(crate) exports: Option<Vec<Asn1Definition>>,
-    pub(crate) name: Asn1ModuleName,
-    pub(crate) tags: Asn1ModuleTag,
-    pub(crate) definitions: HashMap<String, Asn1Definition>,
-    pub(crate) exports_all: bool,
+    pub(in crate::parser) imports: HashMap<String, Asn1ModuleName>,
+    pub(in crate::parser) exports: Option<Vec<Asn1Definition>>,
+    pub(in crate::parser) name: Asn1ModuleName,
+    pub(in crate::parser) tags: Asn1ModuleTag,
+    pub(in crate::parser) definitions: HashMap<String, Asn1Definition>,
+    pub(in crate::parser) exports_all: bool,
 }
 
 impl Asn1Module {
@@ -98,5 +110,20 @@ impl Asn1Module {
             }
         }
         out_vec
+    }
+
+    #[inline(always)]
+    pub(crate) fn get_module_name(&self) -> String {
+        self.name.name.clone()
+    }
+
+    #[inline(always)]
+    pub(crate) fn get_definition_mut(&mut self, key: &str) -> Option<&mut Asn1Definition> {
+        self.definitions.get_mut(key)
+    }
+
+    #[inline(always)]
+    pub(crate) fn get_imported_defs(&self) -> Iter<'_, String, Asn1ModuleName> {
+        self.imports.iter()
     }
 }

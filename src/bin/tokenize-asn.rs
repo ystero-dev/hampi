@@ -27,7 +27,6 @@ fn main() -> io::Result<()> {
             compiler.add_module(module);
         }
     }
-    compiler.resolve_imports()?;
-    compiler.resolve_definitions()?;
+    compiler.resolve_modules()?;
     Ok(())
 }

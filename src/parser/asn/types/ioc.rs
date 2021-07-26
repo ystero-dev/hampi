@@ -5,12 +5,13 @@ use crate::error::Error;
 use crate::tokenizer::Token;
 
 use crate::parser::{
+    asn::values::parse_value,
     utils::{
         expect_keyword, expect_keywords, expect_one_of_keywords, expect_token, parse_set_ish_value,
     },
-    values::parse_value,
 };
-use crate::structs::parser::types::ioc::*;
+
+use crate::parser::asn::structs::types::ioc::*;
 
 use super::parse_type;
 

@@ -4,7 +4,8 @@ use crate::error::Error;
 use crate::tokenizer::Token;
 
 use crate::parser::utils::{expect_keyword, expect_one_of_tokens, expect_token};
-use crate::structs::parser::types::base::{Asn1TypeEnumerated, EnumValue};
+
+use crate::parser::asn::structs::types::base::{Asn1TypeEnumerated, EnumValue};
 
 use super::utils::parse_named_maybe_value;
 

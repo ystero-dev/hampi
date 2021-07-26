@@ -2,7 +2,7 @@
 
 use crate::error::Error;
 
-use crate::structs::parser::defs::{
+use crate::parser::asn::structs::defs::{
     Asn1AssignmentKind, Asn1Definition, Asn1ObjectAssignment, Asn1ObjectSetAssignment,
     Asn1TypeAssignment, Asn1ValueAssignment,
 };

@@ -3,7 +3,9 @@
 use std::collections::HashMap;
 
 use crate::error::Error;
-use crate::structs::parser::{defs::Asn1Definition, module::Asn1Module};
+
+use crate::parser::asn::structs::{defs::Asn1Definition, module::Asn1Module};
+
 use crate::structs::resolver::defs::Asn1ResolvedDefinition;
 
 use crate::resolver::defs::resolve_definition;
@@ -31,7 +33,7 @@ impl Resolver {
 
     pub(crate) fn resolve_definitions(&mut self, module: &mut Asn1Module) -> Result<(), Error> {
         for k in module.definitions_sorted() {
-            let parsed_def = module.definitions.get_mut(&k).unwrap();
+            let parsed_def = module.get_definition_mut(&k).unwrap();
             if parsed_def.params.is_some() {
                 self.parameterized_defs
                     .insert(k.to_string(), parsed_def.clone());

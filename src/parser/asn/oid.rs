@@ -5,10 +5,11 @@ use std::collections::HashMap;
 use lazy_static::lazy_static;
 
 use crate::error::Error;
-use crate::structs::parser::oid::{OIDComponent, ObjectIdentifier};
 use crate::tokenizer::Token;
 
-use super::utils::{expect_one_of_tokens, expect_token, expect_tokens};
+use crate::parser::utils::{expect_one_of_tokens, expect_token, expect_tokens};
+
+use super::structs::oid::{OIDComponent, ObjectIdentifier};
 
 lazy_static! {
     static ref WELL_KNOWN_OID_NAMES: HashMap<&'static str, u32> = {

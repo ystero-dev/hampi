@@ -1,6 +1,6 @@
 //! Related to handling of ASN.1 Constraints
 
-use crate::structs::parser::oid::ObjectIdentifier;
+use crate::parser::asn::structs::oid::ObjectIdentifier;
 
 use super::Asn1Type;
 

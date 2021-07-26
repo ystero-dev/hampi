@@ -3,16 +3,16 @@
 use crate::error::Error;
 use crate::tokenizer::Token;
 
-use crate::parser::{
-    types::constraints::parse_constraint,
-    types::parse_type,
-    utils::{expect_keyword, expect_token},
+use crate::parser::utils::{expect_keyword, expect_token};
+
+use crate::parser::asn::{
+    structs::types::{
+        constructed::{Asn1TypeSequence, Asn1TypeSequenceOf, SeqAdditionGroup, SeqComponent},
+        Asn1ConstructedType, Asn1TypeKind,
+    },
+    types::{constraints::parse_constraint, parse_type},
     values::parse_value,
 };
-use crate::structs::parser::types::constructed::{
-    Asn1TypeSequence, Asn1TypeSequenceOf, SeqAdditionGroup, SeqComponent,
-};
-use crate::structs::parser::types::{Asn1ConstructedType, Asn1TypeKind};
 
 use super::utils::parse_component;
 
