@@ -28,7 +28,19 @@ pub(crate) struct Asn1ResolvedEnumValue {
 }
 
 #[derive(Debug, Clone)]
-pub(crate) enum Asn1ResolvedValue {
+pub(crate) enum ResolvedBaseValue {
     Integer(Asn1ResolvedIntegerValue),
     Enum(Asn1ResolvedEnumValue),
+}
+
+#[derive(Debug, Clone)]
+pub(crate) struct ResolvedRefValue {
+    pub(crate) reference: String,
+    pub(crate) value: Box<Asn1ResolvedValue>,
+}
+
+#[derive(Debug, Clone)]
+pub(crate) enum Asn1ResolvedValue {
+    Reference(ResolvedRefValue),
+    Base(ResolvedBaseValue),
 }

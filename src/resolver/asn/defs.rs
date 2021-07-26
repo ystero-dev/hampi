@@ -46,7 +46,7 @@ fn resolve_value_definition(
     resolver: &mut Resolver,
 ) -> Result<Asn1ResolvedDefinition, Error> {
     let typeref = resolve_type(&value.typeref, resolver)?;
-    let value = resolve_value(&value.value, typeref)?;
+    let value = resolve_value(&value.value, typeref, resolver)?;
     Ok(Asn1ResolvedDefinition::Value(value))
 }
 

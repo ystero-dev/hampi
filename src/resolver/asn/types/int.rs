@@ -33,7 +33,9 @@ fn resolve_reference_type(
             if resolved.is_some() {
                 let resolved = resolved.unwrap();
                 match resolved {
-                    Asn1ResolvedDefinition::Type(ref t) => Ok(t.clone()),
+                    Asn1ResolvedDefinition::Type(ref _t) => {
+                        Ok(Asn1ResolvedType::Reference(r.to_string()))
+                    }
                     _ => Err(resolve_error!(
                         "Expected a Resolved Type, found {:#?}",
                         resolved
