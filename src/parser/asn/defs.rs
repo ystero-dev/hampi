@@ -17,7 +17,10 @@ use crate::parser::{
     },
 };
 
-use super::types::{ioc::parse_class, parse_type};
+use super::types::{
+    ioc::{parse_class, parse_object_set},
+    parse_type,
+};
 use super::values::parse_value;
 
 // Parse a definition into an `Assignment` type.
@@ -294,51 +297,8 @@ fn parse_object_set_assignment<'parser>(
     }
     consumed += 1;
 
-    if !expect_token(&tokens[consumed..], Token::is_curly_begin)? {
-        return Err(unexpected_token!("'{'", tokens[consumed]));
-    }
-    consumed += 1;
-
-    let mut objects = vec![];
-    loop {
-        if expect_token(&tokens[consumed..], Token::is_extension)? {
-            consumed += 1;
-            if expect_token(&tokens[consumed..], Token::is_extension)? {
-                consumed += 1;
-            }
-        }
-
-        match parse_set_ish_value(&tokens[consumed..]) {
-            Ok(result) => {
-                let (value, value_consumed) = result;
-                objects.push(value);
-                consumed += value_consumed;
-            }
-            Err(_) => {
-                // It may be a reference to an object set, allowed
-                if expect_one_of_tokens(
-                    &tokens[consumed..],
-                    &[Token::is_object_set_reference, Token::is_object_reference],
-                )? {
-                    objects.push(tokens[consumed].text.clone());
-                    consumed += 1;
-                }
-            } // Empty Values permitted
-        }
-
-        if expect_token(&tokens[consumed..], Token::is_comma)? {
-            consumed += 1;
-        }
-
-        if expect_token(&tokens[consumed..], Token::is_set_union)? {
-            consumed += 1;
-        }
-
-        if expect_token(&tokens[consumed..], Token::is_curly_end)? {
-            consumed += 1;
-            break;
-        }
-    }
+    let (objects, objects_consumed) = parse_object_set(&tokens[consumed..])?;
+    consumed += objects_consumed;
 
     Ok((
         Asn1Definition {

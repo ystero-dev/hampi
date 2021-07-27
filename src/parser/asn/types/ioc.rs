@@ -7,7 +7,8 @@ use crate::tokenizer::Token;
 use crate::parser::{
     asn::values::parse_value,
     utils::{
-        expect_keyword, expect_keywords, expect_one_of_keywords, expect_token, parse_set_ish_value,
+        expect_keyword, expect_keywords, expect_one_of_keywords, expect_one_of_tokens,
+        expect_token, parse_set_ish_value,
     },
 };
 
@@ -225,4 +226,86 @@ fn parse_with_syntax_for_fields<'parser>(
     consumed += value_consumed;
 
     Ok(consumed)
+}
+
+pub(crate) fn parse_object_set<'parser>(
+    tokens: &'parser [Token],
+) -> Result<(ObjectSet, usize), Error> {
+    let mut consumed = 0;
+
+    if !expect_token(&tokens[consumed..], Token::is_curly_begin)? {
+        return Err(unexpected_token!("'{'", tokens[consumed]));
+    }
+    consumed += 1;
+
+    let mut root_elements = vec![];
+    let mut additional_elements = vec![];
+    let mut extension_token_count = 0;
+    loop {
+        if expect_token(&tokens[consumed..], Token::is_extension)? {
+            extension_token_count += 1;
+            if extension_token_count > 1 {
+                return Err(parse_error!("More than one extension markers found!"));
+            }
+            consumed += 1;
+            if expect_token(&tokens[consumed..], Token::is_comma)? {
+                consumed += 1;
+            }
+        }
+
+        let element = match parse_set_ish_value(&tokens[consumed..]) {
+            Ok(result) => {
+                let (value, value_consumed) = result;
+
+                consumed += value_consumed;
+                Some(ObjectSetElement::Object(value))
+            }
+            Err(_) => {
+                // It may be a reference to an object set, allowed
+                if expect_one_of_tokens(
+                    &tokens[consumed..],
+                    &[Token::is_object_set_reference, Token::is_object_reference],
+                )? {
+                    let token = &tokens[consumed];
+                    consumed += 1;
+                    if token.is_object_reference() {
+                        Some(ObjectSetElement::ObjectReference(token.text.clone()))
+                    } else {
+                        Some(ObjectSetElement::ObjectSetReference(token.text.clone()))
+                    }
+                } else {
+                    None
+                }
+            } // Empty Values permitted
+        };
+
+        if element.is_some() {
+            let element = element.unwrap();
+            if extension_token_count == 0 {
+                root_elements.push(element);
+            } else {
+                additional_elements.push(element);
+            }
+        }
+
+        if expect_token(&tokens[consumed..], Token::is_comma)? {
+            consumed += 1;
+        }
+
+        if expect_token(&tokens[consumed..], Token::is_set_union)? {
+            consumed += 1;
+        }
+
+        if expect_token(&tokens[consumed..], Token::is_curly_end)? {
+            consumed += 1;
+            break;
+        }
+    }
+    Ok((
+        ObjectSet {
+            root_elements,
+            additional_elements,
+        },
+        consumed,
+    ))
 }

@@ -52,12 +52,58 @@ pub(crate) struct Asn1ObjectClass {
 
 #[derive(Debug, Clone)]
 pub(crate) struct Asn1ObjectSet {
-    pub(crate) class: String, // Class for which this Object Set is defined
-    pub(crate) objects: Vec<String>, // For now just a vec of strings,
+    pub(crate) class: String,      // Class for which this Object Set is defined
+    pub(crate) objects: ObjectSet, // Actual Object Set
+}
+
+impl Asn1ObjectSet {
+    pub(crate) fn dependent_references(&self) -> Vec<String> {
+        let mut output = vec![self.class.clone()];
+        output.append(&mut self.objects.dependent_references());
+        output
+    }
 }
 
 #[derive(Debug, Clone)]
 pub(crate) struct Asn1Object {
     pub(crate) class: String, // Class for which this Object Set is defined
     pub(crate) value: String, // For now just a string,
+}
+
+#[derive(Debug, Clone)]
+pub(crate) struct ObjectSet {
+    pub(crate) root_elements: Vec<ObjectSetElement>,
+    pub(crate) additional_elements: Vec<ObjectSetElement>,
+}
+
+impl ObjectSet {
+    pub(crate) fn dependent_references(&self) -> Vec<String> {
+        let mut output = vec![];
+        for e in &self.root_elements {
+            if let Some(element) = match e {
+                ObjectSetElement::ObjectSetReference(ref r)
+                | ObjectSetElement::ObjectReference(ref r) => Some(r.clone()),
+                _ => None,
+            } {
+                output.push(element);
+            }
+        }
+        for e in &self.additional_elements {
+            if let Some(element) = match e {
+                ObjectSetElement::ObjectSetReference(ref r)
+                | ObjectSetElement::ObjectReference(ref r) => Some(r.clone()),
+                _ => None,
+            } {
+                output.push(element);
+            }
+        }
+        output
+    }
+}
+
+#[derive(Debug, Clone)]
+pub(crate) enum ObjectSetElement {
+    ObjectSetReference(String), // A Reference to a defined Object Set
+    ObjectReference(String),    // A reference to a defined Object
+    Object(String),             // An object defined Inline
 }
