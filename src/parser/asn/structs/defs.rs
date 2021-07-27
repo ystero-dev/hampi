@@ -81,9 +81,6 @@ pub(crate) enum Asn1AssignmentKind {
     Class(Asn1ObjectClassAssignment),
     ObjectSet(Asn1ObjectSetAssignment),
     Object(Asn1ObjectAssignment),
-    //InfoObjectClassDefinition,
-    //InfoObjectDefinition,
-    //InfoObjectSetDefinition,
 }
 
 impl Asn1AssignmentKind {

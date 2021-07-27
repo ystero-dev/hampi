@@ -5,14 +5,6 @@ use crate::parser::asn::structs::oid::ObjectIdentifier;
 use super::Asn1Type;
 
 #[derive(Debug, Clone)]
-pub(crate) struct RangeElement {
-    pub(crate) lower: String,
-    pub(crate) lower_inclusive: bool,
-    pub(crate) upper: String,
-    pub(crate) upper_inclusive: bool,
-}
-
-#[derive(Debug, Clone)]
 pub(crate) struct ValueElement {
     pub(crate) value: String,
 }
@@ -30,9 +22,16 @@ pub(crate) enum Elements {
 
 #[derive(Debug, Clone)]
 pub(crate) enum SubtypeElements {
-    SingleValue(ValueElement),
+    SingleValue {
+        value: String,
+    },
     ConstrainedSubtype(Asn1Type),
-    ValueRange(RangeElement),
+    ValueRange {
+        lower: String,
+        lower_inclusive: bool,
+        upper: String,
+        upper_inclusive: bool,
+    },
     SizeConstraint(ElementSet),
     PermittedAlphabet(ElementSet),
 }
@@ -59,26 +58,17 @@ pub(crate) enum ObjectSet {
 }
 
 #[derive(Debug, Clone)]
-pub(crate) struct ComponentRelation {
-    pub(crate) table: String,     // Always a defined
-    pub(crate) component: String, // Reference to @ component
-}
-
-#[derive(Debug, Clone)]
 pub(crate) enum TableConstraint {
     Simple(ObjectSet),
-    CompRel(ComponentRelation),
-}
-
-#[derive(Debug, Clone)]
-pub(crate) struct ContentsConstraint {
-    pub(crate) containing: String, // Reference to referenced type
-    pub(crate) encodedby: Option<ObjectIdentifier>, // Encoding Object Identifier (Right now always None)
+    ComponentRelation { table: String, component: String },
 }
 
 #[derive(Debug, Clone)]
 pub(crate) enum Asn1Constraint {
     Subtype(ElementSet),
     Table(TableConstraint),
-    Contents(ContentsConstraint),
+    Contents {
+        containing: String,                   // Reference to referenced type
+        encoded_by: Option<ObjectIdentifier>, // Encoding Object Identifier (Right now always None)
+    },
 }

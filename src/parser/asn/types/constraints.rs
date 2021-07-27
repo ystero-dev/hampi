@@ -96,10 +96,10 @@ fn parse_table_constraint<'parser>(
     };
 
     let constraint = if component.is_some() {
-        Asn1Constraint::Table(TableConstraint::CompRel(ComponentRelation {
+        Asn1Constraint::Table(TableConstraint::ComponentRelation {
             table,
             component: component.unwrap(),
-        }))
+        })
     } else {
         Asn1Constraint::Table(TableConstraint::Simple(ObjectSet::DefinedObjectSet(table)))
     };
@@ -248,10 +248,7 @@ fn parse_intersection_set<'parser>(tokens: &'parser [Token]) -> Result<(Elements
             let range_elements = result.0;
             consumed += result.1;
 
-            return Ok((
-                Elements::Subtype(SubtypeElements::ValueRange(range_elements)),
-                consumed,
-            ));
+            return Ok((Elements::Subtype(range_elements), consumed));
         }
         Err(_) => {}
     }
@@ -271,7 +268,7 @@ fn parse_intersection_set<'parser>(tokens: &'parser [Token]) -> Result<(Elements
             consumed += result.1;
 
             return Ok((
-                Elements::Subtype(SubtypeElements::SingleValue(ValueElement { value })),
+                Elements::Subtype(SubtypeElements::SingleValue { value }),
                 consumed,
             ));
         }
@@ -301,7 +298,9 @@ fn parse_intersection_set<'parser>(tokens: &'parser [Token]) -> Result<(Elements
 // If parsing fails (tokens of not adequate length or tokens don't match) returns an Error. The
 // caller should do the error handling. Note: Typically caller will simply say Oh it didn't match,
 // let's try next.
-fn parse_range_elements<'parser>(tokens: &'parser [Token]) -> Result<(RangeElement, usize), Error> {
+fn parse_range_elements<'parser>(
+    tokens: &'parser [Token],
+) -> Result<(SubtypeElements, usize), Error> {
     let mut consumed = 0;
 
     fn is_min_max_keyword(token: &Token) -> bool {
@@ -363,7 +362,7 @@ fn parse_range_elements<'parser>(tokens: &'parser [Token]) -> Result<(RangeEleme
     consumed += upper_consumed;
 
     Ok((
-        RangeElement {
+        SubtypeElements::ValueRange {
             lower,
             lower_inclusive,
             upper,
@@ -400,12 +399,12 @@ fn parse_contents_constraint<'parser>(
     }
     consumed += 1;
 
-    let encodedby = None;
+    let encoded_by = None;
     Ok((
-        Asn1Constraint::Contents(ContentsConstraint {
+        Asn1Constraint::Contents {
             containing,
-            encodedby,
-        }),
+            encoded_by,
+        },
         consumed,
     ))
 }
