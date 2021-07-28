@@ -71,16 +71,12 @@ pub(crate) struct Asn1TypeSequence {
 impl Asn1TypeSequence {
     pub(crate) fn dependent_references(&self) -> Vec<String> {
         let mut dependencies = vec![];
-        let _ = self
-            .root_components
-            .iter()
-            .map(|c| dependencies.append(&mut c.dependent_references()));
-        let mut addition_dependencies = vec![];
-        let _ = self
-            .additions
-            .iter()
-            .map(|a| dependencies.append(&mut a.dependent_references()));
-        dependencies.append(&mut addition_dependencies);
+        for c in &self.root_components {
+            dependencies.extend(c.dependent_references());
+        }
+        for a in &self.additions {
+            dependencies.extend(a.dependent_references());
+        }
         dependencies
     }
 }
@@ -94,16 +90,12 @@ pub(crate) struct Asn1TypeChoice {
 impl Asn1TypeChoice {
     pub(crate) fn dependent_references(&self) -> Vec<String> {
         let mut dependencies = vec![];
-        let _ = self
-            .components
-            .iter()
-            .map(|c| dependencies.append(&mut c.dependent_references()));
-        let mut addition_dependencies = vec![];
-        let _ = self
-            .additions
-            .iter()
-            .map(|a| dependencies.append(&mut a.dependent_references()));
-        dependencies.append(&mut addition_dependencies);
+        for c in &self.components {
+            dependencies.extend(c.dependent_references());
+        }
+        for a in &self.additions {
+            dependencies.extend(a.dependent_references());
+        }
         dependencies
     }
 }

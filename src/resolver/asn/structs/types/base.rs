@@ -9,6 +9,7 @@ pub(crate) enum ResolvedBaseType {
     Boolean(Asn1ResolvedBoolean),
     OctetString(Asn1ResolvedOctetString),
     CharacterString(Asn1ResolvedCharacterString),
+    ObjectIdentifier(Asn1ResolvedObjectIdentifier),
 }
 
 // An intermediate representation for a Resolved Integer Type
@@ -68,3 +69,6 @@ pub(crate) struct Asn1ResolvedOctetString;
 
 #[derive(Debug, Default, Clone)]
 pub(crate) struct Asn1ResolvedCharacterString;
+
+#[derive(Debug, Default, Clone)]
+pub(crate) struct Asn1ResolvedObjectIdentifier;

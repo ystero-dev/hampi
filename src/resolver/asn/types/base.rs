@@ -5,7 +5,8 @@ use crate::parser::asn::structs::types::Asn1BuiltinType;
 use crate::resolver::{
     asn::structs::types::base::{
         Asn1ResolvedBitString, Asn1ResolvedBoolean, Asn1ResolvedCharacterString,
-        Asn1ResolvedEnumerated, Asn1ResolvedInteger, Asn1ResolvedOctetString, ResolvedBaseType,
+        Asn1ResolvedEnumerated, Asn1ResolvedInteger, Asn1ResolvedObjectIdentifier,
+        Asn1ResolvedOctetString, ResolvedBaseType,
     },
     Resolver,
 };
@@ -38,6 +39,11 @@ pub(crate) fn resolve_base_type(
         Asn1BuiltinType::CharacterString => {
             let resolved =
                 ResolvedBaseType::CharacterString(Asn1ResolvedCharacterString::default());
+            Ok(resolved)
+        }
+        Asn1BuiltinType::ObjectIdentifier => {
+            let resolved =
+                ResolvedBaseType::ObjectIdentifier(Asn1ResolvedObjectIdentifier::default());
             Ok(resolved)
         }
         _ => Err(resolve_error!(
