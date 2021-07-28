@@ -103,7 +103,7 @@ impl Asn1Compiler {
             "Parameterized Types: {:#?}",
             self.resolver.parameterized_defs.keys()
         );
-        eprintln!("Object Classes: {:#?}", self.resolver.classes.keys());
+        eprintln!("Object Classes: {:#?}", self.resolver.classes);
         Ok(())
     }
 }

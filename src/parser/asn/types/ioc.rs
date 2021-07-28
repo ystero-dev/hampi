@@ -137,14 +137,14 @@ fn parse_fixed_type_value_field_spec<'parser>(
     let with_syntax = None;
 
     Ok((
-        ObjectClassFieldSpec::FixedTypeValue(FixedTypeValueFieldSpec {
+        ObjectClassFieldSpec::FixedTypeValue {
             id,
             field_type,
             unique,
             optional,
             default,
             with_syntax,
-        }),
+        },
         consumed,
     ))
 }
@@ -196,19 +196,19 @@ fn parse_type_field_spec<'parser>(
     let with_syntax = None;
 
     Ok((
-        ObjectClassFieldSpec::Type(TypeFieldSpec {
+        ObjectClassFieldSpec::Type {
             id,
             optional,
             default,
             with_syntax,
-        }),
+        },
         consumed,
     ))
 }
 
 fn parse_with_syntax_for_fields<'parser>(
     tokens: &'parser [Token],
-    _fields: &'parser mut HashMap<String, ObjectClassFieldSpec>,
+    fields: &'parser mut HashMap<String, ObjectClassFieldSpec>,
 ) -> Result<usize, Error> {
     let mut consumed = 0;
     if !expect_keywords(&tokens[consumed..], &["WITH", "SYNTAX"])? {
@@ -219,11 +219,95 @@ fn parse_with_syntax_for_fields<'parser>(
     if !expect_token(&tokens[consumed..], Token::is_curly_begin)? {
         return Err(unexpected_token!("'{'", tokens[consumed]));
     }
+    consumed += 1;
 
-    // FIXME: Handle Syntax properly. For this we will need to splice the words inside with-syntax.
-    // For now just 'consume' the tokens.
-    let (_, value_consumed) = parse_set_ish_value(&tokens[consumed..])?;
-    consumed += value_consumed;
+    let mut in_optional_group = false;
+    loop {
+        if expect_token(&tokens[consumed..], Token::is_square_begin)? {
+            in_optional_group = true;
+            consumed += 1;
+        }
+
+        let words = &tokens[consumed..].split(Token::is_and_identifier).next();
+        if words.is_some() {
+            eprintln!("1, {:#?}", words);
+            // A slice of tokens
+            let words = words.unwrap();
+            consumed += words.len();
+            if words.iter().any(Token::is_with_syntax_reserved_word) {
+                return Err(parse_error!("Found a WITH SYNTAX RESERVED Word!"));
+            }
+            let words = words
+                .iter()
+                .map(|w| w.text.as_str())
+                .collect::<Vec<&str>>()
+                .join(" ");
+
+            eprintln!("2 {:#?}", tokens[consumed]);
+            if !expect_token(&tokens[consumed..], Token::is_and_identifier)? {
+                return Err(unexpected_token!("'CLASS field'", tokens[consumed]));
+            }
+
+            let field = fields.get_mut(&tokens[consumed].text);
+            if field.is_none() {
+                return Err(parse_error!(
+                    "Field {} Not found in Class but found in WITH SYNTAX",
+                    tokens[consumed].text
+                ));
+            }
+            consumed += 1;
+
+            let field = field.unwrap();
+
+            let is_default_none = match field {
+                ObjectClassFieldSpec::Type { default, .. } => default.is_none(),
+                ObjectClassFieldSpec::FixedTypeValue { default, .. } => default.is_none(),
+            };
+            match field {
+                ObjectClassFieldSpec::Type {
+                    with_syntax,
+                    optional,
+                    ..
+                }
+                | ObjectClassFieldSpec::FixedTypeValue {
+                    with_syntax,
+                    optional,
+                    ..
+                } => {
+                    if in_optional_group && !*optional {
+                        if is_default_none {
+                            return Err(parse_error!(
+                                "Optional Group for a field that is not Optional and No default : '{:#?}'",
+                                field
+                            ));
+                        }
+                    }
+                    *with_syntax = Some(words);
+                }
+            }
+        }
+
+        // Sometimes you may see a comma after the Class Field, just consume it.
+        if expect_token(&tokens[consumed..], Token::is_comma)? {
+            consumed += 1;
+        }
+
+        if expect_token(&tokens[consumed..], Token::is_square_end)? {
+            if !in_optional_group {
+                return Err(unexpected_token!("',' or '}' or 'WORD'", tokens[consumed]));
+            }
+            in_optional_group = false;
+            consumed += 1;
+        }
+
+        if expect_token(&tokens[consumed..], Token::is_curly_end)? {
+            if in_optional_group {
+                return Err(parse_error!("Unmatched ']' for Optional Group",));
+            }
+            consumed += 1;
+            break;
+        }
+    }
 
     Ok(consumed)
 }

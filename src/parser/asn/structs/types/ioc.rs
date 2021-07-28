@@ -25,22 +25,33 @@ pub(crate) struct TypeFieldSpec {
 
 #[derive(Debug, Clone)]
 pub(crate) enum ObjectClassFieldSpec {
-    Type(TypeFieldSpec),
+    Type {
+        id: String,
+        default: Option<Asn1Type>,
+        optional: bool,
+        with_syntax: Option<String>,
+    },
+    FixedTypeValue {
+        id: String,
 
-    FixedTypeValue(FixedTypeValueFieldSpec),
+        field_type: Asn1Type,
+        unique: bool,
+        default: Option<String>,
+        optional: bool,
+        with_syntax: Option<String>,
+    },
     // TODO: Following Field Specs are not implemented right now
     // VariableTypeValue(VariableTypeValueFieldSpec),
     // FixedTypeValueSet(FixedTypeValueSetFieldSpec),
     // VariableTypeValueSet(VariableTypeValueSetSpec),
     // Object(ObjectFieldSpec),
-    // ObjectSet(ObjectSetFieldSpec),
+    // ObjectSet(ObjectSetFieldSpec)
 }
 
 impl ObjectClassFieldSpec {
     pub(crate) fn id(&self) -> String {
         match self {
-            Self::Type(t) => t.id.clone(),
-            Self::FixedTypeValue(v) => v.id.clone(),
+            Self::Type { id, .. } | Self::FixedTypeValue { id, .. } => id.clone(),
         }
     }
 }
@@ -48,6 +59,22 @@ impl ObjectClassFieldSpec {
 #[derive(Debug, Clone)]
 pub(crate) struct Asn1ObjectClass {
     pub(crate) fields: HashMap<String, ObjectClassFieldSpec>,
+}
+
+impl Asn1ObjectClass {
+    pub(crate) fn dependent_references(&self) -> Vec<String> {
+        let mut output = vec![];
+        for field in self.fields.values() {
+            match field {
+                ObjectClassFieldSpec::FixedTypeValue { field_type, .. } => {
+                    let mut field_references = field_type.dependent_references();
+                    output.append(&mut field_references);
+                }
+                _ => {}
+            }
+        }
+        output
+    }
 }
 
 #[derive(Debug, Clone)]

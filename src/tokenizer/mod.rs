@@ -111,6 +111,31 @@ const BASE_TYPES: &'static [&'static str] = &[
 
 const CONSTRUCTED_TYPES: &'static [&'static str] = &["SEQUENCE", "SET", "CHOICE"];
 
+const WITH_SYNTAX_RESERVED_WORDS: &'static [&'static str] = &[
+    "BIT",
+    "BOOLEAN",
+    "CHARACTER",
+    "CHOICE",
+    "EMBEDDED",
+    "END",
+    "ENUMERATED",
+    "EXTERNAL",
+    "FALSE",
+    "INSTANCE",
+    "INTEGER",
+    "INTERSECTION",
+    "MINUS-INFINITY",
+    "NULL",
+    "OBJECT",
+    "PLUS-INFINITY",
+    "REAL",
+    "RELATIVE-OID",
+    "SEQUENCE",
+    "SET",
+    "TRUE",
+    "UNION",
+];
+
 /// Line and Column in the source where the token begins.
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub(crate) struct LineColumn {
@@ -269,6 +294,13 @@ impl Token {
     pub fn is_asn_builtin_type(&self) -> bool {
         BASE_TYPES.iter().any(|&t| t == self.text.as_str())
             || CONSTRUCTED_TYPES.iter().any(|&t| t == self.text.as_str())
+    }
+
+    /// Checks whether a given token is a with syntax reserved word
+    pub fn is_with_syntax_reserved_word(&self) -> bool {
+        WITH_SYNTAX_RESERVED_WORDS
+            .iter()
+            .any(|&t| t == self.text.as_str())
     }
 
     /// Returns the 'span' of the current token.

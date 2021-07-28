@@ -15,6 +15,12 @@ pub(crate) struct Asn1ObjectClassAssignment {
     pub(crate) classref: Asn1ObjectClass,
 }
 
+impl Asn1ObjectClassAssignment {
+    pub(crate) fn dependent_references(&self) -> Vec<String> {
+        self.classref.dependent_references()
+    }
+}
+
 /// Struct representing Object Set Assignment
 #[derive(Debug, Clone)]
 pub(crate) struct Asn1ObjectSetAssignment {
@@ -100,7 +106,7 @@ impl Asn1AssignmentKind {
             Self::Type(ref t) => t.typeref.dependent_references(),
             Self::Object(ref o) => vec![o.object.class.clone()],
             Self::ObjectSet(ref s) => s.dependent_references(),
-            _ => vec![],
+            Self::Class(ref c) => c.dependent_references(),
         }
     }
 }
