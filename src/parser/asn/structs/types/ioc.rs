@@ -30,6 +30,7 @@ pub(crate) enum ObjectClassFieldSpec {
         default: Option<Asn1Type>,
         optional: bool,
         with_syntax: Option<String>,
+        resolved: bool,
     },
     FixedTypeValue {
         id: String,
@@ -39,6 +40,7 @@ pub(crate) enum ObjectClassFieldSpec {
         default: Option<String>,
         optional: bool,
         with_syntax: Option<String>,
+        resolved: bool,
     },
     // TODO: Following Field Specs are not implemented right now
     // VariableTypeValue(VariableTypeValueFieldSpec),
@@ -52,6 +54,12 @@ impl ObjectClassFieldSpec {
     pub(crate) fn id(&self) -> String {
         match self {
             Self::Type { id, .. } | Self::FixedTypeValue { id, .. } => id.clone(),
+        }
+    }
+
+    pub(crate) fn resolved(&self) -> bool {
+        match self {
+            Self::Type { resolved, .. } | Self::FixedTypeValue { resolved, .. } => *resolved,
         }
     }
 }

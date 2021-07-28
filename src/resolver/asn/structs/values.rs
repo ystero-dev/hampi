@@ -41,6 +41,10 @@ pub(crate) struct ResolvedRefValue {
 
 #[derive(Debug, Clone)]
 pub(crate) enum Asn1ResolvedValue {
-    Reference(ResolvedRefValue),
+    Reference(String),
+    ReferencedType {
+        typeref: String,
+        value: Box<Asn1ResolvedValue>,
+    },
     Base(ResolvedBaseValue),
 }

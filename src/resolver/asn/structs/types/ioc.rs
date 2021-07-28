@@ -1,11 +1,24 @@
 //! Resolved(Object|ObjectSet) Definitions
+use std::collections::HashMap;
 
-#[derive(Debug, Clone, Default)]
-pub(crate) struct ResolvedFieldSpec;
+use crate::resolver::asn::structs::{types::Asn1ResolvedType, values::Asn1ResolvedValue};
+
+#[derive(Debug, Clone)]
+pub(crate) enum ResolvedFieldSpec {
+    Type { ty: Asn1ResolvedType },
+    FixedTypeValue { value: Asn1ResolvedValue },
+    Unresolved, // Only So that we can create a 'Default' value for the timebeing
+}
+
+impl Default for ResolvedFieldSpec {
+    fn default() -> Self {
+        Self::Unresolved
+    }
+}
 
 #[derive(Debug, Default, Clone)]
 pub(crate) struct Asn1ResolvedObject {
-    pub(crate) fields: Vec<ResolvedFieldSpec>,
+    pub(crate) fields: HashMap<String, ResolvedFieldSpec>,
 }
 
 #[derive(Debug, Default, Clone)]

@@ -8,4 +8,4 @@ mod constructed;
 mod constraints;
 
 mod int;
-pub(super) use int::parse_type;
+pub(crate) use int::parse_type;

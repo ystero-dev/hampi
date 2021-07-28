@@ -251,6 +251,11 @@ impl Token {
                 .all(|c| matches!(c, 'A'..='Z' | '0'..='9' | '-'))
     }
 
+    /// Is a given token a WITH SYNTAX Word, should be same as
+    pub fn is_with_syntax_word(&self) -> bool {
+        self.is_type_reference() && self.text.chars().all(|c| matches!(c, 'A'..='Z' | '-'))
+    }
+
     /// Checks whether the given token is an Object Reference
     pub fn is_object_reference(&self) -> bool {
         self.is_value_reference()

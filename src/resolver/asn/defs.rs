@@ -18,14 +18,25 @@ use super::values::resolve_value;
 pub(crate) fn resolve_definition(
     definition: &Asn1Definition,
     resolver: &mut Resolver,
+    resolve_pending: bool,
 ) -> Result<Asn1ResolvedDefinition, Error> {
     match definition.kind {
         Asn1AssignmentKind::Value(ref v) => resolve_value_definition(v, resolver),
         Asn1AssignmentKind::Type(ref t) => resolve_type_definition(t, resolver),
         Asn1AssignmentKind::ObjectSet(ref objset) => {
-            resolve_object_set_definition(objset, resolver)
+            if resolve_pending {
+                resolve_object_set_definition(objset, resolver)
+            } else {
+                Ok(Asn1ResolvedDefinition::Pending(definition.clone()))
+            }
         }
-        Asn1AssignmentKind::Object(ref object) => resolve_object_definition(object, resolver),
+        Asn1AssignmentKind::Object(ref object) => {
+            if resolve_pending {
+                resolve_object_definition(object, resolver)
+            } else {
+                Ok(Asn1ResolvedDefinition::Pending(definition.clone()))
+            }
+        }
         _ => Err(resolve_error!(
             "asn_resolve_def: Not Implemented! {:#?}",
             definition

@@ -144,6 +144,7 @@ fn parse_fixed_type_value_field_spec<'parser>(
             optional,
             default,
             with_syntax,
+            resolved: false,
         },
         consumed,
     ))
@@ -201,6 +202,7 @@ fn parse_type_field_spec<'parser>(
             optional,
             default,
             with_syntax,
+            resolved: false,
         },
         consumed,
     ))
@@ -230,7 +232,6 @@ fn parse_with_syntax_for_fields<'parser>(
 
         let words = &tokens[consumed..].split(Token::is_and_identifier).next();
         if words.is_some() {
-            eprintln!("1, {:#?}", words);
             // A slice of tokens
             let words = words.unwrap();
             consumed += words.len();
@@ -243,7 +244,6 @@ fn parse_with_syntax_for_fields<'parser>(
                 .collect::<Vec<&str>>()
                 .join(" ");
 
-            eprintln!("2 {:#?}", tokens[consumed]);
             if !expect_token(&tokens[consumed..], Token::is_and_identifier)? {
                 return Err(unexpected_token!("'CLASS field'", tokens[consumed]));
             }

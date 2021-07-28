@@ -5,9 +5,9 @@ pub(super) use module::parse_module;
 
 mod defs;
 
-mod types;
+pub(crate) mod types;
 
-mod values;
+pub(crate) mod values;
 
 mod oid;
 
