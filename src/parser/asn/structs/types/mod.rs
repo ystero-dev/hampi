@@ -62,25 +62,45 @@ impl Default for Asn1TypeKind {
 }
 
 #[derive(Debug, Clone)]
-pub(crate) struct Asn1ParameterizedType {
-    pub(crate) typeref: String,
-    pub(crate) params: String, // FIXME: Make an ActualParams Kind struct
+pub(crate) enum ActualParam {
+    Set(String),
+    Single(String),
 }
 
-#[allow(dead_code)]
+impl ActualParam {
+    fn dependent_references(&self) -> Vec<String> {
+        match self {
+            Self::Set(ref s) => vec![s.clone()],
+            Self::Single(ref s) => vec![s.clone()],
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 pub(crate) enum Asn1TypeReference {
-    ClassField(String),
     Reference(String),
-    Parameterized(Asn1ParameterizedType), // FIXME: For now We can make it a struct
+    ClassField {
+        classref: String,
+        fieldref: String,
+    },
+    Parameterized {
+        typeref: String,
+        params: Vec<ActualParam>,
+    }, // FIXME: For now We can make it a struct
 }
 
 impl Asn1TypeReference {
     pub(crate) fn dependent_references(&self) -> Vec<String> {
         match self {
-            Self::ClassField(ref c) => vec![c.split(".").next().unwrap().to_string()],
+            Self::ClassField { classref, .. } => vec![classref.clone()],
             Self::Reference(ref r) => vec![r.clone()],
-            Self::Parameterized(ref p) => vec![p.typeref.clone()],
+            Self::Parameterized { typeref, params } => {
+                let mut dependent_references = vec![typeref.clone()];
+                for param in params {
+                    dependent_references.extend(param.dependent_references());
+                }
+                dependent_references
+            }
         }
     }
 }

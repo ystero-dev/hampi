@@ -48,8 +48,8 @@ fn resolve_reference_type(
                 ))
             }
         }
-        Asn1TypeReference::Parameterized(ref p) => {
-            let def = resolver.parameterized_defs.get(&p.typeref);
+        Asn1TypeReference::Parameterized { typeref, .. } => {
+            let def = resolver.parameterized_defs.get(typeref);
             if def.is_some() {
                 let def = def.unwrap().clone();
                 match def.kind {
@@ -63,7 +63,7 @@ fn resolve_reference_type(
             } else {
                 Err(resolve_error!(
                     "Parameterized Type for '{:#?}' Not found!",
-                    p
+                    reference
                 ))
             }
         }

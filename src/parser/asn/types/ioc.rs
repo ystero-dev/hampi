@@ -401,7 +401,6 @@ pub(crate) fn parse_object_set_from_class(
     let mut objectset = &mut set.objects;
 
     let mut root_elements = vec![];
-
     loop {
         let element = objectset.root_elements.pop();
         if element.is_none() {
@@ -416,10 +415,33 @@ pub(crate) fn parse_object_set_from_class(
             } else {
                 root_elements.push(element);
             }
+        } else {
+            root_elements.push(element);
         }
     }
     objectset.root_elements = root_elements;
 
+    // FIXME : Make it a function?
+    let mut additional_elements = vec![];
+    loop {
+        let element = objectset.additional_elements.pop();
+        if element.is_none() {
+            break;
+        }
+        let element = element.unwrap();
+        if let ObjectSetElement::Object(ref o) = element {
+            if let Asn1ObjectValue::Input(s) = o {
+                let parsed = parse_object_from_class(&s, class)?;
+                let element = ObjectSetElement::Object(parsed);
+                additional_elements.push(element);
+            } else {
+                additional_elements.push(element);
+            }
+        } else {
+            additional_elements.push(element);
+        }
+    }
+    objectset.additional_elements = additional_elements;
     Ok(())
 }
 

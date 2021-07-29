@@ -112,16 +112,6 @@ impl Asn1Module {
         out_vec
     }
 
-    pub(crate) fn get_object_and_object_set_defs(&self) -> Vec<String> {
-        let mut object_and_set_defs = vec![];
-        for (k, def) in self.definitions.iter() {
-            if def.is_object_or_object_set() {
-                object_and_set_defs.push(k.clone());
-            }
-        }
-        object_and_set_defs
-    }
-
     #[inline(always)]
     pub(crate) fn get_module_name(&self) -> String {
         self.name.name.clone()

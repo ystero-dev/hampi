@@ -104,12 +104,42 @@ pub(crate) enum Asn1ObjectFieldSpec {
     },
 }
 
+impl Asn1ObjectFieldSpec {
+    fn dependent_references(&self) -> Vec<String> {
+        match self {
+            Self::Type { ty } => {
+                if ty.is_some() {
+                    ty.as_ref().unwrap().dependent_references()
+                } else {
+                    vec![]
+                }
+            }
+            Self::FixedTypeValue { typeref, .. } => typeref.dependent_references(),
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 pub(crate) enum Asn1ObjectValue {
     Asn1ObjectFromClass {
         fields: HashMap<String, Asn1ObjectFieldSpec>,
     },
     Input(String),
+}
+
+impl Asn1ObjectValue {
+    fn dependent_references(&self) -> Vec<String> {
+        let mut output = vec![];
+        match self {
+            Self::Asn1ObjectFromClass { fields } => {
+                for field in fields.values() {
+                    output.extend(field.dependent_references());
+                }
+            }
+            _ => {}
+        }
+        output
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -128,22 +158,10 @@ impl ObjectSet {
     pub(crate) fn dependent_references(&self) -> Vec<String> {
         let mut output = vec![];
         for e in &self.root_elements {
-            if let Some(element) = match e {
-                ObjectSetElement::ObjectSetReference(ref r)
-                | ObjectSetElement::ObjectReference(ref r) => Some(r.clone()),
-                _ => None,
-            } {
-                output.push(element);
-            }
+            output.extend(e.dependent_references());
         }
         for e in &self.additional_elements {
-            if let Some(element) = match e {
-                ObjectSetElement::ObjectSetReference(ref r)
-                | ObjectSetElement::ObjectReference(ref r) => Some(r.clone()),
-                _ => None,
-            } {
-                output.push(element);
-            }
+            output.extend(e.dependent_references());
         }
         output
     }
@@ -154,4 +172,13 @@ pub(crate) enum ObjectSetElement {
     ObjectSetReference(String), // A Reference to a defined Object Set
     ObjectReference(String),    // A reference to a defined Object
     Object(Asn1ObjectValue),    // An object defined Inline
+}
+
+impl ObjectSetElement {
+    fn dependent_references(&self) -> Vec<String> {
+        match self {
+            Self::ObjectSetReference(ref r) | Self::ObjectReference(ref r) => vec![r.clone()],
+            Self::Object(ref o) => o.dependent_references(),
+        }
+    }
 }

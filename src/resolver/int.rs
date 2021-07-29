@@ -2,8 +2,6 @@
 
 use std::collections::HashMap;
 
-use topological_sort::TopologicalSort;
-
 use crate::error::Error;
 
 use crate::parser::asn::structs::{defs::Asn1Definition, module::Asn1Module};
@@ -58,7 +56,15 @@ impl Resolver {
 
         let mut pending_definitions: HashMap<String, Asn1Definition> = HashMap::new();
         for k in module.definitions_sorted() {
-            let parsed_def = module.get_definition_mut(&k).unwrap();
+            let parsed_def = module.get_definition_mut(&k);
+            if parsed_def.is_none() {
+                eprintln!(
+                    "Definition '{}' Not found! It's Okay for certain Dummy References",
+                    k
+                );
+                continue;
+            }
+            let parsed_def = parsed_def.unwrap();
             if parsed_def.params.is_some() {
                 self.parameterized_defs
                     .insert(k.to_string(), parsed_def.clone());
@@ -67,7 +73,7 @@ impl Resolver {
                 self.classes.insert(k.to_string(), parsed_def.clone());
                 parsed_def.resolved = true;
             } else {
-                let resolved_def = resolve_definition(parsed_def, self, false)?;
+                let resolved_def = resolve_definition(parsed_def, self, true)?;
                 if let Asn1ResolvedDefinition::Pending(ref p) = resolved_def {
                     pending_definitions.insert(k.clone(), p.clone());
                 } else {
@@ -77,21 +83,16 @@ impl Resolver {
             }
         }
 
-        // Now process pending definitions.
-        let sorted_pending = Self::sorted_pending(&pending_definitions);
-        for k in sorted_pending {
-            let parsed_def = pending_definitions.get_mut(&k);
-            if parsed_def.is_some() {
-                let parsed_def = parsed_def.unwrap();
-                let resolved_def = resolve_definition(&parsed_def, self, true)?;
-                self.resolved_defs.insert(k.clone(), resolved_def);
-                let module_definition = module.get_definition_mut(&k).unwrap();
-                module_definition.resolved = true;
-            }
-        }
-
         for k in module.definitions_sorted() {
-            let parsed_def = module.get_definition_mut(&k).unwrap();
+            let parsed_def = module.get_definition_mut(&k);
+            if parsed_def.is_none() {
+                eprintln!(
+                    "Definition '{}' Not found! It's Okay for certain Dummy References",
+                    k
+                );
+                continue;
+            }
+            let parsed_def = parsed_def.unwrap();
             if !parsed_def.resolved {
                 println!(
                     "UNRESOLVED: Definition: {} in module : {} not resolved!",
@@ -102,28 +103,6 @@ impl Resolver {
         }
 
         Ok(())
-    }
-
-    fn sorted_pending(pending_definitions: &HashMap<String, Asn1Definition>) -> Vec<String> {
-        let mut ts = TopologicalSort::<String>::new();
-
-        for (k, v) in pending_definitions.iter() {
-            for r in v.dependent_references() {
-                ts.add_dependency(r.clone(), k.clone());
-            }
-            ts.insert(k);
-        }
-
-        let mut out_vec = vec![];
-        loop {
-            let popped = ts.pop_all();
-            if popped.is_empty() {
-                break;
-            } else {
-                out_vec.extend(popped);
-            }
-        }
-        out_vec
     }
 
     fn resolve_classes_in_current_module(&mut self, module: &Asn1Module) -> () {

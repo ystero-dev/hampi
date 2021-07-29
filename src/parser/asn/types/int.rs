@@ -2,13 +2,10 @@ use crate::error::Error;
 use crate::tokenizer::Token;
 
 use crate::parser::asn::structs::types::{
-    Asn1BuiltinType, Asn1ConstructedType, Asn1ParameterizedType, Asn1Type, Asn1TypeKind,
-    Asn1TypeReference,
+    ActualParam, Asn1BuiltinType, Asn1ConstructedType, Asn1Type, Asn1TypeKind, Asn1TypeReference,
 };
 
-use crate::parser::utils::{
-    expect_keywords, expect_one_of_tokens, expect_token, expect_tokens, parse_set_ish_value,
-};
+use crate::parser::utils::{expect_keywords, expect_one_of_tokens, expect_token, expect_tokens};
 
 use super::{
     base::{parse_bitstring_type, parse_enumerated_type, parse_integer_type},
@@ -122,11 +119,10 @@ fn parse_referenced_type<'parser>(
     ) {
         Ok(success) => {
             if success {
+                let classref = tokens[consumed].text.clone();
+                let fieldref = tokens[consumed + 2].text.clone();
                 return Ok((
-                    Asn1TypeKind::Reference(Asn1TypeReference::ClassField(Token::concat(
-                        &tokens[consumed..consumed + 3],
-                        "",
-                    ))),
+                    Asn1TypeKind::Reference(Asn1TypeReference::ClassField { classref, fieldref }),
                     3,
                 ));
             }
@@ -157,21 +153,26 @@ fn parse_referenced_type<'parser>(
         match expect_token(&tokens[consumed..], Token::is_curly_begin) {
             Ok(x) => {
                 if x {
-                    parse_set_ish_value(&tokens[consumed..])?
+                    let result = parse_actual_params(&tokens[consumed..])?;
+                    if result.0.is_empty() {
+                        (None, result.1)
+                    } else {
+                        (Some(result.0), result.1)
+                    }
                 } else {
-                    ("".to_string(), 0)
+                    (None, 0)
                 }
             }
-            Err(_) => ("".to_string(), 0),
+            Err(_) => (None, 0),
         };
     consumed += actual_params_consumed;
 
-    if actual_params_consumed > 0 {
+    if actual_params.is_some() {
         Ok((
-            Asn1TypeKind::Reference(Asn1TypeReference::Parameterized(Asn1ParameterizedType {
+            Asn1TypeKind::Reference(Asn1TypeReference::Parameterized {
                 typeref: reference,
-                params: actual_params,
-            })),
+                params: actual_params.unwrap(),
+            }),
             consumed,
         ))
     } else {
@@ -180,6 +181,56 @@ fn parse_referenced_type<'parser>(
             consumed,
         ))
     }
+}
+
+fn parse_actual_params<'parser>(
+    tokens: &'parser [Token],
+) -> Result<(Vec<ActualParam>, usize), Error> {
+    let mut consumed = 0;
+    if !expect_token(&tokens[consumed..], Token::is_curly_begin)? {
+        return Err(unexpected_token!("'{'", tokens[consumed]));
+    }
+    consumed += 1;
+
+    let mut params = vec![];
+    loop {
+        if expect_token(&tokens[consumed..], Token::is_curly_begin)? {
+            consumed += 1;
+            let param = if expect_one_of_tokens(
+                &tokens[consumed..],
+                &[Token::is_numeric, Token::is_identifier],
+            )? {
+                let param = tokens[consumed].text.clone();
+                consumed += 1;
+                param
+            } else {
+                return Err(unexpected_token!("'IDENTIFIER'", tokens[consumed]));
+            };
+
+            if !expect_token(&tokens[consumed..], Token::is_curly_end)? {
+                return Err(unexpected_token!("'}'", tokens[consumed]));
+            };
+            consumed += 1;
+            params.push(ActualParam::Set(param));
+        }
+
+        if expect_one_of_tokens(
+            &tokens[consumed..],
+            &[Token::is_numeric, Token::is_identifier],
+        )? {
+            let param = tokens[consumed].text.clone();
+            consumed += 1;
+            params.push(ActualParam::Single(param));
+        }
+        if expect_token(&tokens[consumed..], Token::is_comma)? {
+            consumed += 1;
+        }
+        if expect_token(&tokens[consumed..], Token::is_curly_end)? {
+            consumed += 1;
+            break;
+        }
+    }
+    Ok((params, consumed))
 }
 
 #[cfg(test)]
