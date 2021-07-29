@@ -10,10 +10,37 @@ use super::{
     defs::parse_definition,
     oid::parse_object_identifier,
     structs::{
+        defs::Asn1Definition,
         module::{Asn1Module, Asn1ModuleName, Asn1ModuleTag},
         oid::ObjectIdentifier,
     },
 };
+
+impl Asn1Module {
+    pub(crate) fn resolve_object_classes(
+        &mut self,
+        object_classes: &HashMap<String, Asn1Definition>,
+    ) -> Result<(), Error> {
+        for def in self.definitions.values_mut() {
+            if !def.is_object_or_object_set() {
+                continue;
+            }
+            if let Some(class) = def.get_object_class() {
+                let classdef = object_classes.get(&class);
+                if classdef.is_none() {
+                    return Err(parse_error!(
+                        "Error Resolving Class '{}' for Definition '{}'",
+                        class,
+                        def.id()
+                    ));
+                }
+                let class = classdef.unwrap();
+                def.resolve_object_class(class)?;
+            }
+        }
+        Ok(())
+    }
+}
 
 pub(in crate::parser) fn parse_module<'parser>(
     tokens: &'parser [Token],

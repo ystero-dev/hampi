@@ -2,7 +2,7 @@
 use std::collections::HashMap;
 
 use crate::error::Error;
-use crate::tokenizer::Token;
+use crate::tokenizer::{tokenize, Token};
 
 use crate::parser::{
     asn::values::parse_value,
@@ -342,7 +342,7 @@ pub(crate) fn parse_object_set<'parser>(
                 let (value, value_consumed) = result;
 
                 consumed += value_consumed;
-                Some(ObjectSetElement::Object(value))
+                Some(ObjectSetElement::Object(Asn1ObjectValue::Input(value)))
             }
             Err(_) => {
                 // It may be a reference to an object set, allowed
@@ -392,4 +392,112 @@ pub(crate) fn parse_object_set<'parser>(
         },
         consumed,
     ))
+}
+
+pub(crate) fn parse_object_set_from_class(
+    set: &mut Asn1ObjectSet,
+    class: &Asn1ObjectClass,
+) -> Result<(), Error> {
+    let mut objectset = &mut set.objects;
+
+    let mut root_elements = vec![];
+
+    loop {
+        let element = objectset.root_elements.pop();
+        if element.is_none() {
+            break;
+        }
+        let element = element.unwrap();
+        if let ObjectSetElement::Object(ref o) = element {
+            if let Asn1ObjectValue::Input(s) = o {
+                let parsed = parse_object_from_class(&s, class)?;
+                let element = ObjectSetElement::Object(parsed);
+                root_elements.push(element);
+            } else {
+                root_elements.push(element);
+            }
+        }
+    }
+    objectset.root_elements = root_elements;
+
+    Ok(())
+}
+
+pub(crate) fn parse_object_from_class(
+    value: &String,
+    class: &Asn1ObjectClass,
+) -> Result<Asn1ObjectValue, Error> {
+    let reader = std::io::BufReader::new(std::io::Cursor::new(value));
+    let tokens = tokenize(reader)?;
+    let mut consumed = 0;
+    let object_tokens = &tokens[1..tokens.len() - 1];
+    let word_tokens = &mut object_tokens.split(|t| !t.is_with_syntax_word());
+    let mut fields = HashMap::new();
+    loop {
+        let words = word_tokens.next();
+        if words.is_none() {
+            break;
+        } else {
+            let words = words.unwrap();
+            consumed += words.len();
+            let words = words
+                .iter()
+                .map(|t| t.text.clone())
+                .collect::<Vec<String>>()
+                .join(" ");
+            let field_spec = class_fieldspec_from_words(class, &words);
+            if field_spec.is_some() {
+                let field_spec = field_spec.unwrap();
+                let (field_spec_value, field_spec_value_consumed) =
+                    value_from_field_spec(field_spec, &object_tokens[consumed..])?;
+                fields.insert(field_spec.id(), field_spec_value);
+                consumed += field_spec_value_consumed;
+            }
+        }
+    }
+    // TODO : Handle Default ones that are notyet processed.
+    Ok(Asn1ObjectValue::Asn1ObjectFromClass { fields })
+}
+
+fn class_fieldspec_from_words<'c>(
+    class: &'c Asn1ObjectClass,
+    words: &'c String,
+) -> Option<&'c ObjectClassFieldSpec> {
+    for field in class.fields.values() {
+        match field {
+            ObjectClassFieldSpec::Type { with_syntax, .. }
+            | ObjectClassFieldSpec::FixedTypeValue { with_syntax, .. } => {
+                if with_syntax.is_none() {
+                    continue;
+                }
+                let with_syntax = with_syntax.as_ref().unwrap();
+                if with_syntax == words {
+                    return Some(field);
+                }
+            }
+        }
+    }
+    None
+}
+
+fn value_from_field_spec(
+    spec: &ObjectClassFieldSpec,
+    tokens: &[Token],
+) -> Result<(Asn1ObjectFieldSpec, usize), Error> {
+    match spec {
+        ObjectClassFieldSpec::Type { .. } => {
+            let (ty, ty_consumed) = parse_type(tokens)?;
+            Ok((Asn1ObjectFieldSpec::Type { ty: Some(ty) }, ty_consumed))
+        }
+        ObjectClassFieldSpec::FixedTypeValue { field_type, .. } => {
+            let (value, value_consumed) = parse_value(tokens)?;
+            Ok((
+                Asn1ObjectFieldSpec::FixedTypeValue {
+                    typeref: field_type.clone(),
+                    value: Some(value),
+                },
+                value_consumed,
+            ))
+        }
+    }
 }

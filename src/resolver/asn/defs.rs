@@ -57,7 +57,7 @@ fn resolve_value_definition(
     resolver: &mut Resolver,
 ) -> Result<Asn1ResolvedDefinition, Error> {
     let typeref = resolve_type(&value.typeref, resolver)?;
-    let value = resolve_value(&value.value, typeref, resolver)?;
+    let value = resolve_value(&value.value, &typeref, resolver)?;
     Ok(Asn1ResolvedDefinition::Value(value))
 }
 
@@ -73,6 +73,6 @@ fn resolve_object_definition(
     object: &Asn1ObjectAssignment,
     resolver: &mut Resolver,
 ) -> Result<Asn1ResolvedDefinition, Error> {
-    let object = resolve_object(&object.object, resolver)?;
+    let object = resolve_object(&object.object.value, resolver)?;
     Ok(Asn1ResolvedDefinition::Object(object))
 }

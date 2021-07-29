@@ -2,15 +2,9 @@
 use std::collections::HashMap;
 
 use crate::error::Error;
-use crate::tokenizer::{tokenize, Token};
 
-use crate::parser::asn::{
-    structs::{
-        defs::Asn1AssignmentKind,
-        types::ioc::{Asn1Object, Asn1ObjectSet, ObjectClassFieldSpec, ObjectSetElement},
-    },
-    types::parse_type,
-    values::parse_value,
+use crate::parser::asn::structs::types::ioc::{
+    Asn1ObjectFieldSpec, Asn1ObjectSet, Asn1ObjectValue, ObjectSetElement,
 };
 
 use crate::resolver::{
@@ -71,9 +65,9 @@ pub(crate) fn resolve_object_set(
                         element
                     }
                 }
-                ObjectSetElement::Object(ref v) => ResolvedObjectSetElement::Object(
-                    resolve_object_value_for_class(v, &objectset.class, resolver)?,
-                ),
+                ObjectSetElement::Object(ref v) => {
+                    ResolvedObjectSetElement::Object(resolve_object(v, resolver)?)
+                }
             };
             elements.push(element);
         }
@@ -84,157 +78,48 @@ pub(crate) fn resolve_object_set(
 }
 
 pub(crate) fn resolve_object(
-    object: &Asn1Object,
+    object_value: &Asn1ObjectValue,
     resolver: &Resolver,
 ) -> Result<Asn1ResolvedObject, Error> {
-    resolve_object_value_for_class(&object.value, &object.class, resolver)
-}
+    let mut resolved_fields = HashMap::new();
+    if let Asn1ObjectValue::Asn1ObjectFromClass { fields } = object_value {
+        for (k, field) in fields {
+            let resolved = match field {
+                Asn1ObjectFieldSpec::Type { ty } => {
+                    let resolved = if ty.is_some() {
+                        Some(resolve_type(&ty.as_ref().unwrap(), resolver)?)
+                    } else {
+                        None
+                    };
+                    ResolvedFieldSpec::Type { ty: resolved }
+                }
+                Asn1ObjectFieldSpec::FixedTypeValue { typeref, value } => {
+                    let resolved_type = resolve_type(typeref, resolver)?;
 
-fn resolve_object_value_for_class(
-    value: &String,
-    class: &String,
-    resolver: &Resolver,
-) -> Result<Asn1ResolvedObject, Error> {
-    let classdef = resolver.classes.get(class);
-    if classdef.is_none() {
-        Err(resolve_error!(
-            "Class '{}' definition not found to resolve object!",
-            class
-        ))
-    } else {
-        let classdef = classdef.unwrap();
-        if let Asn1AssignmentKind::Class(ref c) = classdef.kind {
-            let mut class = c.classref.clone();
-            let reader = std::io::BufReader::new(std::io::Cursor::new(value));
-            let tokens = tokenize(reader)?;
-            let mut consumed = 0;
-            let object_tokens = &tokens[1..tokens.len() - 1];
-            let word_tokens = &mut object_tokens.split(|t| !t.is_with_syntax_word());
-            let mut fields = HashMap::new();
-            loop {
-                let words = word_tokens.next();
-                if words.is_none() {
-                    break;
-                } else {
-                    let words = words.unwrap();
-                    if words.len() > 0 {
-                        consumed += words.len();
-                        let words = words
-                            .iter()
-                            .map(|t| t.text.clone())
-                            .collect::<Vec<String>>()
-                            .join(" ");
-                        // FIXME: call a 'Resolve_Spec' function
-                        for (field, spec) in class.fields.iter_mut() {
-                            if !spec.resolved() {
-                                let (resolved, resolved_consumed) = match spec {
-                                    ObjectClassFieldSpec::Type { .. } => {
-                                        match resolve_type_and_field_spec(
-                                            &words,
-                                            spec,
-                                            resolver,
-                                            &object_tokens[consumed..],
-                                        ) {
-                                            Ok(result) => result,
-                                            Err(_) => (None, 0),
-                                        }
-                                    }
-                                    ObjectClassFieldSpec::FixedTypeValue { .. } => {
-                                        // FIXME : Assumes a simple value, but can be a constructed
-                                        // one, for now ignore.
-                                        match resolve_fixed_type_value_field_spec(
-                                            &words,
-                                            spec,
-                                            resolver,
-                                            &object_tokens[consumed..],
-                                        ) {
-                                            Ok(result) => result,
-                                            Err(_) => (None, 0),
-                                        }
-                                    }
-                                };
-                                if resolved.is_some() {
-                                    consumed += resolved_consumed;
-                                    fields.insert(field.clone(), resolved.unwrap());
-                                    break;
-                                }
-                            }
-                        }
+                    let resolved_value = if value.is_some() {
+                        Some(resolve_value(
+                            &value.as_ref().unwrap(),
+                            &resolved_type,
+                            resolver,
+                        )?)
+                    } else {
+                        None
+                    };
+                    ResolvedFieldSpec::FixedTypeValue {
+                        typeref: resolved_type,
+                        value: resolved_value,
                     }
                 }
-            }
-            Ok(Asn1ResolvedObject { fields })
-        } else {
-            Err(resolve_error!(
-                "Definition for '{}' found, but is not a Class Definition!",
-                class
-            ))
+            };
+            resolved_fields.insert(k.clone(), resolved);
         }
-    }
-}
-
-fn resolve_type_and_field_spec(
-    words: &String,
-    spec: &mut ObjectClassFieldSpec,
-    resolver: &Resolver,
-    tokens: &[Token],
-) -> Result<(Option<ResolvedFieldSpec>, usize), Error> {
-    // First get a Type for this
-
-    if let ObjectClassFieldSpec::Type {
-        with_syntax,
-        resolved,
-        ..
-    } = spec
-    {
-        if with_syntax.is_some() {
-            if with_syntax.as_ref().unwrap() == words {
-                let (parsed_type, consumed) = parse_type(tokens)?;
-                let ty = resolve_type(&parsed_type, resolver)?;
-                *resolved = true;
-                Ok((Some(ResolvedFieldSpec::Type { ty }), consumed))
-            } else {
-                Ok((None, 0))
-            }
-        } else {
-            Ok((None, 0))
-        }
+        Ok(Asn1ResolvedObject {
+            fields: resolved_fields,
+        })
     } else {
-        Err(resolve_error!("Invalid Variant"))
-    }
-}
-
-fn resolve_fixed_type_value_field_spec(
-    words: &String,
-    spec: &mut ObjectClassFieldSpec,
-    resolver: &Resolver,
-    tokens: &[Token],
-) -> Result<(Option<ResolvedFieldSpec>, usize), Error> {
-    let (value, value_consumed) = parse_value(tokens)?;
-
-    if let ObjectClassFieldSpec::FixedTypeValue {
-        with_syntax,
-        resolved,
-        field_type,
-        ..
-    } = spec
-    {
-        if with_syntax.is_some() {
-            if with_syntax.as_ref().unwrap() == words {
-                *resolved = true;
-                let typeref = resolve_type(field_type, resolver)?;
-                let value = resolve_value(&value, typeref, resolver)?;
-                Ok((
-                    Some(ResolvedFieldSpec::FixedTypeValue { value }),
-                    value_consumed,
-                ))
-            } else {
-                Ok((None, 0))
-            }
-        } else {
-            Ok((None, 0))
-        }
-    } else {
-        Err(resolve_error!("Invalid Variant"))
+        Err(resolve_error!(
+            "Unsupported Variant while Resolving {:#?}",
+            object_value
+        ))
     }
 }

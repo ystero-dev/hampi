@@ -10,7 +10,7 @@ use crate::parser::{
             Asn1ObjectSetAssignment, Asn1TypeAssignment, Asn1ValueAssignment, DefinitionParam,
             DummyReferenceKind, GovernerKind, ParamDummyReference, ParamGoverner,
         },
-        types::ioc::{Asn1Object, Asn1ObjectSet},
+        types::ioc::{Asn1Object, Asn1ObjectSet, Asn1ObjectValue},
     },
     utils::{
         expect_keyword, expect_one_of_tokens, expect_token, expect_tokens, parse_set_ish_value,
@@ -18,11 +18,45 @@ use crate::parser::{
 };
 
 use super::types::{
-    ioc::{parse_class, parse_object_set},
+    ioc::{parse_class, parse_object_from_class, parse_object_set, parse_object_set_from_class},
     parse_type,
 };
 use super::values::parse_value;
 
+impl Asn1Definition {
+    pub fn is_object_or_object_set(&self) -> bool {
+        match self.kind {
+            Asn1AssignmentKind::ObjectSet(..) | Asn1AssignmentKind::Object(..) => true,
+            _ => false,
+        }
+    }
+
+    pub fn get_object_class(&self) -> Option<String> {
+        match self.kind {
+            Asn1AssignmentKind::ObjectSet(ref s) => Some(s.set.class.clone()),
+            Asn1AssignmentKind::Object(ref o) => Some(o.object.class.clone()),
+            _ => None,
+        }
+    }
+
+    pub fn resolve_object_class(&mut self, class: &Asn1Definition) -> Result<(), Error> {
+        if let Asn1AssignmentKind::Class(ref c) = class.kind {
+            match self.kind {
+                Asn1AssignmentKind::Object(ref mut o) => {
+                    if let Asn1ObjectValue::Input(s) = &o.object.value {
+                        let parsed = parse_object_from_class(&s, &c.classref)?;
+                        o.object.value = parsed;
+                    }
+                }
+                Asn1AssignmentKind::ObjectSet(ref mut s) => {
+                    parse_object_set_from_class(&mut s.set, &c.classref)?;
+                }
+                _ => {}
+            }
+        }
+        Ok(())
+    }
+}
 // Parse a definition into an `Assignment` type.
 //
 // This function is called by the Module parser to parse each definition. A definition will be one
@@ -117,7 +151,10 @@ fn parse_object_assignment<'parser>(
         Asn1Definition {
             kind: Asn1AssignmentKind::Object(Asn1ObjectAssignment {
                 id,
-                object: Asn1Object { class, value },
+                object: Asn1Object {
+                    class,
+                    value: Asn1ObjectValue::Input(value),
+                },
             }),
             params: None,
             resolved: false,

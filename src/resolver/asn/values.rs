@@ -16,7 +16,7 @@ use crate::resolver::{
 
 pub(crate) fn resolve_value(
     value: &str,
-    typeref: Asn1ResolvedType,
+    typeref: &Asn1ResolvedType,
     resolver: &Resolver,
 ) -> Result<Asn1ResolvedValue, Error> {
     let referenced_value = resolver.resolved_defs.get(value);
@@ -26,7 +26,10 @@ pub(crate) fn resolve_value(
                 ResolvedBaseType::Integer(ref _i) => {
                     let value = value.parse::<BaseInteger>().unwrap();
                     Ok(Asn1ResolvedValue::Base(ResolvedBaseValue::Integer(
-                        Asn1ResolvedIntegerValue { typeref, value },
+                        Asn1ResolvedIntegerValue {
+                            typeref: typeref.clone(),
+                            value,
+                        },
                     )))
                 }
                 ResolvedBaseType::Enum(ref _e) => {
@@ -34,7 +37,10 @@ pub(crate) fn resolve_value(
                     // let value = value.parse::<BaseEnum>().unwrap();
                     let value = 0;
                     Ok(Asn1ResolvedValue::Base(ResolvedBaseValue::Enum(
-                        Asn1ResolvedEnumValue { typeref, value },
+                        Asn1ResolvedEnumValue {
+                            typeref: typeref.clone(),
+                            value,
+                        },
                     )))
                 }
                 _ => Err(resolve_error!(
@@ -53,7 +59,7 @@ pub(crate) fn resolve_value(
                     let def = typedef.unwrap();
                     match def {
                         Asn1ResolvedDefinition::Type(ref t) => {
-                            let v = resolve_value(value, t.clone(), resolver)?;
+                            let v = resolve_value(value, &t.clone(), resolver)?;
                             Ok(Asn1ResolvedValue::ReferencedType {
                                 value: Box::new(v),
                                 typeref: r.clone(),

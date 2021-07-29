@@ -56,12 +56,6 @@ impl ObjectClassFieldSpec {
             Self::Type { id, .. } | Self::FixedTypeValue { id, .. } => id.clone(),
         }
     }
-
-    pub(crate) fn resolved(&self) -> bool {
-        match self {
-            Self::Type { resolved, .. } | Self::FixedTypeValue { resolved, .. } => *resolved,
-        }
-    }
 }
 
 #[derive(Debug, Clone)]
@@ -100,9 +94,28 @@ impl Asn1ObjectSet {
 }
 
 #[derive(Debug, Clone)]
+pub(crate) enum Asn1ObjectFieldSpec {
+    Type {
+        ty: Option<Asn1Type>,
+    },
+    FixedTypeValue {
+        typeref: Asn1Type,
+        value: Option<String>,
+    },
+}
+
+#[derive(Debug, Clone)]
+pub(crate) enum Asn1ObjectValue {
+    Asn1ObjectFromClass {
+        fields: HashMap<String, Asn1ObjectFieldSpec>,
+    },
+    Input(String),
+}
+
+#[derive(Debug, Clone)]
 pub(crate) struct Asn1Object {
     pub(crate) class: String, // Class for which this Object Set is defined
-    pub(crate) value: String, // For now just a string,
+    pub(crate) value: Asn1ObjectValue, // For now just a string,
 }
 
 #[derive(Debug, Clone)]
@@ -140,5 +153,5 @@ impl ObjectSet {
 pub(crate) enum ObjectSetElement {
     ObjectSetReference(String), // A Reference to a defined Object Set
     ObjectReference(String),    // A reference to a defined Object
-    Object(String),             // An object defined Inline
+    Object(Asn1ObjectValue),    // An object defined Inline
 }

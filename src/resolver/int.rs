@@ -51,6 +51,11 @@ impl Resolver {
     // Objects an ObjectSet is referencing needs to be resolved before the ObjectSet is resolved.
     // Thus we 'Sort' these Pending Definitions again and finally process them.
     pub(crate) fn resolve_definitions(&mut self, module: &mut Asn1Module) -> Result<(), Error> {
+        // We need to first get Classes in the current module - resolved
+        self.resolve_classes_in_current_module(module);
+
+        module.resolve_object_classes(&self.classes)?;
+
         let mut pending_definitions: HashMap<String, Asn1Definition> = HashMap::new();
         for k in module.definitions_sorted() {
             let parsed_def = module.get_definition_mut(&k).unwrap();
@@ -119,5 +124,13 @@ impl Resolver {
             }
         }
         out_vec
+    }
+
+    fn resolve_classes_in_current_module(&mut self, module: &Asn1Module) -> () {
+        for (k, def) in module.get_definitions() {
+            if def.is_class_assignment() {
+                self.classes.insert(k.clone(), def.clone());
+            }
+        }
     }
 }

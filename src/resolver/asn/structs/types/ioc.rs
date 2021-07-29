@@ -5,8 +5,13 @@ use crate::resolver::asn::structs::{types::Asn1ResolvedType, values::Asn1Resolve
 
 #[derive(Debug, Clone)]
 pub(crate) enum ResolvedFieldSpec {
-    Type { ty: Asn1ResolvedType },
-    FixedTypeValue { value: Asn1ResolvedValue },
+    Type {
+        ty: Option<Asn1ResolvedType>,
+    },
+    FixedTypeValue {
+        typeref: Asn1ResolvedType,
+        value: Option<Asn1ResolvedValue>,
+    },
     Unresolved, // Only So that we can create a 'Default' value for the timebeing
 }
 
