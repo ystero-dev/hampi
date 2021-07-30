@@ -477,6 +477,37 @@ pub(crate) fn parse_object_from_class(
             }
         }
     }
+    for (key, spec) in class.fields.iter() {
+        if !fields.contains_key(key) {
+            match spec {
+                ObjectClassFieldSpec::Type { default, .. } => {
+                    if default.is_some() {
+                        fields.insert(
+                            key.clone(),
+                            Asn1ObjectFieldSpec::Type {
+                                ty: default.clone(),
+                            },
+                        );
+                    }
+                }
+                ObjectClassFieldSpec::FixedTypeValue {
+                    default,
+                    field_type,
+                    ..
+                } => {
+                    if default.is_some() {
+                        fields.insert(
+                            key.clone(),
+                            Asn1ObjectFieldSpec::FixedTypeValue {
+                                typeref: field_type.clone(),
+                                value: default.clone(),
+                            },
+                        );
+                    }
+                }
+            }
+        }
+    }
     // TODO : Handle Default ones that are notyet processed.
     Ok(Asn1ObjectValue::Asn1ObjectFromClass { fields })
 }
