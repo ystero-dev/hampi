@@ -35,9 +35,8 @@ pub(crate) fn resolve_object_set(
     } else {
         let mut elements = vec![];
         for object in &objectset.objects.root_elements {
-            let element = match object {
-                ObjectSetElement::ObjectSetReference(ref r)
-                | ObjectSetElement::ObjectReference(ref r) => {
+            match object {
+                ObjectSetElement::ObjectSetReference(ref r) => {
                     let resolved = resolver.resolved_defs.get(r);
                     if resolved.is_none() {
                         return Err(resolve_error!(
@@ -46,30 +45,37 @@ pub(crate) fn resolve_object_set(
                             objectset
                         ));
                     } else {
-                        let resolved = resolved.unwrap();
-                        let element = match resolved {
-                            Asn1ResolvedDefinition::ObjectSet(..) => {
-                                ResolvedObjectSetElement::ObjectSetReference(r.clone())
-                            }
-                            Asn1ResolvedDefinition::Object(..) => {
-                                ResolvedObjectSetElement::ObjectReference(r.clone())
-                            }
-                            _ => {
-                                return Err(resolve_error!(
-                                    "Matching definition found for reference '{}' but is a '{:#?}' and not an ObjectSet or an Object!",
-                                    r,
-                                    resolved,
-                                ));
-                            }
-                        };
-                        element
+                        if let Asn1ResolvedDefinition::ObjectSet(ref o) = resolved.unwrap() {
+                            elements.extend(o.objects.elements.clone());
+                        } else {
+                            return Err(resolve_error!("Resolved '{}' is not an Object Set!", r,));
+                        }
+                    }
+                }
+                ObjectSetElement::ObjectReference(ref r) => {
+                    let resolved = resolver.resolved_defs.get(r);
+                    if resolved.is_none() {
+                        return Err(resolve_error!(
+                            "Unable to find the Referencing '{}' Object Set while resolving {:#?}",
+                            r,
+                            objectset
+                        ));
+                    } else {
+                        if let Asn1ResolvedDefinition::Object(ref o) = resolved.unwrap() {
+                            let element = ResolvedObjectSetElement::Object(Asn1ResolvedObject {
+                                fields: o.fields.clone(),
+                            });
+                            elements.push(element);
+                        } else {
+                            return Err(resolve_error!("Resolved '{}' is not an Object!", r,));
+                        }
                     }
                 }
                 ObjectSetElement::Object(ref v) => {
-                    ResolvedObjectSetElement::Object(resolve_object(v, resolver)?)
+                    let element = ResolvedObjectSetElement::Object(resolve_object(v, resolver)?);
+                    elements.push(element);
                 }
-            };
-            elements.push(element);
+            }
         }
         Ok(Asn1ResolvedObjectSet {
             objects: ResolvedObjectSet { elements },

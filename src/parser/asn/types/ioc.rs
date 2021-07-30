@@ -477,6 +477,9 @@ pub(crate) fn parse_object_from_class(
             }
         }
     }
+
+    // If we didn't find an optional value, Check if default exists, if default exists, give it to
+    // the resolved value.
     for (key, spec) in class.fields.iter() {
         if !fields.contains_key(key) {
             match spec {
