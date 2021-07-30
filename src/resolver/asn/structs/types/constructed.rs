@@ -4,23 +4,16 @@ use crate::resolver::asn::structs::types::Asn1ResolvedType;
 
 #[derive(Debug, Clone)]
 pub(crate) enum ResolvedConstructedType {
-    Choice(Asn1ResolvedChoice),
-    Sequence(Asn1ResolvedSequence),
-    SequenceOf(Asn1ResolvedSequenceOf),
+    Choice {
+        components: Vec<ResolvedComponent>,
+    },
+    Sequence {
+        components: Vec<ResolvedSeqComponent>,
+    },
+    SequenceOf {
+        ty: Box<Asn1ResolvedType>,
+    },
 }
-
-#[derive(Debug, Clone)]
-pub(crate) struct Asn1ResolvedChoice {
-    pub(crate) components: Vec<ResolvedComponent>,
-}
-
-#[derive(Debug, Default, Clone)]
-pub(crate) struct Asn1ResolvedSequence {
-    pub(crate) components: Vec<ResolvedSeqComponent>,
-}
-
-#[derive(Debug, Default, Clone)]
-pub(crate) struct Asn1ResolvedSequenceOf;
 
 #[derive(Debug, Clone)]
 pub(crate) struct ResolvedComponent {
@@ -32,6 +25,6 @@ pub(crate) struct ResolvedComponent {
 pub(crate) struct ResolvedSeqComponent {
     pub(crate) component: ResolvedComponent,
     pub(crate) optional: bool,
-    // FIXME : Handle Default
+    // FIXME : Handle default
     // pub(crate) default: Option<Asn1ResolvedType>,
 }

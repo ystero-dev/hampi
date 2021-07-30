@@ -1,5 +1,3 @@
-use crate::parser::asn::structs::defs::Asn1Definition;
-
 use super::types::ioc::{Asn1ResolvedObject, Asn1ResolvedObjectSet};
 use super::types::Asn1ResolvedType;
 use super::values::Asn1ResolvedValue;
@@ -10,5 +8,4 @@ pub(crate) enum Asn1ResolvedDefinition {
     Value(Asn1ResolvedValue),
     ObjectSet(Asn1ResolvedObjectSet),
     Object(Asn1ResolvedObject),
-    Pending(Asn1Definition),
 }

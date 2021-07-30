@@ -33,28 +33,24 @@ impl Resolver {
 
     // Resolve Definitions: Algorithm
     //
-    // Since this whole thing is a bit complicated, it's a good idea to write down the algorithm
-    // here about how we are resolving the definitions.
+    // First we need to resolve classes in the current module, because we need to resolve Object
+    // and ObjectSets before we can process definitions. The Objects and ObjectSets need to be
+    // handled before other definitions because Objects may refer to some Types that may be
+    // required later on while resolving some other Types and if those 'Type's remain hidden within
+    // Objects, we can always end up having some missing definition(s).
     //
-    // First we obtain a set of all definitions in a module Topologically Sorted. Thus when we
-    // visit a definition, any dependencies are already resolved. However this is not still
-    // sufficient, since the Objects and ObjectSets can have dependent Type or Value that can only
-    // be known while processing the Object. The `Type` dependencies are thus not figured out
-    // already. Hence we get Reference Error. For this reason, we simply postpone Object and Object
-    // Set resolution, after all other definitions are sorted. These definitions are called
-    // 'Pending' definitions.
+    // These first two steps are actually part of parsing, which can only be done when all Class
+    // definitions are avaiable (Think of it as macro invocation in Rust, which is before the Type
+    // resolution, but after an individual file is parsed!).
     //
-    // Once everything other than Objects and ObjectSets is processed, we process `Pending`
-    // definitions. However, we need to make sure that these definitions are also sorted, ie. the
-    // Objects an ObjectSet is referencing needs to be resolved before the ObjectSet is resolved.
-    // Thus we 'Sort' these Pending Definitions again and finally process them.
+    // After that we resolve definitions in a Topologically sorted order. Fairly straight forward.
+    // We do not need to do any `Pending` definitions, as we were doing before.
     pub(crate) fn resolve_definitions(&mut self, module: &mut Asn1Module) -> Result<(), Error> {
         // We need to first get Classes in the current module - resolved
         self.resolve_classes_in_current_module(module);
 
         module.resolve_object_classes(&self.classes)?;
 
-        let mut pending_definitions: HashMap<String, Asn1Definition> = HashMap::new();
         let definitions_sorted = module.definitions_sorted();
         for k in definitions_sorted {
             let parsed_def = module.get_definition_mut(&k);
@@ -74,14 +70,10 @@ impl Resolver {
                 self.classes.insert(k.to_string(), parsed_def.clone());
                 parsed_def.resolved = true;
             } else {
-                let resolved_def = resolve_definition(parsed_def, self, true)?;
-                if let Asn1ResolvedDefinition::Pending(ref p) = resolved_def {
-                    pending_definitions.insert(k.clone(), p.clone());
-                } else {
-                    self.resolved_defs.insert(k.clone(), resolved_def);
-                    parsed_def.resolved = true;
-                }
+                let resolved_def = resolve_definition(parsed_def, self)?;
+                self.resolved_defs.insert(k.clone(), resolved_def);
             }
+            parsed_def.resolved = true;
         }
 
         for k in module.definitions_sorted() {

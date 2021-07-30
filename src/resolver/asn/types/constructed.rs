@@ -1,15 +1,14 @@
 use crate::error::Error;
 
 use crate::parser::asn::structs::types::{
-    constructed::{Asn1TypeChoice, Asn1TypeSequence},
+    constructed::{Asn1TypeChoice, Asn1TypeSequence, Asn1TypeSequenceOf},
     Asn1ConstructedType,
 };
 
 use crate::resolver::{
     asn::{
         structs::types::constructed::{
-            Asn1ResolvedChoice, Asn1ResolvedSequence, Asn1ResolvedSequenceOf, ResolvedComponent,
-            ResolvedConstructedType, ResolvedSeqComponent,
+            ResolvedComponent, ResolvedConstructedType, ResolvedSeqComponent,
         },
         types::resolve_type,
     },
@@ -21,18 +20,9 @@ pub(crate) fn resolve_constructed_type(
     resolver: &Resolver,
 ) -> Result<ResolvedConstructedType, Error> {
     match ty {
-        Asn1ConstructedType::Choice(ref c) => {
-            let resolved = ResolvedConstructedType::Choice(resolved_choice_type(c, resolver)?);
-            Ok(resolved)
-        }
-        Asn1ConstructedType::Sequence(ref s) => {
-            let resolved = ResolvedConstructedType::Sequence(resolved_sequence_type(s, resolver)?);
-            Ok(resolved)
-        }
-        Asn1ConstructedType::SequenceOf(ref _i) => {
-            let resolved = ResolvedConstructedType::SequenceOf(Asn1ResolvedSequenceOf::default());
-            Ok(resolved)
-        }
+        Asn1ConstructedType::Choice(ref c) => resolve_choice_type(c, resolver),
+        Asn1ConstructedType::Sequence(ref s) => resolve_sequence_type(s, resolver),
+        Asn1ConstructedType::SequenceOf(ref so) => resolve_sequence_of_type(so, resolver),
         _ => {
             eprintln!("ConstructedType: {:#?}", ty);
             Err(resolve_error!("resolve_constructed_Type: Not Implemented!"))
@@ -40,10 +30,10 @@ pub(crate) fn resolve_constructed_type(
     }
 }
 
-fn resolved_choice_type(
+fn resolve_choice_type(
     choice: &Asn1TypeChoice,
     resolver: &Resolver,
-) -> Result<Asn1ResolvedChoice, Error> {
+) -> Result<ResolvedConstructedType, Error> {
     let mut components = vec![];
     for c in &choice.components {
         let ty = resolve_type(&c.ty, resolver)?;
@@ -54,13 +44,13 @@ fn resolved_choice_type(
         components.push(component);
     }
 
-    Ok(Asn1ResolvedChoice { components })
+    Ok(ResolvedConstructedType::Choice { components })
 }
 
-fn resolved_sequence_type(
+fn resolve_sequence_type(
     sequence: &Asn1TypeSequence,
     resolver: &Resolver,
-) -> Result<Asn1ResolvedSequence, Error> {
+) -> Result<ResolvedConstructedType, Error> {
     let mut components = vec![];
     for c in &sequence.root_components {
         let ty = resolve_type(&c.component.ty, resolver)?;
@@ -75,5 +65,15 @@ fn resolved_sequence_type(
         components.push(seq_component);
     }
 
-    Ok(Asn1ResolvedSequence { components })
+    Ok(ResolvedConstructedType::Sequence { components })
+}
+
+fn resolve_sequence_of_type(
+    sequence_of: &Asn1TypeSequenceOf,
+    resolver: &Resolver,
+) -> Result<ResolvedConstructedType, Error> {
+    let resolved = resolve_type(&sequence_of.ty, resolver)?;
+    Ok(ResolvedConstructedType::SequenceOf {
+        ty: Box::new(resolved),
+    })
 }
