@@ -1,9 +1,6 @@
 use crate::error::Error;
 
-use crate::parser::asn::structs::{
-    defs::Asn1AssignmentKind,
-    types::{Asn1Type, Asn1TypeKind, Asn1TypeReference},
-};
+use crate::parser::asn::structs::types::{Asn1Type, Asn1TypeKind, Asn1TypeReference};
 
 use crate::resolver::{
     asn::{
@@ -48,18 +45,31 @@ fn resolve_reference_type(
                 ))
             }
         }
-        Asn1TypeReference::Parameterized { typeref, .. } => {
+        Asn1TypeReference::Parameterized { typeref, params } => {
             let def = resolver.parameterized_defs.get(typeref);
             if def.is_some() {
                 let def = def.unwrap().clone();
+                let params_resolved_type = def.apply_params(params)?;
+                eprintln!("params_resolved_type: {:#?}", params_resolved_type);
+                resolve_type(&params_resolved_type, resolver)
+                /*
                 match def.kind {
-                    // FIXME : This is not exactly 'Right' but for now we'd go ahead with it.
-                    Asn1AssignmentKind::Type(ref t) => resolve_type(&t.typeref, resolver),
+                    // FIXME : we have started implementing it
+                    Asn1AssignmentKind::Type(ref mut t) => {
+                        if let Asn1TypeKind::Reference(ref mut r) = t.typeref.kind {
+                            if let Asn1TypeReference::Parameterized { params, .. } = r {
+                                *params = outer_params;
+                            }
+                        }
+                        let resolved = resolve_type(&t.typeref, resolver);
+                        resolved
+                    }
                     _ => Err(resolve_error!(
                         "parameterized_type of {:#?} kind not supported.",
                         def.kind
                     )),
                 }
+                */
             } else {
                 Err(resolve_error!(
                     "Parameterized Type for '{:#?}' Not found!",

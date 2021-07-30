@@ -1,4 +1,5 @@
 //! ASN.1 Definitions related Structs
+use crate::tokenizer::Token;
 
 use super::types::{
     ioc::{Asn1Object, Asn1ObjectClass, Asn1ObjectSet},
@@ -114,7 +115,7 @@ impl Asn1AssignmentKind {
 #[derive(Debug, Clone)]
 pub(crate) struct Asn1Definition {
     pub(crate) kind: Asn1AssignmentKind,
-    pub(crate) params: Option<Vec<DefinitionParam>>,
+    pub(crate) params: Option<DefinitionParams>,
     pub(crate) resolved: bool,
 }
 
@@ -187,6 +188,12 @@ pub(crate) enum DummyReferenceKind {
 pub(crate) struct ParamDummyReference {
     pub(crate) name: String,
     pub(crate) kind: DummyReferenceKind,
+}
+
+#[derive(Debug, Clone)]
+pub(crate) struct DefinitionParams {
+    pub(crate) ordered: Vec<DefinitionParam>,
+    pub(crate) type_tokens: Vec<Token>,
 }
 
 #[derive(Debug, Clone)]

@@ -8,9 +8,12 @@ use crate::parser::{
         defs::{
             Asn1AssignmentKind, Asn1Definition, Asn1ObjectAssignment, Asn1ObjectClassAssignment,
             Asn1ObjectSetAssignment, Asn1TypeAssignment, Asn1ValueAssignment, DefinitionParam,
-            DummyReferenceKind, GovernerKind, ParamDummyReference, ParamGoverner,
+            DefinitionParams, DummyReferenceKind, GovernerKind, ParamDummyReference, ParamGoverner,
         },
-        types::ioc::{Asn1Object, Asn1ObjectSet, Asn1ObjectValue},
+        types::{
+            ioc::{Asn1Object, Asn1ObjectSet, Asn1ObjectValue},
+            ActualParam, Asn1Type,
+        },
     },
     utils::{
         expect_keyword, expect_one_of_tokens, expect_token, expect_tokens, parse_set_ish_value,
@@ -55,6 +58,32 @@ impl Asn1Definition {
             }
         }
         Ok(())
+    }
+
+    pub fn apply_params(&self, actual_params: &Vec<ActualParam>) -> Result<Asn1Type, Error> {
+        if self.params.is_none() {
+            return Err(parse_error!("apply_params: No Params for the definition!"));
+        }
+        let mut params = self.params.as_ref().unwrap().clone();
+
+        if params.ordered.len() != actual_params.len() {
+            return Err(parse_error!(
+                "Actual Params and Definition Params Lengths mismatch!"
+            ));
+        }
+
+        for (idx, actual) in actual_params.iter().enumerate() {
+            let replace = actual.param_string();
+            let source = &params.ordered[idx].dummyref.name;
+
+            for token in params.type_tokens.iter_mut() {
+                if &token.text == source {
+                    token.text = replace.clone()
+                }
+            }
+        }
+        let (ty, _) = parse_type(&params.type_tokens)?;
+        Ok(ty)
     }
 }
 // Parse a definition into an `Assignment` type.
@@ -260,8 +289,18 @@ fn parse_type_assignment<'parser>(
     }
     consumed += 1;
 
+    let start = consumed;
+
     let (typeref, typeref_consumed) = parse_type(&tokens[consumed..])?;
     consumed += typeref_consumed;
+
+    let params = if params.is_some() {
+        let mut params = params.unwrap();
+        params.type_tokens = tokens[start..start + typeref_consumed].to_vec();
+        Some(params)
+    } else {
+        None
+    };
 
     Ok((
         Asn1Definition {
@@ -350,7 +389,7 @@ fn parse_object_set_assignment<'parser>(
     ))
 }
 
-fn parse_params<'parser>(tokens: &'parser [Token]) -> Result<(Vec<DefinitionParam>, usize), Error> {
+fn parse_params<'parser>(tokens: &'parser [Token]) -> Result<(DefinitionParams, usize), Error> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_curly_begin)? {
@@ -453,6 +492,11 @@ fn parse_params<'parser>(tokens: &'parser [Token]) -> Result<(Vec<DefinitionPara
             break;
         }
     }
+
+    let params = DefinitionParams {
+        ordered: params,
+        type_tokens: vec![],
+    };
 
     Ok((params, consumed))
 }

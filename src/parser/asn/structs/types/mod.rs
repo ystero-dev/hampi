@@ -74,6 +74,12 @@ impl ActualParam {
             Self::Single(ref s) => vec![s.clone()],
         }
     }
+
+    pub(crate) fn param_string(&self) -> String {
+        match self {
+            Self::Set(ref r) | Self::Single(ref r) => r.clone(),
+        }
+    }
 }
 
 #[derive(Debug, Clone)]

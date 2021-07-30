@@ -55,7 +55,8 @@ impl Resolver {
         module.resolve_object_classes(&self.classes)?;
 
         let mut pending_definitions: HashMap<String, Asn1Definition> = HashMap::new();
-        for k in module.definitions_sorted() {
+        let definitions_sorted = module.definitions_sorted();
+        for k in definitions_sorted {
             let parsed_def = module.get_definition_mut(&k);
             if parsed_def.is_none() {
                 eprintln!(
