@@ -2,7 +2,7 @@ use crate::error::Error;
 
 use crate::parser::asn::structs::types::{
     constructed::{Asn1TypeChoice, Asn1TypeSequence, Asn1TypeSequenceOf},
-    Asn1ConstructedType,
+    Asn1ConstructedType, Asn1Type, Asn1TypeKind,
 };
 
 use crate::resolver::{
@@ -16,17 +16,24 @@ use crate::resolver::{
 };
 
 pub(crate) fn resolve_constructed_type(
-    ty: &Asn1ConstructedType,
+    ty: &Asn1Type,
     resolver: &Resolver,
 ) -> Result<ResolvedConstructedType, Error> {
-    match ty {
-        Asn1ConstructedType::Choice(ref c) => resolve_choice_type(c, resolver),
-        Asn1ConstructedType::Sequence(ref s) => resolve_sequence_type(s, resolver),
-        Asn1ConstructedType::SequenceOf(ref so) => resolve_sequence_of_type(so, resolver),
-        _ => {
-            eprintln!("ConstructedType: {:#?}", ty);
-            Err(resolve_error!("resolve_constructed_Type: Not Implemented!"))
+    if let Asn1TypeKind::Constructed(ref kind) = ty.kind {
+        match kind {
+            Asn1ConstructedType::Choice(ref c) => resolve_choice_type(c, resolver),
+            Asn1ConstructedType::Sequence(ref s) => resolve_sequence_type(s, resolver),
+            Asn1ConstructedType::SequenceOf(ref so) => resolve_sequence_of_type(so, resolver),
+            _ => {
+                eprintln!("ConstructedType: {:#?}", ty);
+                Err(resolve_error!("resolve_constructed_Type: Not Implemented!"))
+            }
         }
+    } else {
+        Err(resolve_error!(
+            "Expected Constructed Type. Found '{:#?}'",
+            ty
+        ))
     }
 }
 

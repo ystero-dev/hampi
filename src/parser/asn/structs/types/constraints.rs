@@ -5,22 +5,6 @@ use crate::parser::asn::structs::oid::ObjectIdentifier;
 use super::Asn1Type;
 
 #[derive(Debug, Clone)]
-pub(crate) struct ValueElement {
-    pub(crate) value: String,
-}
-
-#[derive(Debug, Clone)]
-pub(crate) struct UnionSetElement {
-    pub(crate) values: UnionSet,
-}
-
-#[derive(Debug, Clone)]
-pub(crate) enum Elements {
-    Subtype(SubtypeElements),
-    Set(ElementSet),
-}
-
-#[derive(Debug, Clone)]
 pub(crate) enum SubtypeElements {
     SingleValue {
         value: String,
@@ -37,13 +21,18 @@ pub(crate) enum SubtypeElements {
 }
 
 #[derive(Debug, Clone)]
-pub(crate) struct UnionSet {
-    pub(crate) elements: Vec<IntersectionSet>,
+pub(crate) enum Elements {
+    Subtype(SubtypeElements),
+    Set(ElementSet),
 }
-
 #[derive(Debug, Clone)]
 pub(crate) struct IntersectionSet {
     pub(crate) elements: Vec<Elements>,
+}
+
+#[derive(Debug, Clone)]
+pub(crate) struct UnionSet {
+    pub(crate) elements: Vec<IntersectionSet>,
 }
 
 #[derive(Debug, Clone)]
@@ -52,11 +41,13 @@ pub(crate) struct ElementSet {
     pub(crate) additional_elements: Option<UnionSet>,
 }
 
+// Related To Table Constraints
 #[derive(Debug, Clone)]
 pub(crate) enum ObjectSet {
     DefinedObjectSet(String),
 }
 
+// A Table Constraint is either a Simple Constraint (ObjectSet) or a ComponentRelation(@Components)
 #[derive(Debug, Clone)]
 pub(crate) enum TableConstraint {
     Simple(ObjectSet),
