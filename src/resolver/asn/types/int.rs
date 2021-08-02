@@ -13,6 +13,8 @@ use crate::resolver::{
 pub(crate) fn resolve_type(ty: &Asn1Type, resolver: &Resolver) -> Result<Asn1ResolvedType, Error> {
     match ty.kind {
         Asn1TypeKind::Builtin(..) => Ok(Asn1ResolvedType::Base(resolve_base_type(ty, resolver)?)),
+        // FIXME: Don't always make a Constucted Type, it's possible to get a `Set` Type as a
+        // result of expanding this.
         Asn1TypeKind::Constructed(..) => Ok(Asn1ResolvedType::Constructed(
             resolve_constructed_type(ty, resolver)?,
         )),
