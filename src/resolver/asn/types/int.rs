@@ -75,34 +75,9 @@ fn resolve_reference_type(ty: &Asn1Type, resolver: &Resolver) -> Result<Asn1Reso
                     ))
                 }
             }
-            Asn1TypeReference::ClassField { classref, fieldref } => {
-                resolve_type_set(ty, classref, fieldref, resolver)
-            }
+            Asn1TypeReference::ClassField { .. } => Err(resolve_error!("Not supported yet!")),
         }
     } else {
         Err(resolve_error!("Expected Reference Type. Found '{:#?}'", ty))
     }
-}
-fn resolve_type_set(
-    ty: &Asn1Type,
-    classref: &String,
-    _fieldref: &String,
-    resolver: &Resolver,
-) -> Result<Asn1ResolvedType, Error> {
-    if ty.constraints.is_none() {
-        return Err(resolve_error!(
-            "Cannot Resolve ClassRef Type: {:#?} without Table Constraint!",
-            ty
-        ));
-    }
-    let constraint = &ty.constraints.as_ref().unwrap()[0];
-
-    let value = constraint.get_set_reference()?;
-    eprintln!(
-        "value: classref: {},  {:#?}",
-        classref,
-        resolver.resolved_defs.get(&value)
-    );
-
-    Err(resolve_error!("resolve_type_set: Not Supported: {:#?}", ty))
 }

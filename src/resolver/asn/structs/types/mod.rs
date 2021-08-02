@@ -8,7 +8,7 @@ pub(crate) mod ioc;
 
 #[derive(Debug, Clone)]
 pub(crate) struct ResolvedSetType {
-    types: Vec<Asn1ResolvedType>,
+    pub(crate) types: Vec<Asn1ResolvedType>,
 }
 
 #[derive(Debug, Clone)]

@@ -41,9 +41,15 @@ impl Asn1Type {
             Asn1TypeKind::Constructed(ref c) => c.dependent_references(),
         };
 
-        // TODO: Constraint references
-        let mut constraint_references: Vec<String> = vec![];
-        kind_references.append(&mut constraint_references);
+        let mut constraint_references = vec![];
+        if self.constraints.is_some() {
+            for constraint in self.constraints.as_ref().unwrap() {
+                let constraint_dependent = constraint.dependent_references();
+                constraint_references.extend(constraint_dependent);
+            }
+        }
+
+        kind_references.extend(constraint_references);
         kind_references
     }
 }
