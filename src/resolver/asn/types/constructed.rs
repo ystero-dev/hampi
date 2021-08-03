@@ -23,7 +23,7 @@ use crate::resolver::{
 pub(crate) fn resolve_constructed_type(
     ty: &Asn1Type,
     resolver: &Resolver,
-) -> Result<ResolvedConstructedType, Error> {
+) -> Result<Asn1ResolvedType, Error> {
     if let Asn1TypeKind::Constructed(ref kind) = ty.kind {
         match kind {
             Asn1ConstructedType::Choice(ref c) => resolve_choice_type(c, resolver),
@@ -45,7 +45,7 @@ pub(crate) fn resolve_constructed_type(
 fn resolve_choice_type(
     choice: &Asn1TypeChoice,
     resolver: &Resolver,
-) -> Result<ResolvedConstructedType, Error> {
+) -> Result<Asn1ResolvedType, Error> {
     let mut components = vec![];
     for c in &choice.components {
         let ty = resolve_type(&c.ty, resolver)?;
@@ -56,13 +56,15 @@ fn resolve_choice_type(
         components.push(component);
     }
 
-    Ok(ResolvedConstructedType::Choice { components })
+    Ok(Asn1ResolvedType::Constructed(
+        ResolvedConstructedType::Choice { components },
+    ))
 }
 
 fn resolve_sequence_type(
     sequence: &Asn1TypeSequence,
     resolver: &Resolver,
-) -> Result<ResolvedConstructedType, Error> {
+) -> Result<Asn1ResolvedType, Error> {
     let mut components = vec![];
     for c in &sequence.root_components {
         let ty = match resolve_type(&c.component.ty, resolver) {
@@ -87,17 +89,21 @@ fn resolve_sequence_type(
         components.push(seq_component);
     }
 
-    Ok(ResolvedConstructedType::Sequence { components })
+    Ok(Asn1ResolvedType::Constructed(
+        ResolvedConstructedType::Sequence { components },
+    ))
 }
 
 fn resolve_sequence_of_type(
     sequence_of: &Asn1TypeSequenceOf,
     resolver: &Resolver,
-) -> Result<ResolvedConstructedType, Error> {
+) -> Result<Asn1ResolvedType, Error> {
     let resolved = resolve_type(&sequence_of.ty, resolver)?;
-    Ok(ResolvedConstructedType::SequenceOf {
-        ty: Box::new(resolved),
-    })
+    Ok(Asn1ResolvedType::Constructed(
+        ResolvedConstructedType::SequenceOf {
+            ty: Box::new(resolved),
+        },
+    ))
 }
 
 fn resolve_type_for_components(
