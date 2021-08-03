@@ -1,7 +1,9 @@
+use std::collections::HashMap;
+
 use crate::error::Error;
 
 use crate::parser::asn::structs::types::{
-    constructed::{Asn1TypeChoice, Asn1TypeSequence, Asn1TypeSequenceOf, Component},
+    constructed::{Asn1TypeChoice, Asn1TypeSequence, Asn1TypeSequenceOf, Component, SeqComponent},
     Asn1ConstructedType, Asn1Type, Asn1TypeKind, Asn1TypeReference,
 };
 
@@ -11,7 +13,7 @@ use crate::resolver::{
             defs::Asn1ResolvedDefinition,
             types::{
                 constructed::{ResolvedComponent, ResolvedConstructedType, ResolvedSeqComponent},
-                ioc::{ResolvedFieldSpec, ResolvedObjectSetElement},
+                ioc::{ResolvedFieldSpec, ResolvedObjectSet, ResolvedObjectSetElement},
                 Asn1ResolvedType, ResolvedSetType,
             },
         },
@@ -66,16 +68,12 @@ fn resolve_sequence_type(
     resolver: &Resolver,
 ) -> Result<Asn1ResolvedType, Error> {
     let mut components = vec![];
+    // FIXME: implement for additional_components too
     for c in &sequence.root_components {
         let ty = match resolve_type(&c.component.ty, resolver) {
             Ok(ty) => ty,
             Err(_) => {
-                let components = sequence
-                    .root_components
-                    .iter()
-                    .map(|c| c.component.clone())
-                    .collect::<Vec<Component>>();
-                resolve_type_for_components(&c.component.ty, &components, resolver)?
+                return resolve_sequence_classfield_components(sequence, resolver);
             }
         };
         let component = ResolvedComponent {
@@ -106,54 +104,99 @@ fn resolve_sequence_of_type(
     ))
 }
 
-fn resolve_type_for_components(
-    ty: &Asn1Type,
-    _components: &Vec<Component>,
+fn resolve_sequence_classfield_components(
+    seq: &Asn1TypeSequence,
     resolver: &Resolver,
 ) -> Result<Asn1ResolvedType, Error> {
-    if let Asn1TypeKind::Reference(Asn1TypeReference::ClassField { fieldref, .. }) = &ty.kind {
-        if ty.constraints.is_none() {
-            return Err(resolve_error!(
-                "Cannot Resolve ClassRef Type: {:#?} without Table Constraint!",
-                ty
-            ));
+    let mut all_components = vec![];
+    all_components.extend(seq.root_components.clone());
+    all_components.extend(
+        seq.additions
+            .clone()
+            .iter()
+            .map(|a| a.components.clone())
+            .flatten()
+            .collect::<Vec<SeqComponent>>(),
+    );
+    let all_components = all_components
+        .iter()
+        .map(|c| c.component.clone())
+        .collect::<Vec<Component>>();
+
+    if all_components.is_empty() {
+        // It's an Error to try to resolve Empty components with Class Field Ref
+        return Err(resolve_error!("Expected Sequence with at-least one ClassField Reference Component!. Found Empty Sequences"));
+    }
+
+    // Get the Object Set first It's the Same Object Set for all components. So if we get the first
+    // one that's good enough!
+    let ty = &all_components[0].ty;
+    let constraint = &ty.constraints.as_ref().unwrap()[0];
+
+    let set_reference = constraint.get_set_reference()?;
+
+    let objects = resolver.resolved_defs.get(&set_reference);
+    if objects.is_none() {
+        return Err(resolve_error!(
+            "Object Set '{}' not resolved yet!",
+            set_reference
+        ));
+    }
+    let mut types = HashMap::new();
+    if let Some(Asn1ResolvedDefinition::ObjectSet(ref set)) = objects {
+        let objects = &set.objects;
+        let resolved_components = resolve_seq_components_for_objects(&all_components, objects)?;
+        for (key, resolved) in resolved_components {
+            let ty = Asn1ResolvedType::Constructed(ResolvedConstructedType::Sequence {
+                components: resolved,
+            });
+            types.insert(key, ty);
         }
-        let constraint = &ty.constraints.as_ref().unwrap()[0];
+    }
+    Ok(Asn1ResolvedType::Set(ResolvedSetType { types }))
+}
 
-        let set_reference = constraint.get_set_reference()?;
-
-        let objects = resolver.resolved_defs.get(&set_reference);
-        if objects.is_none() {
-            return Err(resolve_error!(
-                "Object Set '{}' not resolved yet!",
-                set_reference
-            ));
-        }
-
-        let mut types = vec![];
-        if let Some(Asn1ResolvedDefinition::ObjectSet(ref set)) = objects {
-            for object in &set.objects.elements {
-                if let ResolvedObjectSetElement::Object(ref ob) = object {
+fn resolve_seq_components_for_objects(
+    input_components: &Vec<Component>,
+    objects: &ResolvedObjectSet,
+) -> Result<Vec<(String, Vec<ResolvedSeqComponent>)>, Error> {
+    let mut result = vec![];
+    for (key, object) in &objects.lookup_table {
+        let mut resolved_components = vec![];
+        if let ResolvedObjectSetElement::Object(ref ob) = object {
+            for component in input_components {
+                if let Asn1TypeKind::Reference(Asn1TypeReference::ClassField { fieldref, .. }) =
+                    &component.ty.kind
+                {
                     let mut r = ob.fields.iter().filter(|(id, _)| id == &fieldref);
                     let r = r.next();
                     if r.is_some() {
-                        match r.unwrap().1 {
-                            ResolvedFieldSpec::Type { ty } => {
-                                if ty.is_some() {
-                                    types.push(ty.as_ref().unwrap().clone());
+                        let resolved = match r.unwrap().1 {
+                            ResolvedFieldSpec::Type { ty } => ResolvedSeqComponent {
+                                component: ResolvedComponent {
+                                    id: component.id.clone(),
+                                    ty: ty.as_ref().unwrap().clone(),
+                                },
+                                optional: false,
+                            },
+
+                            // FIXME: Not sure what to do with the value.
+                            ResolvedFieldSpec::FixedTypeValue { typeref, .. } => {
+                                ResolvedSeqComponent {
+                                    component: ResolvedComponent {
+                                        id: component.id.clone(),
+                                        ty: typeref.clone(),
+                                    },
+                                    optional: false,
                                 }
                             }
-                            ResolvedFieldSpec::FixedTypeValue { typeref, .. } => {
-                                types.push(typeref.clone());
-                            }
-                        }
-                        break;
+                        };
+                        resolved_components.push(resolved);
                     }
                 }
             }
         }
-        Ok(Asn1ResolvedType::Set(ResolvedSetType { types }))
-    } else {
-        Err(resolve_error!("Expected ClassField Reference!"))
+        result.push((key.clone(), resolved_components));
     }
+    Ok(result)
 }

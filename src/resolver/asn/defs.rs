@@ -55,7 +55,6 @@ fn resolve_object_set_definition(
     resolver: &mut Resolver,
 ) -> Result<Asn1ResolvedDefinition, Error> {
     let objectset = resolve_object_set(&objectset.set, resolver)?;
-    eprintln!("objectset: {:#?}", objectset);
     Ok(Asn1ResolvedDefinition::ObjectSet(objectset))
 }
 

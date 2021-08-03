@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 pub(crate) mod constructed;
 use constructed::ResolvedConstructedType;
 
@@ -8,7 +10,7 @@ pub(crate) mod ioc;
 
 #[derive(Debug, Clone)]
 pub(crate) struct ResolvedSetType {
-    pub(crate) types: Vec<Asn1ResolvedType>,
+    pub(crate) types: HashMap<String, Asn1ResolvedType>,
 }
 
 #[derive(Debug, Clone)]
