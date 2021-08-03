@@ -27,6 +27,7 @@ pub(crate) struct Asn1ResolvedObjectSet {
 #[derive(Debug, Clone)]
 pub(crate) struct ResolvedObjectSet {
     pub(crate) elements: Vec<ResolvedObjectSetElement>,
+    pub(crate) lookup_table: HashMap<String, ResolvedObjectSetElement>,
 }
 
 #[derive(Debug, Clone)]

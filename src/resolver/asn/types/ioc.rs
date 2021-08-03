@@ -15,6 +15,7 @@ use crate::resolver::{
                 Asn1ResolvedObject, Asn1ResolvedObjectSet, ResolvedFieldSpec, ResolvedObjectSet,
                 ResolvedObjectSetElement,
             },
+            values::Asn1ResolvedValue,
         },
         types::resolve_type,
         values::resolve_value,
@@ -33,7 +34,20 @@ pub(crate) fn resolve_object_set(
             objectset.class
         ))
     } else {
+        // if the class has UNIQUE field, create a Map for the values from that field to the
+        // Object. Note: it's indeed possible to have more than one unique field, but we are not
+        // supporting it at the moment, we'll create the map for the 'first' unique field.
+        let class = class.unwrap().get_inner_class().unwrap().classref; // inner class is guaranteed to be Some or a BUG, Let it Panic
+        let unique_field = class.get_first_unique_field_id();
+        let unique_field = if let Some(u) = unique_field {
+            u
+        } else {
+            "".to_string()
+        };
+        let mut lookup_table = HashMap::new();
+
         let mut elements = vec![];
+        // FIXME: Support additional Elements too!
         for object in &objectset.objects.root_elements {
             match object {
                 ObjectSetElement::ObjectSetReference(ref r) => {
@@ -47,6 +61,7 @@ pub(crate) fn resolve_object_set(
                     } else {
                         if let Asn1ResolvedDefinition::ObjectSet(ref o) = resolved.unwrap() {
                             elements.extend(o.objects.elements.clone());
+                            lookup_table.extend(o.objects.lookup_table.clone());
                         } else {
                             return Err(resolve_error!("Resolved '{}' is not an Object Set!", r,));
                         }
@@ -65,7 +80,20 @@ pub(crate) fn resolve_object_set(
                             let element = ResolvedObjectSetElement::Object(Asn1ResolvedObject {
                                 fields: o.fields.clone(),
                             });
-                            elements.push(element);
+                            elements.push(element.clone());
+                            if unique_field.len() > 0 {
+                                if let ResolvedObjectSetElement::Object(ref o) = element {
+                                    let field = o.fields.get(&unique_field);
+                                    if let ResolvedFieldSpec::FixedTypeValue { value, .. } =
+                                        field.unwrap()
+                                    {
+                                        let value = value.as_ref().unwrap();
+                                        if let Asn1ResolvedValue::Reference(ref s) = value {
+                                            lookup_table.insert(s.clone(), element);
+                                        }
+                                    }
+                                }
+                            }
                         } else {
                             return Err(resolve_error!("Resolved '{}' is not an Object!", r,));
                         }
@@ -73,12 +101,28 @@ pub(crate) fn resolve_object_set(
                 }
                 ObjectSetElement::Object(ref v) => {
                     let element = ResolvedObjectSetElement::Object(resolve_object(v, resolver)?);
-                    elements.push(element);
+                    elements.push(element.clone());
+                    if unique_field.len() > 0 {
+                        if let ResolvedObjectSetElement::Object(ref o) = element {
+                            let field = o.fields.get(&unique_field);
+                            if let ResolvedFieldSpec::FixedTypeValue { value, .. } = field.unwrap()
+                            {
+                                let value = value.as_ref().unwrap();
+                                if let Asn1ResolvedValue::Reference(ref s) = value {
+                                    lookup_table.insert(s.clone(), element);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
+
         Ok(Asn1ResolvedObjectSet {
-            objects: ResolvedObjectSet { elements },
+            objects: ResolvedObjectSet {
+                elements,
+                lookup_table,
+            },
         })
     }
 }

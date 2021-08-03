@@ -77,6 +77,17 @@ impl Asn1ObjectClass {
         }
         output
     }
+
+    pub(crate) fn get_first_unique_field_id(&self) -> Option<String> {
+        for (name, value) in &self.fields {
+            if let ObjectClassFieldSpec::FixedTypeValue { unique, .. } = value {
+                if *unique {
+                    return Some(name.clone());
+                }
+            }
+        }
+        None
+    }
 }
 
 #[derive(Debug, Clone)]

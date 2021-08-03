@@ -162,6 +162,36 @@ is_assignment_kind! {
     (is_object_assignment, Asn1AssignmentKind::Object),
 }
 
+macro_rules! get_inner {
+
+    (($fn:ident, $variant: path, $rval: path)) => {
+        #[allow(dead_code)]
+        impl Asn1Definition {
+            pub fn $fn(&self) -> Option<$rval> {
+                if let $variant(ref x) = self.kind {
+                    Some(x.clone())
+                } else {
+                    None
+                }
+            }
+        }
+    };
+
+    ($($tt:tt,)*) => {
+        $(
+        get_inner!($tt);
+        )+
+    };
+}
+
+get_inner! {
+    (get_inner_value, Asn1AssignmentKind::Value, Asn1ValueAssignment),
+    (get_inner_type, Asn1AssignmentKind::Type, Asn1TypeAssignment),
+    (get_inner_class, Asn1AssignmentKind::Class, Asn1ObjectClassAssignment),
+    (get_inner_object_set, Asn1AssignmentKind::ObjectSet, Asn1ObjectSetAssignment),
+    (get_inner_object, Asn1AssignmentKind::Object, Asn1ObjectAssignment),
+}
+
 #[derive(Debug, PartialEq, Clone)]
 pub(crate) enum GovernerKind {
     Type,
