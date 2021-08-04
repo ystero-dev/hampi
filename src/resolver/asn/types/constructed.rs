@@ -153,7 +153,10 @@ fn resolve_sequence_classfield_components(
             types.insert(key, ty);
         }
     }
-    Ok(Asn1ResolvedType::Set(ResolvedSetType { types }))
+    Ok(Asn1ResolvedType::Set(ResolvedSetType {
+        setref: set_reference.clone(),
+        types,
+    }))
 }
 
 fn resolve_seq_components_for_objects(

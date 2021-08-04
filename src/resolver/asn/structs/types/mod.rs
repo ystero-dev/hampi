@@ -10,6 +10,7 @@ pub(crate) mod ioc;
 
 #[derive(Debug, Clone)]
 pub(crate) struct ResolvedSetType {
+    pub(crate) setref: String,
     pub(crate) types: HashMap<String, Asn1ResolvedType>,
 }
 
