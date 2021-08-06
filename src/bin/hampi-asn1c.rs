@@ -23,7 +23,7 @@ fn main() -> io::Result<()> {
                 break;
             }
             let module = module.unwrap();
-            //eprintln!("module: {:#?}", module);
+            eprintln!("module: {:#?}", module);
             compiler.add_module(module);
         }
     }

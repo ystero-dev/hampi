@@ -8,6 +8,8 @@ use base::ResolvedBaseType;
 
 pub(crate) mod ioc;
 
+pub(crate) mod constraints;
+
 #[derive(Debug, Clone)]
 pub(crate) struct ResolvedSetType {
     pub(crate) setref: String,

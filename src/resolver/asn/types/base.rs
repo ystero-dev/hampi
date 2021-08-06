@@ -26,11 +26,12 @@ impl Asn1Type {
     pub(crate) fn get_integer_valueset_from_constraint(
         &self,
         resolver: &Resolver,
-    ) -> Result<Asn1ConstraintValueSet<i64>, Error> {
+    ) -> Result<Asn1ConstraintValueSet, Error> {
         let kind = &self.kind;
         match kind {
-            Asn1TypeKind::Builtin(Asn1BuiltinType::Integer(ref _i)) => {
-                Err(constraint_error!("Not Implemented!"))
+            Asn1TypeKind::Builtin(Asn1BuiltinType::Integer(..)) => {
+                let constraint = &self.constraints.as_ref().unwrap()[0];
+                constraint.get_integer_valueset(resolver)
             }
             Asn1TypeKind::Reference(Asn1TypeReference::Reference(ref _r)) => {
                 Err(constraint_error!("Not Implemented!"))
@@ -91,18 +92,29 @@ pub(crate) fn resolve_base_type(
 }
 
 fn resolve_integer(
-    _base: &mut Asn1ResolvedInteger,
+    base: &mut Asn1ResolvedInteger,
     ty: &Asn1Type,
-    _resolver: &Resolver,
+    resolver: &Resolver,
 ) -> Result<(), Error> {
     // No Constraints
+    eprintln!("1... {:#?}", ty);
     if ty.constraints.is_none() {
         return Ok(());
+    } else {
+        let constraints = ty.constraints.as_ref().unwrap();
+        if constraints.is_empty() {
+            return Ok(());
+        }
     }
 
-    //let (root_values, extensible, additional_values) = ty.resolve_constraint(resolver);
-    // FIXME: Only single constraint for now.
-    //let _constraint = &ty.constraints.as_ref().unwrap()[0];
+    // Get the Values that are expected
+    let value_set = ty.get_integer_valueset_from_constraint(resolver)?;
+    if let Some(x) = value_set.root_values.min() {
+        if x < 0 {
+            base.signed = true
+        }
+    }
 
+    let _ = base.resolved_constraints.replace(value_set);
     Ok(())
 }

@@ -1,6 +1,8 @@
 //! Structs for the resolved Base Types
 use std::collections::{BTreeSet, HashMap};
 
+use crate::resolver::asn::structs::types::constraints::Asn1ConstraintValueSet;
+
 #[derive(Debug, Clone)]
 pub(crate) enum ResolvedBaseType {
     Integer(Asn1ResolvedInteger),
@@ -18,11 +20,10 @@ pub(crate) enum ResolvedBaseType {
 // Information from this structure can be directly used for code generation.
 #[derive(Debug, Clone)]
 pub(crate) struct Asn1ResolvedInteger {
-    bytes: u8,
-    signed: bool,
-    values: Option<BTreeSet<i64>>,
-    excepts: Option<BTreeSet<i64>>,
-    named_values: Option<HashMap<String, i64>>,
+    pub(crate) bytes: u8,
+    pub(crate) signed: bool,
+    pub(crate) resolved_constraints: Option<Asn1ConstraintValueSet>,
+    pub(crate) named_values: Option<HashMap<String, i64>>,
 }
 
 impl Default for Asn1ResolvedInteger {
@@ -30,9 +31,8 @@ impl Default for Asn1ResolvedInteger {
         Self {
             bytes: 8,
             signed: true,
-            values: None,
-            excepts: None,
             named_values: None,
+            resolved_constraints: None,
         }
     }
 }
