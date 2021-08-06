@@ -38,6 +38,8 @@ pub(crate) struct UnionSet {
 #[derive(Debug, Clone)]
 pub(crate) struct ElementSet {
     pub(crate) root_elements: UnionSet,
+
+    // Even if "empty" additinal_elements is present, this ElementSet is extensible.
     pub(crate) additional_elements: Option<UnionSet>,
 }
 

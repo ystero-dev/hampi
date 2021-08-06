@@ -9,9 +9,9 @@ impl Asn1Constraint {
     ///
     /// This function should be called for Single Value Subtype Constraints or Simple Table
     /// constraints only.
-    pub(crate) fn get_single_value(&self) -> Result<String, Error> {
+    pub(crate) fn get_single_string_value(&self) -> Result<String, Error> {
         if !self.is_subtype() || !self.is_single_value() || !self.is_simple_table_constraint() {
-            Err(resolve_error!(
+            Err(constraint_error!(
                 "Require a Single Value Subtype or Table Constraint. Found '{:#?}'.",
                 self
             ))
@@ -20,17 +20,17 @@ impl Asn1Constraint {
             if value.is_some() {
                 Ok(value.unwrap())
             } else {
-                Err(resolve_error!("Not Single Value!"))
+                Err(constraint_error!("Not Single Value!"))
             }
         } else if let Asn1Constraint::Table(ref t) = self {
             let value = t.get_single_value();
             if value.is_some() {
                 Ok(value.unwrap())
             } else {
-                Err(resolve_error!("Not Single Value!"))
+                Err(constraint_error!("Not Single Value!"))
             }
         } else {
-            Err(resolve_error!(
+            Err(constraint_error!(
                 "Single Value not supported for '{:#?}'",
                 self
             ))
@@ -39,7 +39,7 @@ impl Asn1Constraint {
 
     /// Returns the 'Set Reference' trimming the leading '{' and trailing '}'
     pub(crate) fn get_set_reference(&self) -> Result<String, Error> {
-        match self.get_single_value() {
+        match self.get_single_string_value() {
             Ok(v) => Ok(v
                 .trim_matches(|c| matches!(c, '{' | '}'))
                 .trim()

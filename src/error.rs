@@ -19,6 +19,8 @@ pub enum Error {
 
     /// Compilation Errors
     ResolveError(String),
+
+    ConstraintError(String),
 }
 
 impl std::fmt::Display for Error {
@@ -62,7 +64,10 @@ impl std::fmt::Display for Error {
                 write!(f, "Parsing Error: {}", errstr)
             }
             Error::ResolveError(ref errstr) => {
-                write!(f, "Compilation Error: {}", errstr)
+                write!(f, "Compilation Error: Resolve: {}", errstr)
+            }
+            Error::ConstraintError(ref errstr) => {
+                write!(f, "Compilation Error: Constraint: {}", errstr)
             }
         }
     }
@@ -111,5 +116,11 @@ macro_rules! unknown_oid_name {
 macro_rules! resolve_error {
     ($($arg: tt)*) => {
         crate::error::Error::ResolveError(format!($($arg)*))
+    };
+}
+
+macro_rules! constraint_error {
+    ($($arg: tt)*) => {
+        crate::error::Error::ConstraintError(format!($($arg)*))
     };
 }
