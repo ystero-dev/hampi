@@ -61,9 +61,10 @@ impl Asn1Constraint {
     // FIXME: only gets the dependent Set for now. Types in other constraints not yet supported.
     /// Returns Dependent Components for the constraint
     pub(crate) fn dependent_references(&self) -> Vec<String> {
-        match self.get_set_reference() {
-            Ok(ref s) => vec![s.clone()],
-            Err(_) => vec![],
+        match self {
+            Self::Table(ref _t) => vec![self.get_set_reference().unwrap()],
+            Self::Subtype(ref s) => s.clone().dependent_references(), // FIXME: Need to get reference
+            Self::Contents { .. } => vec![], // FIXME: Not sure but perhaps this causes lot of circular dependencies
         }
     }
 
@@ -138,6 +139,21 @@ impl ElementSet {
             additional_values,
         })
     }
+
+    fn dependent_references(self) -> Vec<String> {
+        let mut output = vec![];
+        output.extend(self.root_elements.dependent_references());
+
+        if self.additional_elements.is_some() {
+            output.extend(
+                self.additional_elements
+                    .as_ref()
+                    .unwrap()
+                    .dependent_references(),
+            );
+        }
+        output
+    }
 }
 
 impl IntersectionSet {
@@ -181,6 +197,14 @@ impl IntersectionSet {
         }
         Ok(value_set)
     }
+
+    fn dependent_references(&self) -> Vec<String> {
+        let mut output = vec![];
+        for element in &self.elements {
+            output.extend(element.dependent_references())
+        }
+        output
+    }
 }
 
 impl TableConstraint {
@@ -200,6 +224,13 @@ impl Elements {
             Self::Set(ref _s) => Err(constraint_error!(
                 "get_integer_valueset: Set Variant: Not Supported!"
             )),
+        }
+    }
+
+    fn dependent_references(&self) -> Vec<String> {
+        match self {
+            Self::Subtype(ref s) => s.dependent_references(),
+            Self::Set(ref e) => e.clone().dependent_references(),
         }
     }
 }
@@ -274,5 +305,42 @@ impl SubtypeElements {
                 }
             }
         }
+    }
+
+    fn dependent_references(&self) -> Vec<String> {
+        match self {
+            Self::SingleValue { value } => match value.parse::<i128>() {
+                Ok(_) => vec![],
+                Err(_) => vec![value
+                    .trim_matches(|c| matches!(c, '{' | '}'))
+                    .trim()
+                    .to_string()],
+            },
+            Self::ConstrainedSubtype(ref t) => t.dependent_references(),
+            Self::ValueRange { lower, upper, .. } => {
+                let mut output = vec![];
+                match lower.parse::<i128>() {
+                    Ok(_) => {}
+                    Err(_) => output.extend(vec![lower.trim().to_string()]),
+                };
+                match upper.parse::<i128>() {
+                    Ok(_) => {}
+                    Err(_) => output.extend(vec![upper.trim().to_string()]),
+                };
+                output
+            }
+            Self::SizeConstraint(ref s) => s.clone().dependent_references(),
+            Self::PermittedAlphabet(ref _p) => vec![], // FIXME: Should we?
+        }
+    }
+}
+
+impl UnionSet {
+    fn dependent_references(&self) -> Vec<String> {
+        let mut output = vec![];
+        for element in &self.elements {
+            output.extend(element.dependent_references())
+        }
+        output
     }
 }
