@@ -1,7 +1,7 @@
 use super::types::Asn1ResolvedType;
 
 /// An INTEGER value will be represented by a BaseInteger type when 'Resolved'.
-pub(crate) type BaseInteger = i64;
+pub(crate) type BaseInteger = i128;
 
 /// An ENUMERATED Value will be represented by a BaseEnum type when 'Resolved'.
 pub(crate) type BaseEnum = i64;

@@ -4,8 +4,8 @@ use std::ops::Range;
 
 #[derive(Debug, Clone)]
 pub(crate) struct ConstraintValues {
-    pub(crate) ranges: Vec<Range<i64>>,
-    pub(crate) values: Vec<i64>,
+    pub(crate) ranges: Vec<Range<i128>>,
+    pub(crate) values: Vec<i128>,
 }
 
 impl ConstraintValues {
@@ -25,7 +25,7 @@ impl ConstraintValues {
         self.values.is_empty() && self.ranges.is_empty()
     }
 
-    pub(crate) fn min(&self) -> Option<i64> {
+    pub(crate) fn min(&self) -> Option<i128> {
         let values_min = self.values.iter().min();
         let ranges_min = self.ranges.iter().map(|r| r.start).min();
         if values_min.is_none() {
@@ -43,7 +43,7 @@ impl ConstraintValues {
         }
     }
 
-    pub(crate) fn max(&self) -> Option<i64> {
+    pub(crate) fn max(&self) -> Option<i128> {
         let values_max = self.values.iter().max();
         let ranges_max = self.ranges.iter().map(|r| r.end - 1).max();
         if values_max.is_none() {

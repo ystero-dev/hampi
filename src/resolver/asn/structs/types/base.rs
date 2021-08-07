@@ -23,7 +23,7 @@ pub(crate) struct Asn1ResolvedInteger {
     pub(crate) bytes: u8,
     pub(crate) signed: bool,
     pub(crate) resolved_constraints: Option<Asn1ConstraintValueSet>,
-    pub(crate) named_values: Option<HashMap<String, i64>>,
+    pub(crate) named_values: Option<HashMap<String, i128>>,
 }
 
 impl Default for Asn1ResolvedInteger {
@@ -41,9 +41,9 @@ impl Default for Asn1ResolvedInteger {
 pub(crate) struct Asn1ResolvedEnumerated {
     bytes: u8,
     signed: bool,
-    values: Option<BTreeSet<i64>>,
-    excepts: Option<BTreeSet<i64>>,
-    named_values: HashMap<String, i64>,
+    values: Option<BTreeSet<i128>>,
+    excepts: Option<BTreeSet<i128>>,
+    named_values: HashMap<String, i128>,
 }
 
 impl Default for Asn1ResolvedEnumerated {

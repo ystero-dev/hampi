@@ -50,7 +50,8 @@ impl Asn1Constraint {
                         .to_string())
                 } else {
                     Err(resolve_error!(
-                        "Constraint is not a component Relation Constraint!"
+                        "Constraint is not a component Relation Constraint! '{:#?}'",
+                        self
                     ))
                 }
             }
@@ -170,12 +171,12 @@ impl IntersectionSet {
                     .values
                     .into_iter()
                     .filter(|e| element_set.values.contains(e))
-                    .collect::<Vec<i64>>();
+                    .collect::<Vec<i128>>();
                 value_set.ranges = value_set
                     .ranges
                     .into_iter()
                     .filter(|e| element_set.ranges.contains(e))
-                    .collect::<Vec<Range<i64>>>();
+                    .collect::<Vec<Range<i128>>>();
             }
         }
         Ok(value_set)
@@ -246,9 +247,9 @@ impl SubtypeElements {
         Ok(value_set)
     }
 
-    fn parse_or_resolve_value(value: &String, resolver: &Resolver) -> Result<i64, Error> {
+    fn parse_or_resolve_value(value: &String, resolver: &Resolver) -> Result<i128, Error> {
         // FIXME : do the 'resolve part'
-        let parsed = value.parse::<i64>();
+        let parsed = value.parse::<i128>();
         match parsed {
             Ok(x) => Ok(x),
             Err(_) => {
