@@ -97,7 +97,6 @@ fn resolve_integer(
     resolver: &Resolver,
 ) -> Result<(), Error> {
     // No Constraints
-    eprintln!("1... {:#?}", ty);
     if ty.constraints.is_none() {
         return Ok(());
     } else {
@@ -112,8 +111,38 @@ fn resolve_integer(
     if let Some(x) = value_set.root_values.min() {
         if x < 0 {
             base.signed = true
+        } else {
+            base.signed = false
         }
     }
+
+    let bit_width = if base.signed {
+        let min = value_set.root_values.min().unwrap();
+        let max = value_set.root_values.max().unwrap();
+        let bits_needed_max = 128 - max.abs().leading_zeros();
+        let bits_needed_min = 128 - min.abs().leading_zeros();
+        std::cmp::max(bits_needed_min, bits_needed_max)
+    } else {
+        if value_set.root_values.min().is_none() {
+            8_u32
+        } else {
+            let max = value_set.root_values.max().unwrap();
+            let bits_needed_max = 128 - max.leading_zeros();
+            bits_needed_max
+        }
+    };
+
+    base.bytes = if bit_width <= 8 {
+        1
+    } else if bit_width <= 16 {
+        2
+    } else if bit_width <= 32 {
+        4
+    } else if bit_width <= 64 {
+        8
+    } else {
+        16
+    };
 
     let _ = base.resolved_constraints.replace(value_set);
     Ok(())

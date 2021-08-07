@@ -47,26 +47,7 @@ fn resolve_reference_type(ty: &Asn1Type, resolver: &Resolver) -> Result<Asn1Reso
                 if def.is_some() {
                     let def = def.unwrap().clone();
                     let params_resolved_type = def.apply_params(params)?;
-                    //eprintln!("params_resolved_type: {:#?}", params_resolved_type);
                     resolve_type(&params_resolved_type, resolver)
-                    /*
-                    match def.kind {
-                        // FIXME : we have started implementing it
-                        Asn1AssignmentKind::Type(ref mut t) => {
-                            if let Asn1TypeKind::Reference(ref mut r) = t.typeref.kind {
-                                if let Asn1TypeReference::Parameterized { params, .. } = r {
-                                    *params = outer_params;
-                                }
-                            }
-                            let resolved = resolve_type(&t.typeref, resolver);
-                            resolved
-                        }
-                        _ => Err(resolve_error!(
-                            "parameterized_type of {:#?} kind not supported.",
-                            def.kind
-                        )),
-                    }
-                    */
                 } else {
                     Err(resolve_error!(
                         "Parameterized Type for '{:#?}' Not found!",

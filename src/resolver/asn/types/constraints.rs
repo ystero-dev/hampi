@@ -223,7 +223,6 @@ impl SubtypeElements {
                 upper,
                 upper_inclusive,
             } => {
-                eprintln!("Range: {:#?} ", self);
                 let mut lower_value = Self::parse_or_resolve_value(lower, resolver)?;
                 if !lower_inclusive {
                     lower_value += 1;
