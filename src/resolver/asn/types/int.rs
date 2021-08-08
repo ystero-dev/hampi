@@ -10,7 +10,10 @@ use crate::resolver::{
     Resolver,
 };
 
-pub(crate) fn resolve_type(ty: &Asn1Type, resolver: &Resolver) -> Result<Asn1ResolvedType, Error> {
+pub(crate) fn resolve_type(
+    ty: &Asn1Type,
+    resolver: &mut Resolver,
+) -> Result<Asn1ResolvedType, Error> {
     match ty.kind {
         Asn1TypeKind::Builtin(..) => Ok(Asn1ResolvedType::Base(resolve_base_type(ty, resolver)?)),
         Asn1TypeKind::Constructed(..) => resolve_constructed_type(ty, resolver),
@@ -19,7 +22,10 @@ pub(crate) fn resolve_type(ty: &Asn1Type, resolver: &Resolver) -> Result<Asn1Res
     }
 }
 
-fn resolve_reference_type(ty: &Asn1Type, resolver: &Resolver) -> Result<Asn1ResolvedType, Error> {
+fn resolve_reference_type(
+    ty: &Asn1Type,
+    resolver: &mut Resolver,
+) -> Result<Asn1ResolvedType, Error> {
     if let Asn1TypeKind::Reference(ref reference) = ty.kind {
         match reference {
             Asn1TypeReference::Reference(ref r) => {

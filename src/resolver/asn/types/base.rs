@@ -1,7 +1,7 @@
 use crate::error::Error;
 
 use crate::parser::asn::structs::types::{
-    Asn1BuiltinType, Asn1Type, Asn1TypeKind, Asn1TypeReference,
+    base::Asn1TypeInteger, Asn1BuiltinType, Asn1Type, Asn1TypeKind, Asn1TypeReference,
 };
 
 use crate::resolver::{
@@ -46,13 +46,13 @@ impl Asn1Type {
 
 pub(crate) fn resolve_base_type(
     ty: &Asn1Type,
-    resolver: &Resolver,
+    resolver: &mut Resolver,
 ) -> Result<ResolvedBaseType, Error> {
     if let Asn1TypeKind::Builtin(ref kind) = ty.kind {
         match kind {
-            Asn1BuiltinType::Integer(ref _i) => {
+            Asn1BuiltinType::Integer(ref i) => {
                 let mut resolved = Asn1ResolvedInteger::default();
-                resolve_integer(&mut resolved, ty, resolver)?;
+                resolve_integer(&mut resolved, ty, i, resolver)?;
                 Ok(ResolvedBaseType::Integer(resolved))
             }
             Asn1BuiltinType::Enumerated(ref _i) => {
@@ -94,9 +94,9 @@ pub(crate) fn resolve_base_type(
 fn resolve_integer(
     base: &mut Asn1ResolvedInteger,
     ty: &Asn1Type,
-    resolver: &Resolver,
+    i: &Asn1TypeInteger,
+    resolver: &mut Resolver,
 ) -> Result<(), Error> {
-    // No Constraints
     if ty.constraints.is_none() {
         return Ok(());
     } else {
@@ -143,6 +143,11 @@ fn resolve_integer(
     } else {
         16
     };
+
+    // TODO: If we have named values, They should be added to Global list of resolved definitions.
+    if i.named_values.is_some() {
+        eprintln!("named_values: {:#?}", i.named_values);
+    }
 
     let _ = base.resolved_constraints.replace(value_set);
     Ok(())

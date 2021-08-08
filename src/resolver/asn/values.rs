@@ -17,7 +17,7 @@ use crate::resolver::{
 pub(crate) fn resolve_value(
     value: &str,
     typeref: &Asn1ResolvedType,
-    resolver: &Resolver,
+    resolver: &mut Resolver,
 ) -> Result<Asn1ResolvedValue, Error> {
     let referenced_value = resolver.resolved_defs.get(value);
     if referenced_value.is_none() {

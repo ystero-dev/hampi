@@ -2,24 +2,33 @@
 
 use crate::tokenizer::Token;
 
+/// Error Type for the crate.
+///
+/// Defines separate variants for the Tokenization, Parsing and Symbol Resolution Errors.
 #[derive(Debug)]
 pub enum Error {
+    /// Error when tokenizing the ASN.1 Input (Cause, Line, Column)
     TokenizeError(usize, usize, usize),
 
-    // Parsing specific errors.
+    /// Unexpected End of Tokens while parsing tokens.
     UnexpectedEndOfTokens,
+
+    /// Unexpected Token while parsing tokens.
     UnexpectedToken(String, Token),
+
+    /// Invalid token while parsing.
     InvalidToken(Token),
 
-    // Errors related to ASN.1 -
-    // Object Identifer
+    /// Unknown Object Identifier Name (For Well known names).
     UnknownOIDName(Token),
 
+    /// A Generic parsing error.
     ParseError(String),
 
-    /// Compilation Errors
+    /// Error while resolving the parsed definitions.
     ResolveError(String),
 
+    /// Error related to resolving constraints for a type.
     ConstraintError(String),
 }
 
@@ -75,6 +84,7 @@ impl std::fmt::Display for Error {
 
 impl std::error::Error for Error {}
 
+#[doc(hidden)]
 impl From<Error> for std::io::Error {
     fn from(e: Error) -> Self {
         std::io::Error::new(std::io::ErrorKind::InvalidInput, format!("{}", e))

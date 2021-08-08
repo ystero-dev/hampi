@@ -6,7 +6,7 @@ use crate::tokenizer::Token;
 ///
 /// Each parsed token should be of one of the following types.
 #[derive(Debug, PartialEq, Clone)]
-pub enum TokenType {
+pub(crate) enum TokenType {
     CurlyBegin,           // "{"
     CurlyEnd,             // "}"
     RoundBegin,           // "("
@@ -37,11 +37,13 @@ pub enum TokenType {
     LessThan,             // A single '<' (Used in Ranges)
 }
 
-pub type TokenChecker = fn(&Token) -> bool;
+pub(crate) type TokenChecker = fn(&Token) -> bool;
 
 macro_rules! create_is_tokentype_fns {
     (($fn:ident, $toktype: path)) => {
-        pub fn $fn(&self) -> bool {
+
+        #[allow(dead_code)]
+        pub(crate) fn $fn(&self) -> bool {
             self.r#type == $toktype
         }
     };

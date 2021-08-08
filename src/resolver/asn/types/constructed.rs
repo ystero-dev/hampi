@@ -24,7 +24,7 @@ use crate::resolver::{
 
 pub(crate) fn resolve_constructed_type(
     ty: &Asn1Type,
-    resolver: &Resolver,
+    resolver: &mut Resolver,
 ) -> Result<Asn1ResolvedType, Error> {
     if let Asn1TypeKind::Constructed(ref kind) = ty.kind {
         match kind {
@@ -46,7 +46,7 @@ pub(crate) fn resolve_constructed_type(
 
 fn resolve_choice_type(
     choice: &Asn1TypeChoice,
-    resolver: &Resolver,
+    resolver: &mut Resolver,
 ) -> Result<Asn1ResolvedType, Error> {
     let mut components = vec![];
     for c in &choice.components {
@@ -65,7 +65,7 @@ fn resolve_choice_type(
 
 fn resolve_sequence_type(
     sequence: &Asn1TypeSequence,
-    resolver: &Resolver,
+    resolver: &mut Resolver,
 ) -> Result<Asn1ResolvedType, Error> {
     let mut components = vec![];
     // FIXME: implement for additional_components too
@@ -94,7 +94,7 @@ fn resolve_sequence_type(
 
 fn resolve_sequence_of_type(
     sequence_of: &Asn1TypeSequenceOf,
-    resolver: &Resolver,
+    resolver: &mut Resolver,
 ) -> Result<Asn1ResolvedType, Error> {
     let resolved = resolve_type(&sequence_of.ty, resolver)?;
     Ok(Asn1ResolvedType::Constructed(
@@ -106,7 +106,7 @@ fn resolve_sequence_of_type(
 
 fn resolve_sequence_classfield_components(
     seq: &Asn1TypeSequence,
-    resolver: &Resolver,
+    resolver: &mut Resolver,
 ) -> Result<Asn1ResolvedType, Error> {
     let mut all_components = vec![];
     all_components.extend(seq.root_components.clone());

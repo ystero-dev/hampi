@@ -1,3 +1,4 @@
+#![warn(missing_docs)]
 //! ASN.1 Compiler in Rust
 //!
 //! Goal of the project is to develop a compiler for ASN.1 specifications primarily for

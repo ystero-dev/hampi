@@ -25,7 +25,7 @@ use crate::resolver::{
 
 pub(crate) fn resolve_object_set(
     objectset: &Asn1ObjectSet,
-    resolver: &Resolver,
+    resolver: &mut Resolver,
 ) -> Result<Asn1ResolvedObjectSet, Error> {
     let class = resolver.classes.get(&objectset.class);
     if class.is_none() {
@@ -129,7 +129,7 @@ pub(crate) fn resolve_object_set(
 
 pub(crate) fn resolve_object(
     object_value: &Asn1ObjectValue,
-    resolver: &Resolver,
+    resolver: &mut Resolver,
 ) -> Result<Asn1ResolvedObject, Error> {
     let mut resolved_fields = HashMap::new();
     if let Asn1ObjectValue::Asn1ObjectFromClass { fields } = object_value {

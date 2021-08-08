@@ -25,6 +25,7 @@ pub struct Asn1Compiler {
 }
 
 impl Asn1Compiler {
+    /// Create a new Instance of the Compiler structure.
     pub fn new() -> Self {
         Asn1Compiler {
             modules: HashMap::new(),
@@ -32,6 +33,9 @@ impl Asn1Compiler {
         }
     }
 
+    /// Add a module to the list of known modules.
+    ///
+    /// If the module alredy exists, returns `false` else returns `true`.
     pub fn add_module(&mut self, module: Asn1Module) -> bool {
         let old = self.modules.insert(module.get_module_name(), module);
         !old.is_none()

@@ -2,7 +2,7 @@
 //! Tokenizer for an ASN.1 module
 
 #[macro_use]
-pub mod types;
+pub(crate) mod types;
 
 use crate::error::Error;
 
@@ -157,7 +157,7 @@ impl LineColumn {
 
 /// Span of a Token in the ASN Source file.
 #[derive(Debug, Clone)]
-pub struct Span {
+pub(crate) struct Span {
     start: LineColumn,
     end: LineColumn,
 }
@@ -188,9 +188,9 @@ impl Span {
 /// the AST.
 #[derive(Debug, Clone)]
 pub struct Token {
-    pub r#type: TokenType,
-    pub span: Span,
-    pub text: String,
+    pub(crate) r#type: TokenType,
+    pub(crate) span: Span,
+    pub(crate) text: String,
 }
 
 impl Token {
@@ -228,22 +228,22 @@ impl Token {
     // Checkers for ASN.1 Lexical Token types
     //
     /// Checks whether the current token is a 'valuereference'
-    pub fn is_value_reference(&self) -> bool {
+    pub(crate) fn is_value_reference(&self) -> bool {
         self.is_identifier() && self.text.starts_with(char::is_lowercase)
     }
 
     /// Checks whether the current token is a 'typereference'
-    pub fn is_type_reference(&self) -> bool {
+    pub(crate) fn is_type_reference(&self) -> bool {
         self.is_identifier() && self.text.starts_with(char::is_uppercase)
     }
 
     /// Checks whether the given token is a 'modulereference'
-    pub fn is_module_reference(&self) -> bool {
+    pub(crate) fn is_module_reference(&self) -> bool {
         self.is_type_reference()
     }
 
     /// Checks whether the given token is an Object Class Reference
-    pub fn is_object_class_reference(&self) -> bool {
+    pub(crate) fn is_object_class_reference(&self) -> bool {
         self.is_type_reference()
             && self
                 .text
@@ -252,69 +252,72 @@ impl Token {
     }
 
     /// Is a given token a WITH SYNTAX Word, should be same as
-    pub fn is_with_syntax_word(&self) -> bool {
+    pub(crate) fn is_with_syntax_word(&self) -> bool {
         self.is_type_reference() && self.text.chars().all(|c| matches!(c, 'A'..='Z' | '-'))
     }
 
     /// Checks whether the given token is an Object Reference
-    pub fn is_object_reference(&self) -> bool {
+    pub(crate) fn is_object_reference(&self) -> bool {
         self.is_value_reference()
     }
 
     /// Checks whether the given token is an Object Set Reference
-    pub fn is_object_set_reference(&self) -> bool {
+    pub(crate) fn is_object_set_reference(&self) -> bool {
         self.is_type_reference()
     }
 
     /// Checks whether the given identifier is a Type Field Reference
-    pub fn is_type_field_reference(&self) -> bool {
+    pub(crate) fn is_type_field_reference(&self) -> bool {
         self.is_and_identifier() && self.text[1..].starts_with(char::is_uppercase)
     }
     /// Checks whether the given token is a Value Field Reference
-    pub fn is_value_field_reference(&self) -> bool {
+    pub(crate) fn is_value_field_reference(&self) -> bool {
         self.is_and_identifier() && self.text[1..].starts_with(char::is_lowercase)
     }
 
+    #[allow(dead_code)]
     /// Checks whether the given token is a Value Set field reference (same as Type Field reference.)
-    pub fn is_value_set_field_reference(&self) -> bool {
+    pub(crate) fn is_value_set_field_reference(&self) -> bool {
         self.is_type_field_reference()
     }
 
+    #[allow(dead_code)]
     /// Checks whether the given token is an Object Field Reference (same as Value Field Reference.)
-    pub fn is_object_field_reference(&self) -> bool {
+    pub(crate) fn is_object_field_reference(&self) -> bool {
         self.is_value_field_reference()
     }
 
+    #[allow(dead_code)]
     /// Checks whether the given token is an Object Set Field Reference
-    pub fn is_object_set_field_reference(&self) -> bool {
+    pub(crate) fn is_object_set_field_reference(&self) -> bool {
         self.is_type_field_reference()
     }
 
     /// Checks whether given token is a particular keyword.
-    pub fn is_given_keyword(&self, keyword: &str) -> bool {
+    pub(crate) fn is_given_keyword(&self, keyword: &str) -> bool {
         self.is_keyword() && self.text == keyword
     }
 
     /// Checks whether the given token is a builtin type.
-    pub fn is_asn_builtin_type(&self) -> bool {
+    pub(crate) fn is_asn_builtin_type(&self) -> bool {
         BASE_TYPES.iter().any(|&t| t == self.text.as_str())
             || CONSTRUCTED_TYPES.iter().any(|&t| t == self.text.as_str())
     }
 
     /// Checks whether a given token is a with syntax reserved word
-    pub fn is_with_syntax_reserved_word(&self) -> bool {
+    pub(crate) fn is_with_syntax_reserved_word(&self) -> bool {
         WITH_SYNTAX_RESERVED_WORDS
             .iter()
             .any(|&t| t == self.text.as_str())
     }
 
     /// Returns the 'span' of the current token.
-    pub fn span(&self) -> Span {
+    pub(crate) fn span(&self) -> Span {
         self.span.clone()
     }
 
     /// Returns the 'String' obtained by Concatenating tokens.
-    pub fn concat(tokens: &[Token], joinstr: &'static str) -> String {
+    pub(crate) fn concat(tokens: &[Token], joinstr: &'static str) -> String {
         tokens
             .iter()
             .map(|x| x.text.clone())
@@ -323,12 +326,12 @@ impl Token {
     }
 
     /// Returns if the given token is a Set 'intersection'
-    pub fn is_set_intersection(&self) -> bool {
+    pub(crate) fn is_set_intersection(&self) -> bool {
         self.is_set_intersection_token() || self.is_given_keyword("INTERSECTION")
     }
 
     /// Returns if the given token is a Set 'union'
-    pub fn is_set_union(&self) -> bool {
+    pub(crate) fn is_set_union(&self) -> bool {
         self.is_set_union_token() || self.is_given_keyword("UNION")
     }
 }

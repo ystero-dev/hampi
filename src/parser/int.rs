@@ -1,4 +1,5 @@
 //! 'parser' Inernal module, API functions from this module are exported.
+
 use crate::error::Error;
 use crate::tokenizer::Token;
 
