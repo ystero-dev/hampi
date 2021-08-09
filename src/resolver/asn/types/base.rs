@@ -1,7 +1,9 @@
 use crate::error::Error;
+use std::collections::BTreeSet;
 
 use crate::parser::asn::structs::types::{
-    base::Asn1TypeInteger, Asn1BuiltinType, Asn1Type, Asn1TypeKind, Asn1TypeReference,
+    base::{Asn1TypeEnumerated, Asn1TypeInteger, NamedValue},
+    Asn1BuiltinType, Asn1Type, Asn1TypeKind, Asn1TypeReference,
 };
 
 use crate::resolver::{
@@ -51,12 +53,10 @@ pub(crate) fn resolve_base_type(
     if let Asn1TypeKind::Builtin(ref kind) = ty.kind {
         match kind {
             Asn1BuiltinType::Integer(ref i) => {
-                let resolved = resolve_integer(ty, i, resolver)?;
-                Ok(ResolvedBaseType::Integer(resolved))
+                Ok(ResolvedBaseType::Integer(resolve_integer(ty, i, resolver)?))
             }
-            Asn1BuiltinType::Enumerated(ref _i) => {
-                let resolved = ResolvedBaseType::Enum(Asn1ResolvedEnumerated::default());
-                Ok(resolved)
+            Asn1BuiltinType::Enumerated(ref e) => {
+                Ok(ResolvedBaseType::Enum(resolve_enumerated(ty, e, resolver)?))
             }
             Asn1BuiltinType::BitString(ref _i) => {
                 let resolved = ResolvedBaseType::BitString(Asn1ResolvedBitString::default());
@@ -146,10 +146,52 @@ fn resolve_integer(
     };
 
     // TODO: If we have named values, They should be added to Global list of resolved definitions.
-    if i.named_values.is_some() {
-        eprintln!("named_values: {:#?}", i.named_values);
-    }
+    if i.named_values.is_some() {}
 
     let _ = base.resolved_constraints.replace(value_set);
+    Ok(base)
+}
+
+fn resolve_enumerated(
+    _ty: &Asn1Type,
+    e: &Asn1TypeEnumerated,
+    _resolver: &Resolver,
+) -> Result<Asn1ResolvedEnumerated, Error> {
+    let mut base = Asn1ResolvedEnumerated::default();
+
+    // FIXME: TODO Constraints
+
+    let mut values = BTreeSet::<i128>::new();
+
+    // First get all the 'known' values from the Enumerated type into the `values` Set.
+    let mut all_values = e.root_values.clone();
+    all_values.extend(e.ext_values.clone());
+    for v in &all_values {
+        let named = &v.value;
+        if let Some(NamedValue::Number(ref s)) = named {
+            let parsed = s.parse::<i128>().unwrap();
+            values.insert(parsed);
+        }
+    }
+
+    // For all the ASN.1 that we are supporting this is true, so let's just implement this much and
+    // go ahead.
+    // TODO: Support all crazy Enumerations.
+    if values.is_empty() {
+        let mut value = 0_i128;
+        for v in &all_values {
+            base.named_values.insert(v.name.clone(), value);
+            values.insert(value);
+
+            value += 1;
+        }
+    }
+
+    // FIXME: Following is hard-coded
+    base.signed = false;
+    base.bytes = 1;
+
+    let _ = base.values.replace(values);
+
     Ok(base)
 }

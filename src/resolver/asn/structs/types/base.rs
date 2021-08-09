@@ -39,11 +39,11 @@ impl Default for Asn1ResolvedInteger {
 
 #[derive(Debug, Clone)]
 pub(crate) struct Asn1ResolvedEnumerated {
-    bytes: u8,
-    signed: bool,
-    values: Option<BTreeSet<i128>>,
-    excepts: Option<BTreeSet<i128>>,
-    named_values: HashMap<String, i128>,
+    pub(crate) bytes: u8,
+    pub(crate) signed: bool,
+    pub(crate) values: Option<BTreeSet<i128>>,
+    pub(crate) excepts: Option<BTreeSet<i128>>,
+    pub(crate) named_values: HashMap<String, i128>,
 }
 
 impl Default for Asn1ResolvedEnumerated {

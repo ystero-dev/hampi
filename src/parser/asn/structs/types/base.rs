@@ -1,7 +1,7 @@
 //! Handling of Integer Type
 
 #[derive(Debug, Clone)]
-pub enum NamedValue {
+pub(crate) enum NamedValue {
     Number(String),
     ValueRef(String),
 }
