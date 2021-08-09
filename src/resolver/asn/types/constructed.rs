@@ -72,7 +72,7 @@ fn resolve_sequence_type(
     for c in &sequence.root_components {
         let ty = match resolve_type(&c.component.ty, resolver) {
             Ok(ty) => ty,
-            Err(_) => {
+            Err(_e) => {
                 return resolve_sequence_classfield_components(sequence, resolver);
             }
         };

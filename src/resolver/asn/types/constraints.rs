@@ -94,6 +94,26 @@ impl Asn1Constraint {
     fn is_simple_table_constraint(&self) -> bool {
         true
     }
+
+    // Returns whether the constraint is a 'size' constraint.
+    pub(crate) fn is_size_constraint(&self) -> bool {
+        if let Self::Subtype(ref e) = self {
+            let iset = e.get_inner_elements();
+            if iset.len() != 1 {
+                false
+            } else {
+                match iset[0].elements[0] {
+                    Elements::Subtype(ref s) => match s {
+                        SubtypeElements::SizeConstraint(..) => true,
+                        _ => false,
+                    },
+                    _ => false,
+                }
+            }
+        } else {
+            false
+        }
+    }
 }
 
 impl ElementSet {
@@ -266,6 +286,13 @@ impl SubtypeElements {
                     start: lower_value,
                     end: upper_value + 1,
                 });
+            }
+            Self::SizeConstraint(ref elems) => {
+                let mut size_elements = elems.get_integer_valueset(resolver)?;
+                value_set.append(&mut size_elements.root_values);
+                if size_elements.additional_values.is_some() {
+                    value_set.append(&mut size_elements.additional_values.unwrap());
+                }
             }
             _ => {
                 return Err(constraint_error!(

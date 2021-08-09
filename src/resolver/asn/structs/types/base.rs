@@ -65,10 +65,14 @@ pub(crate) struct Asn1ResolvedBitString;
 pub(crate) struct Asn1ResolvedBoolean;
 
 #[derive(Debug, Default, Clone)]
-pub(crate) struct Asn1ResolvedOctetString;
+pub(crate) struct Asn1ResolvedOctetString {
+    pub(crate) size: Option<Asn1ConstraintValueSet>,
+}
 
 #[derive(Debug, Default, Clone)]
-pub(crate) struct Asn1ResolvedCharacterString;
+pub(crate) struct Asn1ResolvedCharacterString {
+    pub(crate) size: Option<Asn1ConstraintValueSet>,
+}
 
 #[derive(Debug, Default, Clone)]
 pub(crate) struct Asn1ResolvedObjectIdentifier;

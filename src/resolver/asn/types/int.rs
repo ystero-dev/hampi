@@ -61,7 +61,9 @@ fn resolve_reference_type(
                     ))
                 }
             }
-            Asn1TypeReference::ClassField { .. } => Err(resolve_error!("Not supported yet!")),
+            Asn1TypeReference::ClassField { .. } => Err(resolve_error!(
+                "Supported Inside Constructed Sequence Type."
+            )),
         }
     } else {
         Err(resolve_error!("Expected Reference Type. Found '{:#?}'", ty))

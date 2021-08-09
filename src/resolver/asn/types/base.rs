@@ -1,5 +1,8 @@
-use crate::error::Error;
+//! Handling of Resolution of 'base' types.
+
 use std::collections::BTreeSet;
+
+use crate::error::Error;
 
 use crate::parser::asn::structs::types::{
     base::{Asn1TypeEnumerated, Asn1TypeInteger, NamedValue},
@@ -66,15 +69,12 @@ pub(crate) fn resolve_base_type(
                 let resolved = ResolvedBaseType::Boolean(Asn1ResolvedBoolean::default());
                 Ok(resolved)
             }
-            Asn1BuiltinType::OctetString => {
-                let resolved = ResolvedBaseType::OctetString(Asn1ResolvedOctetString::default());
-                Ok(resolved)
-            }
-            Asn1BuiltinType::CharacterString => {
-                let resolved =
-                    ResolvedBaseType::CharacterString(Asn1ResolvedCharacterString::default());
-                Ok(resolved)
-            }
+            Asn1BuiltinType::OctetString => Ok(ResolvedBaseType::OctetString(
+                resolve_octet_string(ty, resolver)?,
+            )),
+            Asn1BuiltinType::CharacterString => Ok(ResolvedBaseType::CharacterString(
+                resolve_character_string(ty, resolver)?,
+            )),
             Asn1BuiltinType::ObjectIdentifier => {
                 let resolved =
                     ResolvedBaseType::ObjectIdentifier(Asn1ResolvedObjectIdentifier::default());
@@ -193,5 +193,53 @@ fn resolve_enumerated(
 
     let _ = base.values.replace(values);
 
+    Ok(base)
+}
+
+fn resolve_character_string(
+    ty: &Asn1Type,
+    resolver: &Resolver,
+) -> Result<Asn1ResolvedCharacterString, Error> {
+    let mut base = Asn1ResolvedCharacterString::default();
+
+    if ty.constraints.is_some() {
+        let constraints = ty.constraints.as_ref().unwrap();
+        if !constraints.is_empty() {
+            let constraint = &constraints[0];
+
+            if constraint.is_size_constraint() {
+                let value_set = constraint.get_integer_valueset(resolver)?;
+                let _ = base.size.replace(value_set);
+            } else {
+                return Err(constraint_error!(
+                    "Expected a Size Constraint, Found '{:#?}'",
+                    constraint
+                ));
+            }
+        }
+    }
+    eprintln!("Base: {:#?}", base);
+    Ok(base)
+}
+
+fn resolve_octet_string(
+    ty: &Asn1Type,
+    resolver: &Resolver,
+) -> Result<Asn1ResolvedOctetString, Error> {
+    let mut base = Asn1ResolvedOctetString::default();
+
+    if ty.constraints.is_some() {
+        let constraints = ty.constraints.as_ref().unwrap();
+        if !constraints.is_empty() {
+            let constraint = &constraints[0];
+
+            if constraint.is_size_constraint() {
+                let value_set = constraint.get_integer_valueset(resolver)?;
+                let _ = base.size.replace(value_set);
+            } else {
+                // The constraint is a 'CONTAINING' Constraint, TODO: Handle this.
+            }
+        }
+    }
     Ok(base)
 }
