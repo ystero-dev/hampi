@@ -51,8 +51,7 @@ pub(crate) fn resolve_base_type(
     if let Asn1TypeKind::Builtin(ref kind) = ty.kind {
         match kind {
             Asn1BuiltinType::Integer(ref i) => {
-                let mut resolved = Asn1ResolvedInteger::default();
-                resolve_integer(&mut resolved, ty, i, resolver)?;
+                let resolved = resolve_integer(ty, i, resolver)?;
                 Ok(ResolvedBaseType::Integer(resolved))
             }
             Asn1BuiltinType::Enumerated(ref _i) => {
@@ -91,18 +90,20 @@ pub(crate) fn resolve_base_type(
     }
 }
 
+// Resolves the parsed integer to it's Resolved variant with right bit width and signedness.
 fn resolve_integer(
-    base: &mut Asn1ResolvedInteger,
     ty: &Asn1Type,
     i: &Asn1TypeInteger,
     resolver: &mut Resolver,
-) -> Result<(), Error> {
+) -> Result<Asn1ResolvedInteger, Error> {
+    let mut base = Asn1ResolvedInteger::default();
+
     if ty.constraints.is_none() {
-        return Ok(());
+        return Ok(base);
     } else {
         let constraints = ty.constraints.as_ref().unwrap();
         if constraints.is_empty() {
-            return Ok(());
+            return Ok(base);
         }
     }
 
@@ -150,5 +151,5 @@ fn resolve_integer(
     }
 
     let _ = base.resolved_constraints.replace(value_set);
-    Ok(())
+    Ok(base)
 }
