@@ -58,17 +58,28 @@ impl Default for Asn1ResolvedEnumerated {
     }
 }
 
+// A Resolved `BIT STRING` representation. Normally only the `SIZE` Constraint needs to be
+// resolved. If optional, `named_bits` are present, we maintain those in the map below.
 #[derive(Debug, Default, Clone)]
-pub(crate) struct Asn1ResolvedBitString;
+pub(crate) struct Asn1ResolvedBitString {
+    pub(crate) size: Option<Asn1ConstraintValueSet>,
 
+    // We support only up to 128 named bits, if more than that is required, change this to appropriate. value
+    pub(crate) named_values: HashMap<String, u8>,
+}
+
+// Just an empty structure for Resolved `BOOLEAN` type.
 #[derive(Debug, Default, Clone)]
 pub(crate) struct Asn1ResolvedBoolean;
 
+// A structure representing a Resolved `OCTET STRING`. `SIZE` Constraint is resolved as well. The
+// `CONTAINING` Constraint is not resolved.
 #[derive(Debug, Default, Clone)]
 pub(crate) struct Asn1ResolvedOctetString {
     pub(crate) size: Option<Asn1ConstraintValueSet>,
 }
 
+// A structure representing a Resolved `CharacterString`. `SIZE` Constraint is resolved as well. The
 #[derive(Debug, Default, Clone)]
 pub(crate) struct Asn1ResolvedCharacterString {
     pub(crate) size: Option<Asn1ConstraintValueSet>,

@@ -1,11 +1,11 @@
 //! Handling of Resolution of 'base' types.
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeSet, HashMap};
 
 use crate::error::Error;
 
 use crate::parser::asn::structs::types::{
-    base::{Asn1TypeEnumerated, Asn1TypeInteger, NamedValue},
+    base::{Asn1TypeBitString, Asn1TypeEnumerated, Asn1TypeInteger, NamedValue},
     Asn1BuiltinType, Asn1Type, Asn1TypeKind, Asn1TypeReference,
 };
 
@@ -61,10 +61,9 @@ pub(crate) fn resolve_base_type(
             Asn1BuiltinType::Enumerated(ref e) => {
                 Ok(ResolvedBaseType::Enum(resolve_enumerated(ty, e, resolver)?))
             }
-            Asn1BuiltinType::BitString(ref _i) => {
-                let resolved = ResolvedBaseType::BitString(Asn1ResolvedBitString::default());
-                Ok(resolved)
-            }
+            Asn1BuiltinType::BitString(ref b) => Ok(ResolvedBaseType::BitString(
+                resolve_bit_string(ty, b, resolver)?,
+            )),
             Asn1BuiltinType::Boolean => {
                 let resolved = ResolvedBaseType::Boolean(Asn1ResolvedBoolean::default());
                 Ok(resolved)
@@ -218,7 +217,6 @@ fn resolve_character_string(
             }
         }
     }
-    eprintln!("Base: {:#?}", base);
     Ok(base)
 }
 
@@ -240,6 +238,40 @@ fn resolve_octet_string(
                 // The constraint is a 'CONTAINING' Constraint, TODO: Handle this.
             }
         }
+    }
+    Ok(base)
+}
+
+fn resolve_bit_string(
+    ty: &Asn1Type,
+    b: &Asn1TypeBitString,
+    resolver: &Resolver,
+) -> Result<Asn1ResolvedBitString, Error> {
+    let mut base = Asn1ResolvedBitString::default();
+
+    if ty.constraints.is_some() {
+        let constraints = ty.constraints.as_ref().unwrap();
+        if !constraints.is_empty() {
+            let constraint = &constraints[0];
+
+            if constraint.is_size_constraint() {
+                let value_set = constraint.get_integer_valueset(resolver)?;
+                let _ = base.size.replace(value_set);
+            } else {
+                // The constraint is a 'CONTAINING' Constraint, TODO: Handle this.
+            }
+        }
+    }
+
+    if b.named_bits.is_some() {
+        let mut named_values = HashMap::new();
+        for nb in b.named_bits.as_ref().unwrap() {
+            if let NamedValue::Number(ref v) = nb.1 {
+                let parsed = v.parse::<u8>().unwrap(); // Let it panic if it does not fit in u8.
+                named_values.insert(nb.0.clone(), parsed);
+            }
+        }
+        base.named_values.extend(named_values);
     }
     Ok(base)
 }
