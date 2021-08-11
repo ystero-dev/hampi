@@ -13,6 +13,9 @@ readme = "README.md"
 [dependencies]
 lazy_static = { version = "1.4.0" }
 topological-sort = { version = "0.1" }
+proc-macro2 = { version = "1.0" }
+quote = { version = "1.0" }
+heck = { version = "0.3" }
 
 
 [[bin]]

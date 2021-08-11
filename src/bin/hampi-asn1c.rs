@@ -28,5 +28,8 @@ fn main() -> io::Result<()> {
         }
     }
     compiler.resolve_modules()?;
+
+    compiler.generate()?;
+
     Ok(())
 }

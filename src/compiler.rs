@@ -4,11 +4,16 @@ use std::collections::HashMap;
 
 use topological_sort::TopologicalSort;
 
+use proc_macro2::TokenStream;
+
 use crate::error::Error;
 
 use crate::parser::asn::structs::module::Asn1Module;
 
+use crate::generator::Generator;
 use crate::resolver::Resolver;
+
+use crate::resolver::asn::structs::types::{base::ResolvedBaseType, Asn1ResolvedType};
 
 /// ASN.1 Compiler Struct.
 ///
@@ -21,7 +26,11 @@ pub struct Asn1Compiler {
     // within the modules.
     modules: HashMap<String, Asn1Module>,
 
+    // Holds the 'Resolver' that is used for 'resolv'ing definitions.
     resolver: Resolver,
+
+    // Holds the 'Generator' that is used for 'generate'ing the code for the 'resolved types'.
+    generator: Generator,
 }
 
 impl Asn1Compiler {
@@ -30,6 +39,7 @@ impl Asn1Compiler {
         Asn1Compiler {
             modules: HashMap::new(),
             resolver: Resolver::new(),
+            generator: Generator::new("ngap"), // FIXME: Hard coded
         }
     }
 
@@ -52,6 +62,22 @@ impl Asn1Compiler {
     pub fn resolve_modules(&mut self) -> Result<(), Error> {
         self.resolve_imports()?;
         self.resolve_definitions()
+    }
+
+    /// Generate the code
+    pub fn generate(&self) -> Result<(), Error> {
+        let mut tokens = TokenStream::new();
+        for (k, t) in self.resolver.get_resolved_types() {
+            match t {
+                Asn1ResolvedType::Base(ResolvedBaseType::Integer(ref i)) => {
+                    tokens.extend(i.generate(k, &self.generator)?);
+                }
+                _ => {}
+            }
+        }
+        eprintln!("{}", tokens);
+
+        Ok(())
     }
 
     fn resolve_imports(&self) -> Result<(), Error> {
@@ -111,6 +137,7 @@ impl Asn1Compiler {
             self.resolver.parameterized_defs.keys()
         );
         eprintln!("Object Classes: {:#?}", self.resolver.classes.keys());
+
         Ok(())
     }
 }

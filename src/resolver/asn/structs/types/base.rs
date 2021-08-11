@@ -20,7 +20,7 @@ pub(crate) enum ResolvedBaseType {
 // Information from this structure can be directly used for code generation.
 #[derive(Debug, Clone)]
 pub(crate) struct Asn1ResolvedInteger {
-    pub(crate) bytes: u8,
+    pub(crate) bits: u8,
     pub(crate) signed: bool,
     pub(crate) resolved_constraints: Option<Asn1ConstraintValueSet>,
     pub(crate) named_values: Option<HashMap<String, i128>>,
@@ -29,7 +29,7 @@ pub(crate) struct Asn1ResolvedInteger {
 impl Default for Asn1ResolvedInteger {
     fn default() -> Self {
         Self {
-            bytes: 8,
+            bits: 64,
             signed: true,
             named_values: None,
             resolved_constraints: None,
