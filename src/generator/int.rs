@@ -12,7 +12,7 @@ use crate::resolver::asn::structs::types::Asn1ResolvedType;
 #[derive(Debug)]
 pub(crate) struct Generator {
     // Generated Tokens for the module.
-    tokens: TokenStream,
+    items: Vec<TokenStream>,
 
     // Rust module name.
     name: String,
@@ -24,7 +24,7 @@ pub(crate) struct Generator {
 impl Generator {
     pub(crate) fn new(name: &str) -> Self {
         Generator {
-            tokens: TokenStream::new(),
+            items: vec![],
             name: name.to_string(),
             counter: 1,
         }
@@ -33,15 +33,27 @@ impl Generator {
     // Generates the code using the information from the `Resolver`. Returns a String
     // containing all the code (which is basically a `format!` of the `TokenStream`.
     pub(crate) fn generate(&mut self, resolver: &Resolver) -> Result<String, Error> {
+        // FIXME: Not sure how to make sure the crates defined here are a dependency.
+        // May be can just do with documenting it.
+        let use_tokens = self.generate_use_tokens();
+        self.items.push(use_tokens);
+
         for (k, t) in resolver.get_resolved_types() {
             match t {
                 Asn1ResolvedType::Base(ref b) => self
-                    .tokens
-                    .extend(Asn1ResolvedType::generate_for_base_type(k, b, self)?),
+                    .items
+                    .push(Asn1ResolvedType::generate_for_base_type(k, b, self)?),
                 _ => {}
             }
         }
-        Ok(format!("{}", self.tokens))
+        Ok(format!(
+            "{}",
+            self.items
+                .iter()
+                .map(|t| t.to_string())
+                .collect::<Vec<String>>()
+                .join("\n\n")
+        ))
     }
 
     pub(crate) fn to_type_ident(&self, name: &str) -> Ident {
@@ -89,6 +101,13 @@ impl Generator {
                 64 => Literal::i64_suffixed(value as i64),
                 _ => Literal::i64_suffixed(value as i64),
             }
+        }
+    }
+
+    fn generate_use_tokens(&self) -> TokenStream {
+        quote! {
+            use bitvec::vec::BitVec;
+            use bitvec::order::Msb0;
         }
     }
 }

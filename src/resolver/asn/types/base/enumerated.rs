@@ -1,4 +1,5 @@
-//! Functionality for handling Resolved ASN.1 Enumerated Types
+//! Functionality for handling Resolved ASN.1 ENUMERATED Types
+
 use std::collections::BTreeSet;
 
 use crate::error::Error;

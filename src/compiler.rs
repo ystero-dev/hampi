@@ -72,7 +72,7 @@ impl Asn1Compiler {
                 .map_err(|e| resolve_error!("{:#?}", e.1))?;
 
         eprintln!("Summary: {:#?}", summary);
-        eprintln!("Filemap: {}", filemap[0].1);
+        println!("{}", filemap[0].1);
         Ok(())
     }
 

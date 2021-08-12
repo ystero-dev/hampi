@@ -1,6 +1,18 @@
+//! Handling of Code Generation for 'Built-in' Types
+
 mod integer;
 
 mod enumerated;
+
+mod bitstring;
+
+mod boolean;
+
+mod octetstring;
+
+mod charstring;
+
+// TODO: NULL, OBJECT IDENTIFIER
 
 use proc_macro2::TokenStream;
 
@@ -17,6 +29,10 @@ impl Asn1ResolvedType {
         match base {
             ResolvedBaseType::Integer(ref i) => i.generate(name, generator),
             ResolvedBaseType::Enum(ref e) => e.generate(name, generator),
+            ResolvedBaseType::BitString(ref b) => b.generate(name, generator),
+            ResolvedBaseType::Boolean(ref b) => b.generate(name, generator),
+            ResolvedBaseType::OctetString(ref o) => o.generate(name, generator),
+            ResolvedBaseType::CharacterString(ref c) => c.generate(name, generator),
             _ => Ok(TokenStream::new()),
         }
     }

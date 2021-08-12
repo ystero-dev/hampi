@@ -1,14 +1,47 @@
 use crate::error::Error;
 
-use crate::parser::asn::structs::types::{Asn1Type, Asn1TypeKind, Asn1TypeReference};
+use crate::parser::asn::structs::types::{
+    Asn1BuiltinType, Asn1Type, Asn1TypeKind, Asn1TypeReference,
+};
 
 use crate::resolver::{
     asn::{
-        structs::{defs::Asn1ResolvedDefinition, types::Asn1ResolvedType},
+        structs::{
+            defs::Asn1ResolvedDefinition,
+            types::{constraints::Asn1ConstraintValueSet, Asn1ResolvedType},
+        },
         types::{base::resolve_base_type, constructed::resolve_constructed_type},
     },
     Resolver,
 };
+
+impl Asn1Type {
+    // Returns the Integer ValueSet for a given Type.
+    //
+    // If the type is a `Base` type, it should be INTEGER or it's an Error. If the `Type` is a
+    // Referenced Type, it should be possible to 'resolve' the Reference to a proper
+    // `Asn1ConstraintValueSet` else it's an error, we'll try to 'recursively' 'resolve' till we
+    // get to a `Base` Type.
+    pub(crate) fn get_integer_valueset_from_constraint(
+        &self,
+        resolver: &Resolver,
+    ) -> Result<Asn1ConstraintValueSet, Error> {
+        let kind = &self.kind;
+        match kind {
+            Asn1TypeKind::Builtin(Asn1BuiltinType::Integer(..)) => {
+                let constraint = &self.constraints.as_ref().unwrap()[0];
+                constraint.get_integer_valueset(resolver)
+            }
+            Asn1TypeKind::Reference(Asn1TypeReference::Reference(ref _r)) => {
+                Err(constraint_error!("Not Implemented!"))
+            }
+            _ => Err(constraint_error!(
+                "The Type '{:#?}' is not of a BuiltIn Or a Referenced Kind!",
+                self,
+            )),
+        }
+    }
+}
 
 pub(crate) fn resolve_type(
     ty: &Asn1Type,

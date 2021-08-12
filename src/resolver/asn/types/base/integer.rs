@@ -1,4 +1,4 @@
-//! Functionality for handling Resolved ASN.1 Integer Types
+//! Functionality for handling Resolved ASN.1 INTEGER Types
 
 use crate::error::Error;
 
