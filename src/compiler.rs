@@ -2,6 +2,7 @@
 //! Structs related to ASN.1 Compiler
 use std::collections::HashMap;
 
+use ::rustfmt::{config::Config, format_input, Input};
 use topological_sort::TopologicalSort;
 
 use crate::error::Error;
@@ -62,7 +63,16 @@ impl Asn1Compiler {
 
     /// Generate the code
     pub fn generate(&mut self) -> Result<(), Error> {
-        eprintln!("{}", &mut self.generator.generate(&self.resolver)?);
+        // eprintln!("{}", &mut self.generator.generate(&self.resolver)?);
+
+        let input = Input::Text(self.generator.generate(&self.resolver)?);
+
+        let (summary, filemap, _) =
+            format_input(input, &Config::default(), Some(&mut std::io::stdout()))
+                .map_err(|e| resolve_error!("{:#?}", e.1))?;
+
+        eprintln!("Summary: {:#?}", summary);
+        eprintln!("Filemap: {}", filemap[0].1);
         Ok(())
     }
 
