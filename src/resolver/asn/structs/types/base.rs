@@ -39,7 +39,7 @@ impl Default for Asn1ResolvedInteger {
 
 #[derive(Debug, Clone)]
 pub(crate) struct Asn1ResolvedEnumerated {
-    pub(crate) bytes: u8,
+    pub(crate) bits: u8,
     pub(crate) signed: bool,
     pub(crate) values: Option<BTreeSet<i128>>,
     pub(crate) excepts: Option<BTreeSet<i128>>,
@@ -49,7 +49,7 @@ pub(crate) struct Asn1ResolvedEnumerated {
 impl Default for Asn1ResolvedEnumerated {
     fn default() -> Self {
         Self {
-            bytes: 8,
+            bits: 8,
             signed: true,
             values: None,
             excepts: None,

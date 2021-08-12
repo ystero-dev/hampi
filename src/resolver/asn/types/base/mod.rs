@@ -2,12 +2,14 @@
 
 mod integer;
 
-use std::collections::{BTreeSet, HashMap};
+mod enumerated;
+
+use std::collections::HashMap;
 
 use crate::error::Error;
 
 use crate::parser::asn::structs::types::{
-    base::{Asn1TypeBitString, Asn1TypeEnumerated, NamedValue},
+    base::{Asn1TypeBitString, NamedValue},
     Asn1BuiltinType, Asn1Type, Asn1TypeKind, Asn1TypeReference,
 };
 
@@ -60,9 +62,9 @@ pub(crate) fn resolve_base_type(
             Asn1BuiltinType::Integer(ref i) => Ok(ResolvedBaseType::Integer(
                 Asn1ResolvedInteger::resolve_integer(ty, i, resolver)?,
             )),
-            Asn1BuiltinType::Enumerated(ref e) => {
-                Ok(ResolvedBaseType::Enum(resolve_enumerated(ty, e, resolver)?))
-            }
+            Asn1BuiltinType::Enumerated(ref e) => Ok(ResolvedBaseType::Enum(
+                Asn1ResolvedEnumerated::resolve_enumerated(ty, e, resolver)?,
+            )),
             Asn1BuiltinType::BitString(ref b) => Ok(ResolvedBaseType::BitString(
                 resolve_bit_string(ty, b, resolver)?,
             )),
@@ -89,50 +91,6 @@ pub(crate) fn resolve_base_type(
     } else {
         Err(resolve_error!("Expected Base Type. Found '{:#?}'", ty))
     }
-}
-
-fn resolve_enumerated(
-    _ty: &Asn1Type,
-    e: &Asn1TypeEnumerated,
-    _resolver: &Resolver,
-) -> Result<Asn1ResolvedEnumerated, Error> {
-    let mut base = Asn1ResolvedEnumerated::default();
-
-    // FIXME: TODO Constraints
-
-    let mut values = BTreeSet::<i128>::new();
-
-    // First get all the 'known' values from the Enumerated type into the `values` Set.
-    let mut all_values = e.root_values.clone();
-    all_values.extend(e.ext_values.clone());
-    for v in &all_values {
-        let named = &v.value;
-        if let Some(NamedValue::Number(ref s)) = named {
-            let parsed = s.parse::<i128>().unwrap();
-            values.insert(parsed);
-        }
-    }
-
-    // For all the ASN.1 that we are supporting this is true, so let's just implement this much and
-    // go ahead.
-    // TODO: Support all crazy Enumerations.
-    if values.is_empty() {
-        let mut value = 0_i128;
-        for v in &all_values {
-            base.named_values.insert(v.name.clone(), value);
-            values.insert(value);
-
-            value += 1;
-        }
-    }
-
-    // FIXME: Following is hard-coded
-    base.signed = false;
-    base.bytes = 1;
-
-    let _ = base.values.replace(values);
-
-    Ok(base)
 }
 
 fn resolve_character_string(
