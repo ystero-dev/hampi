@@ -4,16 +4,12 @@ use std::collections::HashMap;
 
 use topological_sort::TopologicalSort;
 
-use proc_macro2::TokenStream;
-
 use crate::error::Error;
 
 use crate::parser::asn::structs::module::Asn1Module;
 
 use crate::generator::Generator;
 use crate::resolver::Resolver;
-
-use crate::resolver::asn::structs::types::{base::ResolvedBaseType, Asn1ResolvedType};
 
 /// ASN.1 Compiler Struct.
 ///
@@ -65,18 +61,8 @@ impl Asn1Compiler {
     }
 
     /// Generate the code
-    pub fn generate(&self) -> Result<(), Error> {
-        let mut tokens = TokenStream::new();
-        for (k, t) in self.resolver.get_resolved_types() {
-            match t {
-                Asn1ResolvedType::Base(ResolvedBaseType::Integer(ref i)) => {
-                    tokens.extend(i.generate(k, &self.generator)?);
-                }
-                _ => {}
-            }
-        }
-        eprintln!("{}", tokens);
-
+    pub fn generate(&mut self) -> Result<(), Error> {
+        eprintln!("{}", &mut self.generator.generate(&self.resolver)?);
         Ok(())
     }
 
