@@ -12,13 +12,16 @@ use crate::resolver::asn::structs::types::Asn1ResolvedType;
 #[derive(Debug)]
 pub(crate) struct Generator {
     // Generated Tokens for the module.
-    items: Vec<TokenStream>,
+    pub(crate) items: Vec<TokenStream>,
 
     // Rust module name.
-    name: String,
+    pub(crate) name: String,
 
     // A counter to uniquify certain names
-    counter: usize,
+    pub(crate) counter: usize,
+
+    // Auxillary Items: These are structs/that are referenced inside constructed type.
+    pub(crate) aux_items: Vec<TokenStream>,
 }
 
 impl Generator {
@@ -27,6 +30,7 @@ impl Generator {
             items: vec![],
             name: name.to_string(),
             counter: 1,
+            aux_items: vec![],
         }
     }
 
@@ -38,14 +42,16 @@ impl Generator {
         let use_tokens = self.generate_use_tokens();
         self.items.push(use_tokens);
 
+        let mut items = vec![];
         for (k, t) in resolver.get_resolved_types() {
-            match t {
-                Asn1ResolvedType::Base(ref b) => self
-                    .items
-                    .push(Asn1ResolvedType::generate_for_base_type(k, b, self)?),
-                _ => {}
+            let item = Asn1ResolvedType::generate_for_type(k, t, self)?;
+            if item.is_some() {
+                items.push(item.unwrap())
             }
         }
+
+        self.items.extend(items);
+
         Ok(format!(
             "{}",
             self.items
@@ -102,6 +108,12 @@ impl Generator {
                 _ => Literal::i64_suffixed(value as i64),
             }
         }
+    }
+
+    pub(crate) fn to_unique_name(&mut self, name: &str) -> String {
+        self.counter += 1;
+
+        format!("{} {}", name, self.counter)
     }
 
     fn generate_use_tokens(&self) -> TokenStream {
