@@ -40,7 +40,7 @@ impl Asn1ResolvedEnumerated {
         if values.is_empty() {
             let mut value = 0_i128;
             for v in &all_values {
-                base.named_values.insert(v.name.clone(), value);
+                base.named_values.push((v.name.clone(), value));
                 values.insert(value);
 
                 value += 1;

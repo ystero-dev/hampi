@@ -1,6 +1,6 @@
 //! Resolver Struct and it's implementation
 
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 
 use crate::error::Error;
 
@@ -13,7 +13,7 @@ use crate::resolver::asn::defs::resolve_definition;
 #[derive(Debug, Clone)]
 pub(crate) struct Resolver {
     // Resolved definitions
-    pub(crate) resolved_defs: HashMap<String, Asn1ResolvedDefinition>,
+    pub(crate) resolved_defs: BTreeMap<String, Asn1ResolvedDefinition>,
 
     // Unresolved Parameterized Definitions used by individual 'Type's to resolve themselves.
     pub(crate) parameterized_defs: HashMap<String, Asn1Definition>,
@@ -25,7 +25,7 @@ pub(crate) struct Resolver {
 impl Resolver {
     pub fn new() -> Self {
         Resolver {
-            resolved_defs: HashMap::new(),
+            resolved_defs: BTreeMap::new(),
             parameterized_defs: HashMap::new(),
             classes: HashMap::new(),
         }

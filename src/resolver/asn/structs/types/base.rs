@@ -43,7 +43,7 @@ pub(crate) struct Asn1ResolvedEnumerated {
     pub(crate) signed: bool,
     pub(crate) values: Option<BTreeSet<i128>>,
     pub(crate) excepts: Option<BTreeSet<i128>>,
-    pub(crate) named_values: HashMap<String, i128>,
+    pub(crate) named_values: Vec<(String, i128)>,
 }
 
 impl Default for Asn1ResolvedEnumerated {
@@ -53,7 +53,7 @@ impl Default for Asn1ResolvedEnumerated {
             signed: true,
             values: None,
             excepts: None,
-            named_values: HashMap::new(),
+            named_values: vec![],
         }
     }
 }
