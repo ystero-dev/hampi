@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 pub(crate) mod constructed;
 use constructed::ResolvedConstructedType;
@@ -13,7 +13,7 @@ pub(crate) mod constraints;
 #[derive(Debug, Clone)]
 pub(crate) struct ResolvedSetType {
     pub(crate) setref: String,
-    pub(crate) types: HashMap<String, Asn1ResolvedType>,
+    pub(crate) types: BTreeMap<String, Asn1ResolvedType>,
 }
 
 #[derive(Debug, Clone)]

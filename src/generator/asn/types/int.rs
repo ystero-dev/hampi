@@ -1,8 +1,8 @@
-#![allow(dead_code)]
 //! Handling top level Generator code for a Resolved Type. Based on the individual type variant,
 //! the respective functions are called.
 
 use proc_macro2::{Ident, TokenStream};
+use quote::quote;
 
 use crate::error::Error;
 use crate::generator::Generator;
@@ -17,6 +17,7 @@ impl Asn1ResolvedType {
         match ty {
             Asn1ResolvedType::Base(ref b) => Ok(Some(b.generate_for_base_type(name, gen)?)),
             Asn1ResolvedType::Constructed(ref c) => Ok(Some(c.generate(name, gen)?)),
+            Asn1ResolvedType::Set(ref s) => Ok(Some(s.generate(name, gen)?)),
             _ => Ok(None),
         }
     }
@@ -46,10 +47,50 @@ impl Asn1ResolvedType {
 }
 
 impl ResolvedSetType {
+    pub(crate) fn generate(
+        &self,
+        name: &str,
+        generator: &mut Generator,
+    ) -> Result<TokenStream, Error> {
+        let ty_ident = generator.to_type_ident(name);
+        let ty_elements = self.generate_aux_types(generator)?;
+
+        Ok(quote! {
+            pub enum #ty_ident {
+                #ty_elements
+            }
+        })
+    }
+
     pub(crate) fn generate_ident_and_aux_types_for_set(
         &self,
-        _gen: &mut Generator,
+        generator: &mut Generator,
     ) -> Result<Ident, Error> {
-        Err(resolve_error!("Not Implemented!"))
+        let ty_ident = generator.to_type_ident(&self.setref);
+
+        let ty_elements = self.generate_aux_types(generator)?;
+        let set_ty = quote! {
+            pub enum #ty_ident {
+                #ty_elements
+            }
+        };
+
+        generator.aux_items.push(set_ty);
+
+        Ok(ty_ident)
+    }
+
+    fn generate_aux_types(&self, generator: &mut Generator) -> Result<TokenStream, Error> {
+        let mut variant_tokens = TokenStream::new();
+        for (name, ty) in &self.types {
+            let ty_ident = Asn1ResolvedType::generate_name_maybe_aux_type(ty, generator)?;
+            let variant_ident = generator.to_type_ident(name);
+
+            let variant_token = quote! {
+                #variant_ident(#ty_ident),
+            };
+            variant_tokens.extend(variant_token);
+        }
+        Ok(variant_tokens)
     }
 }

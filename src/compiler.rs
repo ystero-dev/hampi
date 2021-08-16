@@ -65,7 +65,8 @@ impl Asn1Compiler {
     pub fn generate(&mut self) -> Result<(), Error> {
         // eprintln!("{}", &mut self.generator.generate(&self.resolver)?);
 
-        let input = Input::Text(self.generator.generate(&self.resolver)?);
+        let input_text = self.generator.generate(&self.resolver)?;
+        let input = Input::Text(input_text);
 
         let (summary, filemap, _) =
             format_input(input, &Config::default(), Some(&mut std::io::stdout()))

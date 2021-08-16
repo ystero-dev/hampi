@@ -56,6 +56,14 @@ impl ObjectClassFieldSpec {
             Self::Type { id, .. } | Self::FixedTypeValue { id, .. } => id.clone(),
         }
     }
+
+    fn with_syntax(&self) -> Option<String> {
+        match self {
+            Self::Type { with_syntax, .. } | Self::FixedTypeValue { with_syntax, .. } => {
+                with_syntax.clone()
+            }
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -87,6 +95,13 @@ impl Asn1ObjectClass {
             }
         }
         None
+    }
+
+    pub(crate) fn get_with_syntax_words(&self) -> Vec<String> {
+        self.fields
+            .values()
+            .filter_map(|v| v.with_syntax())
+            .collect::<Vec<String>>()
     }
 }
 

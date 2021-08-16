@@ -453,7 +453,16 @@ pub(crate) fn parse_object_from_class(
     let tokens = tokenize(reader)?;
     let mut consumed = 0;
     let object_tokens = &tokens[1..tokens.len() - 1];
-    let word_tokens = &mut object_tokens.split(|t| !t.is_with_syntax_word());
+
+    // We are splitting the tokens by words from WITH SYNTAX. This will use any word that's not
+    // there in WITH SYNTAX. This is a bit complicated because we've to also worry about WITH
+    // SYNTAX words that can be more than a single WORD.
+    let word_tokens = &mut object_tokens.split(|t| {
+        !class
+            .get_with_syntax_words()
+            .iter()
+            .any(|f| f.split_whitespace().any(|w| &t.text == w))
+    });
     let mut fields = HashMap::new();
     loop {
         let words = word_tokens.next();

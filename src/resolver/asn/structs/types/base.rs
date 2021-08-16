@@ -12,6 +12,7 @@ pub(crate) enum ResolvedBaseType {
     OctetString(Asn1ResolvedOctetString),
     CharacterString(Asn1ResolvedCharacterString),
     ObjectIdentifier(Asn1ResolvedObjectIdentifier),
+    Null,
 }
 
 // An intermediate representation for a Resolved Integer Type

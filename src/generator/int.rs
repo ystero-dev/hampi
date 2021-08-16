@@ -51,8 +51,6 @@ impl Generator {
             }
         }
 
-        eprintln!("aux_items: {:#?})", self.aux_items);
-
         for aux in &self.aux_items {
             items.push(aux.clone())
         }

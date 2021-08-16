@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 use crate::error::Error;
 
@@ -142,7 +142,7 @@ fn resolve_sequence_classfield_components(
             set_reference
         ));
     }
-    let mut types = HashMap::new();
+    let mut types = BTreeMap::new();
     if let Some(Asn1ResolvedDefinition::ObjectSet(ref set)) = objects {
         let objects = &set.objects;
         let resolved_components = resolve_seq_components_for_objects(&all_components, objects)?;
