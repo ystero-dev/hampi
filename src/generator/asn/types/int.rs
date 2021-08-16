@@ -16,9 +16,11 @@ impl Asn1ResolvedType {
     ) -> Result<Option<TokenStream>, Error> {
         match ty {
             Asn1ResolvedType::Base(ref b) => Ok(Some(b.generate_for_base_type(name, gen)?)),
+            Asn1ResolvedType::Constructed(ref c) => Ok(Some(c.generate(name, gen)?)),
             _ => Ok(None),
         }
     }
+
     pub(crate) fn generate_name_maybe_aux_type(
         ty: &Asn1ResolvedType,
         generator: &mut Generator,

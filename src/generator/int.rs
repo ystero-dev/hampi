@@ -1,7 +1,8 @@
 //! Code Generation module
 
-use heck::{CamelCase, ShoutySnakeCase};
+use heck::{CamelCase, ShoutySnakeCase, SnakeCase};
 use proc_macro2::{Ident, Literal, Span, TokenStream};
+
 use quote::quote;
 
 use crate::error::Error;
@@ -50,6 +51,12 @@ impl Generator {
             }
         }
 
+        eprintln!("aux_items: {:#?})", self.aux_items);
+
+        for aux in &self.aux_items {
+            items.push(aux.clone())
+        }
+
         self.items.extend(items);
 
         Ok(format!(
@@ -68,6 +75,14 @@ impl Generator {
 
     pub(crate) fn to_const_ident(&self, name: &str) -> Ident {
         Ident::new(&name.to_shouty_snake_case(), Span::call_site())
+    }
+
+    pub(crate) fn to_value_ident(&self, name: &str) -> Ident {
+        let mut val = name.to_snake_case();
+        if val == "type".to_string() {
+            val = "typ".to_string()
+        }
+        Ident::new(&val, Span::call_site())
     }
 
     pub(crate) fn to_inner_type(&self, bits: u8, signed: bool) -> TokenStream {
