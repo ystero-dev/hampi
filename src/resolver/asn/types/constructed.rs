@@ -59,7 +59,10 @@ fn resolve_choice_type(
     }
 
     Ok(Asn1ResolvedType::Constructed(
-        ResolvedConstructedType::Choice { components },
+        ResolvedConstructedType::Choice {
+            components,
+            name: None,
+        },
     ))
 }
 
@@ -88,7 +91,10 @@ fn resolve_sequence_type(
     }
 
     Ok(Asn1ResolvedType::Constructed(
-        ResolvedConstructedType::Sequence { components },
+        ResolvedConstructedType::Sequence {
+            components,
+            name: None,
+        },
     ))
 }
 
@@ -100,6 +106,7 @@ fn resolve_sequence_of_type(
     Ok(Asn1ResolvedType::Constructed(
         ResolvedConstructedType::SequenceOf {
             ty: Box::new(resolved),
+            name: None,
         },
     ))
 }
@@ -146,9 +153,10 @@ fn resolve_sequence_classfield_components(
     if let Some(Asn1ResolvedDefinition::ObjectSet(ref set)) = objects {
         let objects = &set.objects;
         let resolved_components = resolve_seq_components_for_objects(&all_components, objects)?;
-        for (key, resolved) in resolved_components {
+        for (key, name, components) in resolved_components {
             let ty = Asn1ResolvedType::Constructed(ResolvedConstructedType::Sequence {
-                components: resolved,
+                name: Some(name),
+                components,
             });
             types.insert(key, ty);
         }
@@ -162,7 +170,7 @@ fn resolve_sequence_classfield_components(
 fn resolve_seq_components_for_objects(
     input_components: &Vec<Component>,
     objects: &ResolvedObjectSet,
-) -> Result<Vec<(String, Vec<ResolvedSeqComponent>)>, Error> {
+) -> Result<Vec<(String, String, Vec<ResolvedSeqComponent>)>, Error> {
     let mut result = vec![];
     for (key, object) in &objects.lookup_table {
         let mut resolved_components = vec![];
@@ -198,12 +206,12 @@ fn resolve_seq_components_for_objects(
                     }
                 }
             }
-        }
-        // Only add to the result if Every Component in the Input is also found in the Object. This
-        // is mainly true for optional components. If Optional Components are missing, They should
-        // not be part of the generated Set.
-        if input_components.len() == resolved_components.len() {
-            result.push((key.clone(), resolved_components));
+            // Only add to the result if Every Component in the Input is also found in the Object. This
+            // is mainly true for optional components. If Optional Components are missing, They should
+            // not be part of the generated Set.
+            if input_components.len() == resolved_components.len() {
+                result.push((key.clone(), ob.name.clone(), resolved_components));
+            }
         }
     }
     Ok(result)

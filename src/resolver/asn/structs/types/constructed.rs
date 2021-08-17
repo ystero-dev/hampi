@@ -5,12 +5,15 @@ use crate::resolver::asn::structs::types::Asn1ResolvedType;
 #[derive(Debug, Clone)]
 pub(crate) enum ResolvedConstructedType {
     Choice {
+        name: Option<String>,
         components: Vec<ResolvedComponent>,
     },
     Sequence {
+        name: Option<String>,
         components: Vec<ResolvedSeqComponent>,
     },
     SequenceOf {
+        name: Option<String>,
         ty: Box<Asn1ResolvedType>,
     },
 }

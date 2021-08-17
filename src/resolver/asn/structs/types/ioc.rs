@@ -16,6 +16,7 @@ pub(crate) enum ResolvedFieldSpec {
 
 #[derive(Debug, Clone)]
 pub(crate) struct Asn1ResolvedObject {
+    pub(crate) name: String,
     pub(crate) fields: HashMap<String, ResolvedFieldSpec>,
 }
 

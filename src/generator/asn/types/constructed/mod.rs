@@ -16,7 +16,13 @@ impl ResolvedConstructedType {
         generator: &mut Generator,
     ) -> Result<Ident, Error> {
         let unique_name = match self {
-            ResolvedConstructedType::Sequence { .. } => generator.to_unique_name("Sequence"),
+            ResolvedConstructedType::Sequence { name, .. } => {
+                if name.is_some() {
+                    name.as_ref().unwrap().clone()
+                } else {
+                    generator.to_unique_name("Sequence")
+                }
+            }
             ResolvedConstructedType::Choice { .. } => generator.to_unique_name("Choice"),
             ResolvedConstructedType::SequenceOf { .. } => generator.to_unique_name("SeqOf"),
         };
@@ -45,8 +51,9 @@ impl ResolvedConstructedType {
         name: &str,
         generator: &mut Generator,
     ) -> Result<TokenStream, Error> {
-        if let ResolvedConstructedType::Sequence { ref components } = self {
+        if let ResolvedConstructedType::Sequence { ref components, .. } = self {
             let type_name = generator.to_type_ident(name);
+
             let mut comp_tokens = TokenStream::new();
             for c in components {
                 let comp_field_ident = generator.to_value_ident(&c.component.id);
@@ -72,7 +79,7 @@ impl ResolvedConstructedType {
         name: &str,
         generator: &mut Generator,
     ) -> Result<TokenStream, Error> {
-        if let ResolvedConstructedType::Choice { ref components } = self {
+        if let ResolvedConstructedType::Choice { ref components, .. } = self {
             let type_name = generator.to_type_ident(name);
             let mut comp_tokens = TokenStream::new();
             for c in components {
@@ -98,7 +105,7 @@ impl ResolvedConstructedType {
         name: &str,
         generator: &mut Generator,
     ) -> Result<TokenStream, Error> {
-        if let ResolvedConstructedType::SequenceOf { ref ty } = self {
+        if let ResolvedConstructedType::SequenceOf { ref ty, .. } = self {
             let seq_of_type_ident = generator.to_type_ident(name);
             let seq_of_type = Asn1ResolvedType::generate_name_maybe_aux_type(ty, generator)?;
 

@@ -54,7 +54,7 @@ fn resolve_object_set_definition(
     objectset: &Asn1ObjectSetAssignment,
     resolver: &mut Resolver,
 ) -> Result<Asn1ResolvedDefinition, Error> {
-    let objectset = resolve_object_set(&objectset.set, resolver)?;
+    let objectset = resolve_object_set(&objectset.set, &objectset.id, resolver)?;
     Ok(Asn1ResolvedDefinition::ObjectSet(objectset))
 }
 
@@ -62,6 +62,6 @@ fn resolve_object_definition(
     object: &Asn1ObjectAssignment,
     resolver: &mut Resolver,
 ) -> Result<Asn1ResolvedDefinition, Error> {
-    let object = resolve_object(&object.object.value, resolver)?;
+    let object = resolve_object(&object.id, &object.object.value, resolver)?;
     Ok(Asn1ResolvedDefinition::Object(object))
 }

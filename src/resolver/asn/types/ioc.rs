@@ -25,6 +25,7 @@ use crate::resolver::{
 
 pub(crate) fn resolve_object_set(
     objectset: &Asn1ObjectSet,
+    name: &str,
     resolver: &mut Resolver,
 ) -> Result<Asn1ResolvedObjectSet, Error> {
     let class = resolver.classes.get(&objectset.class);
@@ -49,7 +50,7 @@ pub(crate) fn resolve_object_set(
         let mut elements = vec![];
         let mut input_elements = objectset.objects.root_elements.clone();
         input_elements.extend(objectset.objects.additional_elements.clone());
-        for object in input_elements {
+        for (i, object) in input_elements.iter().enumerate() {
             match object {
                 ObjectSetElement::ObjectSetReference(ref r) => {
                     let resolved = resolver.resolved_defs.get(r);
@@ -79,6 +80,7 @@ pub(crate) fn resolve_object_set(
                     } else {
                         if let Asn1ResolvedDefinition::Object(ref o) = resolved.unwrap() {
                             let element = ResolvedObjectSetElement::Object(Asn1ResolvedObject {
+                                name: r.clone(),
                                 fields: o.fields.clone(),
                             });
                             elements.push(element.clone());
@@ -101,7 +103,12 @@ pub(crate) fn resolve_object_set(
                     }
                 }
                 ObjectSetElement::Object(ref v) => {
-                    let element = ResolvedObjectSetElement::Object(resolve_object(v, resolver)?);
+                    let object_name = format!("{}{}", name, i);
+                    let element = ResolvedObjectSetElement::Object(resolve_object(
+                        &object_name,
+                        v,
+                        resolver,
+                    )?);
                     elements.push(element.clone());
                     if unique_field.len() > 0 {
                         if let ResolvedObjectSetElement::Object(ref o) = element {
@@ -129,6 +136,7 @@ pub(crate) fn resolve_object_set(
 }
 
 pub(crate) fn resolve_object(
+    object_name: &str,
     object_value: &Asn1ObjectValue,
     resolver: &mut Resolver,
 ) -> Result<Asn1ResolvedObject, Error> {
@@ -165,6 +173,7 @@ pub(crate) fn resolve_object(
             resolved_fields.insert(k.clone(), resolved);
         }
         Ok(Asn1ResolvedObject {
+            name: object_name.to_string(),
             fields: resolved_fields,
         })
     } else {
