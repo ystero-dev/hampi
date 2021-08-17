@@ -47,8 +47,9 @@ pub(crate) fn resolve_object_set(
         let mut lookup_table = HashMap::new();
 
         let mut elements = vec![];
-        // FIXME: Support additional Elements too!
-        for object in &objectset.objects.root_elements {
+        let mut input_elements = objectset.objects.root_elements.clone();
+        input_elements.extend(objectset.objects.additional_elements.clone());
+        for object in input_elements {
             match object {
                 ObjectSetElement::ObjectSetReference(ref r) => {
                     let resolved = resolver.resolved_defs.get(r);
