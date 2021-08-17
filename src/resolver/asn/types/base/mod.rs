@@ -17,8 +17,8 @@ use crate::parser::asn::structs::types::{Asn1BuiltinType, Asn1Type, Asn1TypeKind
 use crate::resolver::{
     asn::structs::types::base::{
         Asn1ResolvedBitString, Asn1ResolvedBoolean, Asn1ResolvedCharacterString,
-        Asn1ResolvedEnumerated, Asn1ResolvedInteger, Asn1ResolvedObjectIdentifier,
-        Asn1ResolvedOctetString, ResolvedBaseType,
+        Asn1ResolvedEnumerated, Asn1ResolvedInteger, Asn1ResolvedNull,
+        Asn1ResolvedObjectIdentifier, Asn1ResolvedOctetString, ResolvedBaseType,
     },
     Resolver,
 };
@@ -50,6 +50,7 @@ pub(crate) fn resolve_base_type(
             Asn1BuiltinType::ObjectIdentifier => Ok(ResolvedBaseType::ObjectIdentifier(
                 Asn1ResolvedObjectIdentifier::default(),
             )),
+            Asn1BuiltinType::Null => Ok(ResolvedBaseType::Null(Asn1ResolvedNull::default())),
             _ => Err(resolve_error!(
                 "parse_base_type: Not Implemented! {:#?}",
                 ty

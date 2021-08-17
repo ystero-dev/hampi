@@ -72,7 +72,7 @@ pub(crate) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Type,
         }
 
         "BOOLEAN" => (Asn1TypeKind::Builtin(Asn1BuiltinType::Boolean), 1),
-        "NULL" => (Asn1TypeKind::Builtin(Asn1BuiltinType::Boolean), 1),
+        "NULL" => (Asn1TypeKind::Builtin(Asn1BuiltinType::Null), 1),
         "VisibleString" | "UTF8String" | "IA5String" | "PrintableString" => {
             (Asn1TypeKind::Builtin(Asn1BuiltinType::CharacterString), 1)
         }
