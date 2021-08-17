@@ -199,7 +199,12 @@ fn resolve_seq_components_for_objects(
                 }
             }
         }
-        result.push((key.clone(), resolved_components));
+        // Only add to the result if Every Component in the Input is also found in the Object. This
+        // is mainly true for optional components. If Optional Components are missing, They should
+        // not be part of the generated Set.
+        if input_components.len() == resolved_components.len() {
+            result.push((key.clone(), resolved_components));
+        }
     }
     Ok(result)
 }
