@@ -50,6 +50,7 @@ pub(crate) fn resolve_object_set(
         let mut elements = vec![];
         let mut input_elements = objectset.objects.root_elements.clone();
         input_elements.extend(objectset.objects.additional_elements.clone());
+        let mut decoder_ty = None;
         for (i, object) in input_elements.iter().enumerate() {
             match object {
                 ObjectSetElement::ObjectSetReference(ref r) => {
@@ -62,6 +63,7 @@ pub(crate) fn resolve_object_set(
                         ));
                     } else {
                         if let Asn1ResolvedDefinition::ObjectSet(ref o) = resolved.unwrap() {
+                            decoder_ty = o.objects.decoder_ty.clone();
                             elements.extend(o.objects.elements.clone());
                             lookup_table.extend(o.objects.lookup_table.clone());
                         } else {
@@ -87,9 +89,10 @@ pub(crate) fn resolve_object_set(
                             if unique_field.len() > 0 {
                                 if let ResolvedObjectSetElement::Object(ref o) = element {
                                     let field = o.fields.get(&unique_field);
-                                    if let ResolvedFieldSpec::FixedTypeValue { value, .. } =
+                                    if let ResolvedFieldSpec::FixedTypeValue { value, typeref } =
                                         field.unwrap()
                                     {
+                                        decoder_ty.replace(typeref.clone());
                                         let value = value.as_ref().unwrap();
                                         if let Asn1ResolvedValue::Reference(ref s) = value {
                                             lookup_table.insert(s.clone(), element);
@@ -113,8 +116,10 @@ pub(crate) fn resolve_object_set(
                     if unique_field.len() > 0 {
                         if let ResolvedObjectSetElement::Object(ref o) = element {
                             let field = o.fields.get(&unique_field);
-                            if let ResolvedFieldSpec::FixedTypeValue { value, .. } = field.unwrap()
+                            if let ResolvedFieldSpec::FixedTypeValue { value, typeref } =
+                                field.unwrap()
                             {
+                                decoder_ty.replace(typeref.clone());
                                 let value = value.as_ref().unwrap();
                                 if let Asn1ResolvedValue::Reference(ref s) = value {
                                     lookup_table.insert(s.clone(), element);
@@ -128,6 +133,7 @@ pub(crate) fn resolve_object_set(
 
         Ok(Asn1ResolvedObjectSet {
             objects: ResolvedObjectSet {
+                decoder_ty,
                 elements,
                 lookup_table,
             },

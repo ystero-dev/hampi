@@ -27,6 +27,7 @@ pub(crate) struct Asn1ResolvedObjectSet {
 
 #[derive(Debug, Clone)]
 pub(crate) struct ResolvedObjectSet {
+    pub(crate) decoder_ty: Option<Asn1ResolvedType>,
     pub(crate) elements: Vec<ResolvedObjectSetElement>,
     pub(crate) lookup_table: HashMap<String, ResolvedObjectSetElement>,
 }
