@@ -59,8 +59,14 @@ impl ResolvedConstructedType {
                 let comp_field_ident = generator.to_value_ident(&c.component.id);
                 let comp_ty_ident =
                     Asn1ResolvedType::generate_name_maybe_aux_type(&c.component.ty, generator)?;
-                let comp_token = quote! {
-                    pub #comp_field_ident: #comp_ty_ident,
+                let comp_token = if c.optional {
+                    quote! {
+                        pub #comp_field_ident: Option<#comp_ty_ident>,
+                    }
+                } else {
+                    quote! {
+                        pub #comp_field_ident: #comp_ty_ident,
+                    }
                 };
                 comp_tokens.extend(comp_token);
             }
