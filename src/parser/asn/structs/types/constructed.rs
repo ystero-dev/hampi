@@ -83,18 +83,20 @@ impl Asn1TypeSequence {
 
 #[derive(Debug, Clone)]
 pub(crate) struct Asn1TypeChoice {
-    pub(crate) components: Vec<Component>,
-    pub(crate) additions: Vec<ChoiceAdditionGroup>,
+    pub(crate) root_components: Vec<Component>,
+    pub(crate) additions: Option<Vec<ChoiceAdditionGroup>>,
 }
 
 impl Asn1TypeChoice {
     pub(crate) fn dependent_references(&self) -> Vec<String> {
         let mut dependencies = vec![];
-        for c in &self.components {
+        for c in &self.root_components {
             dependencies.extend(c.dependent_references());
         }
-        for a in &self.additions {
-            dependencies.extend(a.dependent_references());
+        if self.additions.is_some() {
+            for a in self.additions.as_ref().unwrap() {
+                dependencies.extend(a.dependent_references());
+            }
         }
         dependencies
     }

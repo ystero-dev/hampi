@@ -29,7 +29,7 @@ pub(crate) fn parse_choice_type<'parser>(
     }
     consumed += 1;
 
-    let mut components = vec![];
+    let mut root_components = vec![];
     let mut additions = vec![];
     let mut extension_markers = 0;
     loop {
@@ -38,7 +38,7 @@ pub(crate) fn parse_choice_type<'parser>(
             Err(_) => (None, 0),
         };
         if component.is_some() {
-            components.push(component.unwrap());
+            root_components.push(component.unwrap());
             consumed += component_consumed;
         }
 
@@ -79,9 +79,15 @@ pub(crate) fn parse_choice_type<'parser>(
         }
     }
 
+    let additions = if extension_markers > 0 {
+        Some(additions)
+    } else {
+        None
+    };
+
     Ok((
         Asn1TypeChoice {
-            components,
+            root_components,
             additions,
         },
         consumed,
@@ -156,6 +162,7 @@ mod tests {
             input: &'tc str,
             success: bool,
             components_count: usize,
+            extensions_present: bool,
             addition_components_count: usize,
             tokens_consumed: usize,
         }
@@ -165,6 +172,7 @@ mod tests {
                 input: "CHOICE { a BOOL, b INTEGER} ",
                 success: true,
                 components_count: 2,
+                extensions_present: false,
                 addition_components_count: 0,
                 tokens_consumed: 8,
             },
@@ -172,6 +180,7 @@ mod tests {
                 input: "CHOICE { a BOOL, b INTEGER, c CHOICE { d INTEGER, e NULL} } ",
                 success: true,
                 components_count: 3,
+                extensions_present: false,
                 addition_components_count: 0,
                 tokens_consumed: 18,
             },
@@ -179,6 +188,7 @@ mod tests {
                 input: "CHOICE { local INTEGER (0..65535), global OBJECT IDENTIFIER }",
                 success: true,
                 components_count: 2,
+                extensions_present: false,
                 addition_components_count: 0,
                 tokens_consumed: 14,
             },
@@ -186,6 +196,7 @@ mod tests {
                 input: "CHOICE { a INTEGER , b Enum, ..., [[ c CHOICE { d INTEGER } ]] }",
                 success: true,
                 components_count: 2,
+                extensions_present: true,
                 addition_components_count: 1,
                 tokens_consumed: 19,
             },
@@ -193,6 +204,7 @@ mod tests {
                 input: "CHOICE { a INTEGER , b Enum, [[ c CHOICE { d INTEGER } ]] }",
                 success: false,
                 components_count: 0,
+                extensions_present: false,
                 addition_components_count: 0,
                 tokens_consumed: 0,
             },
@@ -200,6 +212,7 @@ mod tests {
                 input: "CHOICE { a INTEGER , b Enum, ..., [[ ]] }",
                 success: false,
                 components_count: 0,
+                extensions_present: true,
                 addition_components_count: 0,
                 tokens_consumed: 0,
             },
@@ -216,13 +229,27 @@ mod tests {
 
             if tc.success {
                 let (choice, choice_consumed) = choice.unwrap();
-                assert_eq!(choice.components.len(), tc.components_count, "{}", tc.input);
                 assert_eq!(
-                    choice.additions.len(),
-                    tc.addition_components_count,
+                    choice.root_components.len(),
+                    tc.components_count,
                     "{}",
                     tc.input
                 );
+                assert_eq!(
+                    choice.additions.is_some(),
+                    tc.extensions_present,
+                    "{}",
+                    tc.input
+                );
+                if tc.extensions_present {
+                    assert_eq!(
+                        choice.additions.unwrap().len(),
+                        tc.addition_components_count,
+                        "{}",
+                        tc.input
+                    );
+                }
+
                 assert_eq!(choice_consumed, tc.tokens_consumed, "{}", tc.input);
             }
         }

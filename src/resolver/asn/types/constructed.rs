@@ -48,20 +48,38 @@ fn resolve_choice_type(
     choice: &Asn1TypeChoice,
     resolver: &mut Resolver,
 ) -> Result<Asn1ResolvedType, Error> {
-    let mut components = vec![];
-    for c in &choice.components {
+    let mut root_components = vec![];
+    for c in &choice.root_components {
         let ty = resolve_type(&c.ty, resolver)?;
         let component = ResolvedComponent {
             id: c.id.clone(),
             ty,
         };
-        components.push(component);
+        root_components.push(component);
     }
+
+    let additions = if choice.additions.is_some() {
+        let mut components = vec![];
+        for addition in choice.additions.as_ref().unwrap() {
+            for c in &addition.components {
+                let ty = resolve_type(&c.ty, resolver)?;
+                let component = ResolvedComponent {
+                    id: c.id.clone(),
+                    ty,
+                };
+                components.push(component);
+            }
+        }
+        Some(components)
+    } else {
+        None
+    };
 
     Ok(Asn1ResolvedType::Constructed(
         ResolvedConstructedType::Choice {
-            components,
             name: None,
+            root_components,
+            additions,
         },
     ))
 }

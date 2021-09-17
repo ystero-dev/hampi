@@ -85,10 +85,14 @@ impl ResolvedConstructedType {
         name: &str,
         generator: &mut Generator,
     ) -> Result<TokenStream, Error> {
-        if let ResolvedConstructedType::Choice { ref components, .. } = self {
+        if let ResolvedConstructedType::Choice {
+            ref root_components,
+            ..
+        } = self
+        {
             let type_name = generator.to_type_ident(name);
             let mut comp_tokens = TokenStream::new();
-            for c in components {
+            for c in root_components {
                 let comp_variant_ident = generator.to_type_ident(&c.id);
                 let comp_variant_ty_ident =
                     Asn1ResolvedType::generate_name_maybe_aux_type(&c.ty, generator)?;

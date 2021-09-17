@@ -6,7 +6,8 @@ use crate::resolver::asn::structs::types::Asn1ResolvedType;
 pub(crate) enum ResolvedConstructedType {
     Choice {
         name: Option<String>,
-        components: Vec<ResolvedComponent>,
+        root_components: Vec<ResolvedComponent>,
+        additions: Option<Vec<ResolvedComponent>>,
     },
     Sequence {
         name: Option<String>,
