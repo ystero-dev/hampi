@@ -21,3 +21,5 @@ pub use compiler::Asn1Compiler;
 pub mod resolver;
 
 pub mod generator;
+
+pub mod codecs;

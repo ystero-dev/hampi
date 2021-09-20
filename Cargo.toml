@@ -17,6 +17,7 @@ proc-macro2 = { version = "1.0" }
 quote = { version = "1.0" }
 heck = { version = "0.3" }
 rustfmt = { version = "0.10" }
+bitvec = { version = "0.22" }
 
 
 [[bin]]
