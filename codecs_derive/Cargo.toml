@@ -1,0 +1,18 @@
+[package]
+name = "asn_codecs_derive"
+version = "0.1.0"
+edition = "2018"
+
+[lib]
+proc-macro = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+asn-codecs = { path = "../codecs" }
+proc-macro2 = { version = "1.0" }
+quote = { version = "1.0" }
+syn = { version = "1.0" }
+
+[dev-dependencies]
+trybuild = { version = "1.0" }

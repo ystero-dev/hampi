@@ -1,25 +1,6 @@
-[package]
-name = "hampi"
-version = "0.0.1"
-authors = ["Abhijit Gadgil <gabhijit@iitbombay.org>"]
-edition = "2018"
-description = "ASN.1 Compiler in Rust."
-repository = "https://github.com/gabhijit/intermodal.git"
-license = "MIT or Apache-2.0"
-readme = "README.md"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-lazy_static = { version = "1.4.0" }
-topological-sort = { version = "0.1" }
-proc-macro2 = { version = "1.0" }
-quote = { version = "1.0" }
-heck = { version = "0.3" }
-rustfmt = { version = "0.10" }
-bitvec = { version = "0.22" }
-
-
-[[bin]]
-name = "hampi-asn1c"
-path = "src/bin/hampi-asn1c.rs"
+[workspace]
+members = [
+	"asn-compiler",
+	"codecs",
+	"codecs_derive",
+]
