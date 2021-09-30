@@ -16,7 +16,7 @@ impl Asn1ResolvedBitString {
     ) -> Result<TokenStream, Error> {
         let struct_name = generator.to_type_ident(name);
         let struct_tokens = quote! {
-            #[derive(Debug)]
+            #[derive(Debug, AperCodec)]
             pub struct #struct_name(BitVec<Msb0, usize>);
         };
 

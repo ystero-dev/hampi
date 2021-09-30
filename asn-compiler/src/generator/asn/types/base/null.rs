@@ -15,6 +15,7 @@ impl Asn1ResolvedNull {
     ) -> Result<TokenStream, Error> {
         let type_name = generator.to_type_ident(name);
         Ok(quote! {
+            #[derive(Debug, AperCodec)]
             pub struct #type_name;
         })
     }

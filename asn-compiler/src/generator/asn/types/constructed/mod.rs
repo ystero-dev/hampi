@@ -71,6 +71,7 @@ impl ResolvedConstructedType {
                 comp_tokens.extend(comp_token);
             }
             Ok(quote! {
+                #[derive(Debug, AperCodec)]
                 pub struct #type_name {
                     #comp_tokens
                 }
@@ -102,6 +103,7 @@ impl ResolvedConstructedType {
                 comp_tokens.extend(comp_token);
             }
             Ok(quote! {
+                #[derive(Debug, AperCodec)]
                 pub enum #type_name {
                     #comp_tokens
                 }
@@ -120,6 +122,7 @@ impl ResolvedConstructedType {
             let seq_of_type = Asn1ResolvedType::generate_name_maybe_aux_type(ty, generator)?;
 
             Ok(quote! {
+                #[derive(Debug, AperCodec)]
                 struct #seq_of_type_ident(Vec<#seq_of_type>);
             })
         } else {
