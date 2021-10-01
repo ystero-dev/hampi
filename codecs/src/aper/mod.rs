@@ -5,17 +5,11 @@ pub mod error;
 
 pub use error::Error as AperCodecError;
 
-pub struct Asn1CodecParams;
-
 /// Trait representing an 'APER Codec'.
 ///
 /// This 'crate' is to be derived by any `struct` or `enum` representing an ASN.1 Type.
 pub trait AperCodec {
-    fn decode(
-        &mut self,
-        data: &mut AperCodecData,
-        params: &Asn1CodecParams,
-    ) -> Result<(), AperCodecError>;
+    fn decode(&mut self, data: &mut AperCodecData) -> Result<(), AperCodecError>;
 }
 
 use bitvec::prelude::*;

@@ -8,3 +8,4 @@ edition = "2018"
 
 [dependencies]
 bitvec = { version = "0.22" }
+syn = { version = "1.0" }

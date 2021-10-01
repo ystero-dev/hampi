@@ -16,7 +16,9 @@ topological-sort = { version = "0.1" }
 proc-macro2 = { version = "1.0" }
 quote = { version = "1.0" }
 heck = { version = "0.3" }
-rustfmt = { version = "0.10" }
+rustfmt = { version = "0.10.0" }
+#rustfmt-nightly = {git = "https://github.com/rust-lang/rustfmt", rev = "ef57c5bf6751e5a4f548c722d6aeb28f6d86664d" }
+#rustfmt-nightly = {git = "https://github.com/rust-lang/rustfmt", branch = "master" }
 bitvec = { version = "0.22" }
 
 
