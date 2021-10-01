@@ -18,6 +18,7 @@ impl Asn1ResolvedInteger {
         let inner_type = generator.to_inner_type(self.bits, self.signed);
         let struct_tokens = quote! {
             #[derive(Debug, AperCodec)]
+            #[asn(type = "INTEGER")]
             pub struct #struct_name(#inner_type);
         };
 

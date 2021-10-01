@@ -72,6 +72,7 @@ impl ResolvedConstructedType {
             }
             Ok(quote! {
                 #[derive(Debug, AperCodec)]
+                #[asn(type = "SEQUENCE")]
                 pub struct #type_name {
                     #comp_tokens
                 }
@@ -104,6 +105,7 @@ impl ResolvedConstructedType {
             }
             Ok(quote! {
                 #[derive(Debug, AperCodec)]
+                #[asn(type = "CHOICE")]
                 pub enum #type_name {
                     #comp_tokens
                 }
@@ -123,6 +125,7 @@ impl ResolvedConstructedType {
 
             Ok(quote! {
                 #[derive(Debug, AperCodec)]
+                #[asn(type = "SEQENCE-OF")]
                 struct #seq_of_type_ident(Vec<#seq_of_type>);
             })
         } else {

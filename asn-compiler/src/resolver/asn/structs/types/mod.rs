@@ -13,6 +13,7 @@ pub(crate) mod constraints;
 #[derive(Debug, Clone)]
 pub(crate) struct ResolvedSetType {
     pub(crate) setref: String,
+    pub(crate) decoder_ty: Box<Option<Asn1ResolvedType>>,
     pub(crate) types: BTreeMap<String, Asn1ResolvedType>,
 }
 

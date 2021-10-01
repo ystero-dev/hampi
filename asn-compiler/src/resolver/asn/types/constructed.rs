@@ -168,9 +168,11 @@ fn resolve_sequence_classfield_components(
         ));
     }
     let mut types = BTreeMap::new();
+    let mut decoder_ty = None;
     if let Some(Asn1ResolvedDefinition::ObjectSet(ref set)) = objects {
         let objects = &set.objects;
         let resolved_components = resolve_seq_components_for_objects(&all_components, objects)?;
+        decoder_ty.replace(objects.decoder_ty.clone());
         for (key, name, components) in resolved_components {
             let ty = Asn1ResolvedType::Constructed(ResolvedConstructedType::Sequence {
                 name: Some(name),
@@ -179,8 +181,10 @@ fn resolve_sequence_classfield_components(
             types.insert(key, ty);
         }
     }
+    let decoder_ty = decoder_ty.unwrap();
     Ok(Asn1ResolvedType::Set(ResolvedSetType {
         setref: set_reference.clone(),
+        decoder_ty: Box::new(decoder_ty),
         types,
     }))
 }

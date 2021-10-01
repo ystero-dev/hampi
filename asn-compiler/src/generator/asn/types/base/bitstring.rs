@@ -17,6 +17,7 @@ impl Asn1ResolvedBitString {
         let struct_name = generator.to_type_ident(name);
         let struct_tokens = quote! {
             #[derive(Debug, AperCodec)]
+            #[asn(type = "BITSTRING")]
             pub struct #struct_name(BitVec<Msb0, usize>);
         };
 
