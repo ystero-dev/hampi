@@ -31,6 +31,7 @@ pub(crate) fn parse_choice_type<'parser>(
 
     let mut root_components = vec![];
     let mut additions = vec![];
+    let mut no_ver_additions_components = vec![];
     let mut extension_markers = 0;
     loop {
         let (component, component_consumed) = match parse_component(&tokens[consumed..]) {
@@ -38,7 +39,15 @@ pub(crate) fn parse_choice_type<'parser>(
             Err(_) => (None, 0),
         };
         if component.is_some() {
-            root_components.push(component.unwrap());
+            // We have a component that needs to be added in the `additions` list and not in the
+            // `root_components`. All such components that are not part of `ChoiceAdditionGroup`
+            // (ie. one without `version`, are pulled into one `ChoiceAdditionGroup` with version
+            // as `None`. And are added separately.
+            if extension_markers > 0 {
+                no_ver_additions_components.push(component.unwrap());
+            } else {
+                root_components.push(component.unwrap());
+            }
             consumed += component_consumed;
         }
 
@@ -80,6 +89,13 @@ pub(crate) fn parse_choice_type<'parser>(
     }
 
     let additions = if extension_markers > 0 {
+        if no_ver_additions_components.len() > 0 {
+            let new_addition = ChoiceAdditionGroup {
+                version: None,
+                components: no_ver_additions_components,
+            };
+            additions.push(new_addition);
+        }
         Some(additions)
     } else {
         None
