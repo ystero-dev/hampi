@@ -44,7 +44,7 @@ pub(crate) fn resolve_base_type(
             Asn1BuiltinType::OctetString => Ok(ResolvedBaseType::OctetString(
                 Asn1ResolvedOctetString::resolve_octet_string(ty, resolver)?,
             )),
-            Asn1BuiltinType::CharacterString => Ok(ResolvedBaseType::CharacterString(
+            Asn1BuiltinType::CharacterString { .. } => Ok(ResolvedBaseType::CharacterString(
                 Asn1ResolvedCharacterString::resolve_character_string(ty, resolver)?,
             )),
             Asn1BuiltinType::ObjectIdentifier => Ok(ResolvedBaseType::ObjectIdentifier(

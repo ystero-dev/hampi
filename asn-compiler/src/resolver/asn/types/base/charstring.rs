@@ -3,7 +3,7 @@
 use crate::error::Error;
 use crate::resolver::Resolver;
 
-use crate::parser::asn::structs::types::Asn1Type;
+use crate::parser::asn::structs::types::{Asn1BuiltinType, Asn1Type, Asn1TypeKind};
 use crate::resolver::asn::structs::types::base::Asn1ResolvedCharacterString;
 
 impl Asn1ResolvedCharacterString {
@@ -13,6 +13,9 @@ impl Asn1ResolvedCharacterString {
     ) -> Result<Asn1ResolvedCharacterString, Error> {
         let mut base = Asn1ResolvedCharacterString::default();
 
+        if let Asn1TypeKind::Builtin(Asn1BuiltinType::CharacterString { str_type }) = &ty.kind {
+            base.str_type = str_type.clone();
+        }
         if ty.constraints.is_some() {
             let constraints = ty.constraints.as_ref().unwrap();
             if !constraints.is_empty() {

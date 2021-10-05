@@ -69,7 +69,22 @@ impl ResolvedSetType {
         let ty_ident = generator.to_type_ident(&self.setref);
 
         let ty_elements = self.generate_aux_types(generator)?;
+        let decoder_ty: proc_macro2::TokenStream = if self.decoder_ty.is_some() {
+            if let Asn1ResolvedType::Reference(ref decoder_ty) =
+                self.decoder_ty.as_ref().as_ref().unwrap()
+            {
+                format!("\"{}\"", generator.to_type_ident(decoder_ty))
+                    .parse()
+                    .unwrap()
+            } else {
+                format!("\"Unknown\"").parse().unwrap()
+            }
+        } else {
+            format!("\"Unknown\"").parse().unwrap()
+        };
         let set_ty = quote! {
+            #[derive(Debug, AperCodec)]
+            #[asn(decoder = #decoder_ty)]
             pub enum #ty_ident {
                 #ty_elements
             }

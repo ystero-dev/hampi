@@ -17,6 +17,7 @@ impl Asn1ResolvedOctetString {
         let struct_name = generator.to_type_ident(name);
         let struct_tokens = quote! {
             #[derive(Debug, AperCodec)]
+            #[asn(type = "OCTET-STRING")]
             pub struct #struct_name(Vec<u8>);
         };
 

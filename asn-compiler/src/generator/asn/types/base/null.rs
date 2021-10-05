@@ -16,6 +16,7 @@ impl Asn1ResolvedNull {
         let type_name = generator.to_type_ident(name);
         Ok(quote! {
             #[derive(Debug, AperCodec)]
+            #[asn(type = "NULL")]
             pub struct #type_name;
         })
     }

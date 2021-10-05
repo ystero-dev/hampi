@@ -87,6 +87,7 @@ pub(crate) struct Asn1ResolvedOctetString {
 // A structure representing a Resolved `CharacterString`. `SIZE` Constraint is resolved as well. The
 #[derive(Debug, Default, Clone)]
 pub(crate) struct Asn1ResolvedCharacterString {
+    pub(crate) str_type: String,
     pub(crate) size: Option<Asn1ConstraintValueSet>,
 }
 

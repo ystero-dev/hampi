@@ -9,7 +9,9 @@ pub use error::Error as AperCodecError;
 ///
 /// This 'crate' is to be derived by any `struct` or `enum` representing an ASN.1 Type.
 pub trait AperCodec {
-    fn decode(&mut self, data: &mut AperCodecData) -> Result<(), AperCodecError>;
+    type Output;
+
+    fn decode(data: &mut AperCodecData) -> Result<Self::Output, AperCodecError>;
 }
 
 use bitvec::prelude::*;

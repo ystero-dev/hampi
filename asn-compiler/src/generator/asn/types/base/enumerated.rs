@@ -20,6 +20,7 @@ impl Asn1ResolvedEnumerated {
         let named_values = self.generate_named_values(generator)?;
         let struct_tokens = quote! {
             #[derive(Debug, AperCodec)]
+            #[asn(type = "ENUMERATED")]
             pub struct #struct_name(#inner_type);
 
             impl #struct_name {

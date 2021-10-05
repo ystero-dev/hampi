@@ -24,7 +24,7 @@ pub(crate) enum Asn1BuiltinType {
     RelativeOid,
 
     // Consumes a lot of String Types.
-    CharacterString,
+    CharacterString { str_type: String },
 }
 
 #[derive(Debug, Clone)]

@@ -16,6 +16,7 @@ impl Asn1ResolvedBoolean {
         let type_name = generator.to_type_ident(name);
         Ok(quote! {
             #[derive(Debug, AperCodec)]
+            #[asn(type = "BOOLEAN")]
             pub struct #type_name(bool);
         })
     }

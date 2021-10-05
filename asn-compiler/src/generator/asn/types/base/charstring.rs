@@ -15,8 +15,11 @@ impl Asn1ResolvedCharacterString {
         generator: &mut Generator,
     ) -> Result<TokenStream, Error> {
         let struct_name = generator.to_type_ident(name);
+        let char_str_type: proc_macro2::TokenStream =
+            format!("\"{}\"", self.str_type).parse().unwrap();
         let struct_tokens = quote! {
             #[derive(Debug, AperCodec)]
+            #[asn(type = #char_str_type)]
             pub struct #struct_name(String);
         };
 

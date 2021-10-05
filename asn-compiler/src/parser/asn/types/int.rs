@@ -45,7 +45,12 @@ pub(crate) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Type,
 
         "OCTET" => (Asn1TypeKind::Builtin(Asn1BuiltinType::OctetString), 2),
 
-        "CHARACTER" => (Asn1TypeKind::Builtin(Asn1BuiltinType::CharacterString), 2),
+        "CHARACTER" => (
+            Asn1TypeKind::Builtin(Asn1BuiltinType::CharacterString {
+                str_type: "CHARACTER-STRING".to_string(),
+            }),
+            2,
+        ),
 
         "ENUMERATED" => {
             let (enum_type, enum_type_consumed) = parse_enumerated_type(tokens)?;
@@ -73,9 +78,12 @@ pub(crate) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Type,
 
         "BOOLEAN" => (Asn1TypeKind::Builtin(Asn1BuiltinType::Boolean), 1),
         "NULL" => (Asn1TypeKind::Builtin(Asn1BuiltinType::Null), 1),
-        "VisibleString" | "UTF8String" | "IA5String" | "PrintableString" => {
-            (Asn1TypeKind::Builtin(Asn1BuiltinType::CharacterString), 1)
-        }
+        "VisibleString" | "UTF8String" | "IA5String" | "PrintableString" => (
+            Asn1TypeKind::Builtin(Asn1BuiltinType::CharacterString {
+                str_type: typestr.to_string(),
+            }),
+            1,
+        ),
 
         "CHOICE" => {
             let (choice_type, choice_type_consumed) = parse_choice_type(tokens)?;
