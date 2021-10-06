@@ -108,6 +108,7 @@ fn resolve_sequence_type(
             component,
             optional: c.optional,
             class_field_type: None,
+            key: None,
         };
         components.push(seq_component);
     }
@@ -216,6 +217,7 @@ fn resolve_seq_components_for_objects(
                                 },
                                 optional: false,
                                 class_field_type: Some(ClassFieldComponentType::Type),
+                                key: Some(key.clone()),
                             },
 
                             // FIXME: Not sure what to do with the value.
@@ -227,6 +229,7 @@ fn resolve_seq_components_for_objects(
                                     },
                                     optional: false,
                                     class_field_type: Some(ClassFieldComponentType::FixedTypeValue),
+                                    key: None,
                                 }
                             }
                         };

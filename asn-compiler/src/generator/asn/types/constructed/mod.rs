@@ -63,8 +63,11 @@ impl ResolvedConstructedType {
                 let comp_attrs = if c.class_field_type.is_some() {
                     match c.class_field_type.as_ref().unwrap() {
                         ClassFieldComponentType::Type => {
+                            let key: proc_macro2::TokenStream =
+                                format!("{}", c.key.as_ref().unwrap()).parse().unwrap();
+                            eprintln!("{:?}", key);
                             quote! {
-                                #[asn(open_type)]
+                                #[asn(open_type, key = #key)]
                             }
                         }
                         ClassFieldComponentType::FixedTypeValue => TokenStream::new(),
@@ -86,6 +89,7 @@ impl ResolvedConstructedType {
                 };
                 comp_tokens.extend(comp_token);
             }
+            eprintln!("comp_tokens: {:?}", comp_tokens);
             Ok(quote! {
                 #[derive(Debug, AperCodec)]
                 #[asn(type = "SEQUENCE")]
@@ -119,7 +123,7 @@ impl ResolvedConstructedType {
                     Asn1ResolvedType::generate_name_maybe_aux_type(&c.ty, generator)?;
                 let comp_token = quote! {
                     #fld_attrs
-                    #comp_variant_ident(#comp_variant_ty_ident),
+                    #comp_variant_ty_ident(#comp_variant_ty_ident),
                 };
                 root_comp_tokens.extend(comp_token);
             }
@@ -135,7 +139,7 @@ impl ResolvedConstructedType {
                         Asn1ResolvedType::generate_name_maybe_aux_type(&a.ty, generator)?;
                     let comp_token = quote! {
                         #fld_attrs
-                        #comp_variant_ident(#comp_variant_ty_ident),
+                        #comp_variant_ty_ident(#comp_variant_ty_ident),
                     };
                     addition_comp_tokens.extend(comp_token);
                 }
@@ -143,7 +147,9 @@ impl ResolvedConstructedType {
             let ty_attributes = quote! { type = "CHOICE" };
 
             let root_comps_len: proc_macro2::TokenStream =
-                format!("\"{}\"", root_components.len()).parse().unwrap();
+                format!("\"{}\"", root_components.len() - 1)
+                    .parse()
+                    .unwrap();
             let lower_bound = quote! { , lb = "0" };
             let upper_bound = quote! { , ub = #root_comps_len };
 

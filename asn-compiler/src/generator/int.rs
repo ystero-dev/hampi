@@ -68,7 +68,7 @@ impl Generator {
     }
 
     pub(crate) fn to_type_ident(&self, name: &str) -> Ident {
-        Ident::new(&name.to_camel_case(), Span::call_site())
+        Ident::new(&name.replace("-", "_").replace(" ", "_"), Span::call_site())
     }
 
     pub(crate) fn to_const_ident(&self, name: &str) -> Ident {

@@ -125,10 +125,7 @@ impl Asn1Compiler {
             //let module_definitions = module.definitions_sorted();
             self.resolver.resolve_definitions(&mut module)?;
         }
-        eprintln!(
-            "Resolved Definitions: {:#?}",
-            self.resolver.resolved_defs.keys()
-        );
+        eprintln!("Resolved Definitions: {:#?}", self.resolver.resolved_defs);
         eprintln!(
             "Parameterized Types: {:#?}",
             self.resolver.parameterized_defs.keys()

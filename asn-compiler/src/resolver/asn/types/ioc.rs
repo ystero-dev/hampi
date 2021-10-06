@@ -95,7 +95,18 @@ pub(crate) fn resolve_object_set(
                                         decoder_ty.replace(typeref.clone());
                                         let value = value.as_ref().unwrap();
                                         if let Asn1ResolvedValue::Reference(ref s) = value {
-                                            lookup_table.insert(s.clone(), element);
+                                            let v = resolver.resolved_defs.get(s).unwrap();
+
+                                            if let Asn1ResolvedDefinition::Value(ref v) = v {
+                                                // Get the actual Value - Usually this value is an
+                                                // Integer Value. This Value is to be used by the
+                                                // decoder.
+                                                let v = format!(
+                                                    "{}",
+                                                    v.get_base_integer_value().unwrap()
+                                                );
+                                                lookup_table.insert(v, element);
+                                            }
                                         }
                                     }
                                 }
@@ -122,7 +133,15 @@ pub(crate) fn resolve_object_set(
                                 decoder_ty.replace(typeref.clone());
                                 let value = value.as_ref().unwrap();
                                 if let Asn1ResolvedValue::Reference(ref s) = value {
-                                    lookup_table.insert(s.clone(), element);
+                                    let v = resolver.resolved_defs.get(s).unwrap();
+
+                                    if let Asn1ResolvedDefinition::Value(ref v) = v {
+                                        // Get the actual Value - Usually this value is an
+                                        // Integer Value. This Value is to be used by the
+                                        // decoder.
+                                        let v = format!("{}", v.get_base_integer_value().unwrap());
+                                        lookup_table.insert(v, element);
+                                    }
                                 }
                             }
                         }

@@ -88,12 +88,12 @@ impl ResolvedSetType {
 
     fn generate_aux_types(&self, generator: &mut Generator) -> Result<TokenStream, Error> {
         let mut variant_tokens = TokenStream::new();
-        for (name, ty) in &self.types {
+        for (_name, ty) in &self.types {
             let ty_ident = Asn1ResolvedType::generate_name_maybe_aux_type(ty, generator)?;
-            let variant_ident = generator.to_type_ident(name);
+            //let variant_ident = generator.to_type_ident(name);
 
             let variant_token = quote! {
-                #variant_ident(#ty_ident),
+                #ty_ident(#ty_ident),
             };
             variant_tokens.extend(variant_token);
         }
