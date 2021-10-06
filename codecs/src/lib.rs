@@ -18,6 +18,7 @@ where
 
     value_extensible: bool,
     size_extensible: bool,
+    open_type: bool,
 
     lb: Option<T>,
     ub: Option<T>,

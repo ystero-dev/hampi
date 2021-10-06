@@ -20,6 +20,12 @@ pub(crate) enum ResolvedConstructedType {
 }
 
 #[derive(Debug, Clone)]
+pub(crate) enum ClassFieldComponentType {
+    FixedTypeValue,
+    Type,
+}
+
+#[derive(Debug, Clone)]
 pub(crate) struct ResolvedComponent {
     pub(crate) id: String,
     pub(crate) ty: Asn1ResolvedType,
@@ -29,6 +35,7 @@ pub(crate) struct ResolvedComponent {
 pub(crate) struct ResolvedSeqComponent {
     pub(crate) component: ResolvedComponent,
     pub(crate) optional: bool,
+    pub(crate) class_field_type: Option<ClassFieldComponentType>,
     // FIXME : Handle default
     // pub(crate) default: Option<Asn1ResolvedType>,
 }

@@ -54,8 +54,11 @@ impl ResolvedSetType {
     ) -> Result<TokenStream, Error> {
         let ty_ident = generator.to_type_ident(name);
         let ty_elements = self.generate_aux_types(generator)?;
+        let decoder_ty = self.generate_decoder_ty_tokens(generator)?;
 
         Ok(quote! {
+            #[derive(Debug, AperCodec)]
+            #decoder_ty
             pub enum #ty_ident {
                 #ty_elements
             }
@@ -67,24 +70,12 @@ impl ResolvedSetType {
         generator: &mut Generator,
     ) -> Result<Ident, Error> {
         let ty_ident = generator.to_type_ident(&self.setref);
-
         let ty_elements = self.generate_aux_types(generator)?;
-        let decoder_ty: proc_macro2::TokenStream = if self.decoder_ty.is_some() {
-            if let Asn1ResolvedType::Reference(ref decoder_ty) =
-                self.decoder_ty.as_ref().as_ref().unwrap()
-            {
-                format!("\"{}\"", generator.to_type_ident(decoder_ty))
-                    .parse()
-                    .unwrap()
-            } else {
-                format!("\"Unknown\"").parse().unwrap()
-            }
-        } else {
-            format!("\"Unknown\"").parse().unwrap()
-        };
+        let decoder_ty = self.generate_decoder_ty_tokens(generator)?;
+
         let set_ty = quote! {
             #[derive(Debug, AperCodec)]
-            #[asn(decoder = #decoder_ty)]
+            #decoder_ty
             pub enum #ty_ident {
                 #ty_elements
             }
@@ -107,5 +98,24 @@ impl ResolvedSetType {
             variant_tokens.extend(variant_token);
         }
         Ok(variant_tokens)
+    }
+
+    fn generate_decoder_ty_tokens(&self, generator: &Generator) -> Result<TokenStream, Error> {
+        let decoder_ty: proc_macro2::TokenStream = if self.decoder_ty.is_some() {
+            if let Asn1ResolvedType::Reference(ref decoder_ty) =
+                self.decoder_ty.as_ref().as_ref().unwrap()
+            {
+                format!("\"{}\"", generator.to_type_ident(decoder_ty))
+                    .parse()
+                    .unwrap()
+            } else {
+                format!("\"Unknown\"").parse().unwrap()
+            }
+        } else {
+            format!("\"Unknown\"").parse().unwrap()
+        };
+
+        let decoder_ty = quote! { #[asn(decoder_ty = #decoder_ty)] };
+        Ok(decoder_ty)
     }
 }

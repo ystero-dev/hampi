@@ -12,7 +12,10 @@ use crate::resolver::{
         structs::{
             defs::Asn1ResolvedDefinition,
             types::{
-                constructed::{ResolvedComponent, ResolvedConstructedType, ResolvedSeqComponent},
+                constructed::{
+                    ClassFieldComponentType, ResolvedComponent, ResolvedConstructedType,
+                    ResolvedSeqComponent,
+                },
                 ioc::{ResolvedFieldSpec, ResolvedObjectSet, ResolvedObjectSetElement},
                 Asn1ResolvedType, ResolvedSetType,
             },
@@ -104,6 +107,7 @@ fn resolve_sequence_type(
         let seq_component = ResolvedSeqComponent {
             component,
             optional: c.optional,
+            class_field_type: None,
         };
         components.push(seq_component);
     }
@@ -211,6 +215,7 @@ fn resolve_seq_components_for_objects(
                                     ty: ty.as_ref().unwrap().clone(),
                                 },
                                 optional: false,
+                                class_field_type: Some(ClassFieldComponentType::Type),
                             },
 
                             // FIXME: Not sure what to do with the value.
@@ -221,6 +226,7 @@ fn resolve_seq_components_for_objects(
                                         ty: typeref.clone(),
                                     },
                                     optional: false,
+                                    class_field_type: Some(ClassFieldComponentType::FixedTypeValue),
                                 }
                             }
                         };

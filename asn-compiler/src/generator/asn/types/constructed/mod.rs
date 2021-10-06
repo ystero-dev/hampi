@@ -7,7 +7,8 @@ use quote::quote;
 use crate::error::Error;
 use crate::generator::Generator;
 use crate::resolver::asn::structs::types::{
-    constructed::ResolvedConstructedType, Asn1ResolvedType,
+    constructed::{ClassFieldComponentType, ResolvedConstructedType},
+    Asn1ResolvedType,
 };
 
 impl ResolvedConstructedType {
@@ -59,12 +60,27 @@ impl ResolvedConstructedType {
                 let comp_field_ident = generator.to_value_ident(&c.component.id);
                 let comp_ty_ident =
                     Asn1ResolvedType::generate_name_maybe_aux_type(&c.component.ty, generator)?;
+                let comp_attrs = if c.class_field_type.is_some() {
+                    match c.class_field_type.as_ref().unwrap() {
+                        ClassFieldComponentType::Type => {
+                            quote! {
+                                #[asn(open_type)]
+                            }
+                        }
+                        ClassFieldComponentType::FixedTypeValue => TokenStream::new(),
+                    }
+                } else {
+                    TokenStream::new()
+                };
+
                 let comp_token = if c.optional {
                     quote! {
+                        #comp_attrs
                         pub #comp_field_ident: Option<#comp_ty_ident>,
                     }
                 } else {
                     quote! {
+                        #comp_attrs
                         pub #comp_field_ident: #comp_ty_ident,
                     }
                 };
