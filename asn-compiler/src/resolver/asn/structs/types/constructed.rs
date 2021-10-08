@@ -36,7 +36,6 @@ pub(crate) struct ResolvedSeqComponent {
     pub(crate) component: ResolvedComponent,
     pub(crate) optional: bool,
     pub(crate) class_field_type: Option<ClassFieldComponentType>,
-    pub(crate) key: Option<String>,
     // FIXME : Handle default
     // pub(crate) default: Option<Asn1ResolvedType>
 }

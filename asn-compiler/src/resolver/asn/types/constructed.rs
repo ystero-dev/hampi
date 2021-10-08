@@ -108,7 +108,6 @@ fn resolve_sequence_type(
             component,
             optional: c.optional,
             class_field_type: None,
-            key: None,
         };
         components.push(seq_component);
     }
@@ -172,78 +171,91 @@ fn resolve_sequence_classfield_components(
             set_reference
         ));
     }
-    let mut types = BTreeMap::new();
-    let mut decoder_ty = None;
     if let Some(Asn1ResolvedDefinition::ObjectSet(ref set)) = objects {
         let objects = &set.objects;
-        let resolved_components = resolve_seq_components_for_objects(&all_components, objects)?;
-        decoder_ty.replace(objects.decoder_ty.clone());
-        for (key, name, components) in resolved_components {
-            let ty = Asn1ResolvedType::Constructed(ResolvedConstructedType::Sequence {
-                name: Some(name),
+        let components =
+            resolve_seq_components_for_objects(&all_components, &set_reference, objects)?;
+        Ok(Asn1ResolvedType::Constructed(
+            ResolvedConstructedType::Sequence {
+                name: None,
                 components,
-            });
-            types.insert(key, ty);
-        }
+            },
+        ))
+    } else {
+        return Err(resolve_error!(
+            "Object Set '{}' not resolved yet!",
+            set_reference
+        ));
     }
-    let decoder_ty = decoder_ty.unwrap();
-    Ok(Asn1ResolvedType::Set(ResolvedSetType {
-        setref: set_reference.clone(),
-        decoder_ty: Box::new(decoder_ty),
-        types,
-    }))
 }
 
 fn resolve_seq_components_for_objects(
     input_components: &Vec<Component>,
+    set_reference: &str,
     objects: &ResolvedObjectSet,
-) -> Result<Vec<(String, String, Vec<ResolvedSeqComponent>)>, Error> {
+) -> Result<Vec<ResolvedSeqComponent>, Error> {
+    if objects.elements.is_empty() {
+        return Ok(vec![]);
+    }
+    let first = &objects.elements[0];
     let mut result = vec![];
-    for (key, object) in &objects.lookup_table {
-        let mut resolved_components = vec![];
-        if let ResolvedObjectSetElement::Object(ref ob) = object {
-            for component in input_components {
-                if let Asn1TypeKind::Reference(Asn1TypeReference::ClassField { fieldref, .. }) =
-                    &component.ty.kind
-                {
-                    let mut r = ob.fields.iter().filter(|(id, _)| id == &fieldref);
-                    let r = r.next();
-                    if r.is_some() {
-                        let resolved = match r.unwrap().1 {
-                            ResolvedFieldSpec::Type { ty } => ResolvedSeqComponent {
-                                component: ResolvedComponent {
-                                    id: component.id.clone(),
-                                    ty: ty.as_ref().unwrap().clone(),
-                                },
-                                optional: false,
-                                class_field_type: Some(ClassFieldComponentType::Type),
-                                key: Some(key.clone()),
-                            },
-
-                            // FIXME: Not sure what to do with the value.
-                            ResolvedFieldSpec::FixedTypeValue { typeref, .. } => {
-                                ResolvedSeqComponent {
-                                    component: ResolvedComponent {
-                                        id: component.id.clone(),
-                                        ty: typeref.clone(),
-                                    },
-                                    optional: false,
-                                    class_field_type: Some(ClassFieldComponentType::FixedTypeValue),
-                                    key: None,
-                                }
-                            }
-                        };
-                        resolved_components.push(resolved);
-                    }
+    for component in input_components {
+        if let Asn1TypeKind::Reference(Asn1TypeReference::ClassField { fieldref, .. }) =
+            &component.ty.kind
+        {
+            if let ResolvedObjectSetElement::Object(ref o) = first {
+                let spec = o.fields.get(fieldref);
+                if let Some(ResolvedFieldSpec::FixedTypeValue { typeref, .. }) = spec {
+                    let component = ResolvedComponent {
+                        id: component.id.clone(),
+                        ty: typeref.clone(),
+                    };
+                    let seq_component = ResolvedSeqComponent {
+                        component,
+                        optional: false, // FIXME:
+                        class_field_type: Some(ClassFieldComponentType::FixedTypeValue),
+                    };
+                    result.push(seq_component);
+                } else {
+                    let types = get_seq_component_for_object_set(fieldref, objects)?;
+                    let ty = ResolvedSetType {
+                        setref: set_reference.to_string(),
+                        types,
+                    };
+                    let component = ResolvedComponent {
+                        id: component.id.clone(),
+                        ty: Asn1ResolvedType::Set(ty),
+                    };
+                    let seq_component = ResolvedSeqComponent {
+                        component,
+                        optional: false, // FIXME:
+                        class_field_type: Some(ClassFieldComponentType::Type),
+                    };
+                    result.push(seq_component);
                 }
-            }
-            // Only add to the result if Every Component in the Input is also found in the Object. This
-            // is mainly true for optional components. If Optional Components are missing, They should
-            // not be part of the generated Set.
-            if input_components.len() == resolved_components.len() {
-                result.push((key.clone(), ob.name.clone(), resolved_components));
             }
         }
     }
+    // Only add to the result if Every Component in the Input is also found in the Object. This
+    // is mainly true for optional components. If Optional Components are missing, They should
+    // not be part of the generated Set.
     Ok(result)
+}
+
+fn get_seq_component_for_object_set(
+    fieldref: &String,
+    objects: &ResolvedObjectSet,
+) -> Result<BTreeMap<String, (String, Asn1ResolvedType)>, Error> {
+    let mut types = BTreeMap::new();
+    for (key, object) in &objects.lookup_table {
+        if let ResolvedObjectSetElement::Object(ref o) = object {
+            let field_ob = o.fields.get(fieldref);
+            if let Some(ResolvedFieldSpec::Type { ty }) = field_ob {
+                if let Some(Asn1ResolvedType::Reference(ref tyid)) = ty {
+                    types.insert(tyid.clone(), (key.clone(), ty.as_ref().unwrap().clone()));
+                }
+            }
+        }
+    }
+    Ok(types)
 }

@@ -60,36 +60,17 @@ impl ResolvedConstructedType {
                 let comp_field_ident = generator.to_value_ident(&c.component.id);
                 let comp_ty_ident =
                     Asn1ResolvedType::generate_name_maybe_aux_type(&c.component.ty, generator)?;
-                let comp_attrs = if c.class_field_type.is_some() {
-                    match c.class_field_type.as_ref().unwrap() {
-                        ClassFieldComponentType::Type => {
-                            let key: proc_macro2::TokenStream =
-                                format!("{}", c.key.as_ref().unwrap()).parse().unwrap();
-                            eprintln!("{:?}", key);
-                            quote! {
-                                #[asn(open_type, key = #key)]
-                            }
-                        }
-                        ClassFieldComponentType::FixedTypeValue => TokenStream::new(),
-                    }
-                } else {
-                    TokenStream::new()
-                };
-
                 let comp_token = if c.optional {
                     quote! {
-                        #comp_attrs
                         pub #comp_field_ident: Option<#comp_ty_ident>,
                     }
                 } else {
                     quote! {
-                        #comp_attrs
                         pub #comp_field_ident: #comp_ty_ident,
                     }
                 };
                 comp_tokens.extend(comp_token);
             }
-            eprintln!("comp_tokens: {:?}", comp_tokens);
             Ok(quote! {
                 #[derive(Debug, AperCodec)]
                 #[asn(type = "SEQUENCE")]
@@ -123,7 +104,7 @@ impl ResolvedConstructedType {
                     Asn1ResolvedType::generate_name_maybe_aux_type(&c.ty, generator)?;
                 let comp_token = quote! {
                     #fld_attrs
-                    #comp_variant_ty_ident(#comp_variant_ty_ident),
+                    #comp_variant_ident(#comp_variant_ty_ident),
                 };
                 root_comp_tokens.extend(comp_token);
             }
@@ -139,7 +120,7 @@ impl ResolvedConstructedType {
                         Asn1ResolvedType::generate_name_maybe_aux_type(&a.ty, generator)?;
                     let comp_token = quote! {
                         #fld_attrs
-                        #comp_variant_ty_ident(#comp_variant_ty_ident),
+                        #comp_variant_ident(#comp_variant_ty_ident),
                     };
                     addition_comp_tokens.extend(comp_token);
                 }

@@ -54,11 +54,9 @@ impl ResolvedSetType {
     ) -> Result<TokenStream, Error> {
         let ty_ident = generator.to_type_ident(name);
         let ty_elements = self.generate_aux_types(generator)?;
-        let decoder_ty = self.generate_decoder_ty_tokens(generator)?;
 
         Ok(quote! {
             #[derive(Debug, AperCodec)]
-            #decoder_ty
             pub enum #ty_ident {
                 #ty_elements
             }
@@ -69,13 +67,12 @@ impl ResolvedSetType {
         &self,
         generator: &mut Generator,
     ) -> Result<Ident, Error> {
+        // FIXME: This is perhaps not right
         let ty_ident = generator.to_type_ident(&self.setref);
         let ty_elements = self.generate_aux_types(generator)?;
-        let decoder_ty = self.generate_decoder_ty_tokens(generator)?;
 
         let set_ty = quote! {
             #[derive(Debug, AperCodec)]
-            #decoder_ty
             pub enum #ty_ident {
                 #ty_elements
             }
@@ -88,34 +85,20 @@ impl ResolvedSetType {
 
     fn generate_aux_types(&self, generator: &mut Generator) -> Result<TokenStream, Error> {
         let mut variant_tokens = TokenStream::new();
-        for (_name, ty) in &self.types {
-            let ty_ident = Asn1ResolvedType::generate_name_maybe_aux_type(ty, generator)?;
-            //let variant_ident = generator.to_type_ident(name);
+        for (name, ty) in &self.types {
+            let variant_ident = generator.to_type_ident(name);
+            let ty_ident = Asn1ResolvedType::generate_name_maybe_aux_type(&ty.1, generator)?;
+            let key: proc_macro2::TokenStream = format!("\"{}\"", ty.0).parse().unwrap();
+            let key_tokens = quote! {
+                #[asn(open_type, key = #key)]
+            };
 
             let variant_token = quote! {
-                #ty_ident(#ty_ident),
+                #key_tokens
+                #variant_ident(#ty_ident),
             };
             variant_tokens.extend(variant_token);
         }
         Ok(variant_tokens)
-    }
-
-    fn generate_decoder_ty_tokens(&self, generator: &Generator) -> Result<TokenStream, Error> {
-        let decoder_ty: proc_macro2::TokenStream = if self.decoder_ty.is_some() {
-            if let Asn1ResolvedType::Reference(ref decoder_ty) =
-                self.decoder_ty.as_ref().as_ref().unwrap()
-            {
-                format!("\"{}\"", generator.to_type_ident(decoder_ty))
-                    .parse()
-                    .unwrap()
-            } else {
-                format!("\"Unknown\"").parse().unwrap()
-            }
-        } else {
-            format!("\"Unknown\"").parse().unwrap()
-        };
-
-        let decoder_ty = quote! { #[asn(decoder_ty = #decoder_ty)] };
-        Ok(decoder_ty)
     }
 }
