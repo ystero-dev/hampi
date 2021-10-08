@@ -25,6 +25,7 @@ impl Asn1ResolvedType {
     pub(crate) fn generate_name_maybe_aux_type(
         ty: &Asn1ResolvedType,
         generator: &mut Generator,
+        input: Option<&String>,
     ) -> Result<Ident, Error> {
         match ty {
             Asn1ResolvedType::Base(ref b) => b.generate_ident_and_aux_type_for_base(generator),
@@ -32,9 +33,11 @@ impl Asn1ResolvedType {
                 Asn1ResolvedType::generate_ident_for_reference(r, generator)
             }
             Asn1ResolvedType::Constructed(ref c) => {
-                c.generate_ident_and_aux_type_for_constucted(generator)
+                c.generate_ident_and_aux_type_for_constucted(generator, input)
             }
-            Asn1ResolvedType::Set(ref s) => s.generate_ident_and_aux_types_for_set(generator),
+            Asn1ResolvedType::Set(ref s) => {
+                s.generate_ident_and_aux_types_for_set(generator, input)
+            }
         }
     }
 
@@ -66,9 +69,14 @@ impl ResolvedSetType {
     pub(crate) fn generate_ident_and_aux_types_for_set(
         &self,
         generator: &mut Generator,
+        input: Option<&String>,
     ) -> Result<Ident, Error> {
         // FIXME: This is perhaps not right
-        let ty_ident = generator.to_type_ident(&self.setref);
+        let ty_ident = if input.is_none() {
+            generator.to_type_ident(&self.setref)
+        } else {
+            generator.to_type_ident(input.unwrap())
+        };
         let ty_elements = self.generate_aux_types(generator)?;
 
         let set_ty = quote! {
@@ -87,7 +95,7 @@ impl ResolvedSetType {
         let mut variant_tokens = TokenStream::new();
         for (name, ty) in &self.types {
             let variant_ident = generator.to_type_ident(name);
-            let ty_ident = Asn1ResolvedType::generate_name_maybe_aux_type(&ty.1, generator)?;
+            let ty_ident = Asn1ResolvedType::generate_name_maybe_aux_type(&ty.1, generator, None)?;
             let key: proc_macro2::TokenStream = format!("\"{}\"", ty.0).parse().unwrap();
             let key_tokens = quote! {
                 #[asn(open_type, key = #key)]

@@ -15,17 +15,34 @@ impl ResolvedConstructedType {
     pub(crate) fn generate_ident_and_aux_type_for_constucted(
         &self,
         generator: &mut Generator,
+        input: Option<&String>,
     ) -> Result<Ident, Error> {
         let unique_name = match self {
             ResolvedConstructedType::Sequence { name, .. } => {
-                if name.is_some() {
-                    name.as_ref().unwrap().clone()
+                if input.is_some() {
+                    input.unwrap().clone()
                 } else {
-                    generator.to_unique_name("Sequence")
+                    if name.is_some() {
+                        name.as_ref().unwrap().clone()
+                    } else {
+                        generator.to_unique_name("Sequence")
+                    }
                 }
             }
-            ResolvedConstructedType::Choice { .. } => generator.to_unique_name("Choice"),
-            ResolvedConstructedType::SequenceOf { .. } => generator.to_unique_name("SeqOf"),
+            ResolvedConstructedType::Choice { .. } => {
+                if input.is_some() {
+                    input.unwrap().clone()
+                } else {
+                    generator.to_unique_name("Choice")
+                }
+            }
+            ResolvedConstructedType::SequenceOf { .. } => {
+                if input.is_some() {
+                    input.unwrap().clone()
+                } else {
+                    generator.to_unique_name("SeqOf")
+                }
+            }
         };
 
         let generated_type = self.generate(&unique_name, generator)?;
@@ -58,8 +75,12 @@ impl ResolvedConstructedType {
             let mut comp_tokens = TokenStream::new();
             for c in components {
                 let comp_field_ident = generator.to_value_ident(&c.component.id);
-                let comp_ty_ident =
-                    Asn1ResolvedType::generate_name_maybe_aux_type(&c.component.ty, generator)?;
+                let input_comp_ty_ident = format!("{}{}", name, c.component.id);
+                let comp_ty_ident = Asn1ResolvedType::generate_name_maybe_aux_type(
+                    &c.component.ty,
+                    generator,
+                    Some(&input_comp_ty_ident),
+                )?;
                 let comp_token = if c.optional {
                     quote! {
                         pub #comp_field_ident: Option<#comp_ty_ident>,
@@ -100,8 +121,12 @@ impl ResolvedConstructedType {
                 let choice_idx: proc_macro2::TokenStream = format!("\"{}\"", i).parse().unwrap();
                 let fld_attrs = quote!( #[asn(choice_idx = #choice_idx)] );
                 let comp_variant_ident = generator.to_type_ident(&c.id);
-                let comp_variant_ty_ident =
-                    Asn1ResolvedType::generate_name_maybe_aux_type(&c.ty, generator)?;
+                let input_comp_ty_ident = format!("{}{}", name, c.id);
+                let comp_variant_ty_ident = Asn1ResolvedType::generate_name_maybe_aux_type(
+                    &c.ty,
+                    generator,
+                    Some(&input_comp_ty_ident),
+                )?;
                 let comp_token = quote! {
                     #fld_attrs
                     #comp_variant_ident(#comp_variant_ty_ident),
@@ -115,9 +140,13 @@ impl ResolvedConstructedType {
                     let choice_idx: proc_macro2::TokenStream =
                         format!("\"{}\"", i).parse().unwrap();
                     let fld_attrs = quote!( #[asn(choice_idx = #choice_idx, extension)] );
+                    let input_comp_ty_ident = format!("{}{}", name, a.id);
                     let comp_variant_ident = generator.to_type_ident(&a.id);
-                    let comp_variant_ty_ident =
-                        Asn1ResolvedType::generate_name_maybe_aux_type(&a.ty, generator)?;
+                    let comp_variant_ty_ident = Asn1ResolvedType::generate_name_maybe_aux_type(
+                        &a.ty,
+                        generator,
+                        Some(&input_comp_ty_ident),
+                    )?;
                     let comp_token = quote! {
                         #fld_attrs
                         #comp_variant_ident(#comp_variant_ty_ident),
@@ -163,7 +192,12 @@ impl ResolvedConstructedType {
     ) -> Result<TokenStream, Error> {
         if let ResolvedConstructedType::SequenceOf { ref ty, .. } = self {
             let seq_of_type_ident = generator.to_type_ident(name);
-            let seq_of_type = Asn1ResolvedType::generate_name_maybe_aux_type(ty, generator)?;
+            let input_type_name = format!("{}Item", name);
+            let seq_of_type = Asn1ResolvedType::generate_name_maybe_aux_type(
+                ty,
+                generator,
+                Some(&input_type_name),
+            )?;
 
             Ok(quote! {
                 #[derive(Debug, AperCodec)]
