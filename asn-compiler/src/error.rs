@@ -30,6 +30,9 @@ pub enum Error {
 
     /// Error related to resolving constraints for a type.
     ConstraintError(String),
+
+    /// Error related to resolving constraints for a type.
+    CodeGenerationError(String),
 }
 
 impl std::fmt::Display for Error {
@@ -77,6 +80,9 @@ impl std::fmt::Display for Error {
             }
             Error::ConstraintError(ref errstr) => {
                 write!(f, "Compilation Error: Constraint: {}", errstr)
+            }
+            Error::CodeGenerationError(ref errstr) => {
+                write!(f, "Compilation Error: Code Generation: {}", errstr)
             }
         }
     }
@@ -126,6 +132,12 @@ macro_rules! unknown_oid_name {
 macro_rules! resolve_error {
     ($($arg: tt)*) => {
         crate::error::Error::ResolveError(format!($($arg)*))
+    };
+}
+
+macro_rules! code_generate_error {
+    ($($arg: tt)*) => {
+        crate::error::Error::CodeGenerationError(format!($($arg)*))
     };
 }
 

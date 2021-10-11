@@ -53,6 +53,7 @@ fn resolve_choice_type(
 ) -> Result<Asn1ResolvedType, Error> {
     let mut root_components = vec![];
     for c in &choice.root_components {
+        eprintln!("root_components: {:#?}", c);
         let ty = resolve_type(&c.ty, resolver)?;
         let component = ResolvedComponent {
             id: c.id.clone(),
@@ -64,6 +65,7 @@ fn resolve_choice_type(
     let additions = if choice.additions.is_some() {
         let mut components = vec![];
         for addition in choice.additions.as_ref().unwrap() {
+            eprintln!("additions ID: {:#?}", addition);
             for c in &addition.components {
                 let ty = resolve_type(&c.ty, resolver)?;
                 let component = ResolvedComponent {
