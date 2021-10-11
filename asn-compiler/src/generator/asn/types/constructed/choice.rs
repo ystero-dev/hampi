@@ -79,7 +79,12 @@ impl ResolvedConstructedType {
         for token in root_tokens {
             let variant_ident = token.variant.clone();
             let ty_ident = token.ty.clone();
+            let key_token: TokenStream = format!("{}", token.key).parse().unwrap();
+            let extension_token = quote! { false };
+            let field_attributes =
+                quote! { #[asn(key = #key_token, extension = #extension_token)] };
             let comp_token = quote! {
+                #field_attributes
                 #variant_ident(#ty_ident),
             };
             root_comp_tokens.extend(comp_token);
@@ -94,14 +99,35 @@ impl ResolvedConstructedType {
             for token in addition_tokens {
                 let variant_ident = token.variant.clone();
                 let ty_ident = token.ty.clone();
+                let key_token: TokenStream = format!("{}", token.key).parse().unwrap();
+                let extension_token = quote! { true };
+                let field_attributes =
+                    quote! { #[asn(key = #key_token, extension = #extension_token)] };
                 let comp_token = quote! {
+                    #field_attributes
                     #variant_ident(#ty_ident),
                 };
                 addition_comp_tokens.extend(comp_token);
             }
         }
+
+        // Attributes Tokens (Let's not Get rid of them as yet, they will be required if we decide
+        // to go the `#derive` Path
+        let lb_token = quote! { lb = 0 };
+        let ub_token: TokenStream = format!("{}", root_tokens.len() - 1).parse().unwrap();
+        let ub_token = quote! { ub = #ub_token };
+        let additions: TokenStream = if addition_tokens.is_some() {
+            quote! { true }
+        } else {
+            quote! { false }
+        };
+        let additions = quote! { additions = #additions };
+
+        let ty_attributes = quote! { #[asn(#lb_token, #ub_token, #additions)] };
+
         Ok(quote! {
             #[derive(Debug, AperCodec)]
+            #ty_attributes
             pub enum #type_name {
                 #root_comp_tokens
                 #addition_comp_tokens
