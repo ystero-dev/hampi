@@ -1,7 +1,7 @@
 use asn_codecs_derive::AperCodec;
 
 #[derive(Debug, AperCodec)]
-#[asn(type = "CHOICE", value_extensible = true, lb = 0, ub = 2)]
+#[asn(type = "CHOICE", extensible = true, lb = 0, ub = 2, sz_lb = -5)]
 struct CodecTest;
 
 fn main() {

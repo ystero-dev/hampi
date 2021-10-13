@@ -1,6 +1,5 @@
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::Meta::List;
 use syn::{parse_macro_input, DeriveInput};
 
 mod attrs;
@@ -14,8 +13,10 @@ pub fn derive(input: TokenStream) -> TokenStream {
     let name = &ast.ident;
 
     let codec_params = attrs::parse_variant_meta_as_codec_params(&ast.attrs);
-
-    let codec_params = attrs::get_codec_params_from_meta_items(&ast.attrs).unwrap();
+    if codec_params.is_err() {
+        return codec_params.err().unwrap().to_compile_error().into();
+    }
+    let codec_params = codec_params.unwrap();
     let lb = codec_params.lb;
     let ub = codec_params.ub;
 
