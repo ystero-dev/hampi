@@ -32,7 +32,7 @@ impl<T: Default> Asn1CodecParams<T> {
     ///
     pub fn from_container_ast(ast: &syn::DeriveInput) -> TokenStream {
         for attr in &ast.attrs {
-            if attr.path.is_ident("asn1") {}
+            if attr.path.is_ident("asn") {}
         }
         TokenStream::new()
     }
