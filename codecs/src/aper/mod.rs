@@ -35,6 +35,32 @@ impl AperCodecData {
         Self::default()
     }
 
+    pub fn from_u8(bits: &[u8]) -> Self {
+        Self {
+            bits: BitSlice::<Msb0, _>::from_slice(bits).unwrap().to_bitvec(),
+            offset: 0,
+        }
+    }
+
+    fn decode_align(&mut self) -> Result<(), AperCodecError> {
+        let remaining = 8 - (self.offset & 0x7 as usize);
+        if !self.bits[self.offset..self.offset + remaining]
+            .iter()
+            .all(|b| b == false)
+        {
+            Err(AperCodecError::new(
+                format!(
+                    "{} Padding bits at Offset {} not all '0'.",
+                    remaining, self.offset,
+                )
+                .as_str(),
+            ))
+        } else {
+            self.offset += remaining;
+            Ok(())
+        }
+    }
+
     fn align(&mut self) -> () {
         let remaining = 8 - (self.offset & 0x7 as usize);
         let mut bv = bitvec![Msb0, u8; 0; remaining];
@@ -42,26 +68,30 @@ impl AperCodecData {
         self.offset += remaining;
     }
 
-    pub fn to_i32(
-        &mut self,
-        extension: bool,
-        _lb: Option<i32>,
-        _ub: Option<i32>,
-    ) -> Result<i32, AperCodecError> {
-        // Extension bit is present
-        if extension {
-            // FIXME: Will panic if offset > BitVec length.
-            let extension_bit = self.bits.get(self.offset).unwrap() == true;
-            if extension_bit {
-                self.offset += 1;
-                return self.decode_unconstrained_i32();
-            };
+    fn decode_bits(&mut self, bits: usize) -> Result<i128, AperCodecError> {
+        let remaining = self.bits.len() - self.offset;
+        if remaining < bits {
+            Err(AperCodecError::new(
+                format!(
+                    "AperCodec:DecodeError:Requested Bits to decode {}, Remaining bits {}",
+                    bits, remaining
+                )
+                .as_str(),
+            ))
+        } else {
+            eprintln!("offset: {}, bits: {}", self.offset, bits);
+            let value = self.bits[self.offset..self.offset + bits].load_be::<u16>() as i128;
+            eprintln!("value: {:#?}", value);
+            Ok(value)
         }
-        Ok(0_i32)
     }
 
-    fn decode_unconstrained_i32(&mut self) -> Result<i32, AperCodecError> {
-        let out = 0 as i32;
-        Ok(out)
+    pub fn advance(&mut self, bits: usize) -> () {
+        let offset = self.offset + bits;
+        if offset > self.bits.len() {
+            self.offset = self.bits.len()
+        } else {
+            self.offset = offset
+        }
     }
 }
