@@ -5,6 +5,10 @@ pub mod error;
 
 pub use error::Error as AperCodecError;
 
+mod decode;
+
+pub use decode::*;
+
 /// Trait representing an 'APER Codec'.
 ///
 /// This 'crate' is to be derived by any `struct` or `enum` representing an ASN.1 Type.

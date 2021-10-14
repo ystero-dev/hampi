@@ -5,14 +5,33 @@ use super::symbol::*;
 
 #[derive(Debug, Default)]
 pub(crate) struct CodecParams {
+    // ASN Type for the Struct or Enum. Required
     pub(crate) ty: Option<syn::LitStr>,
+
+    // Lower Bound for the Value (valid for Integers, Enums and Choice)
     pub(crate) lb: Option<syn::LitInt>,
+
+    // Upper Bound for the Value (valid for Integers, Enums and Choice)
     pub(crate) ub: Option<syn::LitInt>,
+
+    // Is the Value Extensible (When Extension Marker is present in the definition.)
     pub(crate) ext: Option<syn::LitBool>,
+
+    // Size Constraint Lower Bound.
     pub(crate) sz_lb: Option<syn::LitInt>,
+
+    // Size Constraint Upper Bound.
     pub(crate) sz_ub: Option<syn::LitInt>,
+
+    // Size Constraint Extensible
     pub(crate) sz_ext: Option<syn::LitBool>,
+
+    // Key to be used when decoding the value (or Encoding the value.)
     pub(crate) key: Option<syn::LitInt>,
+
+    // The actual 'attribute' from the Syntax tree from which this struct is generated. This will
+    // be used mainly for error reporting inside the functions where this struct is passed.
+    pub(crate) attr: Option<syn::Attribute>,
 }
 
 // Parse All the attributes of the Variant and generate CodecParams Struct
@@ -33,6 +52,7 @@ pub(crate) fn parse_variant_meta_as_codec_params(
             ));
             continue;
         }
+        let _ = codec_params.attr.replace(attr.clone());
         match attr.parse_meta() {
             Ok(syn::Meta::List(meta)) => {
                 for nested in meta.nested.into_iter() {
@@ -154,7 +174,7 @@ pub(crate) fn parse_variant_meta_as_codec_params(
             }
             Ok(other) => errors.push(syn::Error::new_spanned(
                 other,
-                "Only attributes of the type a = b are supported.",
+                "Only attribute values of the form a = b are supported for 'asn' attribute.",
             )),
             Err(error) => errors.push(error),
         }
