@@ -31,13 +31,15 @@ pub struct AperCodecData {
 }
 
 impl AperCodecData {
+    /// Default `AperCodecData`
     pub fn new() -> Self {
         Self::default()
     }
 
-    pub fn from_u8(bits: &[u8]) -> Self {
+    /// Create Our `AperCodecData` Structure from a slice of u8
+    pub fn from_slice(bytes: &[u8]) -> Self {
         Self {
-            bits: BitSlice::<Msb0, _>::from_slice(bits).unwrap().to_bitvec(),
+            bits: BitSlice::<_, _>::from_slice(bytes).unwrap().to_bitvec(),
             offset: 0,
         }
     }
@@ -68,7 +70,22 @@ impl AperCodecData {
         self.offset += remaining;
     }
 
-    fn decode_bits(&mut self, bits: usize) -> Result<i128, AperCodecError> {
+    fn decode_bool(&mut self) -> Result<bool, AperCodecError> {
+        if self.bits.len() == self.offset {
+            return Err(AperCodecError::new(
+                format!(
+                    "AperCodec:DecodeError:End of Bitstream reached while trying to decode bool."
+                )
+                .as_str(),
+            ));
+        }
+        let bit = *self.bits.get(self.offset).as_deref().unwrap();
+        let _ = self.advance_maybe_err(1, true)?;
+
+        Ok(bit)
+    }
+
+    fn decode_bits_as_integer(&mut self, bits: usize) -> Result<i128, AperCodecError> {
         let remaining = self.bits.len() - self.offset;
         if remaining < bits {
             Err(AperCodecError::new(
@@ -80,18 +97,30 @@ impl AperCodecData {
             ))
         } else {
             eprintln!("offset: {}, bits: {}", self.offset, bits);
-            let value = self.bits[self.offset..self.offset + bits].load_be::<u16>() as i128;
+            let value = self.bits[self.offset..self.offset + bits].load_be::<u128>() as i128;
             eprintln!("value: {:#?}", value);
             Ok(value)
         }
     }
 
-    pub fn advance(&mut self, bits: usize) -> () {
+    fn advance_maybe_err(&mut self, bits: usize, ignore: bool) -> Result<(), AperCodecError> {
         let offset = self.offset + bits;
         if offset > self.bits.len() {
-            self.offset = self.bits.len()
+            if ignore {
+                self.offset = self.bits.len()
+            } else {
+                let remaining = self.bits.len() - self.offset;
+                return Err(AperCodecError::new(
+                    format!(
+                        "AperCodec:DecodeError:Requested Bits to advance {}, Remaining bits {}",
+                        bits, remaining
+                    )
+                    .as_str(),
+                ));
+            }
         } else {
             self.offset = offset
         }
+        Ok(())
     }
 }
