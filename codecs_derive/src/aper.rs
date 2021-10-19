@@ -24,6 +24,7 @@ fn generate_aper_decode_for_asn_choice(
 
     let lb = params.lb.as_ref();
     let ub = params.ub.as_ref();
+    let ext = params.ext.as_ref();
 
     let tokens = quote! {
 
@@ -32,7 +33,7 @@ fn generate_aper_decode_for_asn_choice(
 
             fn decode(data: &mut asn_codecs::aper::AperCodecData) -> Result<Self::Output, asn_codecs::aper::AperCodecError> {
 
-                asn_codecs::aper::decode_choice_idx(#lb, #ub);
+                asn_codecs::aper::decode_choice_idx(data, #lb, #ub, #ext);
 
                 Ok(Self{})
             }

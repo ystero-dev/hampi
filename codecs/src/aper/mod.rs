@@ -97,8 +97,13 @@ impl AperCodecData {
             ))
         } else {
             eprintln!("offset: {}, bits: {}", self.offset, bits);
-            let value = self.bits[self.offset..self.offset + bits].load_be::<u128>() as i128;
+            let value = if bits == 0 {
+                0 as i128
+            } else {
+                self.bits[self.offset..self.offset + bits].load_be::<u128>() as i128
+            };
             eprintln!("value: {:#?}", value);
+            self.advance_maybe_err(bits, false)?;
             Ok(value)
         }
     }
@@ -122,5 +127,20 @@ impl AperCodecData {
             self.offset = offset
         }
         Ok(())
+    }
+
+    fn get_bit(&self) -> Result<bool, AperCodecError> {
+        if self.offset >= self.bits.len() {
+            return Err(AperCodecError::new(
+                format!(
+                    "AperCodec:GetBitError:Requested Bit {}, Remaining bits {}",
+                    self.offset,
+                    self.bits.len() - self.offset
+                )
+                .as_str(),
+            ));
+        }
+        let bit = *self.bits.get(self.offset).as_deref().unwrap();
+        Ok(bit)
     }
 }

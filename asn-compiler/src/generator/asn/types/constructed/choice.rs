@@ -121,9 +121,9 @@ impl ResolvedConstructedType {
         } else {
             quote! { false }
         };
-        let additions = quote! { additions = #additions };
+        let additions = quote! { extensible = #additions };
 
-        let ty_attributes = quote! { #[asn(#lb_token, #ub_token, #additions)] };
+        let ty_attributes = quote! { #[asn(type = "CHOICE", #lb_token, #ub_token, #additions)] };
 
         Ok(quote! {
             #[derive(Debug, AperCodec)]
