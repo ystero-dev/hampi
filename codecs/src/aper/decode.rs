@@ -6,18 +6,21 @@ pub fn decode_choice_idx(
     lb: i128,
     ub: i128,
     is_extensible: bool,
-) -> Result<(), AperCodecError> {
-    let _idx = if is_extensible {
+) -> Result<(i128, bool), AperCodecError> {
+    let (idx, extended) = if is_extensible {
         let extended = data.decode_bool()?;
         if !extended {
-            decode_integer(data, Some(lb), Some(ub), false)?
+            let (idx, _) = decode_integer(data, Some(lb), Some(ub), false)?;
+            (idx, extended)
         } else {
-            decode_integer(data, Some(lb), Some(ub), true)?
+            let idx = decode_normally_small_non_negative_whole_number(data)?;
+            (idx, extended)
         }
     } else {
-        decode_integer(data, Some(lb), Some(ub), false)?
+        let (idx, _) = decode_integer(data, Some(lb), Some(ub), false)?;
+        (idx, false)
     };
-    Ok(())
+    Ok((idx, extended))
 }
 
 /// Decode an Integer

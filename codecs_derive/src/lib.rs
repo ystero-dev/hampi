@@ -11,7 +11,7 @@ mod aper;
 pub fn derive(input: TokenStream) -> TokenStream {
     let ast = parse_macro_input!(input as DeriveInput);
 
-    let codec_params = attrs::parse_variant_meta_as_codec_params(&ast.attrs);
+    let codec_params = attrs::parse_ty_meta_as_codec_params(&ast.attrs);
     if codec_params.is_err() {
         return codec_params.err().unwrap().to_compile_error().into();
     }

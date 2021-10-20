@@ -3,18 +3,19 @@
 //! A lot of this code is inspired from `serde_derive_internal` from the venerable `serde` crate.
 use super::symbol::*;
 
+// `struct` or `enum` Attributes that are used by the Codec
 #[derive(Debug, Default)]
-pub(crate) struct CodecParams {
+pub(crate) struct TyCodecParams {
     // ASN Type for the Struct or Enum. Required
     pub(crate) ty: Option<syn::LitStr>,
 
-    // Lower Bound for the Value (valid for Integers, Enums and Choice)
+    // Lower Bound for the Value (valid for Integers, Enums and Choice Index)
     pub(crate) lb: Option<syn::LitInt>,
 
-    // Upper Bound for the Value (valid for Integers, Enums and Choice)
+    // Upper Bound for the Value (valid for Integers, Enums and Choice Index)
     pub(crate) ub: Option<syn::LitInt>,
 
-    // Is the Value Extensible (When Extension Marker is present in the definition.)
+    // Is the Value Extensible (Extension Marker is present in the definition.)
     pub(crate) ext: Option<syn::LitBool>,
 
     // Size Constraint Lower Bound.
@@ -26,22 +27,19 @@ pub(crate) struct CodecParams {
     // Size Constraint Extensible
     pub(crate) sz_ext: Option<syn::LitBool>,
 
-    // Key to be used when decoding the value (or Encoding the value.)
-    pub(crate) key: Option<syn::LitInt>,
-
     // The actual 'attribute' from the Syntax tree from which this struct is generated. This will
     // be used mainly for error reporting inside the functions where this struct is passed.
     pub(crate) attr: Option<syn::Attribute>,
 }
 
-// Parse All the attributes of the Variant and generate CodecParams Struct
+// Parse All the attributes of the Type and generate TyCodecParams Struct
 //
-// The attributes of the `Struct` or `Enum` are parsed and a `CodecParams` structure is generated.
+// The attributes of the `Struct` or `Enum` are parsed and a `TyCodecParams` structure is generated.
 // This stucture will hold the values that will be used by the individual `decode` functions.
-pub(crate) fn parse_variant_meta_as_codec_params(
+pub(crate) fn parse_ty_meta_as_codec_params(
     attrs: &Vec<syn::Attribute>,
-) -> Result<CodecParams, syn::Error> {
-    let mut codec_params = CodecParams::default();
+) -> Result<TyCodecParams, syn::Error> {
+    let mut codec_params = TyCodecParams::default();
 
     let mut errors = vec![];
     for attr in attrs {
@@ -152,7 +150,67 @@ pub(crate) fn parse_variant_meta_as_codec_params(
                                 )),
                             }
                         }
-                        // parses #[asn(sz_ub = 0)]
+                        _ => errors.push(syn::Error::new_spanned(
+                            &nested,
+                            "Unsupported attribute value. Attribute values should be of the form `a = b`"
+                        )),
+                    }
+                }
+            }
+            Ok(other) => errors.push(syn::Error::new_spanned(
+                other,
+                "Only attribute values of the form a = b are supported for 'asn' attribute.",
+            )),
+            Err(error) => errors.push(error),
+        }
+    }
+    if let Some((first, others)) = errors.split_first_mut() {
+        for e in others {
+            first.combine(e.clone())
+        }
+        Err(first.clone())
+    } else {
+        Ok(codec_params)
+    }
+}
+
+// Field or Variant Attributes used as Parameters by Codec
+//
+// We are using one common structure for both `struct` fields and `enum` variants.
+#[derive(Debug, Default)]
+pub(crate) struct FieldVarCodecParams {
+    // Key used by this variant (Typically for an Enum)
+    pub(crate) key: Option<syn::LitInt>,
+
+    // Is the value from outside the "Extension" (ie. not from the Extension Root.)
+    pub(crate) extended: Option<syn::LitBool>,
+
+    // The actual 'attribute' from the Syntax tree from which this struct is generated. This will
+    // be used mainly for error reporting inside the functions where this struct is passed.
+    pub(crate) attr: Option<syn::Attribute>,
+}
+
+// Parses attributes of the field (struct) or a variant (enum) to generate codec params.
+pub(crate) fn parse_fld_meta_as_codec_params(
+    attrs: &Vec<syn::Attribute>,
+) -> Result<FieldVarCodecParams, syn::Error> {
+    let mut codec_params = FieldVarCodecParams::default();
+
+    let mut errors = vec![];
+    for attr in attrs {
+        if attr.path != ASN {
+            errors.push(syn::Error::new_spanned(
+                attr,
+                format!("Unsupported attribute"),
+            ));
+            continue;
+        }
+        let _ = codec_params.attr.replace(attr.clone());
+        match attr.parse_meta() {
+            Ok(syn::Meta::List(meta)) => {
+                for nested in meta.nested.into_iter() {
+                    match nested {
+                        // parses #[asn(key = <int>)]
                         syn::NestedMeta::Meta(syn::Meta::NameValue(ref m)) if m.path == KEY => {
                             match m.lit {
                                 syn::Lit::Int(ref key) => {
@@ -162,6 +220,19 @@ pub(crate) fn parse_variant_meta_as_codec_params(
                                 _ => errors.push(syn::Error::new_spanned(
                                     nested,
                                     "`key` value should be an Int Literal",
+                                )),
+                            }
+                        }
+                        // parses #[asn(extended = true)]
+                        syn::NestedMeta::Meta(syn::Meta::NameValue(ref m)) if m.path == EXTENDED => {
+                            match m.lit {
+                                syn::Lit::Bool(ref ext) => {
+                                    let ext = ext.clone();
+                                    codec_params.extended.replace(ext);
+                                }
+                                _ => errors.push(syn::Error::new_spanned(
+                                    nested,
+                                    "`extended` value should be an Bool Literal",
                                 )),
                             }
                         }
@@ -179,7 +250,6 @@ pub(crate) fn parse_variant_meta_as_codec_params(
             Err(error) => errors.push(error),
         }
     }
-
     if let Some((first, others)) = errors.split_first_mut() {
         for e in others {
             first.combine(e.clone())
