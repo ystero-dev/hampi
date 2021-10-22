@@ -1,22 +1,11 @@
+//! `APER` Code generation for ASN.1 Choice Type
+
 use proc_macro::TokenStream;
 use quote::quote;
 
-use super::attrs::{parse_fld_meta_as_codec_params, TyCodecParams};
+use crate::attrs::{parse_fld_meta_as_codec_params, TyCodecParams};
 
-pub(crate) fn generate_decode(
-    ast: &syn::DeriveInput,
-    params: &TyCodecParams,
-) -> proc_macro::TokenStream {
-    let ty = params.ty.as_ref().unwrap();
-    match ty.value().as_str() {
-        "CHOICE" => generate_aper_decode_for_asn_choice(ast, params),
-        _ => syn::Error::new_spanned(ty.clone(), "This ASN.1 Type is not supported.")
-            .to_compile_error()
-            .into(),
-    }
-}
-
-fn generate_aper_decode_for_asn_choice(
+pub(super) fn generate_aper_decode_for_asn_choice(
     ast: &syn::DeriveInput,
     params: &TyCodecParams,
 ) -> proc_macro::TokenStream {
