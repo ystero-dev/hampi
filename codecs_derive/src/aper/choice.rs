@@ -28,7 +28,7 @@ pub(super) fn generate_aper_decode_for_asn_choice(
 
             fn decode(data: &mut asn_codecs::aper::AperCodecData) -> Result<Self::Output, asn_codecs::aper::AperCodecError> {
 
-                let (idx, extended) = asn_codecs::aper::decode_choice_idx(data, #lb, #ub, #ext)?;
+                let (idx, extended) = asn_codecs::aper::decode::decode_choice_idx(data, #lb, #ub, #ext)?;
                 if extended {
                     match idx {
                         #(#variant_tokens)*
