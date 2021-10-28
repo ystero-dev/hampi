@@ -16,9 +16,48 @@ impl Asn1ResolvedInteger {
     ) -> Result<TokenStream, Error> {
         let struct_name = generator.to_type_ident(name);
         let inner_type = generator.to_inner_type(self.bits, self.signed);
+        let (min, max) = self.get_min_max_constraints();
+        let extensible = self.resolved_constraints.is_some()
+            && self.resolved_constraints.as_ref().unwrap().has_extension();
+
+        let lb = if min.is_some() {
+            let min = min.unwrap();
+            Some(quote! { #min })
+        } else {
+            None
+        };
+
+        eprintln!("lb: {:#?}", lb);
+        let ub = if max.is_some() {
+            let max = max.unwrap();
+            Some(quote! { #max })
+        } else {
+            None
+        };
+
+        eprintln!("ub: {:#?}", ub);
+
+        let mut ty_tokens = quote! { type = "INTEGER" };
+        if lb.is_some() {
+            ty_tokens.extend(quote! {
+                , lb = #lb
+            });
+        }
+        if ub.is_some() {
+            ty_tokens.extend(quote! {
+                , ub = #ub
+            });
+        }
+
+        if extensible {
+            ty_tokens.extend(quote! {
+                , extensible = true
+            });
+        }
+
         let struct_tokens = quote! {
             #[derive(Debug, AperCodec)]
-            #[asn(type = "INTEGER")]
+            #[asn(#ty_tokens)]
             pub struct #struct_name(#inner_type);
         };
 
@@ -35,5 +74,15 @@ impl Asn1ResolvedInteger {
         generator.aux_items.push(item);
 
         Ok(generator.to_type_ident(&unique_name))
+    }
+
+    fn get_min_max_constraints(&self) -> (Option<i128>, Option<i128>) {
+        if self.resolved_constraints.is_none() {
+            (None, None)
+        } else {
+            let constraints = self.resolved_constraints.as_ref().unwrap();
+
+            (constraints.root_values.min(), constraints.root_values.max())
+        }
     }
 }

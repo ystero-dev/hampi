@@ -71,7 +71,7 @@ fn generate_choice_variant_tokens_using_attrs(
                     if fields.unnamed.len() == 1 {
                         let ty = &fields.unnamed.first().as_ref().unwrap().ty;
                         let variant_token = quote! {
-                            #key => Ok(Self::#variant_ident(#ty::decode(data))),
+                            #key => Ok(Self::#variant_ident(#ty::decode(data)?)),
                         };
                         tokens.push(variant_token);
                     } else {

@@ -3,6 +3,7 @@
 use super::attrs::TyCodecParams;
 
 mod choice;
+mod integer;
 
 pub(crate) fn generate_decode(
     ast: &syn::DeriveInput,
@@ -11,6 +12,7 @@ pub(crate) fn generate_decode(
     let ty = params.ty.as_ref().unwrap();
     match ty.value().as_str() {
         "CHOICE" => choice::generate_aper_decode_for_asn_choice(ast, params),
+        "INTEGER" => integer::generate_aper_decode_for_asn_integer(ast, params),
         _ => syn::Error::new_spanned(ty.clone(), "This ASN.1 Type is not supported.")
             .to_compile_error()
             .into(),
