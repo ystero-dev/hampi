@@ -5,5 +5,5 @@ use asn_codecs_derive::AperCodec;
 pub struct ProcedureCode(u8);
 
 fn main() {
-    eprintln!("ProcedureCode");
+    eprintln!("Integer");
 }

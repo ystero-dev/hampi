@@ -12,5 +12,5 @@ enum TestEnum {
 }
 
 fn main() {
-    eprintln!("t:");
+    eprintln!("Choice");
 }

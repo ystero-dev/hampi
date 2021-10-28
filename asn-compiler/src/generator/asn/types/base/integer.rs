@@ -27,15 +27,12 @@ impl Asn1ResolvedInteger {
             None
         };
 
-        eprintln!("lb: {:#?}", lb);
         let ub = if max.is_some() {
             let max = max.unwrap();
             Some(quote! { #max })
         } else {
             None
         };
-
-        eprintln!("ub: {:#?}", ub);
 
         let mut ty_tokens = quote! { type = "INTEGER" };
         if lb.is_some() {

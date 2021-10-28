@@ -42,9 +42,12 @@ impl Default for Asn1ResolvedInteger {
 pub(crate) struct Asn1ResolvedEnumerated {
     pub(crate) bits: u8,
     pub(crate) signed: bool,
-    pub(crate) values: Option<BTreeSet<i128>>,
+    pub(crate) extensible: bool,
+    pub(crate) root_values: Option<BTreeSet<i128>>,
+    pub(crate) ext_values: Option<BTreeSet<i128>>,
     pub(crate) excepts: Option<BTreeSet<i128>>,
-    pub(crate) named_values: Vec<(String, i128)>,
+    pub(crate) named_root_values: Vec<(String, i128)>,
+    pub(crate) named_ext_values: Vec<(String, i128)>,
 }
 
 impl Default for Asn1ResolvedEnumerated {
@@ -52,9 +55,12 @@ impl Default for Asn1ResolvedEnumerated {
         Self {
             bits: 8,
             signed: true,
-            values: None,
+            extensible: false,
+            root_values: None,
+            ext_values: None,
             excepts: None,
-            named_values: vec![],
+            named_root_values: vec![],
+            named_ext_values: vec![],
         }
     }
 }

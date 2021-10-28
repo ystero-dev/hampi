@@ -1,6 +1,12 @@
 use crate::aper::AperCodecData;
 use crate::aper::AperCodecError;
 
+/// Decode a Choice Index.
+///
+/// For an ASN.1 `CHOICE` Type, a CHOICE Index is first decoded. This function is used to `decode`
+/// the choice index. Returns the Index in the 'root' or 'additions' and a flag indicated whether
+/// the value is from the 'root_extensions' or 'addtions'. The caller would then decide the
+/// appropriate `decode` function for the CHOICE variant is called.
 pub fn decode_choice_idx(
     data: &mut AperCodecData,
     lb: i128,
@@ -67,6 +73,42 @@ pub fn decode_integer(
         }
     };
     Ok((value, extended_value))
+}
+
+/// Decode a Boolean
+///
+/// Decode a Boolean value. Returns the decoded value as a `bool`.
+pub fn decode_bool(data: &mut AperCodecData) -> Result<bool, AperCodecError> {
+    data.decode_bool()
+}
+
+/// Decode an Enumerated Value
+///
+/// Decodes an Enumerated value as an index into either `root_values` of the ENUMERATED or
+/// `ext_values` of the ENUMERATED and also decodes a flag indicating where the value velongs. If
+/// `false` the value is from the `root_values`, else the value is from the `ext_values` of the
+/// ENUMERATED.
+pub fn decode_enumerated(
+    data: &mut AperCodecData,
+    lb: Option<i128>,
+    ub: Option<i128>,
+    is_extensible: bool,
+) -> Result<(i128, bool), AperCodecError> {
+    let is_extended = if is_extensible {
+        let is_extended = data.decode_bool()?;
+        is_extended
+    } else {
+        false
+    };
+
+    let decoded = if !is_extended {
+        let decoded = decode_integer(data, lb, ub, false)?;
+        decoded.0
+    } else {
+        decode_normally_small_non_negative_whole_number(data)?
+    };
+
+    Ok((decoded, is_extended))
 }
 
 // Decode a "Normally Small" non-negative number

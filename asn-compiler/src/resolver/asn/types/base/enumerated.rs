@@ -19,29 +19,43 @@ impl Asn1ResolvedEnumerated {
     ) -> Result<Asn1ResolvedEnumerated, Error> {
         let mut base = Asn1ResolvedEnumerated::default();
 
+        base.extensible = e.ext_marker_index.is_some();
+
         // FIXME: TODO Constraints
 
-        let mut values = BTreeSet::<i128>::new();
-
-        // First get all the 'known' values from the Enumerated type into the `values` Set.
-        let mut all_values = e.root_values.clone();
-        all_values.extend(e.ext_values.clone());
-        for v in &all_values {
+        let mut root_values = BTreeSet::<i128>::new();
+        for v in &e.root_values {
             let named = &v.value;
             if let Some(NamedValue::Number(ref s)) = named {
                 let parsed = s.parse::<i128>().unwrap();
-                values.insert(parsed);
+                root_values.insert(parsed);
+            }
+        }
+        // TODO: Support all crazy Enumerations.
+        if root_values.is_empty() {
+            let mut value = 0_i128;
+            for v in &e.root_values {
+                base.named_root_values.push((v.name.clone(), value));
+                root_values.insert(value);
+
+                value += 1;
             }
         }
 
-        // For all the ASN.1 that we are supporting this is true, so let's just implement this much and
-        // go ahead.
+        let mut ext_values = BTreeSet::<i128>::new();
+        for v in &e.ext_values {
+            let named = &v.value;
+            if let Some(NamedValue::Number(ref s)) = named {
+                let parsed = s.parse::<i128>().unwrap();
+                ext_values.insert(parsed);
+            }
+        }
         // TODO: Support all crazy Enumerations.
-        if values.is_empty() {
+        if ext_values.is_empty() {
             let mut value = 0_i128;
-            for v in &all_values {
-                base.named_values.push((v.name.clone(), value));
-                values.insert(value);
+            for v in &e.ext_values {
+                base.named_ext_values.push((v.name.clone(), value));
+                ext_values.insert(value);
 
                 value += 1;
             }
@@ -51,7 +65,8 @@ impl Asn1ResolvedEnumerated {
         base.signed = false;
         base.bits = 8;
 
-        let _ = base.values.replace(values);
+        let _ = base.root_values.replace(root_values);
+        let _ = base.ext_values.replace(ext_values);
 
         Ok(base)
     }
