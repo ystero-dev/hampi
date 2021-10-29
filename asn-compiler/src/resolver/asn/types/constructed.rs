@@ -53,7 +53,6 @@ fn resolve_choice_type(
 ) -> Result<Asn1ResolvedType, Error> {
     let mut root_components = vec![];
     for c in &choice.root_components {
-        eprintln!("root_components: {:#?}", c);
         let ty = resolve_type(&c.ty, resolver)?;
         let component = ResolvedComponent {
             id: c.id.clone(),

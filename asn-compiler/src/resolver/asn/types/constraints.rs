@@ -114,6 +114,38 @@ impl Asn1Constraint {
             false
         }
     }
+
+    pub(crate) fn get_size_valueset(
+        &self,
+        resolver: &Resolver,
+    ) -> Result<Asn1ConstraintValueSet, Error> {
+        if let Self::Subtype(ref e) = self {
+            let iset = e.get_inner_elements();
+            if iset.len() == 1 {
+                match iset[0].elements[0] {
+                    Elements::Subtype(ref s) => match s {
+                        SubtypeElements::SizeConstraint(ref elems) => {
+                            elems.get_integer_valueset(resolver)
+                        }
+                        _ => Err(constraint_error!(
+                            "The Constraint for the Type is not a Size Constraint."
+                        )),
+                    },
+                    _ => Err(constraint_error!(
+                        "The Constraint for the type is not a size Constraint."
+                    )),
+                }
+            } else {
+                Err(constraint_error!(
+                    "The Constraint for the type is not a size Constraint."
+                ))
+            }
+        } else {
+            Err(constraint_error!(
+                "The Constraint for the type is not a size Constraint."
+            ))
+        }
+    }
 }
 
 impl ElementSet {

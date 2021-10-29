@@ -14,10 +14,36 @@ impl Asn1ResolvedBitString {
         name: &str,
         generator: &mut Generator,
     ) -> Result<TokenStream, Error> {
+        let sz_extensible = if self.size.is_some() {
+            let sz = self.size.as_ref().unwrap();
+            let ext = sz.has_extension();
+            quote! { #ext }
+        } else {
+            quote! {false}
+        };
+
+        let (lb, ub) = if self.size.is_some() {
+            let sz = self.size.as_ref().unwrap();
+            (Some(sz.root_values.min()), Some(sz.root_values.max()))
+        } else {
+            (None, None)
+        };
+        let mut ty_attributes = quote! { type = "BITSTRING" };
+        ty_attributes.extend(quote! { , sz_extensible = #sz_extensible });
+
+        if lb.is_some() {
+            let lb = lb.unwrap();
+            ty_attributes.extend(quote! { , lb = #lb });
+        }
+        if ub.is_some() {
+            let ub = ub.unwrap();
+            ty_attributes.extend(quote! { , ub = #ub });
+        }
+
         let struct_name = generator.to_type_ident(name);
         let struct_tokens = quote! {
             #[derive(Debug, AperCodec)]
-            #[asn(type = "BITSTRING")]
+            #[asn(#ty_attributes)]
             pub struct #struct_name(BitVec<Msb0, usize>);
         };
 
