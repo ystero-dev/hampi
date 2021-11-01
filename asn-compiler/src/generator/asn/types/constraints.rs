@@ -16,11 +16,11 @@ impl Asn1ConstraintValueSet {
 
         if self.root_values.min().is_some() {
             let lb = self.root_values.min().unwrap();
-            ty_attributes.extend(quote! { , lb = #lb });
+            ty_attributes.extend(quote! { , sz_lb = #lb });
         }
         if self.root_values.max().is_some() {
             let ub = self.root_values.max().unwrap();
-            ty_attributes.extend(quote! { , ub = #ub });
+            ty_attributes.extend(quote! { , sz_ub = #ub });
         }
 
         ty_attributes
