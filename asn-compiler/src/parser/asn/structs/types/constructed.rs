@@ -36,12 +36,11 @@ pub(crate) struct SeqAdditionGroup {
 
 impl SeqAdditionGroup {
     pub(crate) fn dependent_references(&self) -> Vec<String> {
-        let mut dependencies = vec![];
-        let _ = self
-            .components
+        self.components
             .iter()
-            .map(|c| dependencies.append(&mut c.dependent_references()));
-        dependencies
+            .map(|c| c.dependent_references())
+            .flatten()
+            .collect()
     }
 }
 
@@ -53,12 +52,11 @@ pub(crate) struct ChoiceAdditionGroup {
 
 impl ChoiceAdditionGroup {
     pub(crate) fn dependent_references(&self) -> Vec<String> {
-        let mut dependencies = vec![];
-        let _ = self
-            .components
+        self.components
             .iter()
-            .map(|c| dependencies.append(&mut c.dependent_references()));
-        dependencies
+            .map(|c| c.dependent_references())
+            .flatten()
+            .collect()
     }
 }
 

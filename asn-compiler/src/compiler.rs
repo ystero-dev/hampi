@@ -74,6 +74,7 @@ impl Asn1Compiler {
 
         eprintln!("Summary: {:#?}", summary);
         println!("{}", filemap[0].1);
+
         Ok(())
     }
 

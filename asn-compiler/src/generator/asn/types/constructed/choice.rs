@@ -55,14 +55,14 @@ impl ResolvedConstructedType {
                     &addition_tokens,
                 )?;
 
-            let impl_tokens = ResolvedConstructedType::generate_impl_tokens_for_asn_choice_type(
+            let _impl_tokens = ResolvedConstructedType::generate_impl_tokens_for_asn_choice_type(
                 &type_name,
                 &root_tokens,
                 &addition_tokens,
             )?;
 
             choice_tokens.extend(struct_tokens);
-            choice_tokens.extend(impl_tokens);
+            //choice_tokens.extend(impl_tokens);
 
             Ok(choice_tokens)
         } else {
