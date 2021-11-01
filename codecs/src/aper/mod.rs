@@ -143,4 +143,21 @@ impl AperCodecData {
         let bit = *self.bits.get(self.offset).as_deref().unwrap();
         Ok(bit)
     }
+
+    fn get_bitvec(&mut self, length: usize) -> Result<BitVec<Msb0, u8>, AperCodecError> {
+        if length + self.offset >= self.bits.len() {
+            return Err(AperCodecError::new(
+                format!(
+                    "AperCodec:GetBitError:Requested Bit {}, Remaining bits {}",
+                    self.offset,
+                    self.bits.len() - self.offset
+                )
+                .as_str(),
+            ));
+        }
+        let bv = BitVec::from_bitslice(&self.bits[self.offset..self.offset + length]);
+        let _ = self.advance_maybe_err(length, true)?;
+
+        Ok(bv)
+    }
 }

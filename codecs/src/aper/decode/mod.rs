@@ -1,3 +1,6 @@
+//! Decode APIs for APER Codec
+use bitvec::prelude::*;
+
 use crate::aper::AperCodecData;
 use crate::aper::AperCodecError;
 
@@ -114,17 +117,40 @@ pub fn decode_enumerated(
     Ok((decoded, is_extended))
 }
 
-// Decode a "Normally Small" non-negative number
-//
-// This is typically usedd when encoding/decoding Choice Indexes that are not present in the
-// extension root.
-fn decode_normally_small_non_negative_whole_number(
+/// Decode a Bit String
+///
+/// Decodes the value of the BIT STRING from the Buffer.
+pub fn decode_bitstring(
     data: &mut AperCodecData,
-) -> Result<i128, AperCodecError> {
-    let is_small = data.decode_bool()?;
-    if !is_small {
-        data.decode_bits_as_integer(6)
+    lb: Option<i128>,
+    ub: Option<i128>,
+    is_extensible: bool,
+) -> Result<BitVec<Msb0, u8>, AperCodecError> {
+    let is_extended = if is_extensible {
+        data.decode_bool()?
     } else {
-        decode_semi_constrained_whole_number(data, 0_i128)
+        false
+    };
+
+    let mut bv = BitVec::new();
+    loop {
+        let length = if is_extended {
+            decode_length_determinent(data, None, None, false)?
+        } else {
+            decode_length_determinent(data, lb, ub, false)?
+        };
+
+        if length > 0 {
+            bv.extend(data.get_bitvec(length)?);
+        }
+
+        // Fragmented So get the chunks in multiples of 16384,
+        if length > 16384 {
+            continue;
+        } else {
+            break;
+        }
     }
+
+    Ok(bv)
 }

@@ -1,26 +1,81 @@
 //! Internal decode functions.
+use std::convert::TryInto;
 
 use crate::aper::AperCodecData;
 use crate::aper::AperCodecError;
 
+// Decode a "Normally Small" non-negative number
+//
+// This is typically usedd when encoding/decoding Choice Indexes that are not present in the
+// extension root.
+pub(super) fn decode_normally_small_non_negative_whole_number(
+    data: &mut AperCodecData,
+) -> Result<i128, AperCodecError> {
+    let is_small = data.decode_bool()?;
+    if !is_small {
+        data.decode_bits_as_integer(6)
+    } else {
+        decode_semi_constrained_whole_number(data, 0_i128)
+    }
+}
 // Decode "Normally Small" Length Determinent
 //
 // This type of "length" determinent is used to encode bitmap length in the SEQUENCE extensions,
 // TODO: Support for the case when the length is greater than 64. We almost never come across this
 // case in practice, so right now it just Errors, if in real life we actually see this error for
 // any time it might have to be implemented to take care of that case.
-pub(super) fn decode_normally_small_length_determinent(
+fn decode_normally_small_length_determinent(
     data: &mut AperCodecData,
 ) -> Result<usize, AperCodecError> {
     let is_small = data.decode_bool()?;
     if !is_small {
         Ok(data.decode_bits_as_integer(6)? as usize + 1_usize)
     } else {
-        decode_unconstrained_length_determinent(data)
+        decode_indefinite_length_determinent(data)
     }
 }
 
-pub(super) fn decode_constrained_length_detereminent(
+// Decode a Length Determinent (Section 10.9)
+//
+// Decodes a Length Determinent.
+pub(crate) fn decode_length_determinent(
+    data: &mut AperCodecData,
+    lb: Option<i128>,
+    ub: Option<i128>,
+    normally_small: bool,
+) -> Result<usize, AperCodecError> {
+    // Normally small is told to us by caller and we don't care about `lb` and `ub` values in that
+    // case. We simply follow the procedure as explained in 10.9.3.4
+    if normally_small {
+        return decode_normally_small_length_determinent(data);
+    }
+
+    let lb = if lb.is_none() {
+        0usize
+    } else {
+        lb.unwrap().try_into().unwrap()
+    };
+
+    if ub.is_some() {
+        let ub: usize = ub.unwrap().try_into().unwrap();
+        if ub < 65_536 {
+            if lb == ub {
+                return Ok(ub);
+            }
+
+            // 10.9.3.3
+            return decode_constrained_length_determinent(data, lb, ub);
+        } else {
+            return decode_indefinite_length_determinent(data);
+        }
+    } else {
+        // ub is None, it's an unconstrained one
+        return decode_indefinite_length_determinent(data);
+    }
+}
+
+// Called when `lb` and `ub` are known and the range is less than 64K
+fn decode_constrained_length_determinent(
     data: &mut AperCodecData,
     lb: usize,
     ub: usize,
@@ -37,16 +92,16 @@ pub(super) fn decode_constrained_length_detereminent(
     }
 }
 
-pub(super) fn decode_unconstrained_length_determinent(
-    data: &mut AperCodecData,
-) -> Result<usize, AperCodecError> {
+// Called when `ub` is not determined or `ub ` - `lb` is greater than 64K and in this case value of
+// `lb` is don't care.
+fn decode_indefinite_length_determinent(data: &mut AperCodecData) -> Result<usize, AperCodecError> {
     let _ = data.decode_align()?;
     let first = data.decode_bool()?;
     let length = if !first {
         data.decode_bits_as_integer(7)?
     } else {
         let second = data.decode_bool()?;
-        if second {
+        if !second {
             data.decode_bits_as_integer(14)?
         } else {
             let length = data.decode_bits_as_integer(6)?;
@@ -57,14 +112,14 @@ pub(super) fn decode_unconstrained_length_determinent(
             }
         }
     };
-    Ok(length as usize)
+    Ok(length.try_into().unwrap())
 }
 
 // Section 10.8 X.691
 pub(super) fn decode_unconstrained_whole_number(
     data: &mut AperCodecData,
 ) -> Result<i128, AperCodecError> {
-    let length = decode_unconstrained_length_determinent(data)?;
+    let length = decode_length_determinent(data, None, None, false)?;
     eprintln!("unconstrained length: {}", length);
     let bits = length * 8;
     data.decode_bits_as_integer(bits)
@@ -75,7 +130,7 @@ pub(super) fn decode_semi_constrained_whole_number(
     data: &mut AperCodecData,
     lb: i128,
 ) -> Result<i128, AperCodecError> {
-    let length = decode_unconstrained_length_determinent(data)?;
+    let length = decode_length_determinent(data, None, None, false)?;
     eprintln!("unconstrained length: {}", length);
     let bits = length * 8;
     let val = data.decode_bits_as_integer(bits)?;
@@ -119,7 +174,7 @@ pub(super) fn decode_constrained_whole_number(
         } else {
             let bytes_needed = bytes_needed_for_range(range);
             eprintln!("bytes_needed : {}", bytes_needed);
-            let length = decode_constrained_length_detereminent(data, 1, bytes_needed as usize)?;
+            let length = decode_constrained_length_determinent(data, 1, bytes_needed as usize)?;
             let bits = (length + 1) * 8;
             let _ = data.decode_align()?;
             data.decode_bits_as_integer(bits)?
