@@ -198,3 +198,6 @@ pub fn decode_octetstring(
 
     Ok(octets)
 }
+
+mod decode_charstrings;
+pub use decode_charstrings::*;

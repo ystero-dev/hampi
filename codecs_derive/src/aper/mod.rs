@@ -3,6 +3,7 @@
 use super::attrs::TyCodecParams;
 
 mod bitstring;
+mod charstring;
 mod choice;
 mod enumerated;
 mod integer;
@@ -19,6 +20,9 @@ pub(crate) fn generate_decode(
         "ENUMERATED" => enumerated::generate_aper_decode_for_asn_enumerated(ast, params),
         "BITSTRING" => bitstring::generate_aper_decode_for_asn_bitstring(ast, params),
         "OCTET-STRING" => octetstring::generate_aper_decode_for_asn_octetstring(ast, params),
+        "UTF8String" | "PrintableString" | "VisibleString" => {
+            charstring::generate_aper_decode_for_asn_charstring(ast, params)
+        }
         _ => syn::Error::new_spanned(ty.clone(), "This ASN.1 Type is not supported.")
             .to_compile_error()
             .into(),

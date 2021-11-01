@@ -22,7 +22,7 @@ impl Asn1ResolvedCharacterString {
                 let constraint = &constraints[0];
 
                 if constraint.is_size_constraint() {
-                    let value_set = constraint.get_integer_valueset(resolver)?;
+                    let value_set = constraint.get_size_valueset(resolver)?;
                     let _ = base.size.replace(value_set);
                 } else {
                     return Err(constraint_error!(

@@ -17,9 +17,17 @@ impl Asn1ResolvedCharacterString {
         let struct_name = generator.to_type_ident(name);
         let char_str_type: proc_macro2::TokenStream =
             format!("\"{}\"", self.str_type).parse().unwrap();
+
+        let mut ty_attributes = quote! { type = #char_str_type };
+
+        if self.size.is_some() {
+            let sz_attributes = self.size.as_ref().unwrap().get_ty_size_constraints_attrs();
+            ty_attributes.extend(sz_attributes);
+        }
+
         let struct_tokens = quote! {
             #[derive(Debug, AperCodec)]
-            #[asn(type = #char_str_type)]
+            #[asn(#ty_attributes)]
             pub struct #struct_name(String);
         };
 
