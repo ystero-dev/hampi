@@ -6,4 +6,5 @@ fn tests() {
     t.pass("tests/02-integer.rs");
     t.pass("tests/03-enumerated.rs");
     t.pass("tests/04-bitstring.rs");
+    t.pass("tests/05-octetstring.rs");
 }

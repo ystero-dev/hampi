@@ -1,4 +1,4 @@
-//! `APER` Code generation for ASN.1 INTEGER Type
+//! `APER` Code generation for ASN.1 BIT STRING Type
 
 use quote::quote;
 

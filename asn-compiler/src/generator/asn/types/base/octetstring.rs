@@ -15,9 +15,17 @@ impl Asn1ResolvedOctetString {
         generator: &mut Generator,
     ) -> Result<TokenStream, Error> {
         let struct_name = generator.to_type_ident(name);
+
+        let mut ty_attributes = quote! { type = "OCTET-STRING" };
+
+        if self.size.is_some() {
+            let sz_attributes = self.size.as_ref().unwrap().get_ty_size_constraints_attrs();
+            ty_attributes.extend(sz_attributes);
+        }
+
         let struct_tokens = quote! {
             #[derive(Debug, AperCodec)]
-            #[asn(type = "OCTET-STRING")]
+            #[asn(#ty_attributes)]
             pub struct #struct_name(Vec<u8>);
         };
 

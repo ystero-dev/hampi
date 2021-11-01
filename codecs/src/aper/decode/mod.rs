@@ -141,11 +141,14 @@ pub fn decode_bitstring(
         };
 
         if length > 0 {
+            if length > 16 {
+                let _ = data.decode_align()?;
+            }
             bv.extend(data.get_bitvec(length)?);
         }
 
         // Fragmented So get the chunks in multiples of 16384,
-        if length > 16384 {
+        if length >= 16384 {
             continue;
         } else {
             break;
@@ -153,4 +156,45 @@ pub fn decode_bitstring(
     }
 
     Ok(bv)
+}
+
+/// Decode an OCTET STRING
+///
+/// Decodes the value of the OCTET STRING from the Buffer.
+pub fn decode_octetstring(
+    data: &mut AperCodecData,
+    lb: Option<i128>,
+    ub: Option<i128>,
+    is_extensible: bool,
+) -> Result<Vec<u8>, AperCodecError> {
+    let is_extended = if is_extensible {
+        data.decode_bool()?
+    } else {
+        false
+    };
+
+    let mut octets = Vec::new();
+    loop {
+        let length = if is_extended {
+            decode_length_determinent(data, None, None, false)?
+        } else {
+            decode_length_determinent(data, lb, ub, false)?
+        };
+
+        if length > 0 {
+            if length > 2 {
+                let _ = data.decode_align()?;
+            }
+            octets.extend(data.get_bytes(length)?);
+        }
+
+        // Fragmented So get the chunks in multiples of 16384,
+        if length >= 16384 {
+            continue;
+        } else {
+            break;
+        }
+    }
+
+    Ok(octets)
 }

@@ -1,10 +1,10 @@
-//! `APER` Code generation for ASN.1 INTEGER Type
+//! `APER` Code generation for ASN.1 OCTET STRING Type
 
 use quote::quote;
 
 use crate::attrs::TyCodecParams;
 
-pub(super) fn generate_aper_decode_for_asn_integer(
+pub(super) fn generate_aper_decode_for_asn_octetstring(
     ast: &syn::DeriveInput,
     params: &TyCodecParams,
 ) -> proc_macro::TokenStream {
@@ -32,8 +32,8 @@ pub(super) fn generate_aper_decode_for_asn_integer(
             .into();
     }
 
-    let lb = if params.lb.is_some() {
-        let lb = params.lb.as_ref();
+    let sz_lb = if params.sz_lb.is_some() {
+        let lb = params.sz_lb.as_ref();
         quote! {
             Some(#lb)
         }
@@ -42,8 +42,8 @@ pub(super) fn generate_aper_decode_for_asn_integer(
             None
         }
     };
-    let ub = if params.ub.is_some() {
-        let ub = params.ub.as_ref();
+    let sz_ub = if params.sz_ub.is_some() {
+        let ub = params.sz_ub.as_ref();
         quote! {
             Some(#ub)
         }
@@ -52,8 +52,8 @@ pub(super) fn generate_aper_decode_for_asn_integer(
             None
         }
     };
-    let ext = if params.ext.is_some() {
-        let ext = params.ext.as_ref();
+    let sz_ext = if params.sz_ext.is_some() {
+        let ext = params.sz_ext.as_ref();
         quote! {
             #ext
         }
@@ -69,8 +69,8 @@ pub(super) fn generate_aper_decode_for_asn_integer(
             type Output = Self;
 
             fn decode(data: &mut asn_codecs::aper::AperCodecData) -> Result<Self::Output, asn_codecs::aper::AperCodecError> {
-                let decoded = asn_codecs::aper::decode::decode_integer(data, #lb, #ub, #ext)?;
-                Ok(Self(decoded.0 as #ty))
+                let decoded = asn_codecs::aper::decode::decode_octetstring(data, #sz_lb, #sz_ub, #sz_ext)?;
+                Ok(Self(decoded))
             }
         }
     };
