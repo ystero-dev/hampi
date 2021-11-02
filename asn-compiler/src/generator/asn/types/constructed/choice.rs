@@ -81,8 +81,7 @@ impl ResolvedConstructedType {
             let ty_ident = token.ty.clone();
             let key_token: TokenStream = format!("{}", token.key).parse().unwrap();
             let extension_token = quote! { false };
-            let field_attributes =
-                quote! { #[asn(key = #key_token, extension = #extension_token)] };
+            let field_attributes = quote! { #[asn(key = #key_token, extended = #extension_token)] };
             let comp_token = quote! {
                 #field_attributes
                 #variant_ident(#ty_ident),
@@ -102,7 +101,7 @@ impl ResolvedConstructedType {
                 let key_token: TokenStream = format!("{}", token.key).parse().unwrap();
                 let extension_token = quote! { true };
                 let field_attributes =
-                    quote! { #[asn(key = #key_token, extension = #extension_token)] };
+                    quote! { #[asn(key = #key_token, extended = #extension_token)] };
                 let comp_token = quote! {
                     #field_attributes
                     #variant_ident(#ty_ident),

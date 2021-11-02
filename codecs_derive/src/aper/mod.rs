@@ -7,6 +7,7 @@ mod charstring;
 mod choice;
 mod enumerated;
 mod integer;
+mod null;
 mod octetstring;
 
 pub(crate) fn generate_decode(
@@ -23,6 +24,7 @@ pub(crate) fn generate_decode(
         "UTF8String" | "PrintableString" | "VisibleString" => {
             charstring::generate_aper_decode_for_asn_charstring(ast, params)
         }
+        "NULL" => null::generate_aper_decode_for_asn_null(ast, params),
         _ => syn::Error::new_spanned(ty.clone(), "This ASN.1 Type is not supported.")
             .to_compile_error()
             .into(),
