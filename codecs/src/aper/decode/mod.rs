@@ -35,6 +35,29 @@ pub fn decode_choice_idx(
     Ok((idx, extended))
 }
 
+/// Decode The Sequence Header
+///
+/// The Sequence Header consists of potentially two fields
+/// 1. Whether `extensions` are present in the encoding
+/// 2. Which of the OPTIONAL fields (if any) are present as a bitmap.
+pub fn decode_sequence_header(
+    data: &mut AperCodecData,
+    is_extensible: bool,
+    optional_count: usize,
+) -> Result<(BitVec<Msb0, u8>, bool), AperCodecError> {
+    let extended = if is_extensible {
+        data.decode_bool()?
+    } else {
+        false
+    };
+
+    let mut bitmap = BitVec::new();
+    if optional_count > 0 {
+        bitmap.extend(data.get_bitvec(optional_count)?);
+    }
+    Ok((bitmap, extended))
+}
+
 /// Decode an Integer
 ///
 /// Given an Integer Specification with PER Visible Constraints, decode an Integer Value to obtain

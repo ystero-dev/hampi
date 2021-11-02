@@ -9,5 +9,5 @@ fn tests() {
     t.pass("tests/05-octetstring.rs");
     t.pass("tests/06-charstring.rs");
     t.pass("tests/07-null.rs");
-    t.pass("tests/08-sequence.rs");
+    t.pass("tests/08-seq.rs");
 }

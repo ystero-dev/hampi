@@ -1,3 +1,5 @@
+#![allow(non_camel_case_types)]
+
 use asn_codecs_derive::AperCodec;
 
 #[derive(Debug, AperCodec)]
@@ -17,6 +19,7 @@ impl Criticality {
 #[asn(type = "SEQUENCE", extensible = false)]
 pub struct Bearers_SubjectToEarlyStatusTransferListItem {
     pub id: ProtocolIE_ID,
+    #[asn(optional_idx = 1)]
     pub criticality: Option<Criticality>,
 }
 

@@ -201,6 +201,9 @@ pub(crate) struct FieldVarCodecParams {
     // Is the value from outside the "Extension" (ie. not from the Extension Root.)
     pub(crate) extended: Option<syn::LitBool>,
 
+    // Optional Field Index
+    pub(crate) optional_idx: Option<syn::LitInt>,
+
     // The actual 'attribute' from the Syntax tree from which this struct is generated. This will
     // be used mainly for error reporting inside the functions where this struct is passed.
     pub(crate) attr: Option<syn::Attribute>,
@@ -249,6 +252,19 @@ pub(crate) fn parse_fld_meta_as_codec_params(
                                 _ => errors.push(syn::Error::new_spanned(
                                     nested,
                                     "`extended` value should be an Bool Literal",
+                                )),
+                            }
+                        }
+                        // parses #[asn(extended = true)]
+                        syn::NestedMeta::Meta(syn::Meta::NameValue(ref m)) if m.path == OPTIONAL_IDX => {
+                            match m.lit {
+                                syn::Lit::Int(ref opt_idx) => {
+                                    let opt_idx = opt_idx.clone();
+                                    codec_params.optional_idx.replace(opt_idx);
+                                }
+                                _ => errors.push(syn::Error::new_spanned(
+                                    nested,
+                                    "`optional_idx` value should be an Integer Literal",
                                 )),
                             }
                         }

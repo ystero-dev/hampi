@@ -14,6 +14,7 @@ pub(crate) const SZ_UB: Symbol = Symbol("sz_ub");
 pub(crate) const KEY: Symbol = Symbol("key");
 pub(crate) const EXTENDED: Symbol = Symbol("extended");
 pub(crate) const OPTIONAL_FIELDS: Symbol = Symbol("optional_fields");
+pub(crate) const OPTIONAL_IDX: Symbol = Symbol("optional_idx");
 
 impl PartialEq<Symbol> for Ident {
     fn eq(&self, word: &Symbol) -> bool {

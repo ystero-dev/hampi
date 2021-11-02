@@ -2,7 +2,7 @@
 
 use quote::quote;
 
-use crate::attrs::TyCodecParams;
+use crate::attrs::{parse_fld_meta_as_codec_params, TyCodecParams};
 
 pub(super) fn generate_aper_decode_for_asn_sequence(
     ast: &syn::DeriveInput,
@@ -17,7 +17,7 @@ pub(super) fn generate_aper_decode_for_asn_sequence(
         syn::LitInt::new("0", proc_macro2::Span::call_site())
     };
 
-    let fld_tokens = generate_seq_field_tokens_using_attrs(ast, params);
+    let fld_tokens = generate_seq_field_tokens_using_attrs(ast);
     if fld_tokens.is_err() {
         return fld_tokens.err().unwrap().to_compile_error().into();
     }
@@ -28,9 +28,7 @@ pub(super) fn generate_aper_decode_for_asn_sequence(
             type Output = Self;
 
             fn decode(data: &mut asn_codecs::aper::AperCodecData) -> Result<Self::Output, asn_codecs::aper::AperCodecError> {
-                let (bitmap, extensions_present) = asn_codecs::aper::decode::decode_sequence_header(data, #ext, #opt_count);
-
-
+                let (bitmap, _extensions_present) = asn_codecs::aper::decode::decode_sequence_header(data, #ext, #opt_count)?;
                 Ok(Self{#(#fld_tokens)*})
 
             }
@@ -42,7 +40,6 @@ pub(super) fn generate_aper_decode_for_asn_sequence(
 
 fn generate_seq_field_tokens_using_attrs(
     ast: &syn::DeriveInput,
-    params: &TyCodecParams,
 ) -> Result<Vec<proc_macro2::TokenStream>, syn::Error> {
     let mut tokens = vec![];
 
@@ -50,34 +47,51 @@ fn generate_seq_field_tokens_using_attrs(
     if let syn::Data::Struct(ref data) = ast.data {
         if let syn::Fields::Named(ref fields) = data.fields {
             for field in &fields.named {
-                let field_type = get_field_type(field);
-                if field_type.ty.is_none() {
-                    errors.push(syn::Error::new_spanned(
-                        field,
-                        "Field Type is not in supported Format!",
-                    ));
-                    continue;
+                let codec_params = parse_fld_meta_as_codec_params(&field.attrs);
+                if codec_params.is_err() {
+                    errors.push(codec_params.err().unwrap());
                 } else {
-                    let ty_ident = field_type.ty.unwrap();
-                    let optional = field_type.is_optional;
-                    let decode_tokens = if optional {
-                        quote! {
-                            {
-                            let present = bitmap.get(0);
-                            if present {
-                                Some(#ty_ident::decode(data)?)
-                            } else {
-                                None
-                            }
-                            }
-                        }
+                    let codec_params = codec_params.unwrap();
+                    let field_type = get_field_type(field);
+                    if field_type.ty.is_none() {
+                        errors.push(syn::Error::new_spanned(
+                            field,
+                            "Field Type is not in supported Format!",
+                        ));
+                        continue;
                     } else {
-                        quote! { #ty_ident::decode(data)? }
-                    };
+                        let ty_ident = field_type.ty.unwrap();
+                        let optional = field_type.is_optional;
+                        let decode_tokens = if optional {
+                            let optional_idx = codec_params.optional_idx.as_ref();
+                            if optional_idx.is_none() {
+                                errors.push(syn::Error::new_spanned(
+                                    field,
+                                    "Optional Field without Optional Index.",
+                                ));
+                                // Just pass empty quote
+                                quote! {}
+                            } else {
+                                let optional_idx = optional_idx.unwrap();
+                                quote! {
+                                    {
+                                    let present = bitmap[#optional_idx];
+                                    if present {
+                                        Some(#ty_ident::decode(data)?)
+                                    } else {
+                                        None
+                                    }
+                                    }
+                                }
+                            }
+                        } else {
+                            quote! { #ty_ident::decode(data)? }
+                        };
 
-                    let id = field.ident.as_ref().unwrap();
-                    let field_token = quote! { #id: #decode_tokens, };
-                    tokens.push(field_token);
+                        let id = field.ident.as_ref().unwrap();
+                        let field_token = quote! { #id: #decode_tokens, };
+                        tokens.push(field_token);
+                    }
                 }
             }
         }
