@@ -27,6 +27,9 @@ pub(crate) struct TyCodecParams {
     // Size Constraint Extensible
     pub(crate) sz_ext: Option<syn::LitBool>,
 
+    // Number of Optional Fields (In ASN.1 SEQUENCE types.)
+    pub(crate) optional_fields: Option<syn::LitInt>,
+
     // The actual 'attribute' from the Syntax tree from which this struct is generated. This will
     // be used mainly for error reporting inside the functions where this struct is passed.
     pub(crate) attr: Option<syn::Attribute>,
@@ -147,6 +150,19 @@ pub(crate) fn parse_ty_meta_as_codec_params(
                                 _ => errors.push(syn::Error::new_spanned(
                                     nested,
                                     "`sz_ub` value should be an Int Literal",
+                                )),
+                            }
+                        }
+                        // parses #[asn(optional_fields = 1)]
+                        syn::NestedMeta::Meta(syn::Meta::NameValue(ref m)) if m.path == OPTIONAL_FIELDS => {
+                            match m.lit {
+                                syn::Lit::Int(ref opt_flds) => {
+                                    let opt_flds = opt_flds.clone();
+                                    codec_params.optional_fields.replace(opt_flds);
+                                }
+                                _ => errors.push(syn::Error::new_spanned(
+                                    nested,
+                                    "`optional_fields` value should be an Int Literal",
                                 )),
                             }
                         }

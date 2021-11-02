@@ -6,6 +6,7 @@ use crate::aper::AperCodecError;
 use super::decode_internal::decode_length_determinent;
 
 // 27.5.3 and 27.5.4
+/// Decode a VisibleString CharacterString Type.
 pub fn decode_visible_string(
     data: &mut AperCodecData,
     lb: Option<i128>,
@@ -48,6 +49,7 @@ pub fn decode_visible_string(
     Ok(out)
 }
 
+/// Decode a PrintableString CharacterString Type.
 pub fn decode_printable_string(
     data: &mut AperCodecData,
     lb: Option<i128>,
@@ -98,6 +100,7 @@ pub fn decode_printable_string(
 // UTF-8 String is always - indefinite length case as it's not a fixed character width string. It's
 // almost like decoding an octet string.
 // 27.6
+/// Decode a UTF8String CharacterString Type.
 pub fn decode_utf8_string(
     data: &mut AperCodecData,
     _lb: Option<i128>,

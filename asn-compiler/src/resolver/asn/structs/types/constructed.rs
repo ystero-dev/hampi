@@ -11,6 +11,7 @@ pub(crate) enum ResolvedConstructedType {
     },
     Sequence {
         name: Option<String>,
+        extensible: bool,
         components: Vec<ResolvedSeqComponent>,
     },
     SequenceOf {

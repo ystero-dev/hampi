@@ -88,10 +88,12 @@ fn parse_sequence_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1TypeKin
         }
     }
 
+    let extensible = ext_marker_found > 0;
     Ok((
         Asn1TypeKind::Constructed(Asn1ConstructedType::Sequence(Asn1TypeSequence {
             root_components,
             additions,
+            extensible,
         })),
         consumed,
     ))

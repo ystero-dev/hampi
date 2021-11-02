@@ -64,6 +64,7 @@ impl ChoiceAdditionGroup {
 pub(crate) struct Asn1TypeSequence {
     pub(crate) root_components: Vec<SeqComponent>,
     pub(crate) additions: Vec<SeqAdditionGroup>,
+    pub(crate) extensible: bool,
 }
 
 impl Asn1TypeSequence {

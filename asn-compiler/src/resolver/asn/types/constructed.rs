@@ -116,6 +116,7 @@ fn resolve_sequence_type(
     Ok(Asn1ResolvedType::Constructed(
         ResolvedConstructedType::Sequence {
             components,
+            extensible: sequence.extensible,
             name: None,
         },
     ))
@@ -179,6 +180,7 @@ fn resolve_sequence_classfield_components(
         Ok(Asn1ResolvedType::Constructed(
             ResolvedConstructedType::Sequence {
                 name: None,
+                extensible: seq.extensible,
                 components,
             },
         ))

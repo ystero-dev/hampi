@@ -26,7 +26,7 @@ impl ResolvedConstructedType {
 
             Ok(quote! {
                 #[derive(Debug, AperCodec)]
-                #[asn(type = "SEQENCE-OF")]
+                #[asn(type = "SEQUENCE-OF")]
                 struct #seq_of_type_ident(Vec<#seq_of_type>);
             })
         } else {

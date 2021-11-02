@@ -9,6 +9,7 @@ mod enumerated;
 mod integer;
 mod null;
 mod octetstring;
+mod seq;
 
 pub(crate) fn generate_decode(
     ast: &syn::DeriveInput,
@@ -25,6 +26,7 @@ pub(crate) fn generate_decode(
             charstring::generate_aper_decode_for_asn_charstring(ast, params)
         }
         "NULL" => null::generate_aper_decode_for_asn_null(ast, params),
+        "SEQUENCE" => seq::generate_aper_decode_for_asn_sequence(ast, params),
         _ => syn::Error::new_spanned(ty.clone(), "This ASN.1 Type is not supported.")
             .to_compile_error()
             .into(),
