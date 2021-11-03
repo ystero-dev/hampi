@@ -204,6 +204,9 @@ pub(crate) struct FieldVarCodecParams {
     // Optional Field Index
     pub(crate) optional_idx: Option<syn::LitInt>,
 
+    // If this is a Key Field
+    pub(crate) key_field: Option<syn::LitBool>,
+
     // The actual 'attribute' from the Syntax tree from which this struct is generated. This will
     // be used mainly for error reporting inside the functions where this struct is passed.
     pub(crate) attr: Option<syn::Attribute>,
@@ -265,6 +268,19 @@ pub(crate) fn parse_fld_meta_as_codec_params(
                                 _ => errors.push(syn::Error::new_spanned(
                                     nested,
                                     "`optional_idx` value should be an Integer Literal",
+                                )),
+                            }
+                        }
+                        // parses #[asn(key_field = true)]
+                        syn::NestedMeta::Meta(syn::Meta::NameValue(ref m)) if m.path == KEY_FIELD => {
+                            match m.lit {
+                                syn::Lit::Bool(ref keyfld) => {
+                                    let keyfld = keyfld.clone();
+                                    codec_params.key_field.replace(keyfld);
+                                }
+                                _ => errors.push(syn::Error::new_spanned(
+                                    nested,
+                                    "`extended` value should be an Bool Literal",
                                 )),
                             }
                         }

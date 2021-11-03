@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use asn_codecs_derive::AperCodec;
 
 #[derive(Debug, AperCodec)]

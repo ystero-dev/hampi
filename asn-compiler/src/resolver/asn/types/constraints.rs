@@ -57,6 +57,18 @@ impl Asn1Constraint {
             }
         }
     }
+    /// Returns the 'Set Reference' trimming the leading '{' and trailing '}'
+    pub(crate) fn get_comp_reference(&self) -> Option<String> {
+        if let Self::Table(TableConstraint::ComponentRelation { component, .. }) = self {
+            Some(
+                component
+                    .trim_matches(|c| matches!(c, '@' | '.'))
+                    .to_string(),
+            )
+        } else {
+            None
+        }
+    }
 
     // FIXME: only gets the dependent Set for now. Types in other constraints not yet supported.
     /// Returns Dependent Components for the constraint

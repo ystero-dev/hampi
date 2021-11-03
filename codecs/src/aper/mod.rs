@@ -7,8 +7,6 @@ pub use error::Error as AperCodecError;
 
 pub mod decode;
 
-//pub use decode::*;
-
 /// Trait representing an 'APER Codec'.
 ///
 /// This 'crate' is to be derived by any `struct` or `enum` representing an ASN.1 Type.
@@ -28,6 +26,7 @@ use bitvec::prelude::*;
 pub struct AperCodecData {
     bits: BitVec<Msb0, u8>,
     offset: usize,
+    key: Option<i128>,
 }
 
 impl AperCodecData {
@@ -41,6 +40,7 @@ impl AperCodecData {
         Self {
             bits: BitSlice::<_, _>::from_slice(bytes).unwrap().to_bitvec(),
             offset: 0,
+            key: None,
         }
     }
 
@@ -177,5 +177,13 @@ impl AperCodecData {
         let _ = self.advance_maybe_err(length, true)?;
 
         Ok(bytes)
+    }
+
+    pub fn get_key(&self) -> Option<i128> {
+        self.key
+    }
+
+    pub fn set_key(&mut self, key: i128) -> () {
+        let _ = self.key.replace(key);
     }
 }

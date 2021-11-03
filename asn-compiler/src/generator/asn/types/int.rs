@@ -81,6 +81,7 @@ impl ResolvedSetType {
 
         let set_ty = quote! {
             #[derive(Debug, AperCodec)]
+            #[asn(type = "OPEN")]
             pub enum #ty_ident {
                 #ty_elements
             }
@@ -96,9 +97,9 @@ impl ResolvedSetType {
         for (name, ty) in &self.types {
             let variant_ident = generator.to_type_ident(name);
             let ty_ident = Asn1ResolvedType::generate_name_maybe_aux_type(&ty.1, generator, None)?;
-            let key: proc_macro2::TokenStream = format!("\"{}\"", ty.0).parse().unwrap();
+            let key: proc_macro2::TokenStream = format!("{}", ty.0).parse().unwrap();
             let key_tokens = quote! {
-                #[asn(open_type, key = #key)]
+                #[asn(key = #key)]
             };
 
             let variant_token = quote! {

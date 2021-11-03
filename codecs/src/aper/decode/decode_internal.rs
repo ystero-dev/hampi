@@ -38,7 +38,7 @@ fn decode_normally_small_length_determinent(
 // Decode a Length Determinent (Section 10.9)
 //
 // Decodes a Length Determinent.
-pub(crate) fn decode_length_determinent(
+pub fn decode_length_determinent(
     data: &mut AperCodecData,
     lb: Option<i128>,
     ub: Option<i128>,

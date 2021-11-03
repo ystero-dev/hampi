@@ -109,6 +109,7 @@ fn resolve_sequence_type(
             component,
             optional: c.optional,
             class_field_type: None,
+            key_field: false,
         };
         components.push(seq_component);
     }
@@ -209,6 +210,8 @@ fn resolve_seq_components_for_objects(
             if let ResolvedObjectSetElement::Object(ref o) = first {
                 let spec = o.fields.get(fieldref);
                 if let Some(ResolvedFieldSpec::FixedTypeValue { typeref, .. }) = spec {
+                    let constraint = &component.ty.constraints.as_ref().unwrap()[0];
+                    let comp_spec = constraint.get_comp_reference();
                     let component = ResolvedComponent {
                         id: component.id.clone(),
                         ty: typeref.clone(),
@@ -217,6 +220,7 @@ fn resolve_seq_components_for_objects(
                         component,
                         optional: false, // FIXME:
                         class_field_type: Some(ClassFieldComponentType::FixedTypeValue),
+                        key_field: comp_spec.is_none(),
                     };
                     result.push(seq_component);
                 } else {
@@ -233,6 +237,7 @@ fn resolve_seq_components_for_objects(
                         component,
                         optional: false, // FIXME:
                         class_field_type: Some(ClassFieldComponentType::Type),
+                        key_field: false,
                     };
                     result.push(seq_component);
                 }

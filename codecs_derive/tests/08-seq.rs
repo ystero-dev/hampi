@@ -1,4 +1,4 @@
-#![allow(non_camel_case_types)]
+#![allow(non_camel_case_types, dead_code)]
 
 use asn_codecs_derive::AperCodec;
 

@@ -64,6 +64,7 @@ fn generate_seq_field_tokens_using_attrs(
                         let optional = field_type.is_optional;
                         let decode_tokens = if optional {
                             let optional_idx = codec_params.optional_idx.as_ref();
+
                             if optional_idx.is_none() {
                                 errors.push(syn::Error::new_spanned(
                                     field,
@@ -85,7 +86,28 @@ fn generate_seq_field_tokens_using_attrs(
                                 }
                             }
                         } else {
-                            quote! { #ty_ident::decode(data)? }
+                            let key_field = codec_params.key_field.as_ref();
+                            let is_key_field = if key_field.is_some() {
+                                key_field.unwrap().value()
+                            } else {
+                                false
+                            };
+
+                            if !is_key_field {
+                                quote! {
+                                    {
+                                    #ty_ident::decode(data)?
+                                    }
+                                }
+                            } else {
+                                quote! {
+                                    {
+                                    let value = #ty_ident::decode(data)?;
+                                    let _ = data.set_key(value.0 as i128);
+                                    value
+                                    }
+                                }
+                            }
                         };
 
                         let id = field.ident.as_ref().unwrap();

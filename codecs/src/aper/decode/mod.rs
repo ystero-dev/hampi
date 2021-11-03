@@ -7,6 +7,8 @@ use crate::aper::AperCodecError;
 mod decode_internal;
 use decode_internal::*;
 
+pub use decode_internal::decode_length_determinent;
+
 /// Decode a Choice Index.
 ///
 /// For an ASN.1 `CHOICE` Type, a CHOICE Index is first decoded. This function is used to `decode`

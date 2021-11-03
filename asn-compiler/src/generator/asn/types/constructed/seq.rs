@@ -39,23 +39,33 @@ impl ResolvedConstructedType {
                     generator,
                     Some(&input_comp_ty_ident),
                 )?;
-                let comp_token = if c.optional {
+                let mut fld_attrs = vec![];
+
+                let fld_tokens = if c.optional {
                     let idx: proc_macro2::TokenStream =
                         format!("{}", optional_fields).parse().unwrap();
-                    let fld_attrs = quote! { #[asn(optional_idx = #idx)] };
+                    fld_attrs.push(quote! { optional_idx = #idx,  });
 
                     optional_fields += 1;
 
-                    quote! {
-                        #fld_attrs
-                        pub #comp_field_ident: Option<#comp_ty_ident>,
-                    }
+                    quote! { pub #comp_field_ident: Option<#comp_ty_ident>, }
                 } else {
-                    quote! {
-                        pub #comp_field_ident: #comp_ty_ident,
-                    }
+                    quote! { pub #comp_field_ident: #comp_ty_ident, }
                 };
-                comp_tokens.extend(comp_token);
+
+                if c.key_field {
+                    fld_attrs.push(quote! { key_field = true })
+                }
+
+                let fld_attr_tokens = if fld_attrs.len() > 0 {
+                    quote! { #[asn(#(#fld_attrs),*)] }
+                } else {
+                    quote! {}
+                };
+
+                comp_tokens.extend(quote! {
+                    #fld_attr_tokens #fld_tokens
+                });
             }
 
             let mut ty_tokens = quote! { type = "SEQUENCE", extensible = #extensible };
