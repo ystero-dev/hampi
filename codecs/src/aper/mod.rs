@@ -45,7 +45,13 @@ impl AperCodecData {
     }
 
     fn decode_align(&mut self) -> Result<(), AperCodecError> {
+        if self.offset % 8 == 0 {
+            return Ok(());
+        }
+
         let remaining = 8 - (self.offset & 0x7 as usize);
+        eprintln!("Aligning {} bits", remaining);
+
         if !self.bits[self.offset..self.offset + remaining]
             .iter()
             .all(|b| b == false)
@@ -185,5 +191,9 @@ impl AperCodecData {
 
     pub fn set_key(&mut self, key: i128) -> () {
         let _ = self.key.replace(key);
+    }
+
+    pub fn dump(&self) -> () {
+        eprintln!("Offset: {}", self.offset);
     }
 }

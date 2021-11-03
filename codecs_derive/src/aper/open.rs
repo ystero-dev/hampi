@@ -21,7 +21,9 @@ pub(super) fn generate_aper_decode_for_asn_open_type(
             type Output = Self;
 
             fn decode(data: &mut asn_codecs::aper::AperCodecData) -> Result<Self::Output, asn_codecs::aper::AperCodecError> {
-                let _length = asn_codecs::aper::decode::decode_length_determinent(data, None, None, false)?;
+                let length = asn_codecs::aper::decode::decode_length_determinent(data, None, None, false)?;
+
+                eprintln!("open type: decoded length: {}", length);
 
                 if data.get_key().is_none() {
                     return Err(asn_codecs::aper::AperCodecError::new("Decoding OPEN Type, but `key` is not determined!"));

@@ -46,6 +46,8 @@ pub fn decode_length_determinent(
 ) -> Result<usize, AperCodecError> {
     // Normally small is told to us by caller and we don't care about `lb` and `ub` values in that
     // case. We simply follow the procedure as explained in 10.9.3.4
+    eprintln!("decode_length_determinent");
+    data.dump();
     if normally_small {
         return decode_normally_small_length_determinent(data);
     }
@@ -80,12 +82,16 @@ fn decode_constrained_length_determinent(
     lb: usize,
     ub: usize,
 ) -> Result<usize, AperCodecError> {
+    eprintln!(
+        "decode_constrained_length_determinent, lb: {}, ub: {}",
+        lb, ub
+    );
     let range = ub - lb + 1;
 
-    if range < 65536 {
+    if range <= 65536 {
         // Almost always for our use cases, so let's just use it.
         let length = decode_constrained_whole_number(data, lb as i128, ub as i128)?;
-        eprintln!("length : {}", length);
+        eprintln!("decoded length : {}", length);
         Ok(length as usize)
     } else {
         unimplemented!("Lengths larger than 65536 are not supported yet.")
@@ -168,7 +174,7 @@ pub(super) fn decode_constrained_whole_number(
         } else if range == 256 {
             let _ = data.decode_align()?;
             data.decode_bits_as_integer(8)?
-        } else if range < 65536 {
+        } else if range <= 65536 {
             let _ = data.decode_align()?;
             data.decode_bits_as_integer(16)?
         } else {
