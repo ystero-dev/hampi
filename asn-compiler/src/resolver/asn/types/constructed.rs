@@ -64,7 +64,6 @@ fn resolve_choice_type(
     let additions = if choice.additions.is_some() {
         let mut components = vec![];
         for addition in choice.additions.as_ref().unwrap() {
-            eprintln!("additions ID: {:#?}", addition);
             for c in &addition.components {
                 let ty = resolve_type(&c.ty, resolver)?;
                 let component = ResolvedComponent {
@@ -128,10 +127,18 @@ fn resolve_sequence_of_type(
     resolver: &mut Resolver,
 ) -> Result<Asn1ResolvedType, Error> {
     let resolved = resolve_type(&sequence_of.ty, resolver)?;
+    let size_values = if sequence_of.size.is_some() {
+        let size = sequence_of.size.as_ref().unwrap();
+        Some(size.get_size_valueset(resolver)?)
+    } else {
+        None
+    };
+
     Ok(Asn1ResolvedType::Constructed(
         ResolvedConstructedType::SequenceOf {
             ty: Box::new(resolved),
             name: None,
+            size_values,
         },
     ))
 }

@@ -96,7 +96,6 @@ fn parse_table_constraint<'parser>(
     };
 
     let constraint = if component.is_some() {
-        eprintln!("component_here: {}", component.as_ref().unwrap());
         Asn1Constraint::Table(TableConstraint::ComponentRelation {
             table,
             component: component.unwrap(),

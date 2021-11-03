@@ -15,9 +15,25 @@ impl ResolvedConstructedType {
         name: &str,
         generator: &mut Generator,
     ) -> Result<TokenStream, Error> {
-        if let ResolvedConstructedType::SequenceOf { ref ty, .. } = self {
+        if let ResolvedConstructedType::SequenceOf {
+            ref ty,
+            ref size_values,
+            ..
+        } = self
+        {
             let seq_of_type_ident = generator.to_type_ident(name);
             let input_type_name = format!("{}Item", name);
+
+            let mut ty_attrs = quote! { type = "SEQUENCE-OF" };
+            if size_values.is_some() {
+                ty_attrs.extend(
+                    size_values
+                        .as_ref()
+                        .unwrap()
+                        .get_ty_size_constraints_attrs(),
+                )
+            }
+
             let seq_of_type = Asn1ResolvedType::generate_name_maybe_aux_type(
                 ty,
                 generator,
@@ -26,8 +42,8 @@ impl ResolvedConstructedType {
 
             Ok(quote! {
                 #[derive(Debug, AperCodec)]
-                #[asn(type = "SEQUENCE-OF")]
-                struct #seq_of_type_ident(Vec<#seq_of_type>);
+                #[asn(#ty_attrs)]
+                pub struct #seq_of_type_ident(Vec<#seq_of_type>);
             })
         } else {
             Ok(TokenStream::new())

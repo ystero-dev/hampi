@@ -1,6 +1,6 @@
 //! Structs for the resolved Base Types
 
-use crate::resolver::asn::structs::types::Asn1ResolvedType;
+use crate::resolver::asn::structs::types::{constraints::Asn1ConstraintValueSet, Asn1ResolvedType};
 
 #[derive(Debug, Clone)]
 pub(crate) enum ResolvedConstructedType {
@@ -17,6 +17,7 @@ pub(crate) enum ResolvedConstructedType {
     SequenceOf {
         name: Option<String>,
         ty: Box<Asn1ResolvedType>,
+        size_values: Option<Asn1ConstraintValueSet>,
     },
 }
 
