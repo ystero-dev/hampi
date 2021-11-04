@@ -1,12 +1,14 @@
 //! APER Codec Errors
 //!
+use std::fmt::Display;
+
 #[derive(Debug)]
 pub struct Error {
     msg: String,
 }
 
 impl Error {
-    pub fn new(msg: &str) -> Self {
+    pub fn new<T: AsRef<str> + Display>(msg: T) -> Self {
         Error {
             msg: msg.to_string(),
         }

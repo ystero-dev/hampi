@@ -22,7 +22,7 @@ impl ResolvedConstructedType {
         } = self
         {
             let seq_of_type_ident = generator.to_type_ident(name);
-            let input_type_name = format!("{}Item", name);
+            let input_type_name = format!("{}_Item", name);
 
             let mut ty_attrs = quote! { type = "SEQUENCE-OF" };
             if size_values.is_some() {

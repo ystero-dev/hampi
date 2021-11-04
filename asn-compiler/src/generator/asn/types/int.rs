@@ -18,7 +18,9 @@ impl Asn1ResolvedType {
             Asn1ResolvedType::Base(ref b) => Ok(Some(b.generate_for_base_type(name, gen)?)),
             Asn1ResolvedType::Constructed(ref c) => Ok(Some(c.generate(name, gen)?)),
             Asn1ResolvedType::Set(ref s) => Ok(Some(s.generate(name, gen)?)),
-            _ => Ok(None),
+            Asn1ResolvedType::Reference(ref reference) => Ok(Some(
+                Asn1ResolvedType::generate_type_alias_for_reference(name, gen, reference)?,
+            )),
         }
     }
 
@@ -46,6 +48,19 @@ impl Asn1ResolvedType {
         gen: &mut Generator,
     ) -> Result<Ident, Error> {
         Ok(gen.to_type_ident(reference))
+    }
+
+    fn generate_type_alias_for_reference(
+        name: &str,
+        gen: &mut Generator,
+        reference: &str,
+    ) -> Result<TokenStream, Error> {
+        let referring = gen.to_type_ident(name);
+        let reference = gen.to_type_ident(reference);
+
+        Ok(quote! {
+            pub type #referring = #reference;
+        })
     }
 }
 

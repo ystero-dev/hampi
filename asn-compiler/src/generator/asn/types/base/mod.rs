@@ -14,7 +14,7 @@ mod charstring;
 
 mod null;
 
-// TODO: NULL, OBJECT IDENTIFIER
+mod oid;
 
 use proc_macro2::{Ident, TokenStream};
 
@@ -36,7 +36,7 @@ impl ResolvedBaseType {
             ResolvedBaseType::OctetString(ref o) => o.generate(name, generator),
             ResolvedBaseType::CharacterString(ref c) => c.generate(name, generator),
             ResolvedBaseType::Null(ref n) => n.generate(name, generator),
-            _ => Ok(TokenStream::new()),
+            ResolvedBaseType::ObjectIdentifier(ref o) => o.generate(name, generator),
         }
     }
 
@@ -52,11 +52,7 @@ impl ResolvedBaseType {
             ResolvedBaseType::OctetString(ref o) => o.generate_ident_and_aux_type(generator),
             ResolvedBaseType::CharacterString(ref c) => c.generate_ident_and_aux_type(generator),
             ResolvedBaseType::Null(ref n) => n.generate_ident_and_aux_type(generator),
-            _ => {
-                // FIXME: TODO Type
-                let uniq = generator.to_unique_name("OBJECT IDENTIFIER");
-                Ok(generator.to_type_ident(&uniq))
-            }
+            ResolvedBaseType::ObjectIdentifier(ref o) => o.generate_ident_and_aux_type(generator),
         }
     }
 }
