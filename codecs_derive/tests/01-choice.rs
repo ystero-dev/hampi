@@ -5,7 +5,7 @@ use asn_codecs_derive::AperCodec;
 struct X(u16);
 
 #[derive(Debug, AperCodec)]
-#[asn(type = "CHOICE", extensible = true, lb = 0, ub = 2, sz_lb = -5)]
+#[asn(type = "CHOICE", extensible = true, lb = "0", ub = "2", sz_lb = "0")]
 enum TestEnum {
     #[asn(key = 0, extended = true)]
     A(X),

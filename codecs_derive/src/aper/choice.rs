@@ -11,8 +11,8 @@ pub(super) fn generate_aper_decode_for_asn_choice(
 ) -> proc_macro::TokenStream {
     let name = &ast.ident;
 
-    let lb = params.lb.as_ref();
-    let ub = params.ub.as_ref();
+    let lb = params.lb.as_ref().unwrap().value().parse::<i128>().unwrap();
+    let ub = params.ub.as_ref().unwrap().value().parse::<i128>().unwrap();
     let ext = params.ext.as_ref();
 
     let variant_tokens = generate_choice_variant_tokens_using_attrs(ast);

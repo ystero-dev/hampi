@@ -3,7 +3,7 @@
 use asn_codecs_derive::AperCodec;
 
 #[derive(Debug, AperCodec)]
-#[asn(type = "ENUMERATED", extensible = true, lb = 0i128, ub = 0i128)]
+#[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct AdditionalQosFlowInformation(u8);
 impl AdditionalQosFlowInformation {
     const MORE_LIKELY: u8 = 0u8;

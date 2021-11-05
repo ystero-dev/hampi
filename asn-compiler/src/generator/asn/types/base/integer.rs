@@ -21,14 +21,14 @@ impl Asn1ResolvedInteger {
             && self.resolved_constraints.as_ref().unwrap().has_extension();
 
         let lb = if min.is_some() {
-            let min = min.unwrap();
+            let min = format!("{}", min.unwrap());
             Some(quote! { #min })
         } else {
             None
         };
 
         let ub = if max.is_some() {
-            let max = max.unwrap();
+            let max = format!("{}", max.unwrap());
             Some(quote! { #max })
         } else {
             None

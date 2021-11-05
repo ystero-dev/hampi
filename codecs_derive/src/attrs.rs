@@ -10,19 +10,19 @@ pub(crate) struct TyCodecParams {
     pub(crate) ty: Option<syn::LitStr>,
 
     // Lower Bound for the Value (valid for Integers, Enums and Choice Index)
-    pub(crate) lb: Option<syn::LitInt>,
+    pub(crate) lb: Option<syn::LitStr>,
 
     // Upper Bound for the Value (valid for Integers, Enums and Choice Index)
-    pub(crate) ub: Option<syn::LitInt>,
+    pub(crate) ub: Option<syn::LitStr>,
 
     // Is the Value Extensible (Extension Marker is present in the definition.)
     pub(crate) ext: Option<syn::LitBool>,
 
     // Size Constraint Lower Bound.
-    pub(crate) sz_lb: Option<syn::LitInt>,
+    pub(crate) sz_lb: Option<syn::LitStr>,
 
     // Size Constraint Upper Bound.
-    pub(crate) sz_ub: Option<syn::LitInt>,
+    pub(crate) sz_ub: Option<syn::LitStr>,
 
     // Size Constraint Extensible
     pub(crate) sz_ext: Option<syn::LitBool>,
@@ -61,7 +61,7 @@ pub(crate) fn parse_ty_meta_as_codec_params(
                         // parses #[asn(lb = 0)]
                         syn::NestedMeta::Meta(syn::Meta::NameValue(ref m)) if m.path == LB => {
                             match m.lit {
-                                syn::Lit::Int(ref i) => {
+                                syn::Lit::Str(ref i) => {
                                     let lb = i.clone();
                                     codec_params.lb.replace(lb);
                                 }
@@ -74,7 +74,7 @@ pub(crate) fn parse_ty_meta_as_codec_params(
                         // parses #[asn(ub = 0)]
                         syn::NestedMeta::Meta(syn::Meta::NameValue(ref m)) if m.path == UB => {
                             match m.lit {
-                                syn::Lit::Int(ref i) => {
+                                syn::Lit::Str(ref i) => {
                                     let ub = i.clone();
                                     codec_params.ub.replace(ub);
                                 }
@@ -130,7 +130,7 @@ pub(crate) fn parse_ty_meta_as_codec_params(
                         // parses #[asn(sz_lb = 0)]
                         syn::NestedMeta::Meta(syn::Meta::NameValue(ref m)) if m.path == SZ_LB => {
                             match m.lit {
-                                syn::Lit::Int(ref sz_lb) => {
+                                syn::Lit::Str(ref sz_lb) => {
                                     let sz_lb = sz_lb.clone();
                                     codec_params.sz_lb.replace(sz_lb);
                                 }
@@ -143,7 +143,7 @@ pub(crate) fn parse_ty_meta_as_codec_params(
                         // parses #[asn(sz_ub = 0)]
                         syn::NestedMeta::Meta(syn::Meta::NameValue(ref m)) if m.path == SZ_UB => {
                             match m.lit {
-                                syn::Lit::Int(ref sz_ub) => {
+                                syn::Lit::Str(ref sz_ub) => {
                                     let sz_ub = sz_ub.clone();
                                     codec_params.sz_ub.replace(sz_ub);
                                 }

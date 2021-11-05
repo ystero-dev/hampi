@@ -3,11 +3,11 @@
 use asn_codecs_derive::AperCodec;
 
 #[derive(Debug, AperCodec)]
-#[asn(type = "INTEGER", lb = 0i128, ub = 65535i128)]
+#[asn(type = "INTEGER", lb = "0", ub = "65535")]
 pub struct ProtocolIE_ID(u16);
 
 #[derive(Debug, AperCodec)]
-#[asn(type = "ENUMERATED", lb = 0i128, ub = 2i128)]
+#[asn(type = "ENUMERATED", lb = "0", ub = "2")]
 pub struct Criticality(u8);
 impl Criticality {
     const REJECT: u8 = 0u8;
@@ -16,11 +16,11 @@ impl Criticality {
 }
 
 #[derive(Debug, AperCodec)]
-#[asn(type = "INTEGER", lb = 0i128, ub = 255i128)]
+#[asn(type = "INTEGER", lb = "0", ub = "255")]
 pub struct Routing_ID(u8);
 
 #[derive(Debug, AperCodec)]
-#[asn(type = "INTEGER", lb = 0i128, ub = 4294967295i128)]
+#[asn(type = "INTEGER", lb = "0", ub = "4294967295")]
 pub struct MME_UE_S1AP_ID(u32);
 
 #[derive(Debug, AperCodec)]
@@ -28,7 +28,7 @@ pub struct MME_UE_S1AP_ID(u32);
 pub struct LPPa_PDU(Vec<u8>);
 
 #[derive(Debug, AperCodec)]
-#[asn(type = "INTEGER", lb = 0i128, ub = 16777215i128)]
+#[asn(type = "INTEGER", lb = "0", ub = "16777215")]
 pub struct ENB_UE_S1AP_ID(u32);
 
 #[derive(Debug, AperCodec)]

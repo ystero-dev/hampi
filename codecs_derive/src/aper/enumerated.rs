@@ -33,7 +33,7 @@ pub(super) fn generate_aper_decode_for_asn_enumerated(
     }
 
     let lb = if params.lb.is_some() {
-        let lb = params.lb.as_ref();
+        let lb = params.lb.as_ref().unwrap().value().parse::<i128>().unwrap();
         quote! {
             Some(#lb)
         }
@@ -43,7 +43,7 @@ pub(super) fn generate_aper_decode_for_asn_enumerated(
         }
     };
     let ub = if params.ub.is_some() {
-        let ub = params.ub.as_ref();
+        let ub = params.ub.as_ref().unwrap().value().parse::<i128>().unwrap();
         quote! {
             Some(#ub)
         }

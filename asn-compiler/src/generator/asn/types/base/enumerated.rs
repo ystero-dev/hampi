@@ -23,10 +23,8 @@ impl Asn1ResolvedEnumerated {
         if self.extensible {
             ty_attributes.extend(quote! { , extensible = true });
         }
-        let ub: TokenStream = format!("{}i128", self.named_root_values.len() - 1)
-            .parse()
-            .unwrap();
-        ty_attributes.extend(quote! { , lb = 0i128 });
+        let ub = format!("{}", self.named_root_values.len() - 1);
+        ty_attributes.extend(quote! { , lb = "0" });
         ty_attributes.extend(quote! { , ub =  #ub  });
 
         let struct_tokens = quote! {

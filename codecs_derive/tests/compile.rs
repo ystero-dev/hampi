@@ -15,5 +15,5 @@ fn tests() {
     // TODO: When we can parse all the three specs enable these.
     //t.pass("tests/11-s1ap.rs");
     //t.pass("tests/12-ngap.rs");
-    //t.pass("tests/13-ngap.rs");
+    t.pass("tests/13-ngap.rs");
 }

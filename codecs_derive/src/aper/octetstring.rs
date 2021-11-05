@@ -33,7 +33,13 @@ pub(super) fn generate_aper_decode_for_asn_octetstring(
     }
 
     let sz_lb = if params.sz_lb.is_some() {
-        let lb = params.sz_lb.as_ref();
+        let lb = params
+            .sz_lb
+            .as_ref()
+            .unwrap()
+            .value()
+            .parse::<i128>()
+            .unwrap();
         quote! {
             Some(#lb)
         }
@@ -43,7 +49,13 @@ pub(super) fn generate_aper_decode_for_asn_octetstring(
         }
     };
     let sz_ub = if params.sz_ub.is_some() {
-        let ub = params.sz_ub.as_ref();
+        let ub = params
+            .sz_ub
+            .as_ref()
+            .unwrap()
+            .value()
+            .parse::<i128>()
+            .unwrap();
         quote! {
             Some(#ub)
         }

@@ -112,8 +112,8 @@ impl ResolvedConstructedType {
 
         // Attributes Tokens (Let's not Get rid of them as yet, they will be required if we decide
         // to go the `#derive` Path
-        let lb_token = quote! { lb = 0 };
-        let ub_token: TokenStream = format!("{}", root_tokens.len() - 1).parse().unwrap();
+        let lb_token = quote! { lb = "0" };
+        let ub_token = format!("{}", root_tokens.len() - 1);
         let ub_token = quote! { ub = #ub_token };
         let additions: TokenStream = if addition_tokens.is_some() {
             quote! { true }

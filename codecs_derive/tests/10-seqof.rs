@@ -6,18 +6,13 @@ use asn_codecs_derive::AperCodec;
 #[asn(
     type = "OCTET-STRING",
     sz_extensible = false,
-    sz_lb = 1i128,
-    sz_ub = 32i128
+    sz_lb = "1",
+    sz_ub = "32"
 )]
 pub struct WLANName(Vec<u8>);
 
 #[derive(Debug, AperCodec)]
-#[asn(
-    type = "SEQUENCE-OF",
-    sz_extensible = false,
-    sz_lb = 1i128,
-    sz_ub = 4i128
-)]
+#[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "4")]
 struct WLANMeasConfigNameList(Vec<WLANName>);
 
 fn main() {
