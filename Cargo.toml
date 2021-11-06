@@ -3,4 +3,5 @@ members = [
 	"asn-compiler",
 	"codecs",
 	"codecs_derive",
+	"examples",
 ]

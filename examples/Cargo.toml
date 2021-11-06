@@ -1,0 +1,14 @@
+[package]
+name = "hampi-examples"
+version = "0.0.0"
+authors = ["Abhijit Gadgil <gabhijit@iitbombay.org>"]
+edition = "2018"
+publish = false
+
+
+[dev-dependencies]
+asn-codecs = { path = "../codecs" }
+asn_codecs_derive = { path = "../codecs_derive" }
+trybuild = { version = "1.0" }
+hex = "*"
+bitvec = { version = "0.22" }

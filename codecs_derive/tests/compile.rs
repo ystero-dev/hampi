@@ -12,8 +12,4 @@ fn tests() {
     t.pass("tests/08-seq.rs");
     t.pass("tests/09-open.rs");
     t.pass("tests/10-seqof.rs");
-    // TODO: When we can parse all the three specs enable these.
-    // t.pass("tests/11-ranap.rs");
-    // t.pass("tests/12-s1ap.rs");
-    // t.pass("tests/13-ngap.rs");
 }
