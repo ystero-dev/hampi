@@ -15960,5 +15960,14 @@ pub struct XnTNLConfigurationInfoiE_Extensions_Item {}
 pub struct XnTNLConfigurationInfoiE_Extensions(Vec<XnTNLConfigurationInfoiE_Extensions_Item>);
 
 fn main() {
+    use asn_codecs::aper::*;
     eprintln!("NGAP");
+
+    let ngap_data = hex::decode(
+        "0015404a000004001b00084002f898000000000052400f06004d79206c6974746c6520674e420066001f01000000000002f8980001000800800000010002f8390001001881c00013880015400140",
+    )
+    .unwrap();
+    let mut codec_data = AperCodecData::from_slice(&ngap_data);
+    let ngap_pdu = NGAP_PDU::decode(&mut codec_data).unwrap();
+    eprintln!("ngap_pdu: {:#?}", ngap_pdu);
 }

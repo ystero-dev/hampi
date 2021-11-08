@@ -21,7 +21,7 @@ pub fn decode_choice_idx(
     ub: i128,
     is_extensible: bool,
 ) -> Result<(i128, bool), AperCodecError> {
-    eprintln!("decode_choice_idx");
+    log::trace!("decode_choice_idx");
     data.dump();
 
     let (idx, extended) = if is_extensible {
@@ -53,7 +53,7 @@ pub fn decode_sequence_header(
     is_extensible: bool,
     optional_count: usize,
 ) -> Result<(BitVec<Msb0, u8>, bool), AperCodecError> {
-    eprintln!("decode_sequence_header");
+    log::trace!("decode_sequence_header");
     data.dump();
     let extended = if is_extensible {
         data.decode_bool()?
@@ -86,7 +86,12 @@ pub fn decode_integer(
     ub: Option<i128>,
     is_extensible: bool,
 ) -> Result<(i128, bool), AperCodecError> {
-    eprintln!("decode_integer");
+    log::trace!(
+        "decode_integer: Lower: {:#?} Upper:{:#?} Extensible: {}",
+        lb,
+        ub,
+        is_extensible
+    );
     data.dump();
     let extended_value = if is_extensible {
         let v = data.decode_bool()?;
@@ -111,7 +116,7 @@ pub fn decode_integer(
             } else {
                 let ub = ub.unwrap();
                 // 12.2.1 and 12.2.2
-                eprintln!("decode_constrained_whole_number: {}, {}", lb, ub);
+                log::trace!("decode_constrained_whole_number: {}, {}", lb, ub);
                 decode_constrained_whole_number(data, lb, ub)?
             }
         }
@@ -126,8 +131,6 @@ pub fn decode_integer(
 ///
 /// Decode a Boolean value. Returns the decoded value as a `bool`.
 pub fn decode_bool(data: &mut AperCodecData) -> Result<bool, AperCodecError> {
-    eprintln!("decode_bool");
-    data.dump();
     data.decode_bool()
 }
 
@@ -143,7 +146,7 @@ pub fn decode_enumerated(
     ub: Option<i128>,
     is_extensible: bool,
 ) -> Result<(i128, bool), AperCodecError> {
-    eprintln!("decode_enumerated");
+    log::trace!("decode_enumerated");
     data.dump();
 
     let is_extended = if is_extensible {

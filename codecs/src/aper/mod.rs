@@ -50,7 +50,7 @@ impl AperCodecData {
         }
 
         let remaining = 8 - (self.offset & 0x7 as usize);
-        eprintln!("Aligning {} bits", remaining);
+        log::trace!("Aligning Codec Buffer with {} bits", remaining);
 
         if !self.bits[self.offset..self.offset + remaining]
             .iter()
@@ -102,13 +102,17 @@ impl AperCodecData {
                 .as_str(),
             ))
         } else {
-            eprintln!("offset: {}, bits: {}", self.offset, bits);
+            log::trace!(
+                "Decoding Bits as Integer. offset: {}, bits: {}",
+                self.offset,
+                bits
+            );
             let value = if bits == 0 {
                 0 as i128
             } else {
                 self.bits[self.offset..self.offset + bits].load_be::<u128>() as i128
             };
-            eprintln!("value: {:#?}", value);
+            log::trace!("Decoded Value: {:#?}", value);
             self.advance_maybe_err(bits, false)?;
             Ok(value)
         }
@@ -205,7 +209,8 @@ impl AperCodecData {
     }
 
     /// Dump current 'offset'.
+    #[inline]
     pub fn dump(&self) -> () {
-        eprintln!("Offset: {}", self.offset);
+        log::trace!("AperCodecData: offset: {}", self.offset);
     }
 }

@@ -16,6 +16,7 @@ maintenance = { status = "actively-developed" }
 proc-macro = true
 
 [dependencies]
+log = { version = "0.4.3" }
 asn-codecs = { path = "../codecs" , version = "=0.1.0"}
 bitvec = { version = "0.22" }
 proc-macro2 = { version = "1.0" }
