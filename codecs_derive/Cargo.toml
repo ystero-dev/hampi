@@ -1,17 +1,22 @@
 [package]
 name = "asn_codecs_derive"
 authors = ["Abhijit Gadgil <gabhijit@iitbombay.org>"]
+description = "ASN.1 Codecs derive Macros"
+keywords = ["asn1", "per"]
 version = "0.1.0"
 edition = "2018"
+license-file = "LICENSE"
+repository = "https://github.com/gabhijit/hampi.git"
+include = ["src/**/*.rs", "Cargo.toml", "LICENSE", "LICENSE-MIT", "LICENSE-Apache2"]
 
+[badges]
+maintenance = { status = "actively-developed" }
 
 [lib]
 proc-macro = true
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
-asn-codecs = { path = "../codecs" }
+asn-codecs = { path = "../codecs" , version = "=0.1.0"}
 bitvec = { version = "0.22" }
 proc-macro2 = { version = "1.0" }
 quote = { version = "1.0" }
@@ -19,4 +24,4 @@ syn = { version = "1.0" , features = ["extra-traits"]}
 
 [dev-dependencies]
 trybuild = { version = "1.0" }
-hex = "*"
+hex =  { version = "0.4.3" }

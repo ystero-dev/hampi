@@ -1,6 +1,6 @@
 //! Code Generation module
 
-use heck::{CamelCase, ShoutySnakeCase, SnakeCase};
+use heck::{ShoutySnakeCase, SnakeCase};
 use proc_macro2::{Ident, Literal, Span, TokenStream};
 
 use quote::quote;

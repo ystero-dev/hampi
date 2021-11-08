@@ -1,4 +1,4 @@
-#![allow(non_camel_case_types, dead_code)]
+#![allow(non_camel_case_types, dead_code, unreachable_patterns)]
 
 use asn_codecs::aper::*;
 use asn_codecs_derive::*;

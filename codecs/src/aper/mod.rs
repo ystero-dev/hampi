@@ -185,14 +185,26 @@ impl AperCodecData {
         Ok(bytes)
     }
 
+    /// Get's the current `key` value.
+    ///
+    /// This value will be used by a decoder to determine which 'decode' function is to be called
+    /// (for example in an `enum`, it will be used to determine which `variant` of the `enum` will
+    /// be decoded.
     pub fn get_key(&self) -> Option<i128> {
         self.key
     }
 
+    /// Sets the current `key` value.
+    ///
+    /// During decoding 'open' types, the 'key' used to decode the type further is determined by a
+    /// `key_value` field. ie. a field with attribute `key_value` set in a struct (derived from a
+    /// SEQUENCE ASN.1 type.) This value is passed to the 'decoder' logic further through `set_key`
+    /// function, which updates the internal state of the decoder data.
     pub fn set_key(&mut self, key: i128) -> () {
         let _ = self.key.replace(key);
     }
 
+    /// Dump current 'offset'.
     pub fn dump(&self) -> () {
         eprintln!("Offset: {}", self.offset);
     }

@@ -3,7 +3,7 @@
 use std::fs::File;
 use std::io;
 
-use hampi::Asn1Compiler;
+use asn1_compiler::Asn1Compiler;
 
 fn main() -> io::Result<()> {
     let args: Vec<String> = std::env::args().collect();
@@ -13,9 +13,9 @@ fn main() -> io::Result<()> {
     for arg in &args[1..] {
         eprintln!("File: {}", arg);
         let file = File::open(arg)?;
-        let mut tokens = hampi::tokenizer::tokenize(file)?;
+        let mut tokens = asn1_compiler::tokenizer::tokenize(file)?;
         eprintln!("tokens: {}", tokens.len());
-        let mut modules = hampi::parser::parse(&mut tokens)?;
+        let mut modules = asn1_compiler::parser::parse(&mut tokens)?;
 
         loop {
             let module = modules.pop();

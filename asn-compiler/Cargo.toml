@@ -1,14 +1,17 @@
 [package]
-name = "hampi"
-version = "0.0.1"
+name = "asn1-compiler"
+version = "0.1.0"
 authors = ["Abhijit Gadgil <gabhijit@iitbombay.org>"]
 edition = "2018"
 description = "ASN.1 Compiler in Rust."
-repository = "https://github.com/gabhijit/intermodal.git"
-license = "MIT or Apache-2.0"
+keywords = ["asn1", "per"]
+repository = "https://github.com/gabhijit/hampi.git"
+license-file = "LICENSE"
 readme = "README.md"
+include = ["src/**/*.rs", "README.md", "Cargo.toml", "LICENSE", "LICENSE-MIT", "LICENSE-Apache2"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[badges]
+maintenance = { status = "actively-developed" }
 
 [dependencies]
 lazy_static = { version = "1.4.0" }

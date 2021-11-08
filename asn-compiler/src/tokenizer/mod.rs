@@ -1082,7 +1082,7 @@ mod tests {
             BitHexStringTestCase {
                 input: b"'01 0101\n\t0101\n00'h",
                 success: true,
-                span_end_line: 2,
+                span_end_line: 3,
             },
         ];
         for t in test_cases {
@@ -1092,6 +1092,14 @@ mod tests {
             if result.is_ok() {
                 let tokens = result.unwrap();
                 assert!(tokens.len() == 1, "{:#?}", tokens[0]);
+                let token = &tokens[0];
+                assert!(
+                    token.span.end.line == t.span_end_line,
+                    "input: {:#?}, token end: {}, tc: span_end_line {}",
+                    t.input,
+                    token.span.end.line,
+                    t.span_end_line
+                );
             }
         }
     }

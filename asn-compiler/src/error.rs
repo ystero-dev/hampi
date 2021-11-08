@@ -31,7 +31,7 @@ pub enum Error {
     /// Error related to resolving constraints for a type.
     ConstraintError(String),
 
-    /// Error related to resolving constraints for a type.
+    /// Error related to code generation from resolved types.
     CodeGenerationError(String),
 }
 

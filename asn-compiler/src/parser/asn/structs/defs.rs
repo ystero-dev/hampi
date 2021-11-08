@@ -141,7 +141,7 @@ macro_rules! is_assignment_kind {
                 if let $variant(ref _x) = self.kind {
                     true
                 } else {
-                false
+                    false
                 }
             }
         }
