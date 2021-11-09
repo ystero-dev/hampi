@@ -65,12 +65,12 @@ pub(super) fn generate_aper_decode_for_asn_enumerated(
 
     let tokens = quote! {
 
-        impl asn_codecs::aper::AperCodec for #name {
+        impl asn1_codecs::aper::AperCodec for #name {
             type Output = Self;
 
-            fn decode(data: &mut asn_codecs::aper::AperCodecData) -> Result<Self::Output, asn_codecs::aper::AperCodecError> {
+            fn decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
 
-                let decoded = asn_codecs::aper::decode::decode_enumerated(data, #lb, #ub, #ext)?;
+                let decoded = asn1_codecs::aper::decode::decode_enumerated(data, #lb, #ub, #ext)?;
 
                 Ok(Self(decoded.0 as #ty))
             }

@@ -12,11 +12,11 @@ pub(super) fn generate_aper_decode_for_asn_null(
 
     let tokens = quote! {
 
-        impl asn_codecs::aper::AperCodec for #name {
+        impl asn1_codecs::aper::AperCodec for #name {
 
             type Output = Self;
 
-            fn decode(_data: &mut asn_codecs::aper::AperCodecData) -> Result<Self::Output, asn_codecs::aper::AperCodecError> {
+            fn decode(_data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
                 Ok(Self{})
             }
         }

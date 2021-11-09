@@ -1,6 +1,6 @@
 #![allow(non_camel_case_types, dead_code, unreachable_patterns)]
 
-use asn_codecs_derive::*;
+use asn1_codecs_derive::AperCodec;
 use bitvec::order::Msb0;
 use bitvec::vec::BitVec;
 

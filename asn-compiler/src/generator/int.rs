@@ -131,12 +131,14 @@ impl Generator {
 
     fn generate_use_tokens(&self) -> TokenStream {
         quote! {
+            #![allow(dead_code, unreachable_patterns, non_camel_case_types)]
+
             use bitvec::vec::BitVec;
             use bitvec::order::Msb0;
+
             // FIXME: Do this based on the Codec to be supported, right now we are only supporting
             // APER Codec.
-            use asn_codecs::aper::*;
-            use asn_codecs_derive::*;
+            use asn1_codecs_derive::AperCodec;
         }
     }
 }

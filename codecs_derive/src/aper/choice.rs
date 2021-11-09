@@ -23,19 +23,19 @@ pub(super) fn generate_aper_decode_for_asn_choice(
 
     let tokens = quote! {
 
-        impl asn_codecs::aper::AperCodec for #name {
+        impl asn1_codecs::aper::AperCodec for #name {
             type Output = Self;
 
-            fn decode(data: &mut asn_codecs::aper::AperCodecData) -> Result<Self::Output, asn_codecs::aper::AperCodecError> {
+            fn decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
 
-                let (idx, extended) = asn_codecs::aper::decode::decode_choice_idx(data, #lb, #ub, #ext)?;
+                let (idx, extended) = asn1_codecs::aper::decode::decode_choice_idx(data, #lb, #ub, #ext)?;
                 if !extended {
                     match idx {
                         #(#variant_tokens)*
-                        _ => Err(asn_codecs::aper::AperCodecError::new(format!("Index {} is not a valid Choice Index", idx).as_str()))
+                        _ => Err(asn1_codecs::aper::AperCodecError::new(format!("Index {} is not a valid Choice Index", idx).as_str()))
                     }
                 } else {
-                    Err(asn_codecs::aper::AperCodecError::new("CHOICE Additions not supported yet."))
+                    Err(asn1_codecs::aper::AperCodecError::new("CHOICE Additions not supported yet."))
                 }
             }
         }

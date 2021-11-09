@@ -1,4 +1,5 @@
-use asn_codecs_derive::AperCodec;
+use asn1_codecs_derive::AperCodec;
+
 use bitvec::prelude::*;
 
 #[derive(Debug, AperCodec)]

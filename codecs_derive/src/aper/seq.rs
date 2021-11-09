@@ -24,11 +24,11 @@ pub(super) fn generate_aper_decode_for_asn_sequence(
     let fld_tokens = fld_tokens.unwrap();
 
     let tokens = quote! {
-        impl asn_codecs::aper::AperCodec for #name {
+        impl asn1_codecs::aper::AperCodec for #name {
             type Output = Self;
 
-            fn decode(data: &mut asn_codecs::aper::AperCodecData) -> Result<Self::Output, asn_codecs::aper::AperCodecError> {
-                let (bitmap, _extensions_present) = asn_codecs::aper::decode::decode_sequence_header(data, #ext, #opt_count)?;
+            fn decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
+                let (bitmap, _extensions_present) = asn1_codecs::aper::decode::decode_sequence_header(data, #ext, #opt_count)?;
                 Ok(Self{#(#fld_tokens)*})
 
             }

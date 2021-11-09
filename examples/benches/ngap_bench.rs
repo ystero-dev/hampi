@@ -1,6 +1,6 @@
 use criterion::{criterion_group, criterion_main, Criterion};
 
-use asn_codecs::aper::{AperCodec, AperCodecData};
+use asn1_codecs::aper::{AperCodec, AperCodecData};
 mod ngap;
 use ngap::NGAP_PDU;
 

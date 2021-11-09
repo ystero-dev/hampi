@@ -1,6 +1,6 @@
 #![allow(non_camel_case_types, dead_code)]
 
-use asn_codecs_derive::AperCodec;
+use asn1_codecs_derive::AperCodec;
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "65535")]

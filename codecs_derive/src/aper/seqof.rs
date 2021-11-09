@@ -78,11 +78,11 @@ pub(super) fn generate_aper_decode_for_asn_sequence_of(
 
     let tokens = quote! {
 
-        impl asn_codecs::aper::AperCodec for #name {
+        impl asn1_codecs::aper::AperCodec for #name {
             type Output = Self;
 
-            fn decode(data: &mut asn_codecs::aper::AperCodecData) -> Result<Self::Output, asn_codecs::aper::AperCodecError> {
-                let length = asn_codecs::aper::decode::decode_length_determinent(data, #sz_lb, #sz_ub, #sz_ext)?;
+            fn decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
+                let length = asn1_codecs::aper::decode::decode_length_determinent(data, #sz_lb, #sz_ub, #sz_ext)?;
 
                 let mut items = vec![];
                 let mut count = 0;

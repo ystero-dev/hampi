@@ -1,7 +1,6 @@
 #![allow(non_camel_case_types, dead_code, unreachable_patterns)]
 
-use asn_codecs::aper::*;
-use asn_codecs_derive::*;
+use asn1_codecs_derive::AperCodec;
 use bitvec::order::Msb0;
 use bitvec::vec::BitVec;
 
@@ -12560,6 +12559,7 @@ pub struct UserPlaneInformationiE_Extensions(Vec<UserPlaneInformationiE_Extensio
 pub struct INTEGER_64(u8);
 
 fn main() {
+    use asn1_codecs::aper::*;
     eprintln!("RANAP");
 
     let ranap_data = hex::decode("000100080000010004400122").unwrap();

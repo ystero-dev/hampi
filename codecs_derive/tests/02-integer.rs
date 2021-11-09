@@ -1,4 +1,4 @@
-use asn_codecs_derive::AperCodec;
+use asn1_codecs_derive::AperCodec;
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "255")]

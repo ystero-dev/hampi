@@ -7,8 +7,8 @@ publish = false
 
 
 [dev-dependencies]
-asn-codecs = { path = "../codecs" }
-asn_codecs_derive = { path = "../codecs_derive" }
+asn1-codecs = { path = "../codecs" }
+asn1_codecs_derive = { path = "../codecs_derive" }
 trybuild = { version = "1.0" }
 hex = "*"
 bitvec = { version = "0.22" }

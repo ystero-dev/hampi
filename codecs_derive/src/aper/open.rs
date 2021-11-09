@@ -17,23 +17,23 @@ pub(super) fn generate_aper_decode_for_asn_open_type(
     let variant_tokens = variant_tokens.unwrap();
 
     let tokens = quote! {
-        impl asn_codecs::aper::AperCodec for #name {
+        impl asn1_codecs::aper::AperCodec for #name {
             type Output = Self;
 
-            fn decode(data: &mut asn_codecs::aper::AperCodecData) -> Result<Self::Output, asn_codecs::aper::AperCodecError> {
-                let length = asn_codecs::aper::decode::decode_length_determinent(data, None, None, false)?;
+            fn decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
+                let length = asn1_codecs::aper::decode::decode_length_determinent(data, None, None, false)?;
 
                 log::trace!("open type: decoded length: {}", length);
 
                 if data.get_key().is_none() {
-                    return Err(asn_codecs::aper::AperCodecError::new("Decoding OPEN Type, but `key` is not determined!"));
+                    return Err(asn1_codecs::aper::AperCodecError::new("Decoding OPEN Type, but `key` is not determined!"));
                 }
 
                 let key = data.get_key().unwrap();
 
                 match key {
                     #(#variant_tokens)*
-                    _ => Err(asn_codecs::aper::AperCodecError::new(format!("Key {} Not Found", key).as_str()))
+                    _ => Err(asn1_codecs::aper::AperCodecError::new(format!("Key {} Not Found", key).as_str()))
                 }
 
             }

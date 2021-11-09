@@ -1,6 +1,6 @@
 #![allow(non_camel_case_types, dead_code)]
 
-use asn_codecs_derive::*;
+use asn1_codecs_derive::AperCodec;
 use bitvec::order::Msb0;
 use bitvec::vec::BitVec;
 
@@ -15960,7 +15960,7 @@ pub struct XnTNLConfigurationInfoiE_Extensions_Item {}
 pub struct XnTNLConfigurationInfoiE_Extensions(Vec<XnTNLConfigurationInfoiE_Extensions_Item>);
 
 fn main() {
-    use asn_codecs::aper::*;
+    use asn1_codecs::aper::*;
     eprintln!("NGAP");
 
     let ngap_data = hex::decode(

@@ -1,6 +1,6 @@
 #![allow(non_camel_case_types)]
 
-use asn_codecs_derive::AperCodec;
+use asn1_codecs_derive::AperCodec;
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING")]

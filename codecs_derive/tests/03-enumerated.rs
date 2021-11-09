@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-use asn_codecs_derive::AperCodec;
+use asn1_codecs_derive::AperCodec;
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]

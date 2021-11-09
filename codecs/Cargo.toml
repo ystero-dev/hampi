@@ -1,13 +1,14 @@
 [package]
-name = "asn-codecs"
-version = "0.1.0"
+name = "asn1-codecs"
+version = "0.1.1"
 description = "ASN.1 Codecs for Rust Types."
 authors = ["Abhijit Gadgil <gabhijit@iitbombay.org>"]
 keywords = ["asn1", "per", "decoder", "encoder"]
 edition = "2018"
 license-file = "LICENSE"
 repository = "https://github.com/gabhijit/hampi.git"
-include = ["src/**/*.rs", "Cargo.toml", "LICENSE", "LICENSE-MIT", "LICENSE-Apache2"]
+readme = "README.md"
+include = ["src/**/*.rs", "Cargo.toml", "LICENSE", "LICENSE-MIT", "LICENSE-Apache2", "README.md"]
 
 [badges]
 maintenance = { status = "actively-developed" }
