@@ -445,6 +445,14 @@ pub(crate) fn parse_object_set_from_class(
     Ok(())
 }
 
+// Parse an input value - which is so far a 'string' into the respective `Asn1ObjectValue`
+//
+// Typically parses Something like
+// { Sometype IDENTIFIED BY someID} or
+// { WORDS FOR TYPE Type MORE WORDS value} etc. values
+//
+// Values prefexing `Type` or `value` are associated with `with_syntax` for the type. In the case
+// of `IDENTIFIED BY` syntax The prefix is an 'empty' string.
 pub(crate) fn parse_object_from_class(
     value: &String,
     class: &Asn1ObjectClass,
@@ -483,6 +491,11 @@ pub(crate) fn parse_object_from_class(
                     value_from_field_spec(field_spec, &object_tokens[consumed..])?;
                 fields.insert(field_spec.id(), field_spec_value);
                 consumed += field_spec_value_consumed;
+
+                // Required to handle &Type IDENTIFIED BY &id
+                if consumed == object_tokens.len() {
+                    break;
+                }
             }
         }
     }
