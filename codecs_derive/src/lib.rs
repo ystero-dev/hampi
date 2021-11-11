@@ -9,6 +9,8 @@ mod symbol;
 
 mod aper;
 
+mod utils;
+
 /// APER Codec Derive Macro support.
 #[proc_macro_derive(AperCodec, attributes(asn))]
 pub fn derive(input: TokenStream) -> TokenStream {

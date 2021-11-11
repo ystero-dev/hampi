@@ -2,7 +2,7 @@
 
 use quote::quote;
 
-use crate::attrs::TyCodecParams;
+use crate::{attrs::TyCodecParams, utils};
 
 pub(super) fn generate_aper_decode_for_asn_sequence_of(
     ast: &syn::DeriveInput,
@@ -33,48 +33,7 @@ pub(super) fn generate_aper_decode_for_asn_sequence_of(
             .into();
     }
 
-    let sz_lb = if params.sz_lb.is_some() {
-        let lb = params
-            .sz_lb
-            .as_ref()
-            .unwrap()
-            .value()
-            .parse::<i128>()
-            .unwrap();
-        quote! {
-            Some(#lb)
-        }
-    } else {
-        quote! {
-            None
-        }
-    };
-    let sz_ub = if params.sz_ub.is_some() {
-        let ub = params
-            .sz_ub
-            .as_ref()
-            .unwrap()
-            .value()
-            .parse::<i128>()
-            .unwrap();
-        quote! {
-            Some(#ub)
-        }
-    } else {
-        quote! {
-            None
-        }
-    };
-    let sz_ext = if params.sz_ext.is_some() {
-        let ext = params.sz_ext.as_ref();
-        quote! {
-            #ext
-        }
-    } else {
-        quote! {
-            false
-        }
-    };
+    let (sz_lb, sz_ub, sz_ext) = utils::get_sz_bounds_extensible_from_params(params);
 
     let tokens = quote! {
 
