@@ -260,14 +260,17 @@ fn resolve_seq_components_for_objects(
 fn get_seq_component_for_object_set(
     fieldref: &String,
     objects: &ResolvedObjectSet,
-) -> Result<BTreeMap<String, (String, Asn1ResolvedType)>, Error> {
+) -> Result<BTreeMap<(String, String), (String, Asn1ResolvedType)>, Error> {
     let mut types = BTreeMap::new();
     for (key, object) in &objects.lookup_table {
         if let ResolvedObjectSetElement::Object(ref o) = object {
             let field_ob = o.fields.get(fieldref);
             if let Some(ResolvedFieldSpec::Type { ty }) = field_ob {
-                if let Some(Asn1ResolvedType::Reference(ref tyid)) = ty {
-                    types.insert(tyid.clone(), (key.clone(), ty.as_ref().unwrap().clone()));
+                if let Some(Asn1ResolvedType::Reference(ref _tyid)) = ty {
+                    types.insert(
+                        (key.1.clone(), key.0.clone()),
+                        (key.0.clone(), ty.as_ref().unwrap().clone()),
+                    );
                 }
             }
         }

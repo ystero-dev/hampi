@@ -1,5 +1,4 @@
-#![allow(non_camel_case_types, dead_code, unreachable_patterns)]
-
+#![allow(dead_code, unreachable_patterns, non_camel_case_types)]
 use asn1_codecs_derive::AperCodec;
 use bitvec::order::Msb0;
 use bitvec::vec::BitVec;
@@ -4605,17 +4604,19 @@ pub struct Alt_RAB_Parameter_SupportedMaxBitrateInfiE_Extensions(
 #[asn(type = "OPEN")]
 pub enum Alt_RAB_ParametersiE_Extensions_ItemextensionValue {
     #[asn(key = 172)]
-    Alt_RAB_Parameter_ExtendedGuaranteedBitrateInf(Alt_RAB_Parameter_ExtendedGuaranteedBitrateInf),
+    id_Alt_RAB_Parameter_ExtendedGuaranteedBitrateInf(
+        Alt_RAB_Parameter_ExtendedGuaranteedBitrateInf,
+    ),
     #[asn(key = 173)]
-    Alt_RAB_Parameter_ExtendedMaxBitrateInf(Alt_RAB_Parameter_ExtendedMaxBitrateInf),
+    id_Alt_RAB_Parameter_ExtendedMaxBitrateInf(Alt_RAB_Parameter_ExtendedMaxBitrateInf),
     #[asn(key = 214)]
-    Alt_RAB_Parameter_SupportedGuaranteedBitrateInf(
+    id_Alt_RAB_Parameter_SupportedGuaranteedBitrateInf(
         Alt_RAB_Parameter_SupportedGuaranteedBitrateInf,
     ),
     #[asn(key = 215)]
-    Alt_RAB_Parameter_SupportedMaxBitrateInf(Alt_RAB_Parameter_SupportedMaxBitrateInf),
+    id_Alt_RAB_Parameter_SupportedMaxBitrateInf(Alt_RAB_Parameter_SupportedMaxBitrateInf),
     #[asn(key = 158)]
-    RAB_Parameters(RAB_Parameters),
+    id_AlternativeRABConfiguration(RAB_Parameters),
 }
 
 #[derive(Debug, AperCodec)]
@@ -4640,13 +4641,15 @@ pub struct Alt_RAB_ParametersiE_Extensions(Vec<Alt_RAB_ParametersiE_Extensions_I
 #[asn(type = "OPEN")]
 pub enum Ass_RAB_ParametersiE_Extensions_ItemextensionValue {
     #[asn(key = 174)]
-    Ass_RAB_Parameter_ExtendedGuaranteedBitrateList(
+    id_Ass_RAB_Parameter_ExtendedGuaranteedBitrateList(
         Ass_RAB_Parameter_ExtendedGuaranteedBitrateList,
     ),
     #[asn(key = 175)]
-    Ass_RAB_Parameter_ExtendedMaxBitrateList(Ass_RAB_Parameter_ExtendedMaxBitrateList),
+    id_Ass_RAB_Parameter_ExtendedMaxBitrateList(Ass_RAB_Parameter_ExtendedMaxBitrateList),
+    #[asn(key = 216)]
+    id_Ass_RAB_Parameter_SupportedGuaranteedBitrateList(SupportedRAB_ParameterBitrateList),
     #[asn(key = 217)]
-    SupportedRAB_ParameterBitrateList(SupportedRAB_ParameterBitrateList),
+    id_Ass_RAB_Parameter_SupportedMaxBitrateList(SupportedRAB_ParameterBitrateList),
 }
 
 #[derive(Debug, AperCodec)]
@@ -4706,7 +4709,7 @@ pub struct BIT_STRING_6(BitVec<Msb0, u8>);
 #[asn(type = "OPEN")]
 pub enum CGIiE_Extensions_ItemextensionValue {
     #[asn(key = 55)]
-    RAC(RAC),
+    id_RAC(RAC),
 }
 
 #[derive(Debug, AperCodec)]
@@ -4731,9 +4734,9 @@ pub struct CGIiE_Extensions(Vec<CGIiE_Extensions_Item>);
 #[asn(type = "OPEN")]
 pub enum CN_DeactivateTraceprotocolIEs_Itemvalue {
     #[asn(key = 65)]
-    TraceReference(TraceReference),
+    id_TraceReference(TraceReference),
     #[asn(key = 68)]
-    TriggerID(TriggerID),
+    id_TriggerID(TriggerID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -4771,15 +4774,15 @@ pub struct CN_DeactivateTraceprotocolExtensions(Vec<CN_DeactivateTraceprotocolEx
 #[asn(type = "OPEN")]
 pub enum CN_InvokeTraceprotocolIEs_Itemvalue {
     #[asn(key = 19)]
-    OMC_ID(OMC_ID),
+    id_OMC_ID(OMC_ID),
     #[asn(key = 65)]
-    TraceReference(TraceReference),
+    id_TraceReference(TraceReference),
     #[asn(key = 66)]
-    TraceType(TraceType),
+    id_TraceType(TraceType),
     #[asn(key = 68)]
-    TriggerID(TriggerID),
+    id_TriggerID(TriggerID),
     #[asn(key = 69)]
-    UE_ID(UE_ID),
+    id_UE_ID(UE_ID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -4804,13 +4807,15 @@ pub struct CN_InvokeTraceprotocolIEs(Vec<CN_InvokeTraceprotocolIEs_Item>);
 #[asn(type = "OPEN")]
 pub enum CN_InvokeTraceprotocolExtensions_ItemextensionValue {
     #[asn(key = 244)]
-    MDT_Configuration(MDT_Configuration),
-    #[asn(key = 125)]
-    TracePropagationParameters(TracePropagationParameters),
+    id_MDT_Configuration(MDT_Configuration),
     #[asn(key = 251)]
-    TransportLayerAddress(TransportLayerAddress),
+    id_Trace_Collection_Entity_IP_Addess(TransportLayerAddress),
+    #[asn(key = 125)]
+    id_TracePropagationParameters(TracePropagationParameters),
     #[asn(key = 292)]
-    UE_Application_Layer_Measurement_Configuration(UE_Application_Layer_Measurement_Configuration),
+    id_UE_Application_Layer_Measurement_Configuration(
+        UE_Application_Layer_Measurement_Configuration,
+    ),
 }
 
 #[derive(Debug, AperCodec)]
@@ -4887,7 +4892,7 @@ pub struct CellLoadInformationGroupiE_Extensions(Vec<CellLoadInformationGroupiE_
 #[asn(type = "OPEN")]
 pub enum CommonIDprotocolIEs_Itemvalue {
     #[asn(key = 23)]
-    PermanentNAS_UE_ID(PermanentNAS_UE_ID),
+    id_PermanentNAS_UE_ID(PermanentNAS_UE_ID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -4912,25 +4917,27 @@ pub struct CommonIDprotocolIEs(Vec<CommonIDprotocolIEs_Item>);
 #[asn(type = "OPEN")]
 pub enum CommonIDprotocolExtensions_ItemextensionValue {
     #[asn(key = 234)]
-    CSG_Membership_Status(CSG_Membership_Status),
-    #[asn(key = 263)]
-    MDT_PLMN_List(MDT_PLMN_List),
-    #[asn(key = 249)]
-    Management_Based_MDT_Allowed(Management_Based_MDT_Allowed),
+    id_CSG_Membership_Status(CSG_Membership_Status),
     #[asn(key = 277)]
-    PLMNidentity(PLMNidentity),
+    id_LastE_UTRANPLMNIdentity(PLMNidentity),
+    #[asn(key = 249)]
+    id_Management_Based_MDT_Allowed(Management_Based_MDT_Allowed),
+    #[asn(key = 263)]
+    id_Management_Based_MDT_PLMN_List(MDT_PLMN_List),
     #[asn(key = 289)]
-    PowerSavingIndicator(PowerSavingIndicator),
+    id_PowerSavingIndicator(PowerSavingIndicator),
     #[asn(key = 272)]
-    RSRVCC_Operation_Possible(RSRVCC_Operation_Possible),
+    id_RSRVCC_Operation_Possible(RSRVCC_Operation_Possible),
     #[asn(key = 105)]
-    SNA_Access_Information(SNA_Access_Information),
+    id_SNA_Access_Information(SNA_Access_Information),
     #[asn(key = 228)]
-    SRVCC_Operation_Possible(SRVCC_Operation_Possible),
+    id_SRVCC_Operation_Possible(SRVCC_Operation_Possible),
+    #[asn(key = 127)]
+    id_SelectedPLMN_ID(PLMNidentity),
     #[asn(key = 202)]
-    SubscriberProfileIDforRFP(SubscriberProfileIDforRFP),
+    id_SubscriberProfileIDforRFP(SubscriberProfileIDforRFP),
     #[asn(key = 118)]
-    UESBI_Iu(UESBI_Iu),
+    id_UESBI_Iu(UESBI_Iu),
 }
 
 #[derive(Debug, AperCodec)]
@@ -4968,9 +4975,9 @@ pub struct CriticalityDiagnosticsiE_Extensions(Vec<CriticalityDiagnosticsiE_Exte
 #[asn(type = "OPEN")]
 pub enum CriticalityDiagnostics_IE_List_ItemiE_Extensions_ItemextensionValue {
     #[asn(key = 88)]
-    MessageStructure(MessageStructure),
+    id_MessageStructure(MessageStructure),
     #[asn(key = 93)]
-    TypeOfError(TypeOfError),
+    id_TypeOfError(TypeOfError),
 }
 
 #[derive(Debug, AperCodec)]
@@ -5031,11 +5038,11 @@ pub struct DataVolumeList_Item {
 #[asn(type = "OPEN")]
 pub enum DataVolumeReportprotocolIEs_Itemvalue {
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 31)]
-    RAB_DataVolumeReportList(RAB_DataVolumeReportList),
+    id_RAB_DataVolumeReportList(RAB_DataVolumeReportList),
     #[asn(key = 72)]
-    RAB_FailedtoReportList(RAB_FailedtoReportList),
+    id_RAB_FailedtoReportList(RAB_FailedtoReportList),
 }
 
 #[derive(Debug, AperCodec)]
@@ -5073,7 +5080,7 @@ pub struct DataVolumeReportprotocolExtensions(Vec<DataVolumeReportprotocolExtens
 #[asn(type = "OPEN")]
 pub enum DataVolumeReportRequestprotocolIEs_Itemvalue {
     #[asn(key = 33)]
-    RAB_DataVolumeReportRequestList(RAB_DataVolumeReportRequestList),
+    id_RAB_DataVolumeReportRequestList(RAB_DataVolumeReportRequestList),
 }
 
 #[derive(Debug, AperCodec)]
@@ -5112,8 +5119,10 @@ pub struct DataVolumeReportRequestprotocolExtensions(
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
 pub enum DeltaRAListofIdleModeUEsiE_Extensions_ItemextensionValue {
+    #[asn(key = 182)]
+    id_LAListwithNoIdleModeUEsAnyMore(LAListofIdleModeUEs),
     #[asn(key = 181)]
-    LAListofIdleModeUEs(LAListofIdleModeUEs),
+    id_newLAListofIdleModeUEs(LAListofIdleModeUEs),
 }
 
 #[derive(Debug, AperCodec)]
@@ -5138,13 +5147,13 @@ pub struct DeltaRAListofIdleModeUEsiE_Extensions(Vec<DeltaRAListofIdleModeUEsiE_
 #[asn(type = "OPEN")]
 pub enum DirectInformationTransferprotocolIEs_Itemvalue {
     #[asn(key = 3)]
-    CN_DomainIndicator(CN_DomainIndicator),
+    id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 96)]
-    GlobalCN_ID(GlobalCN_ID),
+    id_GlobalCN_ID(GlobalCN_ID),
     #[asn(key = 86)]
-    GlobalRNC_ID(GlobalRNC_ID),
+    id_GlobalRNC_ID(GlobalRNC_ID),
     #[asn(key = 126)]
-    InterSystemInformationTransferType(InterSystemInformationTransferType),
+    id_InterSystemInformationTransferType(InterSystemInformationTransferType),
 }
 
 #[derive(Debug, AperCodec)]
@@ -5169,7 +5178,7 @@ pub struct DirectInformationTransferprotocolIEs(Vec<DirectInformationTransferpro
 #[asn(type = "OPEN")]
 pub enum DirectInformationTransferprotocolExtensions_ItemextensionValue {
     #[asn(key = 171)]
-    ExtendedRNC_ID(ExtendedRNC_ID),
+    id_ExtendedRNC_ID(ExtendedRNC_ID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -5196,15 +5205,15 @@ pub struct DirectInformationTransferprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum DirectTransferprotocolIEs_Itemvalue {
     #[asn(key = 15)]
-    LAI(LAI),
+    id_LAI(LAI),
     #[asn(key = 16)]
-    NAS_PDU(NAS_PDU),
+    id_NAS_PDU(NAS_PDU),
     #[asn(key = 55)]
-    RAC(RAC),
+    id_RAC(RAC),
     #[asn(key = 58)]
-    SAI(SAI),
+    id_SAI(SAI),
     #[asn(key = 59)]
-    SAPI(SAPI),
+    id_SAPI(SAPI),
 }
 
 #[derive(Debug, AperCodec)]
@@ -5228,16 +5237,18 @@ pub struct DirectTransferprotocolIEs(Vec<DirectTransferprotocolIEs_Item>);
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
 pub enum DirectTransferprotocolExtensions_ItemextensionValue {
-    #[asn(key = 275)]
-    LHN_ID(LHN_ID),
-    #[asn(key = 128)]
-    RedirectionCompleted(RedirectionCompleted),
-    #[asn(key = 129)]
-    RedirectionIndication(RedirectionIndication),
-    #[asn(key = 202)]
-    SubscriberProfileIDforRFP(SubscriberProfileIDforRFP),
     #[asn(key = 241)]
-    TransportLayerAddress(TransportLayerAddress),
+    id_LGW_TransportLayerAddress(TransportLayerAddress),
+    #[asn(key = 275)]
+    id_LHN_ID(LHN_ID),
+    #[asn(key = 128)]
+    id_RedirectionCompleted(RedirectionCompleted),
+    #[asn(key = 129)]
+    id_RedirectionIndication(RedirectionIndication),
+    #[asn(key = 273)]
+    id_SIPTO_LGW_TransportLayerAddress(TransportLayerAddress),
+    #[asn(key = 202)]
+    id_SubscriberProfileIDforRFP(SubscriberProfileIDforRFP),
 }
 
 #[derive(Debug, AperCodec)]
@@ -5277,7 +5288,7 @@ pub struct DirectTransferInformationItem_RANAP_RelocInfiE_Extensions(
 #[asn(type = "OPEN")]
 pub enum DirectTransferInformationList_RANAP_RelocInf_Item_Itemvalue {
     #[asn(key = 80)]
-    DirectTransferInformationItem_RANAP_RelocInf(DirectTransferInformationItem_RANAP_RelocInf),
+    id_DirectTransferInformationItem_RANAP_RelocInf(DirectTransferInformationItem_RANAP_RelocInf),
 }
 
 #[derive(Debug, AperCodec)]
@@ -5324,7 +5335,7 @@ pub struct INTEGER_11(u16);
 #[asn(type = "OPEN")]
 pub enum EUTRANFrequencies_ItemiE_Extensions_ItemextensionValue {
     #[asn(key = 271)]
-    EARFCN_Extended(EARFCN_Extended),
+    id_EARFCN_Extended(EARFCN_Extended),
 }
 
 #[derive(Debug, AperCodec)]
@@ -5372,7 +5383,7 @@ pub struct EncryptionInformationiE_Extensions(Vec<EncryptionInformationiE_Extens
 #[asn(type = "OPEN")]
 pub enum EnhancedRelocationCompleteConfirmprotocolIEs_Itemvalue {
     #[asn(key = 35)]
-    RAB_FailedList(RAB_FailedList),
+    id_RAB_FailedList(RAB_FailedList),
 }
 
 #[derive(Debug, AperCodec)]
@@ -5414,9 +5425,9 @@ pub struct EnhancedRelocationCompleteConfirmprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum EnhancedRelocationCompleteFailureprotocolIEs_Itemvalue {
     #[asn(key = 4)]
-    Cause(Cause),
+    id_Cause(Cause),
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
 }
 
 #[derive(Debug, AperCodec)]
@@ -5457,14 +5468,20 @@ pub struct EnhancedRelocationCompleteFailureprotocolExtensions(
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
 pub enum EnhancedRelocationCompleteRequestprotocolIEs_Itemvalue {
-    #[asn(key = 213)]
-    ExtendedRNC_ID(ExtendedRNC_ID),
-    #[asn(key = 212)]
-    GlobalRNC_ID(GlobalRNC_ID),
+    #[asn(key = 79)]
+    id_IuSigConId(IuSignallingConnectionIdentifier),
     #[asn(key = 196)]
-    IuSignallingConnectionIdentifier(IuSignallingConnectionIdentifier),
+    id_OldIuSigConId(IuSignallingConnectionIdentifier),
     #[asn(key = 188)]
-    RAB_SetupList_EnhancedRelocCompleteReq(RAB_SetupList_EnhancedRelocCompleteReq),
+    id_RAB_SetupList_EnhancedRelocCompleteReq(RAB_SetupList_EnhancedRelocCompleteReq),
+    #[asn(key = 223)]
+    id_Relocation_SourceExtendedRNC_ID(ExtendedRNC_ID),
+    #[asn(key = 222)]
+    id_Relocation_SourceRNC_ID(GlobalRNC_ID),
+    #[asn(key = 213)]
+    id_Relocation_TargetExtendedRNC_ID(ExtendedRNC_ID),
+    #[asn(key = 212)]
+    id_Relocation_TargetRNC_ID(GlobalRNC_ID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -5491,19 +5508,19 @@ pub struct EnhancedRelocationCompleteRequestprotocolIEs(
 #[asn(type = "OPEN")]
 pub enum EnhancedRelocationCompleteRequestprotocolExtensions_ItemextensionValue {
     #[asn(key = 203)]
-    CSG_Id(CSG_Id),
+    id_CSG_Id(CSG_Id),
     #[asn(key = 235)]
-    Cell_Access_Mode(Cell_Access_Mode),
+    id_Cell_Access_Mode(Cell_Access_Mode),
     #[asn(key = 5)]
-    ChosenEncryptionAlgorithm(ChosenEncryptionAlgorithm),
+    id_ChosenEncryptionAlgorithm(ChosenEncryptionAlgorithm),
     #[asn(key = 6)]
-    ChosenIntegrityProtectionAlgorithm(ChosenIntegrityProtectionAlgorithm),
+    id_ChosenIntegrityProtectionAlgorithm(ChosenIntegrityProtectionAlgorithm),
     #[asn(key = 250)]
-    HigherBitratesThan16MbpsFlag(HigherBitratesThan16MbpsFlag),
+    id_HigherBitratesThan16MbpsFlag(HigherBitratesThan16MbpsFlag),
     #[asn(key = 275)]
-    LHN_ID(LHN_ID),
+    id_LHN_ID(LHN_ID),
     #[asn(key = 262)]
-    TunnelInformation(TunnelInformation),
+    id_Tunnel_Information_for_BBF(TunnelInformation),
 }
 
 #[derive(Debug, AperCodec)]
@@ -5530,11 +5547,11 @@ pub struct EnhancedRelocationCompleteRequestprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum EnhancedRelocationCompleteResponseprotocolIEs_Itemvalue {
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 190)]
-    RAB_SetupList_EnhancedRelocCompleteRes(RAB_SetupList_EnhancedRelocCompleteRes),
+    id_RAB_SetupList_EnhancedRelocCompleteRes(RAB_SetupList_EnhancedRelocCompleteRes),
     #[asn(key = 210)]
-    RAB_ToBeReleasedList_EnhancedRelocCompleteRes(RAB_ToBeReleasedList_EnhancedRelocCompleteRes),
+    id_RAB_ToBeReleasedList_EnhancedRelocCompleteRes(RAB_ToBeReleasedList_EnhancedRelocCompleteRes),
 }
 
 #[derive(Debug, AperCodec)]
@@ -5561,11 +5578,11 @@ pub struct EnhancedRelocationCompleteResponseprotocolIEs(
 #[asn(type = "OPEN")]
 pub enum EnhancedRelocationCompleteResponseprotocolExtensions_ItemextensionValue {
     #[asn(key = 234)]
-    CSG_Membership_Status(CSG_Membership_Status),
+    id_CSG_Membership_Status(CSG_Membership_Status),
     #[asn(key = 239)]
-    MSISDN(MSISDN),
+    id_MSISDN(MSISDN),
     #[asn(key = 233)]
-    UE_AggregateMaximumBitRate(UE_AggregateMaximumBitRate),
+    id_UE_AggregateMaximumBitRate(UE_AggregateMaximumBitRate),
 }
 
 #[derive(Debug, AperCodec)]
@@ -5592,13 +5609,13 @@ pub struct EnhancedRelocationCompleteResponseprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum ErrorIndicationprotocolIEs_Itemvalue {
     #[asn(key = 3)]
-    CN_DomainIndicator(CN_DomainIndicator),
+    id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 4)]
-    Cause(Cause),
+    id_Cause(Cause),
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 86)]
-    GlobalRNC_ID(GlobalRNC_ID),
+    id_GlobalRNC_ID(GlobalRNC_ID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -5623,9 +5640,9 @@ pub struct ErrorIndicationprotocolIEs(Vec<ErrorIndicationprotocolIEs_Item>);
 #[asn(type = "OPEN")]
 pub enum ErrorIndicationprotocolExtensions_ItemextensionValue {
     #[asn(key = 171)]
-    ExtendedRNC_ID(ExtendedRNC_ID),
+    id_ExtendedRNC_ID(ExtendedRNC_ID),
     #[asn(key = 96)]
-    GlobalCN_ID(GlobalCN_ID),
+    id_GlobalCN_ID(GlobalCN_ID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -5658,7 +5675,7 @@ pub struct INTEGER_13(i8);
 #[asn(type = "OPEN")]
 pub enum ForwardSRNS_ContextprotocolIEs_Itemvalue {
     #[asn(key = 25)]
-    RAB_ContextList(RAB_ContextList),
+    id_RAB_ContextList(RAB_ContextList),
 }
 
 #[derive(Debug, AperCodec)]
@@ -5683,7 +5700,7 @@ pub struct ForwardSRNS_ContextprotocolIEs(Vec<ForwardSRNS_ContextprotocolIEs_Ite
 #[asn(type = "OPEN")]
 pub enum ForwardSRNS_ContextprotocolExtensions_ItemextensionValue {
     #[asn(key = 103)]
-    RRC_Container(RRC_Container),
+    id_SourceRNC_PDCP_context_info(RRC_Container),
 }
 
 #[derive(Debug, AperCodec)]
@@ -5899,7 +5916,9 @@ pub struct GERAN_Iumode_RAB_Failed_RABAssgntResponse_ItemiE_Extensions(
 #[asn(type = "OPEN")]
 pub enum GERAN_Iumode_RAB_FailedList_RABAssgntResponse_Item_Itemvalue {
     #[asn(key = 109)]
-    GERAN_Iumode_RAB_Failed_RABAssgntResponse_Item(GERAN_Iumode_RAB_Failed_RABAssgntResponse_Item),
+    id_GERAN_Iumode_RAB_Failed_RABAssgntResponse_Item(
+        GERAN_Iumode_RAB_Failed_RABAssgntResponse_Item,
+    ),
 }
 
 #[derive(Debug, AperCodec)]
@@ -6075,9 +6094,9 @@ pub struct INTEGER_39(u8);
 #[asn(type = "OPEN")]
 pub enum IRAT_Measurement_ConfigurationiE_Extensions_ItemextensionValue {
     #[asn(key = 279)]
-    RSRQ_Extension(RSRQ_Extension),
+    id_RSRQ_Extension(RSRQ_Extension),
     #[asn(key = 278)]
-    RSRQ_Type(RSRQ_Type),
+    id_RSRQ_Type(RSRQ_Type),
 }
 
 #[derive(Debug, AperCodec)]
@@ -6121,13 +6140,13 @@ pub struct IRATmeasurementParametersiE_Extensions(Vec<IRATmeasurementParametersi
 #[asn(type = "OPEN")]
 pub enum ImmediateMDTiE_Extensions_ItemextensionValue {
     #[asn(key = 265)]
-    M4Report(M4Report),
+    id_M4Report(M4Report),
     #[asn(key = 266)]
-    M5Report(M5Report),
+    id_M5Report(M5Report),
     #[asn(key = 267)]
-    M6Report(M6Report),
+    id_M6Report(M6Report),
     #[asn(key = 268)]
-    M7Report(M7Report),
+    id_M7Report(M7Report),
 }
 
 #[derive(Debug, AperCodec)]
@@ -6152,13 +6171,13 @@ pub struct ImmediateMDTiE_Extensions(Vec<ImmediateMDTiE_Extensions_Item>);
 #[asn(type = "OPEN")]
 pub enum InformationTransferConfirmationprotocolIEs_Itemvalue {
     #[asn(key = 3)]
-    CN_DomainIndicator(CN_DomainIndicator),
+    id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 86)]
-    GlobalRNC_ID(GlobalRNC_ID),
+    id_GlobalRNC_ID(GlobalRNC_ID),
     #[asn(key = 104)]
-    InformationTransferID(InformationTransferID),
+    id_InformationTransferID(InformationTransferID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -6185,7 +6204,7 @@ pub struct InformationTransferConfirmationprotocolIEs(
 #[asn(type = "OPEN")]
 pub enum InformationTransferConfirmationprotocolExtensions_ItemextensionValue {
     #[asn(key = 171)]
-    ExtendedRNC_ID(ExtendedRNC_ID),
+    id_ExtendedRNC_ID(ExtendedRNC_ID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -6212,15 +6231,15 @@ pub struct InformationTransferConfirmationprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum InformationTransferFailureprotocolIEs_Itemvalue {
     #[asn(key = 3)]
-    CN_DomainIndicator(CN_DomainIndicator),
+    id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 4)]
-    Cause(Cause),
+    id_Cause(Cause),
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 86)]
-    GlobalRNC_ID(GlobalRNC_ID),
+    id_GlobalRNC_ID(GlobalRNC_ID),
     #[asn(key = 104)]
-    InformationTransferID(InformationTransferID),
+    id_InformationTransferID(InformationTransferID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -6245,7 +6264,7 @@ pub struct InformationTransferFailureprotocolIEs(Vec<InformationTransferFailurep
 #[asn(type = "OPEN")]
 pub enum InformationTransferFailureprotocolExtensions_ItemextensionValue {
     #[asn(key = 171)]
-    ExtendedRNC_ID(ExtendedRNC_ID),
+    id_ExtendedRNC_ID(ExtendedRNC_ID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -6272,13 +6291,13 @@ pub struct InformationTransferFailureprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum InformationTransferIndicationprotocolIEs_Itemvalue {
     #[asn(key = 3)]
-    CN_DomainIndicator(CN_DomainIndicator),
+    id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 96)]
-    GlobalCN_ID(GlobalCN_ID),
+    id_GlobalCN_ID(GlobalCN_ID),
     #[asn(key = 104)]
-    InformationTransferID(InformationTransferID),
+    id_InformationTransferID(InformationTransferID),
     #[asn(key = 106)]
-    ProvidedData(ProvidedData),
+    id_ProvidedData(ProvidedData),
 }
 
 #[derive(Debug, AperCodec)]
@@ -6320,19 +6339,19 @@ pub struct InformationTransferIndicationprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum InitialUE_MessageprotocolIEs_Itemvalue {
     #[asn(key = 3)]
-    CN_DomainIndicator(CN_DomainIndicator),
+    id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 86)]
-    GlobalRNC_ID(GlobalRNC_ID),
+    id_GlobalRNC_ID(GlobalRNC_ID),
     #[asn(key = 79)]
-    IuSignallingConnectionIdentifier(IuSignallingConnectionIdentifier),
+    id_IuSigConId(IuSignallingConnectionIdentifier),
     #[asn(key = 15)]
-    LAI(LAI),
+    id_LAI(LAI),
     #[asn(key = 16)]
-    NAS_PDU(NAS_PDU),
+    id_NAS_PDU(NAS_PDU),
     #[asn(key = 55)]
-    RAC(RAC),
+    id_RAC(RAC),
     #[asn(key = 58)]
-    SAI(SAI),
+    id_SAI(SAI),
 }
 
 #[derive(Debug, AperCodec)]
@@ -6357,37 +6376,39 @@ pub struct InitialUE_MessageprotocolIEs(Vec<InitialUE_MessageprotocolIEs_Item>);
 #[asn(type = "OPEN")]
 pub enum InitialUE_MessageprotocolExtensions_ItemextensionValue {
     #[asn(key = 203)]
-    CSG_Id(CSG_Id),
+    id_CSG_Id(CSG_Id),
     #[asn(key = 235)]
-    Cell_Access_Mode(Cell_Access_Mode),
+    id_Cell_Access_Mode(Cell_Access_Mode),
     #[asn(key = 291)]
-    DCN_ID(DCN_ID),
+    id_DCN_ID(DCN_ID),
     #[asn(key = 171)]
-    ExtendedRNC_ID(ExtendedRNC_ID),
+    id_ExtendedRNC_ID(ExtendedRNC_ID),
     #[asn(key = 108)]
-    GERAN_Classmark(GERAN_Classmark),
+    id_GERAN_Classmark(GERAN_Classmark),
     #[asn(key = 250)]
-    HigherBitratesThan16MbpsFlag(HigherBitratesThan16MbpsFlag),
+    id_HigherBitratesThan16MbpsFlag(HigherBitratesThan16MbpsFlag),
+    #[asn(key = 241)]
+    id_LGW_TransportLayerAddress(TransportLayerAddress),
     #[asn(key = 275)]
-    LHN_ID(LHN_ID),
+    id_LHN_ID(LHN_ID),
     #[asn(key = 130)]
-    NAS_SequenceNumber(NAS_SequenceNumber),
-    #[asn(key = 127)]
-    PLMNidentity(PLMNidentity),
+    id_NAS_SequenceNumber(NAS_SequenceNumber),
     #[asn(key = 23)]
-    PermanentNAS_UE_ID(PermanentNAS_UE_ID),
+    id_PermanentNAS_UE_ID(PermanentNAS_UE_ID),
     #[asn(key = 166)]
-    RedirectAttemptFlag(RedirectAttemptFlag),
+    id_RedirectAttemptFlag(RedirectAttemptFlag),
     #[asn(key = 286)]
-    SGSN_Group_Identity(SGSN_Group_Identity),
+    id_SGSN_Group_Identity(SGSN_Group_Identity),
     #[asn(key = 273)]
-    TransportLayerAddress(TransportLayerAddress),
+    id_SIPTO_LGW_TransportLayerAddress(TransportLayerAddress),
+    #[asn(key = 127)]
+    id_SelectedPLMN_ID(PLMNidentity),
     #[asn(key = 262)]
-    TunnelInformation(TunnelInformation),
+    id_Tunnel_Information_for_BBF(TunnelInformation),
     #[asn(key = 294)]
-    UE_Application_Layer_Measurement_Capability(UE_Application_Layer_Measurement_Capability),
+    id_UE_Application_Layer_Measurement_Capability(UE_Application_Layer_Measurement_Capability),
     #[asn(key = 290)]
-    UE_Usage_Type(UE_Usage_Type),
+    id_UE_Usage_Type(UE_Usage_Type),
 }
 
 #[derive(Debug, AperCodec)]
@@ -6412,103 +6433,103 @@ pub struct InitialUE_MessageprotocolExtensions(Vec<InitialUE_MessageprotocolExte
 #[asn(type = "OPEN")]
 pub enum InitiatingMessagevalue {
     #[asn(key = 26)]
-    CN_DeactivateTrace(CN_DeactivateTrace),
+    id_CN_DeactivateTrace(CN_DeactivateTrace),
     #[asn(key = 16)]
-    CN_InvokeTrace(CN_InvokeTrace),
+    id_CN_InvokeTrace(CN_InvokeTrace),
     #[asn(key = 15)]
-    CommonID(CommonID),
+    id_CommonID(CommonID),
     #[asn(key = 7)]
-    DataVolumeReportRequest(DataVolumeReportRequest),
+    id_DataVolumeReport(DataVolumeReportRequest),
     #[asn(key = 34)]
-    DirectInformationTransfer(DirectInformationTransfer),
+    id_DirectInformationTransfer(DirectInformationTransfer),
     #[asn(key = 20)]
-    DirectTransfer(DirectTransfer),
-    #[asn(key = 44)]
-    EnhancedRelocationCompleteConfirm(EnhancedRelocationCompleteConfirm),
-    #[asn(key = 43)]
-    EnhancedRelocationCompleteRequest(EnhancedRelocationCompleteRequest),
+    id_DirectTransfer(DirectTransfer),
     #[asn(key = 22)]
-    ErrorIndication(ErrorIndication),
+    id_ErrorIndication(ErrorIndication),
     #[asn(key = 24)]
-    ForwardSRNS_Context(ForwardSRNS_Context),
+    id_ForwardSRNS_Context(ForwardSRNS_Context),
     #[asn(key = 31)]
-    InformationTransferIndication(InformationTransferIndication),
+    id_InformationTransfer(InformationTransferIndication),
     #[asn(key = 19)]
-    InitialUE_Message(InitialUE_Message),
+    id_InitialUE_Message(InitialUE_Message),
     #[asn(key = 1)]
-    Iu_ReleaseCommand(Iu_ReleaseCommand),
+    id_Iu_Release(Iu_ReleaseCommand),
     #[asn(key = 11)]
-    Iu_ReleaseRequest(Iu_ReleaseRequest),
+    id_Iu_ReleaseRequest(Iu_ReleaseRequest),
     #[asn(key = 30)]
-    LocationRelatedDataRequest(LocationRelatedDataRequest),
+    id_LocationRelatedData(LocationRelatedDataRequest),
     #[asn(key = 18)]
-    LocationReport(LocationReport),
+    id_LocationReport(LocationReport),
     #[asn(key = 17)]
-    LocationReportingControl(LocationReportingControl),
+    id_LocationReportingControl(LocationReportingControl),
     #[asn(key = 40)]
-    MBMSCNDe_RegistrationRequest(MBMSCNDe_RegistrationRequest),
+    id_MBMSCNDe_Registration_Procedure(MBMSCNDe_RegistrationRequest),
     #[asn(key = 41)]
-    MBMSRABEstablishmentIndication(MBMSRABEstablishmentIndication),
+    id_MBMSRABEstablishmentIndication(MBMSRABEstablishmentIndication),
     #[asn(key = 42)]
-    MBMSRABReleaseRequest(MBMSRABReleaseRequest),
+    id_MBMSRABRelease(MBMSRABReleaseRequest),
     #[asn(key = 39)]
-    MBMSRegistrationRequest(MBMSRegistrationRequest),
+    id_MBMSRegistration(MBMSRegistrationRequest),
     #[asn(key = 35)]
-    MBMSSessionStart(MBMSSessionStart),
+    id_MBMSSessionStart(MBMSSessionStart),
     #[asn(key = 37)]
-    MBMSSessionStop(MBMSSessionStop),
+    id_MBMSSessionStop(MBMSSessionStop),
     #[asn(key = 36)]
-    MBMSSessionUpdate(MBMSSessionUpdate),
+    id_MBMSSessionUpdate(MBMSSessionUpdate),
     #[asn(key = 38)]
-    MBMSUELinkingRequest(MBMSUELinkingRequest),
+    id_MBMSUELinking(MBMSUELinkingRequest),
     #[asn(key = 21)]
-    Overload(Overload),
+    id_OverloadControl(Overload),
     #[asn(key = 14)]
-    Paging(Paging),
-    #[asn(key = 25)]
-    PrivateMessage(PrivateMessage),
+    id_Paging(Paging),
     #[asn(key = 0)]
-    RAB_AssignmentRequest(RAB_AssignmentRequest),
+    id_RAB_Assignment(RAB_AssignmentRequest),
     #[asn(key = 29)]
-    RAB_ModifyRequest(RAB_ModifyRequest),
+    id_RAB_ModifyRequest(RAB_ModifyRequest),
     #[asn(key = 10)]
-    RAB_ReleaseRequest(RAB_ReleaseRequest),
-    #[asn(key = 45)]
-    RANAP_EnhancedRelocationInformationRequest(RANAP_EnhancedRelocationInformationRequest),
+    id_RAB_ReleaseRequest(RAB_ReleaseRequest),
     #[asn(key = 28)]
-    RANAP_RelocationInformation(RANAP_RelocationInformation),
+    id_RANAP_Relocation(RANAP_RelocationInformation),
+    #[asn(key = 45)]
+    id_RANAPenhancedRelocation(RANAP_EnhancedRelocationInformationRequest),
     #[asn(key = 4)]
-    RelocationCancel(RelocationCancel),
+    id_RelocationCancel(RelocationCancel),
     #[asn(key = 13)]
-    RelocationComplete(RelocationComplete),
+    id_RelocationComplete(RelocationComplete),
     #[asn(key = 12)]
-    RelocationDetect(RelocationDetect),
-    #[asn(key = 3)]
-    RelocationRequest(RelocationRequest),
+    id_RelocationDetect(RelocationDetect),
     #[asn(key = 2)]
-    RelocationRequired(RelocationRequired),
+    id_RelocationPreparation(RelocationRequired),
+    #[asn(key = 3)]
+    id_RelocationResourceAllocation(RelocationRequest),
     #[asn(key = 49)]
-    RerouteNASRequest(RerouteNASRequest),
+    id_RerouteNASRequest(RerouteNASRequest),
     #[asn(key = 9)]
-    Reset(Reset),
+    id_Reset(Reset),
     #[asn(key = 27)]
-    ResetResource(ResetResource),
+    id_ResetResource(ResetResource),
     #[asn(key = 5)]
-    SRNS_ContextRequest(SRNS_ContextRequest),
+    id_SRNS_ContextTransfer(SRNS_ContextRequest),
     #[asn(key = 23)]
-    SRNS_DataForwardCommand(SRNS_DataForwardCommand),
+    id_SRNS_DataForward(SRNS_DataForwardCommand),
     #[asn(key = 46)]
-    SRVCC_CSKeysRequest(SRVCC_CSKeysRequest),
+    id_SRVCCPreparation(SRVCC_CSKeysRequest),
     #[asn(key = 6)]
-    SecurityModeCommand(SecurityModeCommand),
+    id_SecurityModeControl(SecurityModeCommand),
     #[asn(key = 32)]
-    UESpecificInformationIndication(UESpecificInformationIndication),
+    id_UESpecificInformation(UESpecificInformationIndication),
     #[asn(key = 47)]
-    UeRadioCapabilityMatchRequest(UeRadioCapabilityMatchRequest),
+    id_UeRadioCapabilityMatch(UeRadioCapabilityMatchRequest),
     #[asn(key = 48)]
-    UeRegistrationQueryRequest(UeRegistrationQueryRequest),
+    id_UeRegistrationQuery(UeRegistrationQueryRequest),
     #[asn(key = 33)]
-    UplinkInformationExchangeRequest(UplinkInformationExchangeRequest),
+    id_UplinkInformationExchange(UplinkInformationExchangeRequest),
+    #[asn(key = 43)]
+    id_enhancedRelocationComplete(EnhancedRelocationCompleteRequest),
+    #[asn(key = 44)]
+    id_enhancedRelocationCompleteConfirm(EnhancedRelocationCompleteConfirm),
+    #[asn(key = 25)]
+    id_privateMessage(PrivateMessage),
 }
 
 #[derive(Debug, AperCodec)]
@@ -6569,7 +6590,7 @@ pub struct InterfacesToTraceItemiE_Extensions(Vec<InterfacesToTraceItemiE_Extens
 #[asn(type = "OPEN")]
 pub enum Iu_ReleaseCommandprotocolIEs_Itemvalue {
     #[asn(key = 4)]
-    Cause(Cause),
+    id_Cause(Cause),
 }
 
 #[derive(Debug, AperCodec)]
@@ -6594,11 +6615,11 @@ pub struct Iu_ReleaseCommandprotocolIEs(Vec<Iu_ReleaseCommandprotocolIEs_Item>);
 #[asn(type = "OPEN")]
 pub enum Iu_ReleaseCommandprotocolExtensions_ItemextensionValue {
     #[asn(key = 252)]
-    End_Of_CSFB(End_Of_CSFB),
-    #[asn(key = 254)]
-    Out_Of_UTRAN(Out_Of_UTRAN),
+    id_End_Of_CSFB(End_Of_CSFB),
     #[asn(key = 277)]
-    PLMNidentity(PLMNidentity),
+    id_LastE_UTRANPLMNIdentity(PLMNidentity),
+    #[asn(key = 254)]
+    id_Out_Of_UTRAN(Out_Of_UTRAN),
 }
 
 #[derive(Debug, AperCodec)]
@@ -6623,11 +6644,11 @@ pub struct Iu_ReleaseCommandprotocolExtensions(Vec<Iu_ReleaseCommandprotocolExte
 #[asn(type = "OPEN")]
 pub enum Iu_ReleaseCompleteprotocolIEs_Itemvalue {
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 31)]
-    RAB_DataVolumeReportList(RAB_DataVolumeReportList),
+    id_RAB_DataVolumeReportList(RAB_DataVolumeReportList),
     #[asn(key = 44)]
-    RAB_ReleasedList_IuRelComp(RAB_ReleasedList_IuRelComp),
+    id_RAB_ReleasedList_IuRelComp(RAB_ReleasedList_IuRelComp),
 }
 
 #[derive(Debug, AperCodec)]
@@ -6665,7 +6686,7 @@ pub struct Iu_ReleaseCompleteprotocolExtensions(Vec<Iu_ReleaseCompleteprotocolEx
 #[asn(type = "OPEN")]
 pub enum Iu_ReleaseRequestprotocolIEs_Itemvalue {
     #[asn(key = 4)]
-    Cause(Cause),
+    id_Cause(Cause),
 }
 
 #[derive(Debug, AperCodec)]
@@ -6792,9 +6813,9 @@ pub struct LastKnownServiceAreaiE_Extensions(Vec<LastKnownServiceAreaiE_Extensio
 #[asn(type = "OPEN")]
 pub enum LastVisitedUTRANCell_ItemiE_Extensions_ItemextensionValue {
     #[asn(key = 257)]
-    Cause(Cause),
+    id_HO_Cause(Cause),
     #[asn(key = 253)]
-    Time_UE_StayedInCell_EnhancedGranularity(Time_UE_StayedInCell_EnhancedGranularity),
+    id_Time_UE_StayedInCell_EnhancedGranularity(Time_UE_StayedInCell_EnhancedGranularity),
 }
 
 #[derive(Debug, AperCodec)]
@@ -6842,7 +6863,7 @@ pub struct LeftMBMSBearerService_IEs_Item {
 #[asn(type = "OPEN")]
 pub enum LocationRelatedDataFailureprotocolIEs_Itemvalue {
     #[asn(key = 4)]
-    Cause(Cause),
+    id_Cause(Cause),
 }
 
 #[derive(Debug, AperCodec)]
@@ -6867,7 +6888,7 @@ pub struct LocationRelatedDataFailureprotocolIEs(Vec<LocationRelatedDataFailurep
 #[asn(type = "OPEN")]
 pub enum LocationRelatedDataFailureprotocolExtensions_ItemextensionValue {
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
 }
 
 #[derive(Debug, AperCodec)]
@@ -6894,7 +6915,7 @@ pub struct LocationRelatedDataFailureprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum LocationRelatedDataRequestprotocolIEs_Itemvalue {
     #[asn(key = 95)]
-    LocationRelatedDataRequestType(LocationRelatedDataRequestType),
+    id_LocationRelatedDataRequestType(LocationRelatedDataRequestType),
 }
 
 #[derive(Debug, AperCodec)]
@@ -6919,11 +6940,11 @@ pub struct LocationRelatedDataRequestprotocolIEs(Vec<LocationRelatedDataRequestp
 #[asn(type = "OPEN")]
 pub enum LocationRelatedDataRequestprotocolExtensions_ItemextensionValue {
     #[asn(key = 115)]
-    LocationRelatedDataRequestTypeSpecificToGERANIuMode(
+    id_LocationRelatedDataRequestTypeSpecificToGERANIuMode(
         LocationRelatedDataRequestTypeSpecificToGERANIuMode,
     ),
     #[asn(key = 185)]
-    RequestedGANSSAssistanceData(RequestedGANSSAssistanceData),
+    id_RequestedGANSSAssistanceData(RequestedGANSSAssistanceData),
 }
 
 #[derive(Debug, AperCodec)]
@@ -6950,7 +6971,7 @@ pub struct LocationRelatedDataRequestprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum LocationRelatedDataResponseprotocolIEs_Itemvalue {
     #[asn(key = 94)]
-    BroadcastAssistanceDataDecipheringKeys(BroadcastAssistanceDataDecipheringKeys),
+    id_BroadcastAssistanceDataDecipheringKeys(BroadcastAssistanceDataDecipheringKeys),
 }
 
 #[derive(Debug, AperCodec)]
@@ -6975,9 +6996,9 @@ pub struct LocationRelatedDataResponseprotocolIEs(Vec<LocationRelatedDataRespons
 #[asn(type = "OPEN")]
 pub enum LocationRelatedDataResponseprotocolExtensions_ItemextensionValue {
     #[asn(key = 186)]
-    BroadcastAssistanceDataDecipheringKeys(BroadcastAssistanceDataDecipheringKeys),
+    id_BroadcastGANSSAssistanceDataDecipheringKeys(BroadcastAssistanceDataDecipheringKeys),
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
 }
 
 #[derive(Debug, AperCodec)]
@@ -7004,11 +7025,11 @@ pub struct LocationRelatedDataResponseprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum LocationReportprotocolIEs_Itemvalue {
     #[asn(key = 0)]
-    AreaIdentity(AreaIdentity),
+    id_AreaIdentity(AreaIdentity),
     #[asn(key = 4)]
-    Cause(Cause),
+    id_Cause(Cause),
     #[asn(key = 57)]
-    RequestType(RequestType),
+    id_RequestType(RequestType),
 }
 
 #[derive(Debug, AperCodec)]
@@ -7033,19 +7054,19 @@ pub struct LocationReportprotocolIEs(Vec<LocationReportprotocolIEs_Item>);
 #[asn(type = "OPEN")]
 pub enum LocationReportprotocolExtensions_ItemextensionValue {
     #[asn(key = 122)]
-    AccuracyFulfilmentIndicator(AccuracyFulfilmentIndicator),
+    id_AccuracyFulfilmentIndicator(AccuracyFulfilmentIndicator),
     #[asn(key = 283)]
-    BarometricPressure(BarometricPressure),
+    id_BarometricPressure(BarometricPressure),
     #[asn(key = 285)]
-    CivicAddress(CivicAddress),
+    id_CivicAddress(CivicAddress),
     #[asn(key = 97)]
-    LastKnownServiceArea(LastKnownServiceArea),
+    id_LastKnownServiceArea(LastKnownServiceArea),
     #[asn(key = 119)]
-    PositionData(PositionData),
+    id_PositionData(PositionData),
     #[asn(key = 120)]
-    PositionDataSpecificToGERANIuMode(PositionDataSpecificToGERANIuMode),
+    id_PositionDataSpecificToGERANIuMode(PositionDataSpecificToGERANIuMode),
     #[asn(key = 165)]
-    VelocityEstimate(VelocityEstimate),
+    id_VelocityEstimate(VelocityEstimate),
 }
 
 #[derive(Debug, AperCodec)]
@@ -7070,7 +7091,7 @@ pub struct LocationReportprotocolExtensions(Vec<LocationReportprotocolExtensions
 #[asn(type = "OPEN")]
 pub enum LocationReportingControlprotocolIEs_Itemvalue {
     #[asn(key = 57)]
-    RequestType(RequestType),
+    id_RequestType(RequestType),
 }
 
 #[derive(Debug, AperCodec)]
@@ -7095,17 +7116,17 @@ pub struct LocationReportingControlprotocolIEs(Vec<LocationReportingControlproto
 #[asn(type = "OPEN")]
 pub enum LocationReportingControlprotocolExtensions_ItemextensionValue {
     #[asn(key = 114)]
-    ClientType(ClientType),
+    id_ClientType(ClientType),
     #[asn(key = 164)]
-    IncludeVelocity(IncludeVelocity),
+    id_IncludeVelocity(IncludeVelocity),
     #[asn(key = 168)]
-    PeriodicLocationInfo(PeriodicLocationInfo),
+    id_PeriodicLocationInfo(PeriodicLocationInfo),
     #[asn(key = 113)]
-    PositioningPriority(PositioningPriority),
+    id_PositioningPriority(PositioningPriority),
     #[asn(key = 112)]
-    ResponseTime(ResponseTime),
+    id_ResponseTime(ResponseTime),
     #[asn(key = 111)]
-    VerticalAccuracyCode(VerticalAccuracyCode),
+    id_VerticalAccuracyCode(VerticalAccuracyCode),
 }
 
 #[derive(Debug, AperCodec)]
@@ -7207,9 +7228,9 @@ pub struct M7ReportiE_Extensions(Vec<M7ReportiE_Extensions_Item>);
 #[asn(type = "OPEN")]
 pub enum MBMSCNDe_RegistrationRequestprotocolIEs_Itemvalue {
     #[asn(key = 96)]
-    GlobalCN_ID(GlobalCN_ID),
+    id_GlobalCN_ID(GlobalCN_ID),
     #[asn(key = 153)]
-    TMGI(TMGI),
+    id_TMGI(TMGI),
 }
 
 #[derive(Debug, AperCodec)]
@@ -7251,13 +7272,13 @@ pub struct MBMSCNDe_RegistrationRequestprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum MBMSCNDe_RegistrationResponseprotocolIEs_Itemvalue {
     #[asn(key = 4)]
-    Cause(Cause),
+    id_Cause(Cause),
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 86)]
-    GlobalRNC_ID(GlobalRNC_ID),
+    id_GlobalRNC_ID(GlobalRNC_ID),
     #[asn(key = 153)]
-    TMGI(TMGI),
+    id_TMGI(TMGI),
 }
 
 #[derive(Debug, AperCodec)]
@@ -7284,7 +7305,7 @@ pub struct MBMSCNDe_RegistrationResponseprotocolIEs(
 #[asn(type = "OPEN")]
 pub enum MBMSCNDe_RegistrationResponseprotocolExtensions_ItemextensionValue {
     #[asn(key = 171)]
-    ExtendedRNC_ID(ExtendedRNC_ID),
+    id_ExtendedRNC_ID(ExtendedRNC_ID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -7326,7 +7347,7 @@ pub struct MBMSIPMulticastAddressandAPNlistiE_Extensions(
 #[asn(type = "OPEN")]
 pub enum MBMSRABEstablishmentIndicationprotocolIEs_Itemvalue {
     #[asn(key = 154)]
-    TransportLayerInformation(TransportLayerInformation),
+    id_TransportLayerInformation(TransportLayerInformation),
 }
 
 #[derive(Debug, AperCodec)]
@@ -7368,9 +7389,9 @@ pub struct MBMSRABEstablishmentIndicationprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum MBMSRABReleaseprotocolIEs_Itemvalue {
     #[asn(key = 4)]
-    Cause(Cause),
+    id_Cause(Cause),
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
 }
 
 #[derive(Debug, AperCodec)]
@@ -7408,9 +7429,9 @@ pub struct MBMSRABReleaseprotocolExtensions(Vec<MBMSRABReleaseprotocolExtensions
 #[asn(type = "OPEN")]
 pub enum MBMSRABReleaseFailureprotocolIEs_Itemvalue {
     #[asn(key = 4)]
-    Cause(Cause),
+    id_Cause(Cause),
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
 }
 
 #[derive(Debug, AperCodec)]
@@ -7450,7 +7471,7 @@ pub struct MBMSRABReleaseFailureprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum MBMSRABReleaseRequestprotocolIEs_Itemvalue {
     #[asn(key = 4)]
-    Cause(Cause),
+    id_Cause(Cause),
 }
 
 #[derive(Debug, AperCodec)]
@@ -7490,13 +7511,13 @@ pub struct MBMSRABReleaseRequestprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum MBMSRegistrationFailureprotocolIEs_Itemvalue {
     #[asn(key = 4)]
-    Cause(Cause),
+    id_Cause(Cause),
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 96)]
-    GlobalCN_ID(GlobalCN_ID),
+    id_GlobalCN_ID(GlobalCN_ID),
     #[asn(key = 153)]
-    TMGI(TMGI),
+    id_TMGI(TMGI),
 }
 
 #[derive(Debug, AperCodec)]
@@ -7536,15 +7557,15 @@ pub struct MBMSRegistrationFailureprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum MBMSRegistrationRequestprotocolIEs_Itemvalue {
     #[asn(key = 132)]
-    APN(APN),
+    id_APN(APN),
     #[asn(key = 86)]
-    GlobalRNC_ID(GlobalRNC_ID),
+    id_GlobalRNC_ID(GlobalRNC_ID),
     #[asn(key = 140)]
-    IPMulticastAddress(IPMulticastAddress),
+    id_IPMulticastAddress(IPMulticastAddress),
     #[asn(key = 151)]
-    MBMSRegistrationRequestType(MBMSRegistrationRequestType),
+    id_MBMSRegistrationRequestType(MBMSRegistrationRequestType),
     #[asn(key = 153)]
-    TMGI(TMGI),
+    id_TMGI(TMGI),
 }
 
 #[derive(Debug, AperCodec)]
@@ -7569,7 +7590,7 @@ pub struct MBMSRegistrationRequestprotocolIEs(Vec<MBMSRegistrationRequestprotoco
 #[asn(type = "OPEN")]
 pub enum MBMSRegistrationRequestprotocolExtensions_ItemextensionValue {
     #[asn(key = 171)]
-    ExtendedRNC_ID(ExtendedRNC_ID),
+    id_ExtendedRNC_ID(ExtendedRNC_ID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -7596,11 +7617,11 @@ pub struct MBMSRegistrationRequestprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum MBMSRegistrationResponseprotocolIEs_Itemvalue {
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 96)]
-    GlobalCN_ID(GlobalCN_ID),
+    id_GlobalCN_ID(GlobalCN_ID),
     #[asn(key = 153)]
-    TMGI(TMGI),
+    id_TMGI(TMGI),
 }
 
 #[derive(Debug, AperCodec)]
@@ -7640,31 +7661,31 @@ pub struct MBMSRegistrationResponseprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum MBMSSessionStartprotocolIEs_Itemvalue {
     #[asn(key = 135)]
-    FrequenceLayerConvergenceFlag(FrequenceLayerConvergenceFlag),
+    id_FrequenceLayerConvergenceFlag(FrequenceLayerConvergenceFlag),
     #[asn(key = 96)]
-    GlobalCN_ID(GlobalCN_ID),
+    id_GlobalCN_ID(GlobalCN_ID),
     #[asn(key = 79)]
-    IuSignallingConnectionIdentifier(IuSignallingConnectionIdentifier),
+    id_IuSigConId(IuSignallingConnectionIdentifier),
     #[asn(key = 143)]
-    MBMSBearerServiceType(MBMSBearerServiceType),
+    id_MBMSBearerServiceType(MBMSBearerServiceType),
     #[asn(key = 145)]
-    MBMSServiceArea(MBMSServiceArea),
+    id_MBMSServiceArea(MBMSServiceArea),
     #[asn(key = 146)]
-    MBMSSessionDuration(MBMSSessionDuration),
+    id_MBMSSessionDuration(MBMSSessionDuration),
     #[asn(key = 147)]
-    MBMSSessionIdentity(MBMSSessionIdentity),
+    id_MBMSSessionIdentity(MBMSSessionIdentity),
     #[asn(key = 157)]
-    MBMSSessionRepetitionNumber(MBMSSessionRepetitionNumber),
+    id_MBMSSessionRepetitionNumber(MBMSSessionRepetitionNumber),
     #[asn(key = 148)]
-    PDP_TypeInformation(PDP_TypeInformation),
+    id_PDP_TypeInformation(PDP_TypeInformation),
     #[asn(key = 149)]
-    RAB_Parameters(RAB_Parameters),
+    id_RAB_Parameters(RAB_Parameters),
     #[asn(key = 150)]
-    RAListofIdleModeUEs(RAListofIdleModeUEs),
+    id_RAListofIdleModeUEs(RAListofIdleModeUEs),
     #[asn(key = 153)]
-    TMGI(TMGI),
+    id_TMGI(TMGI),
     #[asn(key = 163)]
-    TimeToMBMSDataTransfer(TimeToMBMSDataTransfer),
+    id_TimeToMBMSDataTransfer(TimeToMBMSDataTransfer),
 }
 
 #[derive(Debug, AperCodec)]
@@ -7689,13 +7710,13 @@ pub struct MBMSSessionStartprotocolIEs(Vec<MBMSSessionStartprotocolIEs_Item>);
 #[asn(type = "OPEN")]
 pub enum MBMSSessionStartprotocolExtensions_ItemextensionValue {
     #[asn(key = 169)]
-    MBMSCountingInformation(MBMSCountingInformation),
+    id_MBMSCountingInformation(MBMSCountingInformation),
     #[asn(key = 201)]
-    MBMSSynchronisationInformation(MBMSSynchronisationInformation),
+    id_MBMSSynchronisationInformation(MBMSSynchronisationInformation),
     #[asn(key = 238)]
-    PDP_TypeInformation_extension(PDP_TypeInformation_extension),
+    id_PDP_TypeInformation_extension(PDP_TypeInformation_extension),
     #[asn(key = 276)]
-    Session_Re_establishment_Indicator(Session_Re_establishment_Indicator),
+    id_Session_Re_establishment_Indicator(Session_Re_establishment_Indicator),
 }
 
 #[derive(Debug, AperCodec)]
@@ -7720,9 +7741,9 @@ pub struct MBMSSessionStartprotocolExtensions(Vec<MBMSSessionStartprotocolExtens
 #[asn(type = "OPEN")]
 pub enum MBMSSessionStartFailureprotocolIEs_Itemvalue {
     #[asn(key = 4)]
-    Cause(Cause),
+    id_Cause(Cause),
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
 }
 
 #[derive(Debug, AperCodec)]
@@ -7762,11 +7783,11 @@ pub struct MBMSSessionStartFailureprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum MBMSSessionStartResponseprotocolIEs_Itemvalue {
     #[asn(key = 4)]
-    Cause(Cause),
+    id_Cause(Cause),
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 154)]
-    TransportLayerInformation(TransportLayerInformation),
+    id_TransportLayerInformation(TransportLayerInformation),
 }
 
 #[derive(Debug, AperCodec)]
@@ -7806,7 +7827,7 @@ pub struct MBMSSessionStartResponseprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum MBMSSessionStopprotocolIEs_Itemvalue {
     #[asn(key = 144)]
-    MBMSCNDe_Registration(MBMSCNDe_Registration),
+    id_MBMSCNDe_Registration(MBMSCNDe_Registration),
 }
 
 #[derive(Debug, AperCodec)]
@@ -7844,9 +7865,9 @@ pub struct MBMSSessionStopprotocolExtensions(Vec<MBMSSessionStopprotocolExtensio
 #[asn(type = "OPEN")]
 pub enum MBMSSessionStopResponseprotocolIEs_Itemvalue {
     #[asn(key = 4)]
-    Cause(Cause),
+    id_Cause(Cause),
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
 }
 
 #[derive(Debug, AperCodec)]
@@ -7886,9 +7907,9 @@ pub struct MBMSSessionStopResponseprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum MBMSSessionUpdateprotocolIEs_Itemvalue {
     #[asn(key = 134)]
-    DeltaRAListofIdleModeUEs(DeltaRAListofIdleModeUEs),
+    id_DeltaRAListofIdleModeUEs(DeltaRAListofIdleModeUEs),
     #[asn(key = 152)]
-    SessionUpdateID(SessionUpdateID),
+    id_SessionUpdateID(SessionUpdateID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -7926,11 +7947,11 @@ pub struct MBMSSessionUpdateprotocolExtensions(Vec<MBMSSessionUpdateprotocolExte
 #[asn(type = "OPEN")]
 pub enum MBMSSessionUpdateFailureprotocolIEs_Itemvalue {
     #[asn(key = 4)]
-    Cause(Cause),
+    id_Cause(Cause),
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 152)]
-    SessionUpdateID(SessionUpdateID),
+    id_SessionUpdateID(SessionUpdateID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -7970,13 +7991,13 @@ pub struct MBMSSessionUpdateFailureprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum MBMSSessionUpdateResponseprotocolIEs_Itemvalue {
     #[asn(key = 4)]
-    Cause(Cause),
+    id_Cause(Cause),
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 152)]
-    SessionUpdateID(SessionUpdateID),
+    id_SessionUpdateID(SessionUpdateID),
     #[asn(key = 154)]
-    TransportLayerInformation(TransportLayerInformation),
+    id_TransportLayerInformation(TransportLayerInformation),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8016,7 +8037,7 @@ pub struct MBMSSessionUpdateResponseprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum MBMSSynchronisationInformationiE_Extensions_ItemextensionValue {
     #[asn(key = 236)]
-    IPMulticastAddress(IPMulticastAddress),
+    id_IP_Source_Address(IPMulticastAddress),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8043,9 +8064,9 @@ pub struct MBMSSynchronisationInformationiE_Extensions(
 #[asn(type = "OPEN")]
 pub enum MBMSUELinkingRequestprotocolIEs_Itemvalue {
     #[asn(key = 141)]
-    JoinedMBMSBearerService_IEs(JoinedMBMSBearerService_IEs),
+    id_JoinedMBMSBearerServicesList(JoinedMBMSBearerService_IEs),
     #[asn(key = 142)]
-    LeftMBMSBearerService_IEs(LeftMBMSBearerService_IEs),
+    id_LeftMBMSBearerServicesList(LeftMBMSBearerService_IEs),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8083,9 +8104,9 @@ pub struct MBMSUELinkingRequestprotocolExtensions(Vec<MBMSUELinkingRequestprotoc
 #[asn(type = "OPEN")]
 pub enum MBMSUELinkingResponseprotocolIEs_Itemvalue {
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 155)]
-    UnsuccessfulLinking_IEs(UnsuccessfulLinking_IEs),
+    id_UnsuccessfulLinkingList(UnsuccessfulLinking_IEs),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8125,7 +8146,7 @@ pub struct MBMSUELinkingResponseprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum MDT_ConfigurationiE_Extensions_ItemextensionValue {
     #[asn(key = 264)]
-    MDT_PLMN_List(MDT_PLMN_List),
+    id_SignallingBasedMDTPLMNList(MDT_PLMN_List),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8177,7 +8198,7 @@ pub struct MessageStructure_Item {
 #[asn(type = "OPEN")]
 pub enum NotEmptyRAListofIdleModeUEsiE_Extensions_ItemextensionValue {
     #[asn(key = 180)]
-    LAListofIdleModeUEs(LAListofIdleModeUEs),
+    id_LAofIdleModeUEs(LAListofIdleModeUEs),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8217,24 +8238,24 @@ pub struct Offload_RAB_ParametersiE_Extensions(Vec<Offload_RAB_ParametersiE_Exte
 #[asn(type = "OPEN")]
 pub enum Outcomevalue {
     #[asn(key = 38)]
-    MBMSUELinkingResponse(MBMSUELinkingResponse),
+    id_MBMSUELinking(MBMSUELinkingResponse),
     #[asn(key = 0)]
-    RAB_AssignmentResponse(RAB_AssignmentResponse),
+    id_RAB_Assignment(RAB_AssignmentResponse),
     #[asn(key = 46)]
-    SRVCC_CSKeysResponse(SRVCC_CSKeysResponse),
+    id_SRVCCPreparation(SRVCC_CSKeysResponse),
     #[asn(key = 47)]
-    UeRadioCapabilityMatchResponse(UeRadioCapabilityMatchResponse),
+    id_UeRadioCapabilityMatch(UeRadioCapabilityMatchResponse),
     #[asn(key = 48)]
-    UeRegistrationQueryResponse(UeRegistrationQueryResponse),
+    id_UeRegistrationQuery(UeRegistrationQueryResponse),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
 pub enum OverloadprotocolIEs_Itemvalue {
     #[asn(key = 86)]
-    GlobalRNC_ID(GlobalRNC_ID),
+    id_GlobalRNC_ID(GlobalRNC_ID),
     #[asn(key = 18)]
-    NumberOfSteps(NumberOfSteps),
+    id_NumberOfSteps(NumberOfSteps),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8259,13 +8280,13 @@ pub struct OverloadprotocolIEs(Vec<OverloadprotocolIEs_Item>);
 #[asn(type = "OPEN")]
 pub enum OverloadprotocolExtensions_ItemextensionValue {
     #[asn(key = 3)]
-    CN_DomainIndicator(CN_DomainIndicator),
+    id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 171)]
-    ExtendedRNC_ID(ExtendedRNC_ID),
+    id_ExtendedRNC_ID(ExtendedRNC_ID),
     #[asn(key = 96)]
-    GlobalCN_ID(GlobalCN_ID),
+    id_GlobalCN_ID(GlobalCN_ID),
     #[asn(key = 245)]
-    Priority_Class_Indicator(Priority_Class_Indicator),
+    id_Priority_Class_Indicator(Priority_Class_Indicator),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8327,19 +8348,19 @@ pub struct PLMNs_in_shared_network_Item {
 #[asn(type = "OPEN")]
 pub enum PagingprotocolIEs_Itemvalue {
     #[asn(key = 3)]
-    CN_DomainIndicator(CN_DomainIndicator),
+    id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 76)]
-    DRX_CycleLengthCoefficient(DRX_CycleLengthCoefficient),
+    id_DRX_CycleLengthCoefficient(DRX_CycleLengthCoefficient),
     #[asn(key = 17)]
-    NonSearchingIndication(NonSearchingIndication),
+    id_NonSearchingIndication(NonSearchingIndication),
     #[asn(key = 21)]
-    PagingAreaID(PagingAreaID),
+    id_PagingAreaID(PagingAreaID),
     #[asn(key = 22)]
-    PagingCause(PagingCause),
+    id_PagingCause(PagingCause),
     #[asn(key = 23)]
-    PermanentNAS_UE_ID(PermanentNAS_UE_ID),
+    id_PermanentNAS_UE_ID(PermanentNAS_UE_ID),
     #[asn(key = 64)]
-    TemporaryUE_ID(TemporaryUE_ID),
+    id_TemporaryUE_ID(TemporaryUE_ID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8364,9 +8385,9 @@ pub struct PagingprotocolIEs(Vec<PagingprotocolIEs_Item>);
 #[asn(type = "OPEN")]
 pub enum PagingprotocolExtensions_ItemextensionValue {
     #[asn(key = 229)]
-    CSG_Id_List(CSG_Id_List),
+    id_CSG_Id_List(CSG_Id_List),
     #[asn(key = 96)]
-    GlobalCN_ID(GlobalCN_ID),
+    id_GlobalCN_ID(GlobalCN_ID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8412,9 +8433,9 @@ pub struct PeriodicLocationInfoiE_Extensions(Vec<PeriodicLocationInfoiE_Extensio
 #[asn(type = "OPEN")]
 pub enum PositionDataiE_Extensions_ItemextensionValue {
     #[asn(key = 284)]
-    Additional_PositioningDataSet(Additional_PositioningDataSet),
+    id_Additional_PositioningDataSet(Additional_PositioningDataSet),
     #[asn(key = 184)]
-    GANSS_PositioningDataSet(GANSS_PositioningDataSet),
+    id_GANSS_PositioningDataSet(GANSS_PositioningDataSet),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8460,9 +8481,9 @@ pub struct PrivateMessageprivateIEs(Vec<PrivateMessageprivateIEs_Item>);
 #[asn(type = "OPEN")]
 pub enum RAB_AssignmentRequestprotocolIEs_Itemvalue {
     #[asn(key = 41)]
-    RAB_ReleaseList(RAB_ReleaseList),
+    id_RAB_ReleaseList(RAB_ReleaseList),
     #[asn(key = 54)]
-    RAB_SetupOrModifyList(RAB_SetupOrModifyList),
+    id_RAB_SetupOrModifyList(RAB_SetupOrModifyList),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8487,9 +8508,9 @@ pub struct RAB_AssignmentRequestprotocolIEs(Vec<RAB_AssignmentRequestprotocolIEs
 #[asn(type = "OPEN")]
 pub enum RAB_AssignmentRequestprotocolExtensions_ItemextensionValue {
     #[asn(key = 239)]
-    MSISDN(MSISDN),
+    id_MSISDN(MSISDN),
     #[asn(key = 233)]
-    UE_AggregateMaximumBitRate(UE_AggregateMaximumBitRate),
+    id_UE_AggregateMaximumBitRate(UE_AggregateMaximumBitRate),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8516,17 +8537,17 @@ pub struct RAB_AssignmentRequestprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum RAB_AssignmentResponseprotocolIEs_Itemvalue {
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 35)]
-    RAB_FailedList(RAB_FailedList),
+    id_RAB_FailedList(RAB_FailedList),
     #[asn(key = 38)]
-    RAB_QueuedList(RAB_QueuedList),
+    id_RAB_QueuedList(RAB_QueuedList),
     #[asn(key = 39)]
-    RAB_ReleaseFailedList(RAB_ReleaseFailedList),
+    id_RAB_ReleaseFailedList(RAB_ReleaseFailedList),
     #[asn(key = 43)]
-    RAB_ReleasedList(RAB_ReleasedList),
+    id_RAB_ReleasedList(RAB_ReleasedList),
     #[asn(key = 52)]
-    RAB_SetupOrModifiedList(RAB_SetupOrModifiedList),
+    id_RAB_SetupOrModifiedList(RAB_SetupOrModifiedList),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8551,7 +8572,7 @@ pub struct RAB_AssignmentResponseprotocolIEs(Vec<RAB_AssignmentResponseprotocolI
 #[asn(type = "OPEN")]
 pub enum RAB_AssignmentResponseprotocolExtensions_ItemextensionValue {
     #[asn(key = 110)]
-    GERAN_Iumode_RAB_FailedList_RABAssgntResponse(GERAN_Iumode_RAB_FailedList_RABAssgntResponse),
+    id_GERAN_Iumode_RAB_FailedList_RABAssgntResponse(GERAN_Iumode_RAB_FailedList_RABAssgntResponse),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8578,7 +8599,7 @@ pub struct RAB_AssignmentResponseprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum RAB_ContextFailedtoTransferList_Item_Itemvalue {
     #[asn(key = 84)]
-    RABs_ContextFailedtoTransferItem(RABs_ContextFailedtoTransferItem),
+    id_RAB_ContextFailedtoTransferItem(RABs_ContextFailedtoTransferItem),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8631,7 +8652,7 @@ pub struct RAB_ContextItem_RANAP_RelocInfiE_Extensions(
 #[asn(type = "OPEN")]
 pub enum RAB_ContextList_Item_Itemvalue {
     #[asn(key = 24)]
-    RAB_ContextItem(RAB_ContextItem),
+    id_RAB_ContextItem(RAB_ContextItem),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8656,7 +8677,7 @@ pub struct RAB_ContextList_Item(Vec<RAB_ContextList_Item_Item>);
 #[asn(type = "OPEN")]
 pub enum RAB_ContextList_RANAP_RelocInf_Item_Itemvalue {
     #[asn(key = 82)]
-    RAB_ContextItem_RANAP_RelocInf(RAB_ContextItem_RANAP_RelocInf),
+    id_RAB_ContextItem_RANAP_RelocInf(RAB_ContextItem_RANAP_RelocInf),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8681,9 +8702,9 @@ pub struct RAB_ContextList_RANAP_RelocInf_Item(Vec<RAB_ContextList_RANAP_RelocIn
 #[asn(type = "OPEN")]
 pub enum RAB_DataForwardingItemiE_Extensions_ItemextensionValue {
     #[asn(key = 13)]
-    IuTransportAssociation(IuTransportAssociation),
+    id_IuTransportAssociation(IuTransportAssociation),
     #[asn(key = 67)]
-    TransportLayerAddress(TransportLayerAddress),
+    id_TransportLayerAddress(TransportLayerAddress),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8723,7 +8744,7 @@ pub struct RAB_DataForwardingItem_SRNS_CtxReqiE_Extensions(
 #[asn(type = "OPEN")]
 pub enum RAB_DataForwardingList_Item_Itemvalue {
     #[asn(key = 26)]
-    RAB_DataForwardingItem(RAB_DataForwardingItem),
+    id_RAB_DataForwardingItem(RAB_DataForwardingItem),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8748,7 +8769,7 @@ pub struct RAB_DataForwardingList_Item(Vec<RAB_DataForwardingList_Item_Item>);
 #[asn(type = "OPEN")]
 pub enum RAB_DataForwardingList_SRNS_CtxReq_Item_Itemvalue {
     #[asn(key = 27)]
-    RAB_DataForwardingItem_SRNS_CtxReq(RAB_DataForwardingItem_SRNS_CtxReq),
+    id_RAB_DataForwardingItem_SRNS_CtxReq(RAB_DataForwardingItem_SRNS_CtxReq),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8788,7 +8809,7 @@ pub struct RAB_DataVolumeReportItemiE_Extensions(Vec<RAB_DataVolumeReportItemiE_
 #[asn(type = "OPEN")]
 pub enum RAB_DataVolumeReportList_Item_Itemvalue {
     #[asn(key = 30)]
-    RAB_DataVolumeReportItem(RAB_DataVolumeReportItem),
+    id_RAB_DataVolumeReportItem(RAB_DataVolumeReportItem),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8828,7 +8849,7 @@ pub struct RAB_DataVolumeReportRequestItemiE_Extensions(
 #[asn(type = "OPEN")]
 pub enum RAB_DataVolumeReportRequestList_Item_Itemvalue {
     #[asn(key = 32)]
-    RAB_DataVolumeReportRequestItem(RAB_DataVolumeReportRequestItem),
+    id_RAB_DataVolumeReportRequestItem(RAB_DataVolumeReportRequestItem),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8881,7 +8902,7 @@ pub struct RAB_FailedItem_EnhRelocInfoResiE_Extensions(
 #[asn(type = "OPEN")]
 pub enum RAB_FailedList_Item_Itemvalue {
     #[asn(key = 34)]
-    RAB_FailedItem(RAB_FailedItem),
+    id_RAB_FailedItem(RAB_FailedItem),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8906,7 +8927,7 @@ pub struct RAB_FailedList_Item(Vec<RAB_FailedList_Item_Item>);
 #[asn(type = "OPEN")]
 pub enum RAB_FailedList_EnhRelocInfoRes_Item_Itemvalue {
     #[asn(key = 198)]
-    RAB_FailedItem_EnhRelocInfoRes(RAB_FailedItem_EnhRelocInfoRes),
+    id_RAB_FailedItem_EnhRelocInfoRes(RAB_FailedItem_EnhRelocInfoRes),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8931,7 +8952,7 @@ pub struct RAB_FailedList_EnhRelocInfoRes_Item(Vec<RAB_FailedList_EnhRelocInfoRe
 #[asn(type = "OPEN")]
 pub enum RAB_FailedtoReportList_Item_Itemvalue {
     #[asn(key = 71)]
-    RABs_failed_to_reportItem(RABs_failed_to_reportItem),
+    id_RAB_FailedtoReportItem(RABs_failed_to_reportItem),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8969,7 +8990,7 @@ pub struct RAB_ModifyItemiE_Extensions(Vec<RAB_ModifyItemiE_Extensions_Item>);
 #[asn(type = "OPEN")]
 pub enum RAB_ModifyList_Item_Itemvalue {
     #[asn(key = 92)]
-    RAB_ModifyItem(RAB_ModifyItem),
+    id_RAB_ModifyItem(RAB_ModifyItem),
 }
 
 #[derive(Debug, AperCodec)]
@@ -8994,7 +9015,7 @@ pub struct RAB_ModifyList_Item(Vec<RAB_ModifyList_Item_Item>);
 #[asn(type = "OPEN")]
 pub enum RAB_ModifyRequestprotocolIEs_Itemvalue {
     #[asn(key = 91)]
-    RAB_ModifyList(RAB_ModifyList),
+    id_RAB_ModifyList(RAB_ModifyList),
 }
 
 #[derive(Debug, AperCodec)]
@@ -9032,13 +9053,15 @@ pub struct RAB_ModifyRequestprotocolExtensions(Vec<RAB_ModifyRequestprotocolExte
 #[asn(type = "OPEN")]
 pub enum RAB_ParametersiE_Extensions_ItemextensionValue {
     #[asn(key = 176)]
-    RAB_Parameter_ExtendedGuaranteedBitrateList(RAB_Parameter_ExtendedGuaranteedBitrateList),
+    id_RAB_Parameter_ExtendedGuaranteedBitrateList(RAB_Parameter_ExtendedGuaranteedBitrateList),
     #[asn(key = 177)]
-    RAB_Parameter_ExtendedMaxBitrateList(RAB_Parameter_ExtendedMaxBitrateList),
-    #[asn(key = 116)]
-    SignallingIndication(SignallingIndication),
+    id_RAB_Parameter_ExtendedMaxBitrateList(RAB_Parameter_ExtendedMaxBitrateList),
+    #[asn(key = 218)]
+    id_RAB_Parameter_SupportedGuaranteedBitrateList(SupportedRAB_ParameterBitrateList),
     #[asn(key = 219)]
-    SupportedRAB_ParameterBitrateList(SupportedRAB_ParameterBitrateList),
+    id_RAB_Parameter_SupportedMaxBitrateList(SupportedRAB_ParameterBitrateList),
+    #[asn(key = 116)]
+    id_SignallingIndication(SignallingIndication),
 }
 
 #[derive(Debug, AperCodec)]
@@ -9076,7 +9099,7 @@ pub struct RAB_QueuedItemiE_Extensions(Vec<RAB_QueuedItemiE_Extensions_Item>);
 #[asn(type = "OPEN")]
 pub enum RAB_QueuedList_Item_Itemvalue {
     #[asn(key = 37)]
-    RAB_QueuedItem(RAB_QueuedItem),
+    id_RAB_QueuedItem(RAB_QueuedItem),
 }
 
 #[derive(Debug, AperCodec)]
@@ -9114,7 +9137,7 @@ pub struct RAB_ReleaseItemiE_Extensions(Vec<RAB_ReleaseItemiE_Extensions_Item>);
 #[asn(type = "OPEN")]
 pub enum RAB_ReleaseList_Item_Itemvalue {
     #[asn(key = 40)]
-    RAB_ReleaseItem(RAB_ReleaseItem),
+    id_RAB_ReleaseItem(RAB_ReleaseItem),
 }
 
 #[derive(Debug, AperCodec)]
@@ -9139,7 +9162,7 @@ pub struct RAB_ReleaseList_Item(Vec<RAB_ReleaseList_Item_Item>);
 #[asn(type = "OPEN")]
 pub enum RAB_ReleaseRequestprotocolIEs_Itemvalue {
     #[asn(key = 41)]
-    RAB_ReleaseList(RAB_ReleaseList),
+    id_RAB_ReleaseList(RAB_ReleaseList),
 }
 
 #[derive(Debug, AperCodec)]
@@ -9205,7 +9228,7 @@ pub struct RAB_ReleasedItem_IuRelCompiE_Extensions(
 #[asn(type = "OPEN")]
 pub enum RAB_ReleasedList_Item_Itemvalue {
     #[asn(key = 42)]
-    RAB_ReleasedItem(RAB_ReleasedItem),
+    id_RAB_ReleasedItem(RAB_ReleasedItem),
 }
 
 #[derive(Debug, AperCodec)]
@@ -9230,7 +9253,7 @@ pub struct RAB_ReleasedList_Item(Vec<RAB_ReleasedList_Item_Item>);
 #[asn(type = "OPEN")]
 pub enum RAB_ReleasedList_IuRelComp_Item_Itemvalue {
     #[asn(key = 87)]
-    RAB_ReleasedItem_IuRelComp(RAB_ReleasedItem_IuRelComp),
+    id_RAB_ReleasedItem_IuRelComp(RAB_ReleasedItem_IuRelComp),
 }
 
 #[derive(Debug, AperCodec)]
@@ -9268,7 +9291,7 @@ pub struct RAB_RelocationReleaseItemiE_Extensions(Vec<RAB_RelocationReleaseItemi
 #[asn(type = "OPEN")]
 pub enum RAB_RelocationReleaseList_Item_Itemvalue {
     #[asn(key = 45)]
-    RAB_RelocationReleaseItem(RAB_RelocationReleaseItem),
+    id_RAB_RelocationReleaseItem(RAB_RelocationReleaseItem),
 }
 
 #[derive(Debug, AperCodec)]
@@ -9293,9 +9316,9 @@ pub struct RAB_RelocationReleaseList_Item(Vec<RAB_RelocationReleaseList_Item_Ite
 #[asn(type = "OPEN")]
 pub enum RAB_SetupItem_EnhRelocInfoReqiE_Extensions_ItemextensionValue {
     #[asn(key = 231)]
-    E_UTRAN_Service_Handover(E_UTRAN_Service_Handover),
+    id_E_UTRAN_Service_Handover(E_UTRAN_Service_Handover),
     #[asn(key = 238)]
-    PDP_TypeInformation_extension(PDP_TypeInformation_extension),
+    id_PDP_TypeInformation_extension(PDP_TypeInformation_extension),
 }
 
 #[derive(Debug, AperCodec)]
@@ -9352,7 +9375,7 @@ pub struct RAB_SetupItem_EnhancedRelocCompleteReqiE_Extensions(
 #[asn(type = "OPEN")]
 pub enum RAB_SetupItem_EnhancedRelocCompleteResiE_Extensions_ItemextensionValue {
     #[asn(key = 240)]
-    Offload_RAB_Parameters(Offload_RAB_Parameters),
+    id_Offload_RAB_Parameters(Offload_RAB_Parameters),
 }
 
 #[derive(Debug, AperCodec)]
@@ -9379,15 +9402,15 @@ pub struct RAB_SetupItem_EnhancedRelocCompleteResiE_Extensions(
 #[asn(type = "OPEN")]
 pub enum RAB_SetupItem_RelocReqiE_Extensions_ItemextensionValue {
     #[asn(key = 89)]
-    Alt_RAB_Parameters(Alt_RAB_Parameters),
+    id_Alt_RAB_Parameters(Alt_RAB_Parameters),
     #[asn(key = 231)]
-    E_UTRAN_Service_Handover(E_UTRAN_Service_Handover),
+    id_E_UTRAN_Service_Handover(E_UTRAN_Service_Handover),
     #[asn(key = 107)]
-    GERAN_BSC_Container(GERAN_BSC_Container),
+    id_GERAN_BSC_Container(GERAN_BSC_Container),
     #[asn(key = 240)]
-    Offload_RAB_Parameters(Offload_RAB_Parameters),
+    id_Offload_RAB_Parameters(Offload_RAB_Parameters),
     #[asn(key = 238)]
-    PDP_TypeInformation_extension(PDP_TypeInformation_extension),
+    id_PDP_TypeInformation_extension(PDP_TypeInformation_extension),
 }
 
 #[derive(Debug, AperCodec)]
@@ -9412,11 +9435,11 @@ pub struct RAB_SetupItem_RelocReqiE_Extensions(Vec<RAB_SetupItem_RelocReqiE_Exte
 #[asn(type = "OPEN")]
 pub enum RAB_SetupItem_RelocReqAckiE_Extensions_ItemextensionValue {
     #[asn(key = 90)]
-    Ass_RAB_Parameters(Ass_RAB_Parameters),
+    id_Ass_RAB_Parameters(Ass_RAB_Parameters),
     #[asn(key = 13)]
-    IuTransportAssociation(IuTransportAssociation),
+    id_IuTransportAssociation(IuTransportAssociation),
     #[asn(key = 67)]
-    TransportLayerAddress(TransportLayerAddress),
+    id_TransportLayerAddress(TransportLayerAddress),
 }
 
 #[derive(Debug, AperCodec)]
@@ -9441,7 +9464,7 @@ pub struct RAB_SetupItem_RelocReqAckiE_Extensions(Vec<RAB_SetupItem_RelocReqAcki
 #[asn(type = "OPEN")]
 pub enum RAB_SetupList_EnhRelocInfoReq_Item_Itemvalue {
     #[asn(key = 193)]
-    RAB_SetupItem_EnhRelocInfoReq(RAB_SetupItem_EnhRelocInfoReq),
+    id_RAB_SetupItem_EnhRelocInfoReq(RAB_SetupItem_EnhRelocInfoReq),
 }
 
 #[derive(Debug, AperCodec)]
@@ -9466,7 +9489,7 @@ pub struct RAB_SetupList_EnhRelocInfoReq_Item(Vec<RAB_SetupList_EnhRelocInfoReq_
 #[asn(type = "OPEN")]
 pub enum RAB_SetupList_EnhRelocInfoRes_Item_Itemvalue {
     #[asn(key = 195)]
-    RAB_SetupItem_EnhRelocInfoRes(RAB_SetupItem_EnhRelocInfoRes),
+    id_RAB_SetupItem_EnhRelocInfoRes(RAB_SetupItem_EnhRelocInfoRes),
 }
 
 #[derive(Debug, AperCodec)]
@@ -9491,7 +9514,7 @@ pub struct RAB_SetupList_EnhRelocInfoRes_Item(Vec<RAB_SetupList_EnhRelocInfoRes_
 #[asn(type = "OPEN")]
 pub enum RAB_SetupList_EnhancedRelocCompleteReq_Item_Itemvalue {
     #[asn(key = 189)]
-    RAB_SetupItem_EnhancedRelocCompleteReq(RAB_SetupItem_EnhancedRelocCompleteReq),
+    id_RAB_SetupItem_EnhancedRelocCompleteReq(RAB_SetupItem_EnhancedRelocCompleteReq),
 }
 
 #[derive(Debug, AperCodec)]
@@ -9518,7 +9541,7 @@ pub struct RAB_SetupList_EnhancedRelocCompleteReq_Item(
 #[asn(type = "OPEN")]
 pub enum RAB_SetupList_EnhancedRelocCompleteRes_Item_Itemvalue {
     #[asn(key = 191)]
-    RAB_SetupItem_EnhancedRelocCompleteRes(RAB_SetupItem_EnhancedRelocCompleteRes),
+    id_RAB_SetupItem_EnhancedRelocCompleteRes(RAB_SetupItem_EnhancedRelocCompleteRes),
 }
 
 #[derive(Debug, AperCodec)]
@@ -9545,7 +9568,7 @@ pub struct RAB_SetupList_EnhancedRelocCompleteRes_Item(
 #[asn(type = "OPEN")]
 pub enum RAB_SetupList_RelocReq_Item_Itemvalue {
     #[asn(key = 47)]
-    RAB_SetupItem_RelocReq(RAB_SetupItem_RelocReq),
+    id_RAB_SetupItem_RelocReq(RAB_SetupItem_RelocReq),
 }
 
 #[derive(Debug, AperCodec)]
@@ -9570,7 +9593,7 @@ pub struct RAB_SetupList_RelocReq_Item(Vec<RAB_SetupList_RelocReq_Item_Item>);
 #[asn(type = "OPEN")]
 pub enum RAB_SetupList_RelocReqAck_Item_Itemvalue {
     #[asn(key = 48)]
-    RAB_SetupItem_RelocReqAck(RAB_SetupItem_RelocReqAck),
+    id_RAB_SetupItem_RelocReqAck(RAB_SetupItem_RelocReqAck),
 }
 
 #[derive(Debug, AperCodec)]
@@ -9595,7 +9618,7 @@ pub struct RAB_SetupList_RelocReqAck_Item(Vec<RAB_SetupList_RelocReqAck_Item_Ite
 #[asn(type = "OPEN")]
 pub enum RAB_SetupOrModifiedItemiE_Extensions_ItemextensionValue {
     #[asn(key = 90)]
-    Ass_RAB_Parameters(Ass_RAB_Parameters),
+    id_Ass_RAB_Parameters(Ass_RAB_Parameters),
 }
 
 #[derive(Debug, AperCodec)]
@@ -9620,7 +9643,7 @@ pub struct RAB_SetupOrModifiedItemiE_Extensions(Vec<RAB_SetupOrModifiedItemiE_Ex
 #[asn(type = "OPEN")]
 pub enum RAB_SetupOrModifiedList_Item_Itemvalue {
     #[asn(key = 51)]
-    RAB_SetupOrModifiedItem(RAB_SetupOrModifiedItem),
+    id_RAB_SetupOrModifiedItem(RAB_SetupOrModifiedItem),
 }
 
 #[derive(Debug, AperCodec)]
@@ -9645,9 +9668,11 @@ pub struct RAB_SetupOrModifiedList_Item(Vec<RAB_SetupOrModifiedList_Item_Item>);
 #[asn(type = "OPEN")]
 pub enum RAB_SetupOrModifyItemFirstiE_Extensions_ItemextensionValue {
     #[asn(key = 242)]
-    Correlation_ID(Correlation_ID),
+    id_Correlation_ID(Correlation_ID),
     #[asn(key = 231)]
-    E_UTRAN_Service_Handover(E_UTRAN_Service_Handover),
+    id_E_UTRAN_Service_Handover(E_UTRAN_Service_Handover),
+    #[asn(key = 274)]
+    id_SIPTO_Correlation_ID(Correlation_ID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -9674,13 +9699,13 @@ pub struct RAB_SetupOrModifyItemFirstiE_Extensions(
 #[asn(type = "OPEN")]
 pub enum RAB_SetupOrModifyItemSecondiE_Extensions_ItemextensionValue {
     #[asn(key = 89)]
-    Alt_RAB_Parameters(Alt_RAB_Parameters),
+    id_Alt_RAB_Parameters(Alt_RAB_Parameters),
     #[asn(key = 107)]
-    GERAN_BSC_Container(GERAN_BSC_Container),
+    id_GERAN_BSC_Container(GERAN_BSC_Container),
     #[asn(key = 240)]
-    Offload_RAB_Parameters(Offload_RAB_Parameters),
+    id_Offload_RAB_Parameters(Offload_RAB_Parameters),
     #[asn(key = 238)]
-    PDP_TypeInformation_extension(PDP_TypeInformation_extension),
+    id_PDP_TypeInformation_extension(PDP_TypeInformation_extension),
 }
 
 #[derive(Debug, AperCodec)]
@@ -9707,14 +9732,14 @@ pub struct RAB_SetupOrModifyItemSecondiE_Extensions(
 #[asn(type = "OPEN")]
 pub enum RAB_SetupOrModifyList_Item_ItemfirstValue {
     #[asn(key = 53)]
-    RAB_SetupOrModifyItemFirst(RAB_SetupOrModifyItemFirst),
+    id_RAB_SetupOrModifyItem(RAB_SetupOrModifyItemFirst),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
 pub enum RAB_SetupOrModifyList_Item_ItemsecondValue {
     #[asn(key = 53)]
-    RAB_SetupOrModifyItemSecond(RAB_SetupOrModifyItemSecond),
+    id_RAB_SetupOrModifyItem(RAB_SetupOrModifyItemSecond),
 }
 
 #[derive(Debug, AperCodec)]
@@ -9756,7 +9781,7 @@ pub struct RAB_ToBeReleasedItem_EnhancedRelocCompleteResiE_Extensions(
 #[asn(type = "OPEN")]
 pub enum RAB_ToBeReleasedList_EnhancedRelocCompleteRes_Item_Itemvalue {
     #[asn(key = 209)]
-    RAB_ToBeReleasedItem_EnhancedRelocCompleteRes(RAB_ToBeReleasedItem_EnhancedRelocCompleteRes),
+    id_RAB_ToBeReleasedItem_EnhancedRelocCompleteRes(RAB_ToBeReleasedItem_EnhancedRelocCompleteRes),
 }
 
 #[derive(Debug, AperCodec)]
@@ -9783,7 +9808,7 @@ pub struct RAB_ToBeReleasedList_EnhancedRelocCompleteRes_Item(
 #[asn(type = "OPEN")]
 pub enum RAB_TrCH_MappingItemiE_Extensions_ItemextensionValue {
     #[asn(key = 3)]
-    CN_DomainIndicator(CN_DomainIndicator),
+    id_CN_DomainIndicator(CN_DomainIndicator),
 }
 
 #[derive(Debug, AperCodec)]
@@ -9919,21 +9944,25 @@ impl ENUMERATED_50 {
 #[asn(type = "OPEN")]
 pub enum RANAP_EnhancedRelocationInformationRequestprotocolIEs_Itemvalue {
     #[asn(key = 133)]
-    CNMBMSLinkingInformation(CNMBMSLinkingInformation),
+    id_CNMBMSLinkingInformation(CNMBMSLinkingInformation),
     #[asn(key = 206)]
-    GlobalCN_ID(GlobalCN_ID),
+    id_GlobalCN_IDCS(GlobalCN_ID),
+    #[asn(key = 207)]
+    id_GlobalCN_IDPS(GlobalCN_ID),
     #[asn(key = 204)]
-    IuSignallingConnectionIdentifier(IuSignallingConnectionIdentifier),
-    #[asn(key = 127)]
-    PLMNidentity(PLMNidentity),
+    id_OldIuSigConIdCS(IuSignallingConnectionIdentifier),
+    #[asn(key = 205)]
+    id_OldIuSigConIdPS(IuSignallingConnectionIdentifier),
     #[asn(key = 192)]
-    RAB_SetupList_EnhRelocInfoReq(RAB_SetupList_EnhRelocInfoReq),
+    id_RAB_SetupList_EnhRelocInfoReq(RAB_SetupList_EnhRelocInfoReq),
     #[asn(key = 105)]
-    SNA_Access_Information(SNA_Access_Information),
+    id_SNA_Access_Information(SNA_Access_Information),
+    #[asn(key = 127)]
+    id_SelectedPLMN_ID(PLMNidentity),
     #[asn(key = 61)]
-    SourceRNC_ToTargetRNC_TransparentContainer(SourceRNC_ToTargetRNC_TransparentContainer),
+    id_Source_ToTarget_TransparentContainer(SourceRNC_ToTargetRNC_TransparentContainer),
     #[asn(key = 118)]
-    UESBI_Iu(UESBI_Iu),
+    id_UESBI_Iu(UESBI_Iu),
 }
 
 #[derive(Debug, AperCodec)]
@@ -9959,20 +9988,20 @@ pub struct RANAP_EnhancedRelocationInformationRequestprotocolIEs(
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
 pub enum RANAP_EnhancedRelocationInformationRequestprotocolExtensions_ItemextensionValue {
-    #[asn(key = 203)]
-    CSG_Id(CSG_Id),
-    #[asn(key = 234)]
-    CSG_Membership_Status(CSG_Membership_Status),
-    #[asn(key = 11)]
-    EncryptionInformation(EncryptionInformation),
-    #[asn(key = 12)]
-    IntegrityProtectionInformation(IntegrityProtectionInformation),
     #[asn(key = 261)]
-    PLMNidentity(PLMNidentity),
+    id_AnchorPLMN_ID(PLMNidentity),
+    #[asn(key = 203)]
+    id_CSG_Id(CSG_Id),
+    #[asn(key = 234)]
+    id_CSG_Membership_Status(CSG_Membership_Status),
+    #[asn(key = 11)]
+    id_EncryptionInformation(EncryptionInformation),
+    #[asn(key = 12)]
+    id_IntegrityProtectionInformation(IntegrityProtectionInformation),
     #[asn(key = 248)]
-    RABParametersList(RABParametersList),
+    id_RABParametersList(RABParametersList),
     #[asn(key = 233)]
-    UE_AggregateMaximumBitRate(UE_AggregateMaximumBitRate),
+    id_UE_AggregateMaximumBitRate(UE_AggregateMaximumBitRate),
 }
 
 #[derive(Debug, AperCodec)]
@@ -10000,13 +10029,13 @@ pub struct RANAP_EnhancedRelocationInformationRequestprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum RANAP_EnhancedRelocationInformationResponseprotocolIEs_Itemvalue {
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 197)]
-    RAB_FailedList_EnhRelocInfoRes(RAB_FailedList_EnhRelocInfoRes),
+    id_RAB_FailedList_EnhRelocInfoRes(RAB_FailedList_EnhRelocInfoRes),
     #[asn(key = 194)]
-    RAB_SetupList_EnhRelocInfoRes(RAB_SetupList_EnhRelocInfoRes),
+    id_RAB_SetupList_EnhRelocInfoRes(RAB_SetupList_EnhRelocInfoRes),
     #[asn(key = 63)]
-    TargetRNC_ToSourceRNC_TransparentContainer(TargetRNC_ToSourceRNC_TransparentContainer),
+    id_Target_ToSource_TransparentContainer(TargetRNC_ToSourceRNC_TransparentContainer),
 }
 
 #[derive(Debug, AperCodec)]
@@ -10048,9 +10077,9 @@ pub struct RANAP_EnhancedRelocationInformationResponseprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum RANAP_RelocationInformationprotocolIEs_Itemvalue {
     #[asn(key = 81)]
-    DirectTransferInformationList_RANAP_RelocInf(DirectTransferInformationList_RANAP_RelocInf),
+    id_DirectTransferInformationList_RANAP_RelocInf(DirectTransferInformationList_RANAP_RelocInf),
     #[asn(key = 83)]
-    RAB_ContextList_RANAP_RelocInf(RAB_ContextList_RANAP_RelocInf),
+    id_RAB_ContextList_RANAP_RelocInf(RAB_ContextList_RANAP_RelocInf),
 }
 
 #[derive(Debug, AperCodec)]
@@ -10075,9 +10104,9 @@ pub struct RANAP_RelocationInformationprotocolIEs(Vec<RANAP_RelocationInformatio
 #[asn(type = "OPEN")]
 pub enum RANAP_RelocationInformationprotocolExtensions_ItemextensionValue {
     #[asn(key = 247)]
-    RNSAPRelocationParameters(RNSAPRelocationParameters),
+    id_RNSAPRelocationParameters(RNSAPRelocationParameters),
     #[asn(key = 103)]
-    RRC_Container(RRC_Container),
+    id_SourceRNC_PDCP_context_info(RRC_Container),
 }
 
 #[derive(Debug, AperCodec)]
@@ -10125,13 +10154,13 @@ impl ENUMERATED_51 {
 #[asn(type = "OPEN")]
 pub enum RNCTraceInformationiE_Extensions_ItemextensionValue {
     #[asn(key = 256)]
-    IMSI(IMSI),
-    #[asn(key = 255)]
-    TraceRecordingSessionReference(TraceRecordingSessionReference),
-    #[asn(key = 251)]
-    TransportLayerAddress(TransportLayerAddress),
+    id_IMSI(IMSI),
     #[asn(key = 270)]
-    UTRAN_CellID(UTRAN_CellID),
+    id_Serving_Cell_Identifier(UTRAN_CellID),
+    #[asn(key = 251)]
+    id_Trace_Collection_Entity_IP_Addess(TransportLayerAddress),
+    #[asn(key = 255)]
+    id_TraceRecordingSessionReference(TraceRecordingSessionReference),
 }
 
 #[derive(Debug, AperCodec)]
@@ -10208,15 +10237,15 @@ pub struct RSRVCC_InformationiE_Extensions(Vec<RSRVCC_InformationiE_Extensions_I
 #[asn(type = "OPEN")]
 pub enum RedirectionIndication_Itemvalue {
     #[asn(key = 280)]
-    Additional_CSPS_coordination_information(Additional_CSPS_coordination_information),
+    id_Additional_CSPS_coordination_information(Additional_CSPS_coordination_information),
     #[asn(key = 16)]
-    NAS_PDU(NAS_PDU),
+    id_NAS_PDU(NAS_PDU),
     #[asn(key = 130)]
-    NAS_SequenceNumber(NAS_SequenceNumber),
+    id_NAS_SequenceNumber(NAS_SequenceNumber),
     #[asn(key = 23)]
-    PermanentNAS_UE_ID(PermanentNAS_UE_ID),
+    id_PermanentNAS_UE_ID(PermanentNAS_UE_ID),
     #[asn(key = 131)]
-    RejectCauseValue(RejectCauseValue),
+    id_RejectCauseValue(RejectCauseValue),
 }
 
 #[derive(Debug, AperCodec)]
@@ -10232,7 +10261,7 @@ pub struct RedirectionIndication_Item {
 #[asn(type = "OPEN")]
 pub enum RelocationCancelprotocolIEs_Itemvalue {
     #[asn(key = 4)]
-    Cause(Cause),
+    id_Cause(Cause),
 }
 
 #[derive(Debug, AperCodec)]
@@ -10270,7 +10299,7 @@ pub struct RelocationCancelprotocolExtensions(Vec<RelocationCancelprotocolExtens
 #[asn(type = "OPEN")]
 pub enum RelocationCancelAcknowledgeprotocolIEs_Itemvalue {
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
 }
 
 #[derive(Debug, AperCodec)]
@@ -10310,15 +10339,15 @@ pub struct RelocationCancelAcknowledgeprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum RelocationCommandprotocolIEs_Itemvalue {
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 14)]
-    L3_Information(L3_Information),
+    id_L3_Information(L3_Information),
     #[asn(key = 28)]
-    RAB_DataForwardingList(RAB_DataForwardingList),
+    id_RAB_DataForwardingList(RAB_DataForwardingList),
     #[asn(key = 46)]
-    RAB_RelocationReleaseList(RAB_RelocationReleaseList),
+    id_RAB_RelocationReleaseList(RAB_RelocationReleaseList),
     #[asn(key = 63)]
-    Target_ToSource_TransparentContainer(Target_ToSource_TransparentContainer),
+    id_Target_ToSource_TransparentContainer(Target_ToSource_TransparentContainer),
 }
 
 #[derive(Debug, AperCodec)]
@@ -10343,13 +10372,13 @@ pub struct RelocationCommandprotocolIEs(Vec<RelocationCommandprotocolIEs_Item>);
 #[asn(type = "OPEN")]
 pub enum RelocationCommandprotocolExtensions_ItemextensionValue {
     #[asn(key = 99)]
-    InterSystemInformation_TransparentContainer(InterSystemInformation_TransparentContainer),
+    id_InterSystemInformation_TransparentContainer(InterSystemInformation_TransparentContainer),
     #[asn(key = 260)]
-    RSRVCC_Information(RSRVCC_Information),
+    id_RSRVCC_Information(RSRVCC_Information),
     #[asn(key = 227)]
-    SRVCC_Information(SRVCC_Information),
+    id_SRVCC_Information(SRVCC_Information),
     #[asn(key = 162)]
-    TargetBSS_ToSourceBSS_TransparentContainer(TargetBSS_ToSourceBSS_TransparentContainer),
+    id_TargetBSS_ToSourceBSS_TransparentContainer(TargetBSS_ToSourceBSS_TransparentContainer),
 }
 
 #[derive(Debug, AperCodec)]
@@ -10387,11 +10416,11 @@ pub struct RelocationCompleteprotocolIEs(Vec<RelocationCompleteprotocolIEs_Item>
 #[asn(type = "OPEN")]
 pub enum RelocationCompleteprotocolExtensions_ItemextensionValue {
     #[asn(key = 250)]
-    HigherBitratesThan16MbpsFlag(HigherBitratesThan16MbpsFlag),
+    id_HigherBitratesThan16MbpsFlag(HigherBitratesThan16MbpsFlag),
     #[asn(key = 275)]
-    LHN_ID(LHN_ID),
+    id_LHN_ID(LHN_ID),
     #[asn(key = 262)]
-    TunnelInformation(TunnelInformation),
+    id_Tunnel_Information_for_BBF(TunnelInformation),
 }
 
 #[derive(Debug, AperCodec)]
@@ -10442,9 +10471,9 @@ pub struct RelocationDetectprotocolExtensions(Vec<RelocationDetectprotocolExtens
 #[asn(type = "OPEN")]
 pub enum RelocationFailureprotocolIEs_Itemvalue {
     #[asn(key = 4)]
-    Cause(Cause),
+    id_Cause(Cause),
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
 }
 
 #[derive(Debug, AperCodec)]
@@ -10469,9 +10498,9 @@ pub struct RelocationFailureprotocolIEs(Vec<RelocationFailureprotocolIEs_Item>);
 #[asn(type = "OPEN")]
 pub enum RelocationFailureprotocolExtensions_ItemextensionValue {
     #[asn(key = 108)]
-    GERAN_Classmark(GERAN_Classmark),
+    id_GERAN_Classmark(GERAN_Classmark),
     #[asn(key = 100)]
-    NewBSS_To_OldBSS_Information(NewBSS_To_OldBSS_Information),
+    id_NewBSS_To_OldBSS_Information(NewBSS_To_OldBSS_Information),
 }
 
 #[derive(Debug, AperCodec)]
@@ -10496,9 +10525,9 @@ pub struct RelocationFailureprotocolExtensions(Vec<RelocationFailureprotocolExte
 #[asn(type = "OPEN")]
 pub enum RelocationPreparationFailureprotocolIEs_Itemvalue {
     #[asn(key = 4)]
-    Cause(Cause),
+    id_Cause(Cause),
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
 }
 
 #[derive(Debug, AperCodec)]
@@ -10525,7 +10554,7 @@ pub struct RelocationPreparationFailureprotocolIEs(
 #[asn(type = "OPEN")]
 pub enum RelocationPreparationFailureprotocolExtensions_ItemextensionValue {
     #[asn(key = 99)]
-    InterSystemInformation_TransparentContainer(InterSystemInformation_TransparentContainer),
+    id_InterSystemInformation_TransparentContainer(InterSystemInformation_TransparentContainer),
 }
 
 #[derive(Debug, AperCodec)]
@@ -10552,21 +10581,21 @@ pub struct RelocationPreparationFailureprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum RelocationRequestprotocolIEs_Itemvalue {
     #[asn(key = 3)]
-    CN_DomainIndicator(CN_DomainIndicator),
+    id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 4)]
-    Cause(Cause),
+    id_Cause(Cause),
     #[asn(key = 11)]
-    EncryptionInformation(EncryptionInformation),
+    id_EncryptionInformation(EncryptionInformation),
     #[asn(key = 12)]
-    IntegrityProtectionInformation(IntegrityProtectionInformation),
+    id_IntegrityProtectionInformation(IntegrityProtectionInformation),
     #[asn(key = 79)]
-    IuSignallingConnectionIdentifier(IuSignallingConnectionIdentifier),
+    id_IuSigConId(IuSignallingConnectionIdentifier),
     #[asn(key = 23)]
-    PermanentNAS_UE_ID(PermanentNAS_UE_ID),
+    id_PermanentNAS_UE_ID(PermanentNAS_UE_ID),
     #[asn(key = 49)]
-    RAB_SetupList_RelocReq(RAB_SetupList_RelocReq),
+    id_RAB_SetupList_RelocReq(RAB_SetupList_RelocReq),
     #[asn(key = 61)]
-    SourceRNC_ToTargetRNC_TransparentContainer(SourceRNC_ToTargetRNC_TransparentContainer),
+    id_Source_ToTarget_TransparentContainer(SourceRNC_ToTargetRNC_TransparentContainer),
 }
 
 #[derive(Debug, AperCodec)]
@@ -10590,30 +10619,32 @@ pub struct RelocationRequestprotocolIEs(Vec<RelocationRequestprotocolIEs_Item>);
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
 pub enum RelocationRequestprotocolExtensions_ItemextensionValue {
+    #[asn(key = 261)]
+    id_AnchorPLMN_ID(PLMNidentity),
     #[asn(key = 133)]
-    CNMBMSLinkingInformation(CNMBMSLinkingInformation),
+    id_CNMBMSLinkingInformation(CNMBMSLinkingInformation),
     #[asn(key = 203)]
-    CSG_Id(CSG_Id),
+    id_CSG_Id(CSG_Id),
     #[asn(key = 234)]
-    CSG_Membership_Status(CSG_Membership_Status),
+    id_CSG_Membership_Status(CSG_Membership_Status),
     #[asn(key = 96)]
-    GlobalCN_ID(GlobalCN_ID),
+    id_GlobalCN_ID(GlobalCN_ID),
     #[asn(key = 239)]
-    MSISDN(MSISDN),
-    #[asn(key = 127)]
-    PLMNidentity(PLMNidentity),
+    id_MSISDN(MSISDN),
     #[asn(key = 289)]
-    PowerSavingIndicator(PowerSavingIndicator),
+    id_PowerSavingIndicator(PowerSavingIndicator),
     #[asn(key = 105)]
-    SNA_Access_Information(SNA_Access_Information),
+    id_SNA_Access_Information(SNA_Access_Information),
+    #[asn(key = 127)]
+    id_SelectedPLMN_ID(PLMNidentity),
     #[asn(key = 233)]
-    UE_AggregateMaximumBitRate(UE_AggregateMaximumBitRate),
+    id_UE_AggregateMaximumBitRate(UE_AggregateMaximumBitRate),
     #[asn(key = 293)]
-    UE_Application_Layer_Measurement_Configuration_For_Relocation(
+    id_UE_Application_Layer_Measurement_Configuration_For_Relocation(
         UE_Application_Layer_Measurement_Configuration_For_Relocation,
     ),
     #[asn(key = 118)]
-    UESBI_Iu(UESBI_Iu),
+    id_UESBI_Iu(UESBI_Iu),
 }
 
 #[derive(Debug, AperCodec)]
@@ -10638,17 +10669,17 @@ pub struct RelocationRequestprotocolExtensions(Vec<RelocationRequestprotocolExte
 #[asn(type = "OPEN")]
 pub enum RelocationRequestAcknowledgeprotocolIEs_Itemvalue {
     #[asn(key = 5)]
-    ChosenEncryptionAlgorithm(ChosenEncryptionAlgorithm),
+    id_ChosenEncryptionAlgorithm(ChosenEncryptionAlgorithm),
     #[asn(key = 6)]
-    ChosenIntegrityProtectionAlgorithm(ChosenIntegrityProtectionAlgorithm),
+    id_ChosenIntegrityProtectionAlgorithm(ChosenIntegrityProtectionAlgorithm),
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 35)]
-    RAB_FailedList(RAB_FailedList),
+    id_RAB_FailedList(RAB_FailedList),
     #[asn(key = 50)]
-    RAB_SetupList_RelocReqAck(RAB_SetupList_RelocReqAck),
+    id_RAB_SetupList_RelocReqAck(RAB_SetupList_RelocReqAck),
     #[asn(key = 63)]
-    TargetRNC_ToSourceRNC_TransparentContainer(TargetRNC_ToSourceRNC_TransparentContainer),
+    id_Target_ToSource_TransparentContainer(TargetRNC_ToSourceRNC_TransparentContainer),
 }
 
 #[derive(Debug, AperCodec)]
@@ -10675,9 +10706,9 @@ pub struct RelocationRequestAcknowledgeprotocolIEs(
 #[asn(type = "OPEN")]
 pub enum RelocationRequestAcknowledgeprotocolExtensions_ItemextensionValue {
     #[asn(key = 203)]
-    CSG_Id(CSG_Id),
+    id_CSG_Id(CSG_Id),
     #[asn(key = 100)]
-    NewBSS_To_OldBSS_Information(NewBSS_To_OldBSS_Information),
+    id_NewBSS_To_OldBSS_Information(NewBSS_To_OldBSS_Information),
 }
 
 #[derive(Debug, AperCodec)]
@@ -10704,21 +10735,21 @@ pub struct RelocationRequestAcknowledgeprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum RelocationRequiredprotocolIEs_Itemvalue {
     #[asn(key = 4)]
-    Cause(Cause),
+    id_Cause(Cause),
     #[asn(key = 7)]
-    ClassmarkInformation2(ClassmarkInformation2),
+    id_ClassmarkInformation2(ClassmarkInformation2),
     #[asn(key = 8)]
-    ClassmarkInformation3(ClassmarkInformation3),
+    id_ClassmarkInformation3(ClassmarkInformation3),
     #[asn(key = 20)]
-    OldBSS_ToNewBSS_Information(OldBSS_ToNewBSS_Information),
+    id_OldBSS_ToNewBSS_Information(OldBSS_ToNewBSS_Information),
     #[asn(key = 56)]
-    RelocationType(RelocationType),
+    id_RelocationType(RelocationType),
     #[asn(key = 61)]
-    Source_ToTarget_TransparentContainer(Source_ToTarget_TransparentContainer),
+    id_Source_ToTarget_TransparentContainer(Source_ToTarget_TransparentContainer),
     #[asn(key = 60)]
-    SourceID(SourceID),
+    id_SourceID(SourceID),
     #[asn(key = 62)]
-    TargetID(TargetID),
+    id_TargetID(TargetID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -10743,19 +10774,19 @@ pub struct RelocationRequiredprotocolIEs(Vec<RelocationRequiredprotocolIEs_Item>
 #[asn(type = "OPEN")]
 pub enum RelocationRequiredprotocolExtensions_ItemextensionValue {
     #[asn(key = 203)]
-    CSG_Id(CSG_Id),
+    id_CSG_Id(CSG_Id),
     #[asn(key = 235)]
-    Cell_Access_Mode(Cell_Access_Mode),
+    id_Cell_Access_Mode(Cell_Access_Mode),
     #[asn(key = 108)]
-    GERAN_Classmark(GERAN_Classmark),
+    id_GERAN_Classmark(GERAN_Classmark),
     #[asn(key = 259)]
-    RSRVCC_HO_Indication(RSRVCC_HO_Indication),
+    id_RSRVCC_HO_Indication(RSRVCC_HO_Indication),
     #[asn(key = 226)]
-    SRVCC_HO_Indication(SRVCC_HO_Indication),
+    id_SRVCC_HO_Indication(SRVCC_HO_Indication),
     #[asn(key = 161)]
-    SourceBSS_ToTargetBSS_TransparentContainer(SourceBSS_ToTargetBSS_TransparentContainer),
+    id_SourceBSS_ToTargetBSS_TransparentContainer(SourceBSS_ToTargetBSS_TransparentContainer),
     #[asn(key = 293)]
-    UE_Application_Layer_Measurement_Configuration_For_Relocation(
+    id_UE_Application_Layer_Measurement_Configuration_For_Relocation(
         UE_Application_Layer_Measurement_Configuration_For_Relocation,
     ),
 }
@@ -10786,15 +10817,19 @@ pub struct INTEGER_56(u8);
 #[asn(type = "OPEN")]
 pub enum Requested_RAB_Parameter_ValuesiE_Extensions_ItemextensionValue {
     #[asn(key = 159)]
-    AlternativeRABConfigurationRequest(AlternativeRABConfigurationRequest),
+    id_AlternativeRABConfigurationRequest(AlternativeRABConfigurationRequest),
     #[asn(key = 179)]
-    Requested_RAB_Parameter_ExtendedGuaranteedBitrateList(
+    id_Requested_RAB_Parameter_ExtendedGuaranteedBitrateList(
         Requested_RAB_Parameter_ExtendedGuaranteedBitrateList,
     ),
     #[asn(key = 178)]
-    Requested_RAB_Parameter_ExtendedMaxBitrateList(Requested_RAB_Parameter_ExtendedMaxBitrateList),
+    id_Requested_RAB_Parameter_ExtendedMaxBitrateList(
+        Requested_RAB_Parameter_ExtendedMaxBitrateList,
+    ),
+    #[asn(key = 221)]
+    id_Requested_RAB_Parameter_SupportedGuaranteedBitrateList(SupportedRAB_ParameterBitrateList),
     #[asn(key = 220)]
-    SupportedRAB_ParameterBitrateList(SupportedRAB_ParameterBitrateList),
+    id_Requested_RAB_Parameter_SupportedMaxBitrateList(SupportedRAB_ParameterBitrateList),
 }
 
 #[derive(Debug, AperCodec)]
@@ -10821,11 +10856,11 @@ pub struct Requested_RAB_Parameter_ValuesiE_Extensions(
 #[asn(type = "OPEN")]
 pub enum RerouteNASRequestprotocolIEs_Itemvalue {
     #[asn(key = 287)]
-    P_TMSI(P_TMSI),
+    id_P_TMSI(P_TMSI),
     #[asn(key = 286)]
-    SGSN_Group_Identity(SGSN_Group_Identity),
+    id_SGSN_Group_Identity(SGSN_Group_Identity),
     #[asn(key = 290)]
-    UE_Usage_Type(UE_Usage_Type),
+    id_UE_Usage_Type(UE_Usage_Type),
 }
 
 #[derive(Debug, AperCodec)]
@@ -10863,11 +10898,11 @@ pub struct RerouteNASRequestprotocolExtensions(Vec<RerouteNASRequestprotocolExte
 #[asn(type = "OPEN")]
 pub enum ResetprotocolIEs_Itemvalue {
     #[asn(key = 3)]
-    CN_DomainIndicator(CN_DomainIndicator),
+    id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 4)]
-    Cause(Cause),
+    id_Cause(Cause),
     #[asn(key = 86)]
-    GlobalRNC_ID(GlobalRNC_ID),
+    id_GlobalRNC_ID(GlobalRNC_ID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -10892,9 +10927,9 @@ pub struct ResetprotocolIEs(Vec<ResetprotocolIEs_Item>);
 #[asn(type = "OPEN")]
 pub enum ResetprotocolExtensions_ItemextensionValue {
     #[asn(key = 171)]
-    ExtendedRNC_ID(ExtendedRNC_ID),
+    id_ExtendedRNC_ID(ExtendedRNC_ID),
     #[asn(key = 96)]
-    GlobalCN_ID(GlobalCN_ID),
+    id_GlobalCN_ID(GlobalCN_ID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -10919,11 +10954,11 @@ pub struct ResetprotocolExtensions(Vec<ResetprotocolExtensions_Item>);
 #[asn(type = "OPEN")]
 pub enum ResetAcknowledgeprotocolIEs_Itemvalue {
     #[asn(key = 3)]
-    CN_DomainIndicator(CN_DomainIndicator),
+    id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 86)]
-    GlobalRNC_ID(GlobalRNC_ID),
+    id_GlobalRNC_ID(GlobalRNC_ID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -10948,9 +10983,9 @@ pub struct ResetAcknowledgeprotocolIEs(Vec<ResetAcknowledgeprotocolIEs_Item>);
 #[asn(type = "OPEN")]
 pub enum ResetAcknowledgeprotocolExtensions_ItemextensionValue {
     #[asn(key = 171)]
-    ExtendedRNC_ID(ExtendedRNC_ID),
+    id_ExtendedRNC_ID(ExtendedRNC_ID),
     #[asn(key = 96)]
-    GlobalCN_ID(GlobalCN_ID),
+    id_GlobalCN_ID(GlobalCN_ID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -10975,13 +11010,13 @@ pub struct ResetAcknowledgeprotocolExtensions(Vec<ResetAcknowledgeprotocolExtens
 #[asn(type = "OPEN")]
 pub enum ResetResourceprotocolIEs_Itemvalue {
     #[asn(key = 3)]
-    CN_DomainIndicator(CN_DomainIndicator),
+    id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 4)]
-    Cause(Cause),
+    id_Cause(Cause),
     #[asn(key = 86)]
-    GlobalRNC_ID(GlobalRNC_ID),
+    id_GlobalRNC_ID(GlobalRNC_ID),
     #[asn(key = 77)]
-    ResetResourceList(ResetResourceList),
+    id_IuSigConIdList(ResetResourceList),
 }
 
 #[derive(Debug, AperCodec)]
@@ -11006,9 +11041,9 @@ pub struct ResetResourceprotocolIEs(Vec<ResetResourceprotocolIEs_Item>);
 #[asn(type = "OPEN")]
 pub enum ResetResourceprotocolExtensions_ItemextensionValue {
     #[asn(key = 171)]
-    ExtendedRNC_ID(ExtendedRNC_ID),
+    id_ExtendedRNC_ID(ExtendedRNC_ID),
     #[asn(key = 96)]
-    GlobalCN_ID(GlobalCN_ID),
+    id_GlobalCN_ID(GlobalCN_ID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -11033,7 +11068,7 @@ pub struct ResetResourceprotocolExtensions(Vec<ResetResourceprotocolExtensions_I
 #[asn(type = "OPEN")]
 pub enum ResetResourceAckItemiE_Extensions_ItemextensionValue {
     #[asn(key = 282)]
-    IuSignallingConnectionIdentifier(IuSignallingConnectionIdentifier),
+    id_IuSigConIdRangeEnd(IuSignallingConnectionIdentifier),
 }
 
 #[derive(Debug, AperCodec)]
@@ -11058,7 +11093,7 @@ pub struct ResetResourceAckItemiE_Extensions(Vec<ResetResourceAckItemiE_Extensio
 #[asn(type = "OPEN")]
 pub enum ResetResourceAckList_Item_Itemvalue {
     #[asn(key = 78)]
-    ResetResourceAckItem(ResetResourceAckItem),
+    id_IuSigConIdItem(ResetResourceAckItem),
 }
 
 #[derive(Debug, AperCodec)]
@@ -11083,13 +11118,13 @@ pub struct ResetResourceAckList_Item(Vec<ResetResourceAckList_Item_Item>);
 #[asn(type = "OPEN")]
 pub enum ResetResourceAcknowledgeprotocolIEs_Itemvalue {
     #[asn(key = 3)]
-    CN_DomainIndicator(CN_DomainIndicator),
+    id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 86)]
-    GlobalRNC_ID(GlobalRNC_ID),
+    id_GlobalRNC_ID(GlobalRNC_ID),
     #[asn(key = 77)]
-    ResetResourceAckList(ResetResourceAckList),
+    id_IuSigConIdList(ResetResourceAckList),
 }
 
 #[derive(Debug, AperCodec)]
@@ -11114,9 +11149,9 @@ pub struct ResetResourceAcknowledgeprotocolIEs(Vec<ResetResourceAcknowledgeproto
 #[asn(type = "OPEN")]
 pub enum ResetResourceAcknowledgeprotocolExtensions_ItemextensionValue {
     #[asn(key = 171)]
-    ExtendedRNC_ID(ExtendedRNC_ID),
+    id_ExtendedRNC_ID(ExtendedRNC_ID),
     #[asn(key = 96)]
-    GlobalCN_ID(GlobalCN_ID),
+    id_GlobalCN_ID(GlobalCN_ID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -11143,7 +11178,7 @@ pub struct ResetResourceAcknowledgeprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum ResetResourceItemiE_Extensions_ItemextensionValue {
     #[asn(key = 282)]
-    IuSignallingConnectionIdentifier(IuSignallingConnectionIdentifier),
+    id_IuSigConIdRangeEnd(IuSignallingConnectionIdentifier),
 }
 
 #[derive(Debug, AperCodec)]
@@ -11168,7 +11203,7 @@ pub struct ResetResourceItemiE_Extensions(Vec<ResetResourceItemiE_Extensions_Ite
 #[asn(type = "OPEN")]
 pub enum ResetResourceList_Item_Itemvalue {
     #[asn(key = 78)]
-    ResetResourceItem(ResetResourceItem),
+    id_IuSigConIdItem(ResetResourceItem),
 }
 
 #[derive(Debug, AperCodec)]
@@ -11326,7 +11361,7 @@ pub struct SRB_TrCH_MappingItemiE_Extensions(Vec<SRB_TrCH_MappingItemiE_Extensio
 #[asn(type = "OPEN")]
 pub enum SRNS_ContextRequestprotocolIEs_Itemvalue {
     #[asn(key = 29)]
-    RAB_DataForwardingList_SRNS_CtxReq(RAB_DataForwardingList_SRNS_CtxReq),
+    id_RAB_DataForwardingList_SRNS_CtxReq(RAB_DataForwardingList_SRNS_CtxReq),
 }
 
 #[derive(Debug, AperCodec)]
@@ -11351,7 +11386,7 @@ pub struct SRNS_ContextRequestprotocolIEs(Vec<SRNS_ContextRequestprotocolIEs_Ite
 #[asn(type = "OPEN")]
 pub enum SRNS_ContextRequestprotocolExtensions_ItemextensionValue {
     #[asn(key = 167)]
-    RAT_Type(RAT_Type),
+    id_RAT_Type(RAT_Type),
 }
 
 #[derive(Debug, AperCodec)]
@@ -11376,11 +11411,11 @@ pub struct SRNS_ContextRequestprotocolExtensions(Vec<SRNS_ContextRequestprotocol
 #[asn(type = "OPEN")]
 pub enum SRNS_ContextResponseprotocolIEs_Itemvalue {
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 85)]
-    RAB_ContextFailedtoTransferList(RAB_ContextFailedtoTransferList),
+    id_RAB_ContextFailedtoTransferList(RAB_ContextFailedtoTransferList),
     #[asn(key = 25)]
-    RAB_ContextList(RAB_ContextList),
+    id_RAB_ContextList(RAB_ContextList),
 }
 
 #[derive(Debug, AperCodec)]
@@ -11418,7 +11453,7 @@ pub struct SRNS_ContextResponseprotocolExtensions(Vec<SRNS_ContextResponseprotoc
 #[asn(type = "OPEN")]
 pub enum SRNS_DataForwardCommandprotocolIEs_Itemvalue {
     #[asn(key = 28)]
-    RAB_DataForwardingList(RAB_DataForwardingList),
+    id_RAB_DataForwardingList(RAB_DataForwardingList),
 }
 
 #[derive(Debug, AperCodec)]
@@ -11484,13 +11519,13 @@ pub struct SRVCC_CSKeysRequestprotocolExtensions(Vec<SRVCC_CSKeysRequestprotocol
 #[asn(type = "OPEN")]
 pub enum SRVCC_CSKeysResponseprotocolIEs_Itemvalue {
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 224)]
-    EncryptionKey(EncryptionKey),
+    id_EncryptionKey(EncryptionKey),
     #[asn(key = 225)]
-    IntegrityProtectionKey(IntegrityProtectionKey),
+    id_IntegrityProtectionKey(IntegrityProtectionKey),
     #[asn(key = 227)]
-    SRVCC_Information(SRVCC_Information),
+    id_SRVCC_Information(SRVCC_Information),
 }
 
 #[derive(Debug, AperCodec)]
@@ -11550,11 +11585,11 @@ pub struct SRVCC_InformationiE_Extensions(Vec<SRVCC_InformationiE_Extensions_Ite
 #[asn(type = "OPEN")]
 pub enum SecurityModeCommandprotocolIEs_Itemvalue {
     #[asn(key = 11)]
-    EncryptionInformation(EncryptionInformation),
+    id_EncryptionInformation(EncryptionInformation),
     #[asn(key = 12)]
-    IntegrityProtectionInformation(IntegrityProtectionInformation),
+    id_IntegrityProtectionInformation(IntegrityProtectionInformation),
     #[asn(key = 75)]
-    KeyStatus(KeyStatus),
+    id_KeyStatus(KeyStatus),
 }
 
 #[derive(Debug, AperCodec)]
@@ -11592,11 +11627,11 @@ pub struct SecurityModeCommandprotocolExtensions(Vec<SecurityModeCommandprotocol
 #[asn(type = "OPEN")]
 pub enum SecurityModeCompleteprotocolIEs_Itemvalue {
     #[asn(key = 5)]
-    ChosenEncryptionAlgorithm(ChosenEncryptionAlgorithm),
+    id_ChosenEncryptionAlgorithm(ChosenEncryptionAlgorithm),
     #[asn(key = 6)]
-    ChosenIntegrityProtectionAlgorithm(ChosenIntegrityProtectionAlgorithm),
+    id_ChosenIntegrityProtectionAlgorithm(ChosenIntegrityProtectionAlgorithm),
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
 }
 
 #[derive(Debug, AperCodec)]
@@ -11634,9 +11669,9 @@ pub struct SecurityModeCompleteprotocolExtensions(Vec<SecurityModeCompleteprotoc
 #[asn(type = "OPEN")]
 pub enum SecurityModeRejectprotocolIEs_Itemvalue {
     #[asn(key = 4)]
-    Cause(Cause),
+    id_Cause(Cause),
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
 }
 
 #[derive(Debug, AperCodec)]
@@ -11689,7 +11724,7 @@ pub struct Shared_Network_InformationiE_Extensions(
 #[asn(type = "OPEN")]
 pub enum SourceRNC_IDiE_Extensions_ItemextensionValue {
     #[asn(key = 171)]
-    ExtendedRNC_ID(ExtendedRNC_ID),
+    id_ExtendedRNC_ID(ExtendedRNC_ID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -11714,35 +11749,35 @@ pub struct SourceRNC_IDiE_Extensions(Vec<SourceRNC_IDiE_Extensions_Item>);
 #[asn(type = "OPEN")]
 pub enum SourceRNC_ToTargetRNC_TransparentContaineriE_Extensions_ItemextensionValue {
     #[asn(key = 237)]
-    CSFB_Information(CSFB_Information),
+    id_CSFB_Information(CSFB_Information),
     #[asn(key = 121)]
-    CellLoadInformationGroup(CellLoadInformationGroup),
-    #[asn(key = 187)]
-    D_RNTI(D_RNTI),
+    id_CellLoadInformationGroup(CellLoadInformationGroup),
     #[asn(key = 243)]
-    IRAT_Measurement_Configuration(IRAT_Measurement_Configuration),
-    #[asn(key = 156)]
-    MBMSLinkingInformation(MBMSLinkingInformation),
-    #[asn(key = 263)]
-    MDT_PLMN_List(MDT_PLMN_List),
-    #[asn(key = 249)]
-    Management_Based_MDT_Allowed(Management_Based_MDT_Allowed),
+    id_IRAT_Measurement_Configuration(IRAT_Measurement_Configuration),
     #[asn(key = 277)]
-    PLMNidentity(PLMNidentity),
+    id_LastE_UTRANPLMNIdentity(PLMNidentity),
+    #[asn(key = 156)]
+    id_MBMSLinkingInformation(MBMSLinkingInformation),
+    #[asn(key = 249)]
+    id_Management_Based_MDT_Allowed(Management_Based_MDT_Allowed),
+    #[asn(key = 263)]
+    id_Management_Based_MDT_PLMN_List(MDT_PLMN_List),
     #[asn(key = 230)]
-    RAB_ID(RAB_ID),
+    id_PSRABtobeReplaced(RAB_ID),
     #[asn(key = 98)]
-    SRB_TrCH_Mapping(SRB_TrCH_Mapping),
+    id_SRB_TrCH_Mapping(SRB_TrCH_Mapping),
     #[asn(key = 227)]
-    SRVCC_Information(SRVCC_Information),
+    id_SRVCC_Information(SRVCC_Information),
     #[asn(key = 296)]
-    SRVCCSource(SRVCCSource),
+    id_SRVCCSource(SRVCCSource),
     #[asn(key = 202)]
-    SubscriberProfileIDforRFP(SubscriberProfileIDforRFP),
+    id_SubscriberProfileIDforRFP(SubscriberProfileIDforRFP),
     #[asn(key = 124)]
-    TraceRecordingSessionInformation(TraceRecordingSessionInformation),
+    id_TraceRecordingSessionInformation(TraceRecordingSessionInformation),
     #[asn(key = 200)]
-    UE_History_Information(UE_History_Information),
+    id_UE_History_Information(UE_History_Information),
+    #[asn(key = 187)]
+    id_d_RNTI_for_NoIuCSUP(D_RNTI),
 }
 
 #[derive(Debug, AperCodec)]
@@ -11782,45 +11817,45 @@ pub struct SourceUTRANCellIDiE_Extensions(Vec<SourceUTRANCellIDiE_Extensions_Ite
 #[asn(type = "OPEN")]
 pub enum SuccessfulOutcomevalue {
     #[asn(key = 7)]
-    DataVolumeReport(DataVolumeReport),
-    #[asn(key = 43)]
-    EnhancedRelocationCompleteResponse(EnhancedRelocationCompleteResponse),
+    id_DataVolumeReport(DataVolumeReport),
     #[asn(key = 31)]
-    InformationTransferConfirmation(InformationTransferConfirmation),
+    id_InformationTransfer(InformationTransferConfirmation),
     #[asn(key = 1)]
-    Iu_ReleaseComplete(Iu_ReleaseComplete),
+    id_Iu_Release(Iu_ReleaseComplete),
     #[asn(key = 30)]
-    LocationRelatedDataResponse(LocationRelatedDataResponse),
+    id_LocationRelatedData(LocationRelatedDataResponse),
     #[asn(key = 40)]
-    MBMSCNDe_RegistrationResponse(MBMSCNDe_RegistrationResponse),
+    id_MBMSCNDe_Registration_Procedure(MBMSCNDe_RegistrationResponse),
     #[asn(key = 42)]
-    MBMSRABRelease(MBMSRABRelease),
+    id_MBMSRABRelease(MBMSRABRelease),
     #[asn(key = 39)]
-    MBMSRegistrationResponse(MBMSRegistrationResponse),
+    id_MBMSRegistration(MBMSRegistrationResponse),
     #[asn(key = 35)]
-    MBMSSessionStartResponse(MBMSSessionStartResponse),
+    id_MBMSSessionStart(MBMSSessionStartResponse),
     #[asn(key = 37)]
-    MBMSSessionStopResponse(MBMSSessionStopResponse),
+    id_MBMSSessionStop(MBMSSessionStopResponse),
     #[asn(key = 36)]
-    MBMSSessionUpdateResponse(MBMSSessionUpdateResponse),
+    id_MBMSSessionUpdate(MBMSSessionUpdateResponse),
     #[asn(key = 45)]
-    RANAP_EnhancedRelocationInformationResponse(RANAP_EnhancedRelocationInformationResponse),
+    id_RANAPenhancedRelocation(RANAP_EnhancedRelocationInformationResponse),
     #[asn(key = 4)]
-    RelocationCancelAcknowledge(RelocationCancelAcknowledge),
+    id_RelocationCancel(RelocationCancelAcknowledge),
     #[asn(key = 2)]
-    RelocationCommand(RelocationCommand),
+    id_RelocationPreparation(RelocationCommand),
     #[asn(key = 3)]
-    RelocationRequestAcknowledge(RelocationRequestAcknowledge),
+    id_RelocationResourceAllocation(RelocationRequestAcknowledge),
     #[asn(key = 9)]
-    ResetAcknowledge(ResetAcknowledge),
+    id_Reset(ResetAcknowledge),
     #[asn(key = 27)]
-    ResetResourceAcknowledge(ResetResourceAcknowledge),
+    id_ResetResource(ResetResourceAcknowledge),
     #[asn(key = 5)]
-    SRNS_ContextResponse(SRNS_ContextResponse),
+    id_SRNS_ContextTransfer(SRNS_ContextResponse),
     #[asn(key = 6)]
-    SecurityModeComplete(SecurityModeComplete),
+    id_SecurityModeControl(SecurityModeComplete),
     #[asn(key = 33)]
-    UplinkInformationExchangeResponse(UplinkInformationExchangeResponse),
+    id_UplinkInformationExchange(UplinkInformationExchangeResponse),
+    #[asn(key = 43)]
+    id_enhancedRelocationComplete(EnhancedRelocationCompleteResponse),
 }
 
 #[derive(Debug, AperCodec)]
@@ -11900,7 +11935,7 @@ pub struct TargetENB_IDiE_Extensions(Vec<TargetENB_IDiE_Extensions_Item>);
 #[asn(type = "OPEN")]
 pub enum TargetRNC_IDiE_Extensions_ItemextensionValue {
     #[asn(key = 171)]
-    ExtendedRNC_ID(ExtendedRNC_ID),
+    id_ExtendedRNC_ID(ExtendedRNC_ID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -11925,7 +11960,9 @@ pub struct TargetRNC_IDiE_Extensions(Vec<TargetRNC_IDiE_Extensions_Item>);
 #[asn(type = "OPEN")]
 pub enum TargetRNC_ToSourceRNC_TransparentContaineriE_Extensions_ItemextensionValue {
     #[asn(key = 295)]
-    UeApplicationLayerMeasurementSupportIndication(UeApplicationLayerMeasurementSupportIndication),
+    id_UeApplicationLayerMeasurementSupportIndication(
+        UeApplicationLayerMeasurementSupportIndication,
+    ),
 }
 
 #[derive(Debug, AperCodec)]
@@ -11952,9 +11989,9 @@ pub struct TargetRNC_ToSourceRNC_TransparentContaineriE_Extensions(
 #[asn(type = "OPEN")]
 pub enum TrCH_IDiE_Extensions_ItemextensionValue {
     #[asn(key = 160)]
-    E_DCH_MAC_d_Flow_ID(E_DCH_MAC_d_Flow_ID),
+    id_E_DCH_MAC_d_Flow_ID(E_DCH_MAC_d_Flow_ID),
     #[asn(key = 117)]
-    HS_DSCH_MAC_d_Flow_ID(HS_DSCH_MAC_d_Flow_ID),
+    id_hS_DSCH_MAC_d_Flow_ID(HS_DSCH_MAC_d_Flow_ID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -12096,7 +12133,7 @@ pub struct UESBI_IuiE_Extensions(Vec<UESBI_IuiE_Extensions_Item>);
 #[asn(type = "OPEN")]
 pub enum UESpecificInformationIndicationprotocolIEs_Itemvalue {
     #[asn(key = 118)]
-    UESBI_Iu(UESBI_Iu),
+    id_UESBI_Iu(UESBI_Iu),
 }
 
 #[derive(Debug, AperCodec)]
@@ -12138,7 +12175,7 @@ pub struct UESpecificInformationIndicationprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum UPInformationiE_Extensions_ItemextensionValue {
     #[asn(key = 269)]
-    TimingDifferenceULDL(TimingDifferenceULDL),
+    id_TimingDifferenceULDL(TimingDifferenceULDL),
 }
 
 #[derive(Debug, AperCodec)]
@@ -12206,7 +12243,7 @@ pub struct UeRadioCapabilityMatchRequestprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum UeRadioCapabilityMatchResponseprotocolIEs_Itemvalue {
     #[asn(key = 258)]
-    VoiceSupportMatchIndicator(VoiceSupportMatchIndicator),
+    id_VoiceSupportMatchIndicator(VoiceSupportMatchIndicator),
 }
 
 #[derive(Debug, AperCodec)]
@@ -12248,9 +12285,9 @@ pub struct UeRadioCapabilityMatchResponseprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum UeRegistrationQueryRequestprotocolIEs_Itemvalue {
     #[asn(key = 79)]
-    IuSignallingConnectionIdentifier(IuSignallingConnectionIdentifier),
+    id_IuSigConId(IuSignallingConnectionIdentifier),
     #[asn(key = 23)]
-    PermanentNAS_UE_ID(PermanentNAS_UE_ID),
+    id_PermanentNAS_UE_ID(PermanentNAS_UE_ID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -12290,7 +12327,7 @@ pub struct UeRegistrationQueryRequestprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum UeRegistrationQueryResponseprotocolIEs_Itemvalue {
     #[asn(key = 281)]
-    UERegistrationQueryResult(UERegistrationQueryResult),
+    id_UERegistrationQueryResult(UERegistrationQueryResult),
 }
 
 #[derive(Debug, AperCodec)]
@@ -12353,43 +12390,43 @@ pub struct UnsuccessfulLinking_IEs_Item {
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
 pub enum UnsuccessfulOutcomevalue {
-    #[asn(key = 43)]
-    EnhancedRelocationCompleteFailure(EnhancedRelocationCompleteFailure),
     #[asn(key = 31)]
-    InformationTransferFailure(InformationTransferFailure),
+    id_InformationTransfer(InformationTransferFailure),
     #[asn(key = 30)]
-    LocationRelatedDataFailure(LocationRelatedDataFailure),
+    id_LocationRelatedData(LocationRelatedDataFailure),
     #[asn(key = 42)]
-    MBMSRABReleaseFailure(MBMSRABReleaseFailure),
+    id_MBMSRABRelease(MBMSRABReleaseFailure),
     #[asn(key = 39)]
-    MBMSRegistrationFailure(MBMSRegistrationFailure),
+    id_MBMSRegistration(MBMSRegistrationFailure),
     #[asn(key = 35)]
-    MBMSSessionStartFailure(MBMSSessionStartFailure),
+    id_MBMSSessionStart(MBMSSessionStartFailure),
     #[asn(key = 36)]
-    MBMSSessionUpdateFailure(MBMSSessionUpdateFailure),
-    #[asn(key = 3)]
-    RelocationFailure(RelocationFailure),
+    id_MBMSSessionUpdate(MBMSSessionUpdateFailure),
     #[asn(key = 2)]
-    RelocationPreparationFailure(RelocationPreparationFailure),
+    id_RelocationPreparation(RelocationPreparationFailure),
+    #[asn(key = 3)]
+    id_RelocationResourceAllocation(RelocationFailure),
     #[asn(key = 6)]
-    SecurityModeReject(SecurityModeReject),
+    id_SecurityModeControl(SecurityModeReject),
     #[asn(key = 33)]
-    UplinkInformationExchangeFailure(UplinkInformationExchangeFailure),
+    id_UplinkInformationExchange(UplinkInformationExchangeFailure),
+    #[asn(key = 43)]
+    id_enhancedRelocationComplete(EnhancedRelocationCompleteFailure),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
 pub enum UplinkInformationExchangeFailureprotocolIEs_Itemvalue {
     #[asn(key = 3)]
-    CN_DomainIndicator(CN_DomainIndicator),
+    id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 4)]
-    Cause(Cause),
+    id_Cause(Cause),
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 96)]
-    GlobalCN_ID(GlobalCN_ID),
+    id_GlobalCN_ID(GlobalCN_ID),
     #[asn(key = 136)]
-    InformationExchangeID(InformationExchangeID),
+    id_InformationExchangeID(InformationExchangeID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -12431,17 +12468,17 @@ pub struct UplinkInformationExchangeFailureprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum UplinkInformationExchangeRequestprotocolIEs_Itemvalue {
     #[asn(key = 3)]
-    CN_DomainIndicator(CN_DomainIndicator),
+    id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 86)]
-    GlobalRNC_ID(GlobalRNC_ID),
+    id_GlobalRNC_ID(GlobalRNC_ID),
     #[asn(key = 136)]
-    InformationExchangeID(InformationExchangeID),
+    id_InformationExchangeID(InformationExchangeID),
     #[asn(key = 137)]
-    InformationExchangeType(InformationExchangeType),
+    id_InformationExchangeType(InformationExchangeType),
     #[asn(key = 139)]
-    InformationRequestType(InformationRequestType),
+    id_InformationRequestType(InformationRequestType),
     #[asn(key = 123)]
-    InformationTransferType(InformationTransferType),
+    id_InformationTransferType(InformationTransferType),
 }
 
 #[derive(Debug, AperCodec)]
@@ -12468,7 +12505,7 @@ pub struct UplinkInformationExchangeRequestprotocolIEs(
 #[asn(type = "OPEN")]
 pub enum UplinkInformationExchangeRequestprotocolExtensions_ItemextensionValue {
     #[asn(key = 171)]
-    ExtendedRNC_ID(ExtendedRNC_ID),
+    id_ExtendedRNC_ID(ExtendedRNC_ID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -12495,15 +12532,15 @@ pub struct UplinkInformationExchangeRequestprotocolExtensions(
 #[asn(type = "OPEN")]
 pub enum UplinkInformationExchangeResponseprotocolIEs_Itemvalue {
     #[asn(key = 3)]
-    CN_DomainIndicator(CN_DomainIndicator),
+    id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 9)]
-    CriticalityDiagnostics(CriticalityDiagnostics),
+    id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 96)]
-    GlobalCN_ID(GlobalCN_ID),
+    id_GlobalCN_ID(GlobalCN_ID),
     #[asn(key = 136)]
-    InformationExchangeID(InformationExchangeID),
+    id_InformationExchangeID(InformationExchangeID),
     #[asn(key = 138)]
-    InformationRequested(InformationRequested),
+    id_InformationRequested(InformationRequested),
 }
 
 #[derive(Debug, AperCodec)]

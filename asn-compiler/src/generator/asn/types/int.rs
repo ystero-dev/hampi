@@ -110,7 +110,7 @@ impl ResolvedSetType {
     fn generate_aux_types(&self, generator: &mut Generator) -> Result<TokenStream, Error> {
         let mut variant_tokens = TokenStream::new();
         for (name, ty) in &self.types {
-            let variant_ident = generator.to_type_ident(name);
+            let variant_ident = generator.to_type_ident(&name.0);
             let ty_ident = Asn1ResolvedType::generate_name_maybe_aux_type(&ty.1, generator, None)?;
             let key: proc_macro2::TokenStream = format!("{}", ty.0).parse().unwrap();
             let key_tokens = quote! {

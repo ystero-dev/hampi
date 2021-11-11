@@ -105,7 +105,7 @@ pub(crate) fn resolve_object_set(
                                                     "{}",
                                                     v.get_base_integer_value().unwrap()
                                                 );
-                                                lookup_table.insert(v, element);
+                                                lookup_table.insert((v, s.clone()), element);
                                             }
                                         }
                                     }
@@ -140,7 +140,7 @@ pub(crate) fn resolve_object_set(
                                         // Integer Value. This Value is to be used by the
                                         // decoder.
                                         let v = format!("{}", v.get_base_integer_value().unwrap());
-                                        lookup_table.insert(v, element);
+                                        lookup_table.insert((v, s.clone()), element);
                                     }
                                 }
                             }
