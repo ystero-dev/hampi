@@ -33,7 +33,8 @@ impl ResolvedConstructedType {
             let mut optional_fields = 0;
             for c in components {
                 let comp_field_ident = generator.to_value_ident(&c.component.id);
-                let input_comp_ty_ident = format!("{}{}", name, c.component.id);
+                let comp_ty_suffix = generator.to_type_ident(&c.component.id);
+                let input_comp_ty_ident = format!("{}{}", name, comp_ty_suffix);
                 let comp_ty_ident = Asn1ResolvedType::generate_name_maybe_aux_type(
                     &c.component.ty,
                     generator,
