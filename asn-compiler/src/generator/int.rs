@@ -132,7 +132,7 @@ impl Generator {
 
     fn generate_use_tokens(&self) -> TokenStream {
         quote! {
-            #![allow(dead_code, unreachable_patterns, non_camel_case_types)]
+            #![allow(dead_code, unreachable_patterns)]
 
             use bitvec::vec::BitVec;
             use bitvec::order::Msb0;
