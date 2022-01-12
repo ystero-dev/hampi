@@ -1,6 +1,6 @@
 //! Code Generation module
 
-use heck::{ShoutySnakeCase, SnakeCase};
+use heck::{ToShoutySnakeCase, ToSnakeCase, ToUpperCamelCase};
 use proc_macro2::{Ident, Literal, Span, TokenStream};
 
 use quote::quote;
@@ -68,7 +68,8 @@ impl Generator {
     }
 
     pub(crate) fn to_type_ident(&self, name: &str) -> Ident {
-        Ident::new(&name.replace("-", "_").replace(" ", "_"), Span::call_site())
+        let val = capitalize_first(name).to_snake_case().to_upper_camel_case();
+        Ident::new(&val, Span::call_site())
     }
 
     pub(crate) fn to_const_ident(&self, name: &str) -> Ident {
@@ -76,7 +77,7 @@ impl Generator {
     }
 
     pub(crate) fn to_value_ident(&self, name: &str) -> Ident {
-        let mut val = name.to_snake_case();
+        let mut val = capitalize_first(name).to_snake_case();
         if val == "type".to_string() {
             val = "typ".to_string()
         }
@@ -131,7 +132,7 @@ impl Generator {
 
     fn generate_use_tokens(&self) -> TokenStream {
         quote! {
-            #![allow(dead_code, unreachable_patterns, non_camel_case_types)]
+            #![allow(dead_code, unreachable_patterns)]
 
             use bitvec::vec::BitVec;
             use bitvec::order::Msb0;
@@ -140,5 +141,13 @@ impl Generator {
             // APER Codec.
             use asn1_codecs_derive::AperCodec;
         }
+    }
+}
+
+fn capitalize_first(s: &str) -> String {
+    let mut cs = s.chars();
+    match cs.next() {
+        None => String::new(),
+        Some(first) => first.to_uppercase().collect::<String>() + cs.as_str(),
     }
 }
