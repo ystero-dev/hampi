@@ -28,11 +28,11 @@ pub struct Additional_CSPS_coordination_information {
     #[asn(optional_idx = 1)]
     pub old_rac: Option<RAC>,
     #[asn(optional_idx = 2)]
-    pub n_ri: Option<BIT_STRING_2>,
+    pub nri: Option<BIT_STRING_2>,
     #[asn(optional_idx = 3)]
-    pub u_e_is_attaching: Option<NULL_3>,
+    pub ue_is_attaching: Option<NULL_3>,
     #[asn(optional_idx = 4)]
-    pub i_e_extensions: Option<Additional_CSPS_coordination_informationiE_Extensions>,
+    pub ie_extensions: Option<Additional_CSPS_coordination_informationIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -51,7 +51,7 @@ pub struct AllocationOrRetentionPriority {
     pub pre_emption_vulnerability: Pre_emptionVulnerability,
     pub queuing_allowed: QueuingAllowed,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<AllocationOrRetentionPriorityiE_Extensions>,
+    pub ie_extensions: Option<AllocationOrRetentionPriorityIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -145,7 +145,7 @@ pub struct Alt_RAB_Parameter_SupportedGuaranteedBitrateInf {
     #[asn(optional_idx = 0)]
     pub alt_supported_guaranteed_bitrates: Option<Alt_RAB_Parameter_SupportedGuaranteedBitrates>,
     #[asn(optional_idx = 1)]
-    pub i_e_extensions: Option<Alt_RAB_Parameter_SupportedGuaranteedBitrateInfiE_Extensions>,
+    pub ie_extensions: Option<Alt_RAB_Parameter_SupportedGuaranteedBitrateInfIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -159,7 +159,7 @@ pub struct Alt_RAB_Parameter_SupportedMaxBitrateInf {
     #[asn(optional_idx = 0)]
     pub alt_supported_max_bitrates: Option<Alt_RAB_Parameter_SupportedMaxBitrates>,
     #[asn(optional_idx = 1)]
-    pub i_e_extensions: Option<Alt_RAB_Parameter_SupportedMaxBitrateInfiE_Extensions>,
+    pub ie_extensions: Option<Alt_RAB_Parameter_SupportedMaxBitrateInfIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -174,7 +174,7 @@ pub struct Alt_RAB_Parameters {
     #[asn(optional_idx = 1)]
     pub alt_guaranteed_bit_rate_inf: Option<Alt_RAB_Parameter_GuaranteedBitrateInf>,
     #[asn(optional_idx = 2)]
-    pub i_e_extensions: Option<Alt_RAB_ParametersiE_Extensions>,
+    pub ie_extensions: Option<Alt_RAB_ParametersIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -188,22 +188,22 @@ impl AlternativeRABConfigurationRequest {
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = true)]
 pub enum AreaIdentity {
     #[asn(key = 0, extended = false)]
-    sAI(SAI),
+    SAI(SAI),
     #[asn(key = 1, extended = false)]
-    geographicalArea(GeographicalArea),
+    GeographicalArea(GeographicalArea),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "CHOICE", lb = "0", ub = "3", extensible = true)]
 pub enum AreaScopeForUEApplicationLayerMeasurementConfiguration {
     #[asn(key = 0, extended = false)]
-    cellbased(CellBased),
+    Cellbased(CellBased),
     #[asn(key = 1, extended = false)]
-    labased(LABased),
+    Labased(LABased),
     #[asn(key = 2, extended = false)]
-    rabased(RABased),
+    Rabased(RABased),
     #[asn(key = 3, extended = false)]
-    plmn_area_based(PLMNBased),
+    Plmn_area_based(PLMNBased),
 }
 
 #[derive(Debug, AperCodec)]
@@ -230,12 +230,12 @@ pub struct Ass_RAB_Parameters {
     #[asn(optional_idx = 1)]
     pub ass_guaranteed_bit_rate_inf: Option<Ass_RAB_Parameter_GuaranteedBitrateList>,
     #[asn(optional_idx = 2)]
-    pub i_e_extensions: Option<Ass_RAB_ParametersiE_Extensions>,
+    pub ie_extensions: Option<Ass_RAB_ParametersIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "32")]
-pub struct AuthorisedPLMNs(Vec<AuthorisedPLMNs_Item>);
+pub struct AuthorisedPLMNs(Vec<AuthorisedPLMNs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -265,11 +265,11 @@ pub struct BroadcastAssistanceDataDecipheringKeys {
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 1)]
 pub struct CGI {
-    pub p_lm_nidentity: PLMNidentity,
-    pub l_ac: LAC,
-    pub c_i: CI,
+    pub plm_nidentity: PLMNidentity,
+    pub lac: LAC,
+    pub ci: CI,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<CGIiE_Extensions>,
+    pub ie_extensions: Option<CGIIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -279,9 +279,9 @@ pub struct CI(Vec<u8>);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct CN_DeactivateTrace {
-    pub protocol_i_es: CN_DeactivateTraceprotocolIEs,
+    pub protocol_i_es: CN_DeactivateTraceProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<CN_DeactivateTraceprotocolExtensions>,
+    pub protocol_extensions: Option<CN_DeactivateTraceProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -299,9 +299,9 @@ pub struct CN_ID(u16);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct CN_InvokeTrace {
-    pub protocol_i_es: CN_InvokeTraceprotocolIEs,
+    pub protocol_i_es: CN_InvokeTraceProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<CN_InvokeTraceprotocolExtensions>,
+    pub protocol_extensions: Option<CN_InvokeTraceProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -309,7 +309,7 @@ pub struct CN_InvokeTrace {
 pub struct CNMBMSLinkingInformation {
     pub joined_mbms_bearer_service_i_es: JoinedMBMSBearerService_IEs,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<CNMBMSLinkingInformationiE_Extensions>,
+    pub ie_extensions: Option<CNMBMSLinkingInformationIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -345,19 +345,19 @@ impl CSG_Membership_Status {
 #[asn(type = "CHOICE", lb = "0", ub = "5", extensible = true)]
 pub enum Cause {
     #[asn(key = 0, extended = false)]
-    radioNetwork(CauseRadioNetwork),
+    RadioNetwork(CauseRadioNetwork),
     #[asn(key = 1, extended = false)]
-    transmissionNetwork(CauseTransmissionNetwork),
+    TransmissionNetwork(CauseTransmissionNetwork),
     #[asn(key = 2, extended = false)]
-    nAS(CauseNAS),
+    NAS(CauseNAS),
     #[asn(key = 3, extended = false)]
-    protocol(CauseProtocol),
+    Protocol(CauseProtocol),
     #[asn(key = 4, extended = false)]
-    misc(CauseMisc),
+    Misc(CauseMisc),
     #[asn(key = 5, extended = false)]
-    non_Standard(CauseNon_Standard),
+    Non_Standard(CauseNon_Standard),
     #[asn(key = 0, extended = true)]
-    radioNetworkExtension(CauseRadioNetworkExtension),
+    RadioNetworkExtension(CauseRadioNetworkExtension),
 }
 
 #[derive(Debug, AperCodec)]
@@ -408,7 +408,7 @@ pub struct Cell_Id(u32);
 pub struct CellBased {
     pub cell_id_list: CellIdList,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<CellBasediE_Extensions>,
+    pub ie_extensions: Option<CellBasedIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -421,11 +421,11 @@ pub struct CellLoadInformation {
     pub cell_capacity_class_value: Cell_Capacity_Class_Value,
     pub load_value: LoadValue,
     #[asn(optional_idx = 0)]
-    pub r_t_load_value: Option<RTLoadValue>,
+    pub rt_load_value: Option<RTLoadValue>,
     #[asn(optional_idx = 1)]
-    pub n_rt_load_information_value: Option<NRTLoadInformationValue>,
+    pub nrt_load_information_value: Option<NRTLoadInformationValue>,
     #[asn(optional_idx = 2)]
-    pub i_e_extensions: Option<CellLoadInformationiE_Extensions>,
+    pub ie_extensions: Option<CellLoadInformationIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -437,7 +437,7 @@ pub struct CellLoadInformationGroup {
     #[asn(optional_idx = 1)]
     pub downlink_cell_load_information: Option<CellLoadInformation>,
     #[asn(optional_idx = 2)]
-    pub i_e_extensions: Option<CellLoadInformationGroupiE_Extensions>,
+    pub ie_extensions: Option<CellLoadInformationGroupIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -483,9 +483,9 @@ impl ClientType {
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct CommonID {
-    pub protocol_i_es: CommonIDprotocolIEs,
+    pub protocol_i_es: CommonIDProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<CommonIDprotocolExtensions>,
+    pub protocol_extensions: Option<CommonIDProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -513,7 +513,7 @@ pub struct CriticalityDiagnostics {
     #[asn(optional_idx = 3)]
     pub i_es_criticality_diagnostics: Option<CriticalityDiagnostics_IE_List>,
     #[asn(optional_idx = 4)]
-    pub i_e_extensions: Option<CriticalityDiagnosticsiE_Extensions>,
+    pub ie_extensions: Option<CriticalityDiagnosticsIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -523,7 +523,7 @@ pub struct CriticalityDiagnostics {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct CriticalityDiagnostics_IE_List(Vec<CriticalityDiagnostics_IE_List_Item>);
+pub struct CriticalityDiagnostics_IE_List(Vec<CriticalityDiagnostics_IE_List_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "1048575")]
@@ -563,7 +563,7 @@ impl DataPDUType {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "2")]
-pub struct DataVolumeList(Vec<DataVolumeList_Item>);
+pub struct DataVolumeList(Vec<DataVolumeList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "255")]
@@ -572,17 +572,17 @@ pub struct DataVolumeReference(u8);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct DataVolumeReport {
-    pub protocol_i_es: DataVolumeReportprotocolIEs,
+    pub protocol_i_es: DataVolumeReportProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<DataVolumeReportprotocolExtensions>,
+    pub protocol_extensions: Option<DataVolumeReportProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct DataVolumeReportRequest {
-    pub protocol_i_es: DataVolumeReportRequestprotocolIEs,
+    pub protocol_i_es: DataVolumeReportRequestProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<DataVolumeReportRequestprotocolExtensions>,
+    pub protocol_extensions: Option<DataVolumeReportRequestProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -616,17 +616,17 @@ pub struct DeltaRAListofIdleModeUEs {
     #[asn(optional_idx = 0)]
     pub new_ra_listof_idle_mode_u_es: Option<NewRAListofIdleModeUEs>,
     #[asn(optional_idx = 1)]
-    pub r_a_listwith_no_idle_mode_u_es_any_more: Option<RAListwithNoIdleModeUEsAnyMore>,
+    pub ra_listwith_no_idle_mode_u_es_any_more: Option<RAListwithNoIdleModeUEsAnyMore>,
     #[asn(optional_idx = 2)]
-    pub i_e_extensions: Option<DeltaRAListofIdleModeUEsiE_Extensions>,
+    pub ie_extensions: Option<DeltaRAListofIdleModeUEsIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct DirectInformationTransfer {
-    pub protocol_i_es: DirectInformationTransferprotocolIEs,
+    pub protocol_i_es: DirectInformationTransferProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<DirectInformationTransferprotocolExtensions>,
+    pub protocol_extensions: Option<DirectInformationTransferProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -640,25 +640,25 @@ impl DirectReportingIndicator {
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct DirectTransfer {
-    pub protocol_i_es: DirectTransferprotocolIEs,
+    pub protocol_i_es: DirectTransferProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<DirectTransferprotocolExtensions>,
+    pub protocol_extensions: Option<DirectTransferProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct DirectTransferInformationItem_RANAP_RelocInf {
-    pub n_as_pdu: NAS_PDU,
-    pub s_api: SAPI,
-    pub c_n_domain_indicator: CN_DomainIndicator,
+    pub nas_pdu: NAS_PDU,
+    pub sapi: SAPI,
+    pub cn_domain_indicator: CN_DomainIndicator,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<DirectTransferInformationItem_RANAP_RelocInfiE_Extensions>,
+    pub ie_extensions: Option<DirectTransferInformationItem_RANAP_RelocInfIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "15")]
 pub struct DirectTransferInformationList_RANAP_RelocInf(
-    Vec<DirectTransferInformationList_RANAP_RelocInf_Item>,
+    Vec<DirectTransferInformationList_RANAP_RelocInf_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -680,18 +680,18 @@ pub struct EARFCN_Extended(u32);
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = true)]
 pub enum ENB_ID {
     #[asn(key = 0, extended = false)]
-    macroENB_ID(BIT_STRING_7),
+    MacroENB_ID(BIT_STRING_7),
     #[asn(key = 1, extended = false)]
-    homeENB_ID(BIT_STRING_8),
+    HomeENB_ID(BIT_STRING_8),
     #[asn(key = 0, extended = true)]
-    short_macroENB_ID(BIT_STRING_9),
+    Short_macroENB_ID(BIT_STRING_9),
     #[asn(key = 1, extended = true)]
-    long_macroENB_ID(BIT_STRING_10),
+    Long_macroENB_ID(BIT_STRING_10),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "8")]
-pub struct EUTRANFrequencies(Vec<EUTRANFrequencies_Item>);
+pub struct EUTRANFrequencies(Vec<EUTRANFrequencies_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "15")]
@@ -703,7 +703,7 @@ pub struct EncryptionInformation {
     pub permitted_algorithms: PermittedEncryptionAlgorithms,
     pub key: EncryptionKey,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<EncryptionInformationiE_Extensions>,
+    pub ie_extensions: Option<EncryptionInformationIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -725,54 +725,54 @@ impl End_Of_CSFB {
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct EnhancedRelocationCompleteConfirm {
-    pub protocol_i_es: EnhancedRelocationCompleteConfirmprotocolIEs,
+    pub protocol_i_es: EnhancedRelocationCompleteConfirmProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<EnhancedRelocationCompleteConfirmprotocolExtensions>,
+    pub protocol_extensions: Option<EnhancedRelocationCompleteConfirmProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct EnhancedRelocationCompleteFailure {
-    pub protocol_i_es: EnhancedRelocationCompleteFailureprotocolIEs,
+    pub protocol_i_es: EnhancedRelocationCompleteFailureProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<EnhancedRelocationCompleteFailureprotocolExtensions>,
+    pub protocol_extensions: Option<EnhancedRelocationCompleteFailureProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct EnhancedRelocationCompleteRequest {
-    pub protocol_i_es: EnhancedRelocationCompleteRequestprotocolIEs,
+    pub protocol_i_es: EnhancedRelocationCompleteRequestProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<EnhancedRelocationCompleteRequestprotocolExtensions>,
+    pub protocol_extensions: Option<EnhancedRelocationCompleteRequestProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct EnhancedRelocationCompleteResponse {
-    pub protocol_i_es: EnhancedRelocationCompleteResponseprotocolIEs,
+    pub protocol_i_es: EnhancedRelocationCompleteResponseProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<EnhancedRelocationCompleteResponseprotocolExtensions>,
+    pub protocol_extensions: Option<EnhancedRelocationCompleteResponseProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "CHOICE", lb = "0", ub = "3", extensible = true)]
 pub enum EquipmentsToBeTraced {
     #[asn(key = 0, extended = false)]
-    iMEIlist(IMEIList),
+    IMEIlist(IMEIList),
     #[asn(key = 1, extended = false)]
-    iMEISVlist(IMEISVList),
+    IMEISVlist(IMEISVList),
     #[asn(key = 2, extended = false)]
-    iMEIgroup(IMEIGroup),
+    IMEIgroup(IMEIGroup),
     #[asn(key = 3, extended = false)]
-    iMEISVgroup(IMEISVGroup),
+    IMEISVgroup(IMEISVGroup),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct ErrorIndication {
-    pub protocol_i_es: ErrorIndicationprotocolIEs,
+    pub protocol_i_es: ErrorIndicationProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<ErrorIndicationprotocolExtensions>,
+    pub protocol_extensions: Option<ErrorIndicationProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -812,9 +812,9 @@ pub struct ExtendedRNC_ID(u16);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct ForwardSRNS_Context {
-    pub protocol_i_es: ForwardSRNS_ContextprotocolIEs,
+    pub protocol_i_es: ForwardSRNS_ContextProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<ForwardSRNS_ContextprotocolExtensions>,
+    pub protocol_extensions: Option<ForwardSRNS_ContextProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -852,7 +852,7 @@ pub struct GA_EllipsoidArc {
     pub included_angle: INTEGER_19,
     pub confidence: INTEGER_20,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<GA_EllipsoidArciE_Extensions>,
+    pub ie_extensions: Option<GA_EllipsoidArcIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -860,7 +860,7 @@ pub struct GA_EllipsoidArc {
 pub struct GA_Point {
     pub geographical_coordinates: GeographicalCoordinates,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<GA_PointiE_Extensions>,
+    pub ie_extensions: Option<GA_PointIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -869,7 +869,7 @@ pub struct GA_PointWithAltitude {
     pub geographical_coordinates: GeographicalCoordinates,
     pub altitude_and_direction: GA_AltitudeAndDirection,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<GA_PointWithAltitudeiE_Extensions>,
+    pub ie_extensions: Option<GA_PointWithAltitudeIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -881,7 +881,7 @@ pub struct GA_PointWithAltitudeAndUncertaintyEllipsoid {
     pub uncertainty_altitude: INTEGER_21,
     pub confidence: INTEGER_22,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<GA_PointWithAltitudeAndUncertaintyEllipsoidiE_Extensions>,
+    pub ie_extensions: Option<GA_PointWithAltitudeAndUncertaintyEllipsoidIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -889,7 +889,7 @@ pub struct GA_PointWithAltitudeAndUncertaintyEllipsoid {
 pub struct GA_PointWithUnCertainty {
     pub geographical_coordinates: GeographicalCoordinates,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<GA_PointWithUnCertaintyiE_Extensions>,
+    pub ie_extensions: Option<GA_PointWithUnCertaintyIE_Extensions>,
     pub uncertainty_code: INTEGER_23,
 }
 
@@ -900,12 +900,12 @@ pub struct GA_PointWithUnCertaintyEllipse {
     pub uncertainty_ellipse: GA_UncertaintyEllipse,
     pub confidence: INTEGER_24,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<GA_PointWithUnCertaintyEllipseiE_Extensions>,
+    pub ie_extensions: Option<GA_PointWithUnCertaintyEllipseIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "15")]
-pub struct GA_Polygon(Vec<GA_Polygon_Item>);
+pub struct GA_Polygon(Vec<GA_Polygon_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true)]
@@ -930,11 +930,11 @@ pub struct GERAN_BSC_Container(Vec<u8>);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 1)]
 pub struct GERAN_Cell_ID {
-    pub l_ai: LAI,
-    pub r_ac: RAC,
-    pub c_i: CI,
+    pub lai: LAI,
+    pub rac: RAC,
+    pub ci: CI,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<GERAN_Cell_IDiE_Extensions>,
+    pub ie_extensions: Option<GERAN_Cell_IDIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -944,12 +944,12 @@ pub struct GERAN_Classmark(Vec<u8>);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 2)]
 pub struct GERAN_Iumode_RAB_Failed_RABAssgntResponse_Item {
-    pub r_ab_id: RAB_ID,
+    pub rab_id: RAB_ID,
     pub cause: Cause,
     #[asn(optional_idx = 0)]
-    pub g_eran_classmark: Option<GERAN_Classmark>,
+    pub geran_classmark: Option<GERAN_Classmark>,
     #[asn(optional_idx = 1)]
-    pub i_e_extensions: Option<GERAN_Iumode_RAB_Failed_RABAssgntResponse_ItemiE_Extensions>,
+    pub ie_extensions: Option<GERAN_Iumode_RAB_Failed_RABAssgntResponse_ItemIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -960,7 +960,7 @@ pub struct GERAN_Iumode_RAB_Failed_RABAssgntResponse_Item {
     sz_ub = "256"
 )]
 pub struct GERAN_Iumode_RAB_FailedList_RABAssgntResponse(
-    Vec<GERAN_Iumode_RAB_FailedList_RABAssgntResponse_Item>,
+    Vec<GERAN_Iumode_RAB_FailedList_RABAssgntResponse_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -971,19 +971,19 @@ pub struct GTP_TEI(Vec<u8>);
 #[asn(type = "CHOICE", lb = "0", ub = "2", extensible = true)]
 pub enum GeographicalArea {
     #[asn(key = 0, extended = false)]
-    point(GA_Point),
+    Point(GA_Point),
     #[asn(key = 1, extended = false)]
-    pointWithUnCertainty(GA_PointWithUnCertainty),
+    PointWithUnCertainty(GA_PointWithUnCertainty),
     #[asn(key = 2, extended = false)]
-    polygon(GA_Polygon),
+    Polygon(GA_Polygon),
     #[asn(key = 0, extended = true)]
-    pointWithUncertaintyEllipse(GA_PointWithUnCertaintyEllipse),
+    PointWithUncertaintyEllipse(GA_PointWithUnCertaintyEllipse),
     #[asn(key = 1, extended = true)]
-    pointWithAltitude(GA_PointWithAltitude),
+    PointWithAltitude(GA_PointWithAltitude),
     #[asn(key = 2, extended = true)]
-    pointWithAltitudeAndUncertaintyEllipsoid(GA_PointWithAltitudeAndUncertaintyEllipsoid),
+    PointWithAltitudeAndUncertaintyEllipsoid(GA_PointWithAltitudeAndUncertaintyEllipsoid),
     #[asn(key = 3, extended = true)]
-    ellipsoidArc(GA_EllipsoidArc),
+    EllipsoidArc(GA_EllipsoidArc),
 }
 
 #[derive(Debug, AperCodec)]
@@ -993,21 +993,21 @@ pub struct GeographicalCoordinates {
     pub latitude: INTEGER_29,
     pub longitude: INTEGER_30,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<GeographicalCoordinatesiE_Extensions>,
+    pub ie_extensions: Option<GeographicalCoordinatesIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
 pub struct GlobalCN_ID {
-    pub p_lm_nidentity: PLMNidentity,
-    pub c_n_id: CN_ID,
+    pub plm_nidentity: PLMNidentity,
+    pub cn_id: CN_ID,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
 pub struct GlobalRNC_ID {
-    pub p_lm_nidentity: PLMNidentity,
-    pub r_nc_id: RNC_ID,
+    pub plm_nidentity: PLMNidentity,
+    pub rnc_id: RNC_ID,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1038,7 +1038,7 @@ pub struct HorizontalSpeedAndBearing {
 pub struct HorizontalVelocity {
     pub horizontal_speed_and_bearing: HorizontalSpeedAndBearing,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<HorizontalVelocityiE_Extensions>,
+    pub ie_extensions: Option<HorizontalVelocityIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1047,7 +1047,7 @@ pub struct HorizontalVelocityWithUncertainty {
     pub horizontal_speed_and_bearing: HorizontalSpeedAndBearing,
     pub uncertainty_speed: INTEGER_33,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<HorizontalVelocityWithUncertaintyiE_Extensions>,
+    pub ie_extensions: Option<HorizontalVelocityWithUncertaintyIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1056,7 +1056,7 @@ pub struct HorizontalWithVerticalVelocity {
     pub horizontal_speed_and_bearing: HorizontalSpeedAndBearing,
     pub veritcal_velocity: VerticalVelocity,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<HorizontalWithVerticalVelocityiE_Extensions>,
+    pub ie_extensions: Option<HorizontalWithVerticalVelocityIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1067,7 +1067,7 @@ pub struct HorizontalWithVerticalVelocityAndUncertainty {
     pub horizontal_uncertainty_speed: INTEGER_34,
     pub vertical_uncertainty_speed: INTEGER_35,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<HorizontalWithVerticalVelocityAndUncertaintyiE_Extensions>,
+    pub ie_extensions: Option<HorizontalWithVerticalVelocityAndUncertaintyIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1077,10 +1077,10 @@ pub struct IMEI(Vec<u8>);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 1)]
 pub struct IMEIGroup {
-    pub i_mei: IMEI,
-    pub i_mei_mask: BIT_STRING_36,
+    pub imei: IMEI,
+    pub imei_mask: BIT_STRING_36,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<IMEIGroupiE_Extensions>,
+    pub ie_extensions: Option<IMEIGroupIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1094,10 +1094,10 @@ pub struct IMEISV(Vec<u8>);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 1)]
 pub struct IMEISVGroup {
-    pub i_meisv: IMEISV,
-    pub i_meisv_mask: BIT_STRING_37,
+    pub imeisv: IMEISV,
+    pub imeisv_mask: BIT_STRING_37,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<IMEISVGroupiE_Extensions>,
+    pub ie_extensions: Option<IMEISVGroupIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1119,12 +1119,12 @@ pub struct IPMulticastAddress(Vec<u8>);
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 3)]
 pub struct IRAT_Measurement_Configuration {
     #[asn(optional_idx = 0)]
-    pub r_srp: Option<INTEGER_38>,
+    pub rsrp: Option<INTEGER_38>,
     #[asn(optional_idx = 1)]
-    pub r_srq: Option<INTEGER_39>,
-    pub i_ra_tmeasurement_parameters: IRATmeasurementParameters,
+    pub rsrq: Option<INTEGER_39>,
+    pub ira_tmeasurement_parameters: IRATmeasurementParameters,
     #[asn(optional_idx = 2)]
-    pub i_e_extensions: Option<IRAT_Measurement_ConfigurationiE_Extensions>,
+    pub ie_extensions: Option<IRAT_Measurement_ConfigurationIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1132,9 +1132,9 @@ pub struct IRAT_Measurement_Configuration {
 pub struct IRATmeasurementParameters {
     pub measurement_duration: INTEGER_40,
     #[asn(optional_idx = 0)]
-    pub e_utran_frequencies: Option<EUTRANFrequencies>,
+    pub eutran_frequencies: Option<EUTRANFrequencies>,
     #[asn(optional_idx = 1)]
-    pub i_e_extensions: Option<IRATmeasurementParametersiE_Extensions>,
+    pub ie_extensions: Option<IRATmeasurementParametersIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1146,7 +1146,7 @@ pub struct ImmediateMDT {
     #[asn(optional_idx = 1)]
     pub m2report: Option<M2Report>,
     #[asn(optional_idx = 2)]
-    pub i_e_extensions: Option<ImmediateMDTiE_Extensions>,
+    pub ie_extensions: Option<ImmediateMDTIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1172,34 +1172,34 @@ impl InformationExchangeType {
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = true)]
 pub enum InformationRequestType {
     #[asn(key = 0, extended = false)]
-    mBMSIPMulticastAddressandAPNRequest(MBMSIPMulticastAddressandAPNRequest),
+    MBMSIPMulticastAddressandAPNRequest(MBMSIPMulticastAddressandAPNRequest),
     #[asn(key = 1, extended = false)]
-    permanentNAS_UE_ID(PermanentNAS_UE_ID),
+    PermanentNAS_UE_ID(PermanentNAS_UE_ID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = true)]
 pub enum InformationRequested {
     #[asn(key = 0, extended = false)]
-    requestedMBMSIPMulticastAddressandAPNRequest(RequestedMBMSIPMulticastAddressandAPNRequest),
+    RequestedMBMSIPMulticastAddressandAPNRequest(RequestedMBMSIPMulticastAddressandAPNRequest),
     #[asn(key = 1, extended = false)]
-    requestedMulticastServiceList(RequestedMulticastServiceList),
+    RequestedMulticastServiceList(RequestedMulticastServiceList),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct InformationTransferConfirmation {
-    pub protocol_i_es: InformationTransferConfirmationprotocolIEs,
+    pub protocol_i_es: InformationTransferConfirmationProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<InformationTransferConfirmationprotocolExtensions>,
+    pub protocol_extensions: Option<InformationTransferConfirmationProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct InformationTransferFailure {
-    pub protocol_i_es: InformationTransferFailureprotocolIEs,
+    pub protocol_i_es: InformationTransferFailureProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<InformationTransferFailureprotocolExtensions>,
+    pub protocol_extensions: Option<InformationTransferFailureProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1209,24 +1209,24 @@ pub struct InformationTransferID(u32);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct InformationTransferIndication {
-    pub protocol_i_es: InformationTransferIndicationprotocolIEs,
+    pub protocol_i_es: InformationTransferIndicationProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<InformationTransferIndicationprotocolExtensions>,
+    pub protocol_extensions: Option<InformationTransferIndicationProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "CHOICE", lb = "0", ub = "0", extensible = true)]
 pub enum InformationTransferType {
     #[asn(key = 0, extended = false)]
-    rNCTraceInformation(RNCTraceInformation),
+    RNCTraceInformation(RNCTraceInformation),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct InitialUE_Message {
-    pub protocol_i_es: InitialUE_MessageprotocolIEs,
+    pub protocol_i_es: InitialUE_MessageProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<InitialUE_MessageprotocolExtensions>,
+    pub protocol_extensions: Option<InitialUE_MessageProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1235,7 +1235,7 @@ pub struct InitiatingMessage {
     #[asn(key_field = true)]
     pub procedure_code: ProcedureCode,
     pub criticality: Criticality,
-    pub value: InitiatingMessagevalue,
+    pub value: InitiatingMessageValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1248,7 +1248,7 @@ pub struct IntegrityProtectionInformation {
     pub permitted_algorithms: PermittedIntegrityProtectionAlgorithms,
     pub key: IntegrityProtectionKey,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<IntegrityProtectionInformationiE_Extensions>,
+    pub ie_extensions: Option<IntegrityProtectionInformationIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1268,14 +1268,14 @@ pub struct InterSystemInformation_TransparentContainer {
     #[asn(optional_idx = 1)]
     pub uplink_cell_load_information: Option<CellLoadInformation>,
     #[asn(optional_idx = 2)]
-    pub i_e_extensions: Option<InterSystemInformation_TransparentContaineriE_Extensions>,
+    pub ie_extensions: Option<InterSystemInformation_TransparentContainerIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "CHOICE", lb = "0", ub = "0", extensible = true)]
 pub enum InterSystemInformationTransferType {
     #[asn(key = 0, extended = false)]
-    rIM_Transfer(RIM_Transfer),
+    RIM_Transfer(RIM_Transfer),
 }
 
 #[derive(Debug, AperCodec)]
@@ -1283,31 +1283,31 @@ pub enum InterSystemInformationTransferType {
 pub struct InterfacesToTraceItem {
     pub interface: ENUMERATED_41,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<InterfacesToTraceItemiE_Extensions>,
+    pub ie_extensions: Option<InterfacesToTraceItemIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct Iu_ReleaseCommand {
-    pub protocol_i_es: Iu_ReleaseCommandprotocolIEs,
+    pub protocol_i_es: Iu_ReleaseCommandProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<Iu_ReleaseCommandprotocolExtensions>,
+    pub protocol_extensions: Option<Iu_ReleaseCommandProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct Iu_ReleaseComplete {
-    pub protocol_i_es: Iu_ReleaseCompleteprotocolIEs,
+    pub protocol_i_es: Iu_ReleaseCompleteProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<Iu_ReleaseCompleteprotocolExtensions>,
+    pub protocol_extensions: Option<Iu_ReleaseCompleteProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct Iu_ReleaseRequest {
-    pub protocol_i_es: Iu_ReleaseRequestprotocolIEs,
+    pub protocol_i_es: Iu_ReleaseRequestProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<Iu_ReleaseRequestprotocolExtensions>,
+    pub protocol_extensions: Option<Iu_ReleaseRequestProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1318,9 +1318,9 @@ pub struct IuSignallingConnectionIdentifier(BitVec<Msb0, u8>);
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = true)]
 pub enum IuTransportAssociation {
     #[asn(key = 0, extended = false)]
-    gTP_TEI(GTP_TEI),
+    GTP_TEI(GTP_TEI),
     #[asn(key = 1, extended = false)]
-    bindingID(BindingID),
+    BindingID(BindingID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -1330,7 +1330,7 @@ pub enum IuTransportAssociation {
     sz_lb = "1",
     sz_ub = "128"
 )]
-pub struct JoinedMBMSBearerService_IEs(Vec<JoinedMBMSBearerService_IEs_Item>);
+pub struct JoinedMBMSBearerService_IEs(Vec<JoinedMBMSBearerService_IEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
@@ -1351,14 +1351,14 @@ pub struct L3_Information(Vec<u8>);
     sz_lb = "1",
     sz_ub = "65536"
 )]
-pub struct LA_LIST(Vec<LA_LIST_Item>);
+pub struct LA_LIST(Vec<LA_LIST_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct LABased {
     pub lai_list: LAI_List,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<LABasediE_Extensions>,
+    pub ie_extensions: Option<LABasedIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1368,10 +1368,10 @@ pub struct LAC(Vec<u8>);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 1)]
 pub struct LAI {
-    pub p_lm_nidentity: PLMNidentity,
-    pub l_ac: LAC,
+    pub plm_nidentity: PLMNidentity,
+    pub lac: LAC,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<LAIiE_Extensions>,
+    pub ie_extensions: Option<LAIIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1399,20 +1399,20 @@ pub struct LHN_ID(Vec<u8>);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct LastKnownServiceArea {
-    pub s_ai: SAI,
+    pub sai: SAI,
     pub age_of_sai: INTEGER_42,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<LastKnownServiceAreaiE_Extensions>,
+    pub ie_extensions: Option<LastKnownServiceAreaIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct LastVisitedUTRANCell_Item {
-    pub u_tran_cell_id: UTRAN_CellID,
+    pub utran_cell_id: UTRAN_CellID,
     pub cell_type: CellType,
     pub time_ue_stayed_in_cell: Time_UE_StayedInCell,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<LastVisitedUTRANCell_ItemiE_Extensions>,
+    pub ie_extensions: Option<LastVisitedUTRANCell_ItemIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1422,7 +1422,7 @@ pub struct LastVisitedUTRANCell_Item {
     sz_lb = "1",
     sz_ub = "128"
 )]
-pub struct LeftMBMSBearerService_IEs(Vec<LeftMBMSBearerService_IEs_Item>);
+pub struct LeftMBMSBearerService_IEs(Vec<LeftMBMSBearerService_IEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "2")]
@@ -1453,17 +1453,17 @@ pub struct LoadValue(u8);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct LocationRelatedDataFailure {
-    pub protocol_i_es: LocationRelatedDataFailureprotocolIEs,
+    pub protocol_i_es: LocationRelatedDataFailureProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<LocationRelatedDataFailureprotocolExtensions>,
+    pub protocol_extensions: Option<LocationRelatedDataFailureProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct LocationRelatedDataRequest {
-    pub protocol_i_es: LocationRelatedDataRequestprotocolIEs,
+    pub protocol_i_es: LocationRelatedDataRequestProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<LocationRelatedDataRequestprotocolExtensions>,
+    pub protocol_extensions: Option<LocationRelatedDataRequestProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1486,25 +1486,25 @@ impl LocationRelatedDataRequestTypeSpecificToGERANIuMode {
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct LocationRelatedDataResponse {
-    pub protocol_i_es: LocationRelatedDataResponseprotocolIEs,
+    pub protocol_i_es: LocationRelatedDataResponseProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<LocationRelatedDataResponseprotocolExtensions>,
+    pub protocol_extensions: Option<LocationRelatedDataResponseProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct LocationReport {
-    pub protocol_i_es: LocationReportprotocolIEs,
+    pub protocol_i_es: LocationReportProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<LocationReportprotocolExtensions>,
+    pub protocol_extensions: Option<LocationReportProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct LocationReportingControl {
-    pub protocol_i_es: LocationReportingControlprotocolIEs,
+    pub protocol_i_es: LocationReportingControlProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<LocationReportingControlprotocolExtensions>,
+    pub protocol_extensions: Option<LocationReportingControlProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1533,7 +1533,7 @@ pub struct LocationReportingTransferInformation {
     #[asn(optional_idx = 10)]
     pub periodic_location_info: Option<PeriodicLocationInfo>,
     #[asn(optional_idx = 11)]
-    pub i_e_extensions: Option<LocationReportingTransferInformationiE_Extensions>,
+    pub ie_extensions: Option<LocationReportingTransferInformationIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1542,7 +1542,7 @@ pub struct LoggedMDT {
     pub logging_interval: LoggingInterval,
     pub logging_duration: LoggingDuration,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<LoggedMDTiE_Extensions>,
+    pub ie_extensions: Option<LoggedMDTIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1575,18 +1575,18 @@ impl LoggingInterval {
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = true)]
 pub enum M1Report {
     #[asn(key = 0, extended = false)]
-    periodic(MDT_Report_Parameters),
+    Periodic(MDT_Report_Parameters),
     #[asn(key = 1, extended = false)]
-    event1F(Event1F_Parameters),
+    Event1F(Event1F_Parameters),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = true)]
 pub enum M2Report {
     #[asn(key = 0, extended = false)]
-    periodic(MDT_Report_Parameters),
+    Periodic(MDT_Report_Parameters),
     #[asn(key = 1, extended = false)]
-    event1I(Event1I_Parameters),
+    Event1I(Event1I_Parameters),
 }
 
 #[derive(Debug, AperCodec)]
@@ -1596,7 +1596,7 @@ pub struct M4_Collection_Parameters {
     #[asn(optional_idx = 0)]
     pub m4_threshold: Option<M4_Threshold>,
     #[asn(optional_idx = 1)]
-    pub i_e_extensions: Option<M4_Collection_ParametersiE_Extensions>,
+    pub ie_extensions: Option<M4_Collection_ParametersIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1621,9 +1621,9 @@ pub struct M4_Threshold(u8);
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = true)]
 pub enum M4Report {
     #[asn(key = 0, extended = false)]
-    all(NULL_43),
+    All(NULL_43),
     #[asn(key = 1, extended = false)]
-    m4_collection_parameters(M4_Collection_Parameters),
+    M4_collection_parameters(M4_Collection_Parameters),
 }
 
 #[derive(Debug, AperCodec)]
@@ -1644,9 +1644,9 @@ impl M5_Period {
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = true)]
 pub enum M5Report {
     #[asn(key = 0, extended = false)]
-    when_available(NULL_44),
+    When_available(NULL_44),
     #[asn(key = 1, extended = false)]
-    m5_period(M5_Period),
+    M5_period(M5_Period),
 }
 
 #[derive(Debug, AperCodec)]
@@ -1674,7 +1674,7 @@ pub struct M6Report {
     pub m6_period: M6_Period,
     pub m6_links_to_log: Links_to_log,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<M6ReportiE_Extensions>,
+    pub ie_extensions: Option<M6ReportIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1702,7 +1702,7 @@ pub struct M7Report {
     pub m7_period: M7_Period,
     pub m7_links_to_log: Links_to_log,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<M7ReportiE_Extensions>,
+    pub ie_extensions: Option<M7ReportIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1728,17 +1728,17 @@ impl MBMSCNDe_Registration {
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct MBMSCNDe_RegistrationRequest {
-    pub protocol_i_es: MBMSCNDe_RegistrationRequestprotocolIEs,
+    pub protocol_i_es: MBMSCNDe_RegistrationRequestProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<MBMSCNDe_RegistrationRequestprotocolExtensions>,
+    pub protocol_extensions: Option<MBMSCNDe_RegistrationRequestProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct MBMSCNDe_RegistrationResponse {
-    pub protocol_i_es: MBMSCNDe_RegistrationResponseprotocolIEs,
+    pub protocol_i_es: MBMSCNDe_RegistrationResponseProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<MBMSCNDe_RegistrationResponseprotocolExtensions>,
+    pub protocol_extensions: Option<MBMSCNDe_RegistrationResponseProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1769,11 +1769,11 @@ pub struct MBMSIPMulticastAddressandAPNRequest(Vec<TMGI>);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct MBMSIPMulticastAddressandAPNlist {
-    pub t_mgi: TMGI,
-    pub i_p_multicast_address: IPMulticastAddress,
-    pub a_pn: APN,
+    pub tmgi: TMGI,
+    pub ip_multicast_address: IPMulticastAddress,
+    pub apn: APN,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<MBMSIPMulticastAddressandAPNlistiE_Extensions>,
+    pub ie_extensions: Option<MBMSIPMulticastAddressandAPNlistIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1786,49 +1786,49 @@ impl MBMSLinkingInformation {
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct MBMSRABEstablishmentIndication {
-    pub protocol_i_es: MBMSRABEstablishmentIndicationprotocolIEs,
+    pub protocol_i_es: MBMSRABEstablishmentIndicationProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<MBMSRABEstablishmentIndicationprotocolExtensions>,
+    pub protocol_extensions: Option<MBMSRABEstablishmentIndicationProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct MBMSRABRelease {
-    pub protocol_i_es: MBMSRABReleaseprotocolIEs,
+    pub protocol_i_es: MBMSRABReleaseProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<MBMSRABReleaseprotocolExtensions>,
+    pub protocol_extensions: Option<MBMSRABReleaseProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct MBMSRABReleaseFailure {
-    pub protocol_i_es: MBMSRABReleaseFailureprotocolIEs,
+    pub protocol_i_es: MBMSRABReleaseFailureProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<MBMSRABReleaseFailureprotocolExtensions>,
+    pub protocol_extensions: Option<MBMSRABReleaseFailureProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct MBMSRABReleaseRequest {
-    pub protocol_i_es: MBMSRABReleaseRequestprotocolIEs,
+    pub protocol_i_es: MBMSRABReleaseRequestProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<MBMSRABReleaseRequestprotocolExtensions>,
+    pub protocol_extensions: Option<MBMSRABReleaseRequestProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct MBMSRegistrationFailure {
-    pub protocol_i_es: MBMSRegistrationFailureprotocolIEs,
+    pub protocol_i_es: MBMSRegistrationFailureProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<MBMSRegistrationFailureprotocolExtensions>,
+    pub protocol_extensions: Option<MBMSRegistrationFailureProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct MBMSRegistrationRequest {
-    pub protocol_i_es: MBMSRegistrationRequestprotocolIEs,
+    pub protocol_i_es: MBMSRegistrationRequestProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<MBMSRegistrationRequestprotocolExtensions>,
+    pub protocol_extensions: Option<MBMSRegistrationRequestProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1842,9 +1842,9 @@ impl MBMSRegistrationRequestType {
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct MBMSRegistrationResponse {
-    pub protocol_i_es: MBMSRegistrationResponseprotocolIEs,
+    pub protocol_i_es: MBMSRegistrationResponseProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<MBMSRegistrationResponseprotocolExtensions>,
+    pub protocol_extensions: Option<MBMSRegistrationResponseProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1866,91 +1866,91 @@ pub struct MBMSSessionRepetitionNumber(Vec<u8>);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct MBMSSessionStart {
-    pub protocol_i_es: MBMSSessionStartprotocolIEs,
+    pub protocol_i_es: MBMSSessionStartProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<MBMSSessionStartprotocolExtensions>,
+    pub protocol_extensions: Option<MBMSSessionStartProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct MBMSSessionStartFailure {
-    pub protocol_i_es: MBMSSessionStartFailureprotocolIEs,
+    pub protocol_i_es: MBMSSessionStartFailureProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<MBMSSessionStartFailureprotocolExtensions>,
+    pub protocol_extensions: Option<MBMSSessionStartFailureProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct MBMSSessionStartResponse {
-    pub protocol_i_es: MBMSSessionStartResponseprotocolIEs,
+    pub protocol_i_es: MBMSSessionStartResponseProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<MBMSSessionStartResponseprotocolExtensions>,
+    pub protocol_extensions: Option<MBMSSessionStartResponseProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct MBMSSessionStop {
-    pub protocol_i_es: MBMSSessionStopprotocolIEs,
+    pub protocol_i_es: MBMSSessionStopProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<MBMSSessionStopprotocolExtensions>,
+    pub protocol_extensions: Option<MBMSSessionStopProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct MBMSSessionStopResponse {
-    pub protocol_i_es: MBMSSessionStopResponseprotocolIEs,
+    pub protocol_i_es: MBMSSessionStopResponseProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<MBMSSessionStopResponseprotocolExtensions>,
+    pub protocol_extensions: Option<MBMSSessionStopResponseProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct MBMSSessionUpdate {
-    pub protocol_i_es: MBMSSessionUpdateprotocolIEs,
+    pub protocol_i_es: MBMSSessionUpdateProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<MBMSSessionUpdateprotocolExtensions>,
+    pub protocol_extensions: Option<MBMSSessionUpdateProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct MBMSSessionUpdateFailure {
-    pub protocol_i_es: MBMSSessionUpdateFailureprotocolIEs,
+    pub protocol_i_es: MBMSSessionUpdateFailureProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<MBMSSessionUpdateFailureprotocolExtensions>,
+    pub protocol_extensions: Option<MBMSSessionUpdateFailureProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct MBMSSessionUpdateResponse {
-    pub protocol_i_es: MBMSSessionUpdateResponseprotocolIEs,
+    pub protocol_i_es: MBMSSessionUpdateResponseProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<MBMSSessionUpdateResponseprotocolExtensions>,
+    pub protocol_extensions: Option<MBMSSessionUpdateResponseProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct MBMSSynchronisationInformation {
-    pub m_bmshc_indicator: MBMSHCIndicator,
-    pub i_p_multicast_address: IPMulticastAddress,
-    pub g_tpdlteid: GTP_TEI,
+    pub mbmshc_indicator: MBMSHCIndicator,
+    pub ip_multicast_address: IPMulticastAddress,
+    pub gtpdlteid: GTP_TEI,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<MBMSSynchronisationInformationiE_Extensions>,
+    pub ie_extensions: Option<MBMSSynchronisationInformationIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct MBMSUELinkingRequest {
-    pub protocol_i_es: MBMSUELinkingRequestprotocolIEs,
+    pub protocol_i_es: MBMSUELinkingRequestProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<MBMSUELinkingRequestprotocolExtensions>,
+    pub protocol_extensions: Option<MBMSUELinkingRequestProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct MBMSUELinkingResponse {
-    pub protocol_i_es: MBMSUELinkingResponseprotocolIEs,
+    pub protocol_i_es: MBMSUELinkingResponseProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<MBMSUELinkingResponseprotocolExtensions>,
+    pub protocol_extensions: Option<MBMSUELinkingResponseProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1969,7 +1969,7 @@ pub struct MDT_Configuration {
     pub mdt_area_scope: MDTAreaScope,
     pub mdt_mode: MDTMode,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<MDT_ConfigurationiE_Extensions>,
+    pub ie_extensions: Option<MDT_ConfigurationIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -1987,22 +1987,22 @@ pub struct MDT_Report_Parameters {
 #[asn(type = "CHOICE", lb = "0", ub = "3", extensible = true)]
 pub enum MDTAreaScope {
     #[asn(key = 0, extended = false)]
-    cellbased(CellBased),
+    Cellbased(CellBased),
     #[asn(key = 1, extended = false)]
-    labased(LABased),
+    Labased(LABased),
     #[asn(key = 2, extended = false)]
-    rabased(RABased),
+    Rabased(RABased),
     #[asn(key = 3, extended = false)]
-    plmn_area_based(NULL_45),
+    Plmn_area_based(NULL_45),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = true)]
 pub enum MDTMode {
     #[asn(key = 0, extended = false)]
-    immediateMDT(ImmediateMDT),
+    ImmediateMDT(ImmediateMDT),
     #[asn(key = 1, extended = false)]
-    loggedMDT(LoggedMDT),
+    LoggedMDT(LoggedMDT),
 }
 
 #[derive(Debug, AperCodec)]
@@ -2056,7 +2056,7 @@ pub struct MeasurementsToActivate(BitVec<Msb0, u8>);
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct MessageStructure(Vec<MessageStructure_Item>);
+pub struct MessageStructure(Vec<MessageStructure_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING")]
@@ -2100,7 +2100,7 @@ impl NonSearchingIndication {
 pub struct NotEmptyRAListofIdleModeUEs {
     pub r_aof_idle_mode_u_es: RAofIdleModeUEs,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<NotEmptyRAListofIdleModeUEsiE_Extensions>,
+    pub ie_extensions: Option<NotEmptyRAListofIdleModeUEsIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -2130,7 +2130,7 @@ pub struct Offload_RAB_Parameters {
     pub access_point_name: Offload_RAB_Parameters_APN,
     pub charging_characteristics: Offload_RAB_Parameters_ChargingCharacteristics,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<Offload_RAB_ParametersiE_Extensions>,
+    pub ie_extensions: Option<Offload_RAB_ParametersIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -2163,15 +2163,15 @@ pub struct Outcome {
     #[asn(key_field = true)]
     pub procedure_code: ProcedureCode,
     pub criticality: Criticality,
-    pub value: Outcomevalue,
+    pub value: OutcomeValue,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct Overload {
-    pub protocol_i_es: OverloadprotocolIEs,
+    pub protocol_i_es: OverloadProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<OverloadprotocolExtensions>,
+    pub protocol_extensions: Option<OverloadProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -2213,7 +2213,7 @@ pub struct PDUType14FrameSequenceNumber(u8);
 pub struct PLMNBased {
     pub plmn_list: PLMNList,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<PLMNBasediE_Extensions>,
+    pub ie_extensions: Option<PLMNBasedIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -2224,23 +2224,23 @@ pub type PLMNidentity = TBCD_STRING;
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "32")]
-pub struct PLMNs_in_shared_network(Vec<PLMNs_in_shared_network_Item>);
+pub struct PLMNs_in_shared_network(Vec<PLMNs_in_shared_network_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct Paging {
-    pub protocol_i_es: PagingprotocolIEs,
+    pub protocol_i_es: PagingProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<PagingprotocolExtensions>,
+    pub protocol_extensions: Option<PagingProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = true)]
 pub enum PagingAreaID {
     #[asn(key = 0, extended = false)]
-    lAI(LAI),
+    LAI(LAI),
     #[asn(key = 1, extended = false)]
-    rAI(RAI),
+    RAI(RAI),
 }
 
 #[derive(Debug, AperCodec)]
@@ -2260,7 +2260,7 @@ pub struct PeriodicLocationInfo {
     pub reporting_amount: INTEGER_46,
     pub reporting_interval: INTEGER_47,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<PeriodicLocationInfoiE_Extensions>,
+    pub ie_extensions: Option<PeriodicLocationInfoIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -2275,7 +2275,7 @@ impl PeriodicReportingIndicator {
 #[asn(type = "CHOICE", lb = "0", ub = "0", extensible = true)]
 pub enum PermanentNAS_UE_ID {
     #[asn(key = 0, extended = false)]
-    iMSI(IMSI),
+    IMSI(IMSI),
 }
 
 #[derive(Debug, AperCodec)]
@@ -2297,7 +2297,7 @@ pub struct PositionData {
     #[asn(optional_idx = 0)]
     pub positioning_data_set: Option<PositioningDataSet>,
     #[asn(optional_idx = 1)]
-    pub i_e_extensions: Option<PositionDataiE_Extensions>,
+    pub ie_extensions: Option<PositionDataIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -2369,15 +2369,15 @@ pub struct PriorityLevel(u8);
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = false)]
 pub enum PrivateIE_ID {
     #[asn(key = 0, extended = false)]
-    local(INTEGER_48),
+    Local(INTEGER_48),
     #[asn(key = 1, extended = false)]
-    global(OBJECT_IDENTIFIER_49),
+    Global(OBJECT_IDENTIFIER_49),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true)]
 pub struct PrivateMessage {
-    pub private_i_es: PrivateMessageprivateIEs,
+    pub private_i_es: PrivateMessagePrivateIEs,
 }
 
 #[derive(Debug, AperCodec)]
@@ -2396,7 +2396,7 @@ pub struct ProtocolIE_ID(u16);
 #[asn(type = "CHOICE", lb = "0", ub = "0", extensible = true)]
 pub enum ProvidedData {
     #[asn(key = 0, extended = false)]
-    shared_network_information(Shared_Network_Information),
+    Shared_network_information(Shared_Network_Information),
 }
 
 #[derive(Debug, AperCodec)]
@@ -2410,17 +2410,17 @@ impl QueuingAllowed {
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RAB_AssignmentRequest {
-    pub protocol_i_es: RAB_AssignmentRequestprotocolIEs,
+    pub protocol_i_es: RAB_AssignmentRequestProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<RAB_AssignmentRequestprotocolExtensions>,
+    pub protocol_extensions: Option<RAB_AssignmentRequestProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RAB_AssignmentResponse {
-    pub protocol_i_es: RAB_AssignmentResponseprotocolIEs,
+    pub protocol_i_es: RAB_AssignmentResponseProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<RAB_AssignmentResponseprotocolExtensions>,
+    pub protocol_extensions: Option<RAB_AssignmentResponseProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -2440,12 +2440,12 @@ impl RAB_AsymmetryIndicator {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_ContextFailedtoTransferList(Vec<RAB_ContextFailedtoTransferList_Item>);
+pub struct RAB_ContextFailedtoTransferList(Vec<RAB_ContextFailedtoTransferList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 5)]
 pub struct RAB_ContextItem {
-    pub r_ab_id: RAB_ID,
+    pub rab_id: RAB_ID,
     #[asn(optional_idx = 0)]
     pub dl_gtp_pdu_sequence_number: Option<DL_GTP_PDU_SequenceNumber>,
     #[asn(optional_idx = 1)]
@@ -2455,13 +2455,13 @@ pub struct RAB_ContextItem {
     #[asn(optional_idx = 3)]
     pub ul_n_pdu_sequence_number: Option<UL_N_PDU_SequenceNumber>,
     #[asn(optional_idx = 4)]
-    pub i_e_extensions: Option<RAB_ContextItemiE_Extensions>,
+    pub ie_extensions: Option<RAB_ContextItemIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 5)]
 pub struct RAB_ContextItem_RANAP_RelocInf {
-    pub r_ab_id: RAB_ID,
+    pub rab_id: RAB_ID,
     #[asn(optional_idx = 0)]
     pub dl_gtp_pdu_sequence_number: Option<DL_GTP_PDU_SequenceNumber>,
     #[asn(optional_idx = 1)]
@@ -2471,7 +2471,7 @@ pub struct RAB_ContextItem_RANAP_RelocInf {
     #[asn(optional_idx = 3)]
     pub ul_n_pdu_sequence_number: Option<UL_N_PDU_SequenceNumber>,
     #[asn(optional_idx = 4)]
-    pub i_e_extensions: Option<RAB_ContextItem_RANAP_RelocInfiE_Extensions>,
+    pub ie_extensions: Option<RAB_ContextItem_RANAP_RelocInfIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -2481,7 +2481,7 @@ pub struct RAB_ContextItem_RANAP_RelocInf {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_ContextList(Vec<RAB_ContextList_Item>);
+pub struct RAB_ContextList(Vec<RAB_ContextList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -2490,24 +2490,24 @@ pub struct RAB_ContextList(Vec<RAB_ContextList_Item>);
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_ContextList_RANAP_RelocInf(Vec<RAB_ContextList_RANAP_RelocInf_Item>);
+pub struct RAB_ContextList_RANAP_RelocInf(Vec<RAB_ContextList_RANAP_RelocInf_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RAB_DataForwardingItem {
-    pub r_ab_id: RAB_ID,
+    pub rab_id: RAB_ID,
     pub transport_layer_address: TransportLayerAddress,
     pub iu_transport_association: IuTransportAssociation,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<RAB_DataForwardingItemiE_Extensions>,
+    pub ie_extensions: Option<RAB_DataForwardingItemIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RAB_DataForwardingItem_SRNS_CtxReq {
-    pub r_ab_id: RAB_ID,
+    pub rab_id: RAB_ID,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<RAB_DataForwardingItem_SRNS_CtxReqiE_Extensions>,
+    pub ie_extensions: Option<RAB_DataForwardingItem_SRNS_CtxReqIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -2517,7 +2517,7 @@ pub struct RAB_DataForwardingItem_SRNS_CtxReq {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_DataForwardingList(Vec<RAB_DataForwardingList_Item>);
+pub struct RAB_DataForwardingList(Vec<RAB_DataForwardingList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -2526,16 +2526,16 @@ pub struct RAB_DataForwardingList(Vec<RAB_DataForwardingList_Item>);
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_DataForwardingList_SRNS_CtxReq(Vec<RAB_DataForwardingList_SRNS_CtxReq_Item>);
+pub struct RAB_DataForwardingList_SRNS_CtxReq(Vec<RAB_DataForwardingList_SRNS_CtxReq_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 2)]
 pub struct RAB_DataVolumeReportItem {
-    pub r_ab_id: RAB_ID,
+    pub rab_id: RAB_ID,
     #[asn(optional_idx = 0)]
     pub dl_unsuccessfully_transmitted_data_volume: Option<DataVolumeList>,
     #[asn(optional_idx = 1)]
-    pub i_e_extensions: Option<RAB_DataVolumeReportItemiE_Extensions>,
+    pub ie_extensions: Option<RAB_DataVolumeReportItemIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -2545,14 +2545,14 @@ pub struct RAB_DataVolumeReportItem {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_DataVolumeReportList(Vec<RAB_DataVolumeReportList_Item>);
+pub struct RAB_DataVolumeReportList(Vec<RAB_DataVolumeReportList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RAB_DataVolumeReportRequestItem {
-    pub r_ab_id: RAB_ID,
+    pub rab_id: RAB_ID,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<RAB_DataVolumeReportRequestItemiE_Extensions>,
+    pub ie_extensions: Option<RAB_DataVolumeReportRequestItemIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -2562,25 +2562,25 @@ pub struct RAB_DataVolumeReportRequestItem {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_DataVolumeReportRequestList(Vec<RAB_DataVolumeReportRequestList_Item>);
+pub struct RAB_DataVolumeReportRequestList(Vec<RAB_DataVolumeReportRequestList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RAB_FailedItem {
-    pub r_ab_id: RAB_ID,
+    pub rab_id: RAB_ID,
     pub cause: Cause,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<RAB_FailedItemiE_Extensions>,
+    pub ie_extensions: Option<RAB_FailedItemIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RAB_FailedItem_EnhRelocInfoRes {
-    pub c_n_domain_indicator: CN_DomainIndicator,
-    pub r_ab_id: RAB_ID,
+    pub cn_domain_indicator: CN_DomainIndicator,
+    pub rab_id: RAB_ID,
     pub cause: Cause,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<RAB_FailedItem_EnhRelocInfoResiE_Extensions>,
+    pub ie_extensions: Option<RAB_FailedItem_EnhRelocInfoResIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -2590,7 +2590,7 @@ pub struct RAB_FailedItem_EnhRelocInfoRes {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_FailedList(Vec<RAB_FailedList_Item>);
+pub struct RAB_FailedList(Vec<RAB_FailedList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -2599,7 +2599,7 @@ pub struct RAB_FailedList(Vec<RAB_FailedList_Item>);
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_FailedList_EnhRelocInfoRes(Vec<RAB_FailedList_EnhRelocInfoRes_Item>);
+pub struct RAB_FailedList_EnhRelocInfoRes(Vec<RAB_FailedList_EnhRelocInfoRes_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -2608,7 +2608,7 @@ pub struct RAB_FailedList_EnhRelocInfoRes(Vec<RAB_FailedList_EnhRelocInfoRes_Ite
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_FailedtoReportList(Vec<RAB_FailedtoReportList_Item>);
+pub struct RAB_FailedtoReportList(Vec<RAB_FailedtoReportList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "8", sz_ub = "8")]
@@ -2617,10 +2617,10 @@ pub struct RAB_ID(BitVec<Msb0, u8>);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RAB_ModifyItem {
-    pub r_ab_id: RAB_ID,
+    pub rab_id: RAB_ID,
     pub requested_rab_parameter_values: Requested_RAB_Parameter_Values,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<RAB_ModifyItemiE_Extensions>,
+    pub ie_extensions: Option<RAB_ModifyItemIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -2630,14 +2630,14 @@ pub struct RAB_ModifyItem {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_ModifyList(Vec<RAB_ModifyList_Item>);
+pub struct RAB_ModifyList(Vec<RAB_ModifyList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RAB_ModifyRequest {
-    pub protocol_i_es: RAB_ModifyRequestprotocolIEs,
+    pub protocol_i_es: RAB_ModifyRequestProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<RAB_ModifyRequestprotocolExtensions>,
+    pub protocol_extensions: Option<RAB_ModifyRequestProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -2660,13 +2660,13 @@ pub struct RAB_Parameter_MaxBitrateList(Vec<MaxBitrate>);
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 7)]
 pub struct RAB_Parameters {
     pub traffic_class: TrafficClass,
-    pub r_ab_asymmetry_indicator: RAB_AsymmetryIndicator,
+    pub rab_asymmetry_indicator: RAB_AsymmetryIndicator,
     pub max_bitrate: RAB_Parameter_MaxBitrateList,
     #[asn(optional_idx = 0)]
     pub guaranteed_bit_rate: Option<RAB_Parameter_GuaranteedBitrateList>,
     pub delivery_order: DeliveryOrder,
     pub max_sdu_size: MaxSDU_Size,
-    pub s_du_parameters: SDU_Parameters,
+    pub sdu_parameters: SDU_Parameters,
     #[asn(optional_idx = 1)]
     pub transfer_delay: Option<TransferDelay>,
     #[asn(optional_idx = 2)]
@@ -2678,15 +2678,15 @@ pub struct RAB_Parameters {
     #[asn(optional_idx = 5)]
     pub relocation_requirement: Option<RelocationRequirement>,
     #[asn(optional_idx = 6)]
-    pub i_e_extensions: Option<RAB_ParametersiE_Extensions>,
+    pub ie_extensions: Option<RAB_ParametersIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RAB_QueuedItem {
-    pub r_ab_id: RAB_ID,
+    pub rab_id: RAB_ID,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<RAB_QueuedItemiE_Extensions>,
+    pub ie_extensions: Option<RAB_QueuedItemIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -2696,17 +2696,17 @@ pub struct RAB_QueuedItem {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_QueuedList(Vec<RAB_QueuedList_Item>);
+pub struct RAB_QueuedList(Vec<RAB_QueuedList_Entry>);
 
 pub type RAB_ReleaseFailedList = RAB_FailedList;
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RAB_ReleaseItem {
-    pub r_ab_id: RAB_ID,
+    pub rab_id: RAB_ID,
     pub cause: Cause,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<RAB_ReleaseItemiE_Extensions>,
+    pub ie_extensions: Option<RAB_ReleaseItemIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -2716,40 +2716,40 @@ pub struct RAB_ReleaseItem {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_ReleaseList(Vec<RAB_ReleaseList_Item>);
+pub struct RAB_ReleaseList(Vec<RAB_ReleaseList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RAB_ReleaseRequest {
-    pub protocol_i_es: RAB_ReleaseRequestprotocolIEs,
+    pub protocol_i_es: RAB_ReleaseRequestProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<RAB_ReleaseRequestprotocolExtensions>,
+    pub protocol_extensions: Option<RAB_ReleaseRequestProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 4)]
 pub struct RAB_ReleasedItem {
-    pub r_ab_id: RAB_ID,
+    pub rab_id: RAB_ID,
     #[asn(optional_idx = 0)]
     pub dl_data_volumes: Option<DataVolumeList>,
     #[asn(optional_idx = 1)]
-    pub d_l_gtp_pdu_sequence_number: Option<DL_GTP_PDU_SequenceNumber>,
+    pub dl_gtp_pdu_sequence_number: Option<DL_GTP_PDU_SequenceNumber>,
     #[asn(optional_idx = 2)]
-    pub u_l_gtp_pdu_sequence_number: Option<UL_GTP_PDU_SequenceNumber>,
+    pub ul_gtp_pdu_sequence_number: Option<UL_GTP_PDU_SequenceNumber>,
     #[asn(optional_idx = 3)]
-    pub i_e_extensions: Option<RAB_ReleasedItemiE_Extensions>,
+    pub ie_extensions: Option<RAB_ReleasedItemIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 3)]
 pub struct RAB_ReleasedItem_IuRelComp {
-    pub r_ab_id: RAB_ID,
+    pub rab_id: RAB_ID,
     #[asn(optional_idx = 0)]
-    pub d_l_gtp_pdu_sequence_number: Option<DL_GTP_PDU_SequenceNumber>,
+    pub dl_gtp_pdu_sequence_number: Option<DL_GTP_PDU_SequenceNumber>,
     #[asn(optional_idx = 1)]
-    pub u_l_gtp_pdu_sequence_number: Option<UL_GTP_PDU_SequenceNumber>,
+    pub ul_gtp_pdu_sequence_number: Option<UL_GTP_PDU_SequenceNumber>,
     #[asn(optional_idx = 2)]
-    pub i_e_extensions: Option<RAB_ReleasedItem_IuRelCompiE_Extensions>,
+    pub ie_extensions: Option<RAB_ReleasedItem_IuRelCompIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -2759,7 +2759,7 @@ pub struct RAB_ReleasedItem_IuRelComp {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_ReleasedList(Vec<RAB_ReleasedList_Item>);
+pub struct RAB_ReleasedList(Vec<RAB_ReleasedList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -2768,14 +2768,14 @@ pub struct RAB_ReleasedList(Vec<RAB_ReleasedList_Item>);
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_ReleasedList_IuRelComp(Vec<RAB_ReleasedList_IuRelComp_Item>);
+pub struct RAB_ReleasedList_IuRelComp(Vec<RAB_ReleasedList_IuRelComp_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RAB_RelocationReleaseItem {
-    pub r_ab_id: RAB_ID,
+    pub rab_id: RAB_ID,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<RAB_RelocationReleaseItemiE_Extensions>,
+    pub ie_extensions: Option<RAB_RelocationReleaseItemIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -2785,18 +2785,18 @@ pub struct RAB_RelocationReleaseItem {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_RelocationReleaseList(Vec<RAB_RelocationReleaseList_Item>);
+pub struct RAB_RelocationReleaseList(Vec<RAB_RelocationReleaseList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 7)]
 pub struct RAB_SetupItem_EnhRelocInfoReq {
-    pub r_ab_id: RAB_ID,
-    pub c_n_domain_indicator: CN_DomainIndicator,
-    pub r_ab_parameters: RAB_Parameters,
+    pub rab_id: RAB_ID,
+    pub cn_domain_indicator: CN_DomainIndicator,
+    pub rab_parameters: RAB_Parameters,
     #[asn(optional_idx = 0)]
     pub data_volume_reporting_indication: Option<DataVolumeReportingIndication>,
     #[asn(optional_idx = 1)]
-    pub p_dp_type_information: Option<PDP_TypeInformation>,
+    pub pdp_type_information: Option<PDP_TypeInformation>,
     pub user_plane_information: UserPlaneInformation,
     #[asn(optional_idx = 2)]
     pub data_forwarding_information: Option<TNLInformationEnhRelInfoReq>,
@@ -2807,26 +2807,26 @@ pub struct RAB_SetupItem_EnhRelocInfoReq {
     #[asn(optional_idx = 5)]
     pub alt_rab_parameters: Option<Alt_RAB_Parameters>,
     #[asn(optional_idx = 6)]
-    pub i_e_extensions: Option<RAB_SetupItem_EnhRelocInfoReqiE_Extensions>,
+    pub ie_extensions: Option<RAB_SetupItem_EnhRelocInfoReqIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 3)]
 pub struct RAB_SetupItem_EnhRelocInfoRes {
-    pub c_n_domain_indicator: CN_DomainIndicator,
-    pub r_ab_id: RAB_ID,
+    pub cn_domain_indicator: CN_DomainIndicator,
+    pub rab_id: RAB_ID,
     #[asn(optional_idx = 0)]
     pub data_forwarding_information: Option<TNLInformationEnhRelInfoRes>,
     #[asn(optional_idx = 1)]
     pub ass_rab_parameters: Option<Ass_RAB_Parameters>,
     #[asn(optional_idx = 2)]
-    pub i_e_extensions: Option<RAB_SetupItem_EnhRelocInfoResiE_Extensions>,
+    pub ie_extensions: Option<RAB_SetupItem_EnhRelocInfoResIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 4)]
 pub struct RAB_SetupItem_EnhancedRelocCompleteReq {
-    pub r_ab_id: RAB_ID,
+    pub rab_id: RAB_ID,
     #[asn(optional_idx = 0)]
     pub transport_layer_address_req1: Option<TransportLayerAddress>,
     #[asn(optional_idx = 1)]
@@ -2834,15 +2834,15 @@ pub struct RAB_SetupItem_EnhancedRelocCompleteReq {
     #[asn(optional_idx = 2)]
     pub ass_rab_parameters: Option<Ass_RAB_Parameters>,
     #[asn(optional_idx = 3)]
-    pub i_e_extensions: Option<RAB_SetupItem_EnhancedRelocCompleteReqiE_Extensions>,
+    pub ie_extensions: Option<RAB_SetupItem_EnhancedRelocCompleteReqIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 5)]
 pub struct RAB_SetupItem_EnhancedRelocCompleteRes {
-    pub r_ab_id: RAB_ID,
+    pub rab_id: RAB_ID,
     #[asn(optional_idx = 0)]
-    pub r_ab_parameters: Option<RAB_Parameters>,
+    pub rab_parameters: Option<RAB_Parameters>,
     pub user_plane_information: UserPlaneInformation,
     #[asn(optional_idx = 1)]
     pub transport_layer_address_res1: Option<TransportLayerAddress>,
@@ -2851,39 +2851,39 @@ pub struct RAB_SetupItem_EnhancedRelocCompleteRes {
     #[asn(optional_idx = 3)]
     pub rab2be_released_list: Option<RAB_ToBeReleasedList_EnhancedRelocCompleteRes>,
     #[asn(optional_idx = 4)]
-    pub i_e_extensions: Option<RAB_SetupItem_EnhancedRelocCompleteResiE_Extensions>,
+    pub ie_extensions: Option<RAB_SetupItem_EnhancedRelocCompleteResIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 5)]
 pub struct RAB_SetupItem_RelocReq {
-    pub r_ab_id: RAB_ID,
+    pub rab_id: RAB_ID,
     #[asn(optional_idx = 0)]
-    pub n_as_synchronisation_indicator: Option<NAS_SynchronisationIndicator>,
-    pub r_ab_parameters: RAB_Parameters,
+    pub nas_synchronisation_indicator: Option<NAS_SynchronisationIndicator>,
+    pub rab_parameters: RAB_Parameters,
     #[asn(optional_idx = 1)]
     pub data_volume_reporting_indication: Option<DataVolumeReportingIndication>,
     #[asn(optional_idx = 2)]
-    pub p_dp_type_information: Option<PDP_TypeInformation>,
+    pub pdp_type_information: Option<PDP_TypeInformation>,
     pub user_plane_information: UserPlaneInformation,
     pub transport_layer_address: TransportLayerAddress,
     pub iu_transport_association: IuTransportAssociation,
     #[asn(optional_idx = 3)]
     pub service_handover: Option<Service_Handover>,
     #[asn(optional_idx = 4)]
-    pub i_e_extensions: Option<RAB_SetupItem_RelocReqiE_Extensions>,
+    pub ie_extensions: Option<RAB_SetupItem_RelocReqIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 3)]
 pub struct RAB_SetupItem_RelocReqAck {
-    pub r_ab_id: RAB_ID,
+    pub rab_id: RAB_ID,
     #[asn(optional_idx = 0)]
     pub transport_layer_address: Option<TransportLayerAddress>,
     #[asn(optional_idx = 1)]
     pub iu_transport_association: Option<IuTransportAssociation>,
     #[asn(optional_idx = 2)]
-    pub i_e_extensions: Option<RAB_SetupItem_RelocReqAckiE_Extensions>,
+    pub ie_extensions: Option<RAB_SetupItem_RelocReqAckIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -2893,7 +2893,7 @@ pub struct RAB_SetupItem_RelocReqAck {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_SetupList_EnhRelocInfoReq(Vec<RAB_SetupList_EnhRelocInfoReq_Item>);
+pub struct RAB_SetupList_EnhRelocInfoReq(Vec<RAB_SetupList_EnhRelocInfoReq_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -2902,7 +2902,7 @@ pub struct RAB_SetupList_EnhRelocInfoReq(Vec<RAB_SetupList_EnhRelocInfoReq_Item>
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_SetupList_EnhRelocInfoRes(Vec<RAB_SetupList_EnhRelocInfoRes_Item>);
+pub struct RAB_SetupList_EnhRelocInfoRes(Vec<RAB_SetupList_EnhRelocInfoRes_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -2911,7 +2911,9 @@ pub struct RAB_SetupList_EnhRelocInfoRes(Vec<RAB_SetupList_EnhRelocInfoRes_Item>
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_SetupList_EnhancedRelocCompleteReq(Vec<RAB_SetupList_EnhancedRelocCompleteReq_Item>);
+pub struct RAB_SetupList_EnhancedRelocCompleteReq(
+    Vec<RAB_SetupList_EnhancedRelocCompleteReq_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -2920,7 +2922,9 @@ pub struct RAB_SetupList_EnhancedRelocCompleteReq(Vec<RAB_SetupList_EnhancedRelo
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_SetupList_EnhancedRelocCompleteRes(Vec<RAB_SetupList_EnhancedRelocCompleteRes_Item>);
+pub struct RAB_SetupList_EnhancedRelocCompleteRes(
+    Vec<RAB_SetupList_EnhancedRelocCompleteRes_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -2929,7 +2933,7 @@ pub struct RAB_SetupList_EnhancedRelocCompleteRes(Vec<RAB_SetupList_EnhancedRelo
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_SetupList_RelocReq(Vec<RAB_SetupList_RelocReq_Item>);
+pub struct RAB_SetupList_RelocReq(Vec<RAB_SetupList_RelocReq_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -2938,12 +2942,12 @@ pub struct RAB_SetupList_RelocReq(Vec<RAB_SetupList_RelocReq_Item>);
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_SetupList_RelocReqAck(Vec<RAB_SetupList_RelocReqAck_Item>);
+pub struct RAB_SetupList_RelocReqAck(Vec<RAB_SetupList_RelocReqAck_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 4)]
 pub struct RAB_SetupOrModifiedItem {
-    pub r_ab_id: RAB_ID,
+    pub rab_id: RAB_ID,
     #[asn(optional_idx = 0)]
     pub transport_layer_address: Option<TransportLayerAddress>,
     #[asn(optional_idx = 1)]
@@ -2951,7 +2955,7 @@ pub struct RAB_SetupOrModifiedItem {
     #[asn(optional_idx = 2)]
     pub dl_data_volumes: Option<DataVolumeList>,
     #[asn(optional_idx = 3)]
-    pub i_e_extensions: Option<RAB_SetupOrModifiedItemiE_Extensions>,
+    pub ie_extensions: Option<RAB_SetupOrModifiedItemIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -2961,16 +2965,16 @@ pub struct RAB_SetupOrModifiedItem {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_SetupOrModifiedList(Vec<RAB_SetupOrModifiedList_Item>);
+pub struct RAB_SetupOrModifiedList(Vec<RAB_SetupOrModifiedList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 6)]
 pub struct RAB_SetupOrModifyItemFirst {
-    pub r_ab_id: RAB_ID,
+    pub rab_id: RAB_ID,
     #[asn(optional_idx = 0)]
-    pub n_as_synchronisation_indicator: Option<NAS_SynchronisationIndicator>,
+    pub nas_synchronisation_indicator: Option<NAS_SynchronisationIndicator>,
     #[asn(optional_idx = 1)]
-    pub r_ab_parameters: Option<RAB_Parameters>,
+    pub rab_parameters: Option<RAB_Parameters>,
     #[asn(optional_idx = 2)]
     pub user_plane_information: Option<UserPlaneInformation>,
     #[asn(optional_idx = 3)]
@@ -2978,14 +2982,14 @@ pub struct RAB_SetupOrModifyItemFirst {
     #[asn(optional_idx = 4)]
     pub service_handover: Option<Service_Handover>,
     #[asn(optional_idx = 5)]
-    pub i_e_extensions: Option<RAB_SetupOrModifyItemFirstiE_Extensions>,
+    pub ie_extensions: Option<RAB_SetupOrModifyItemFirstIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 7)]
 pub struct RAB_SetupOrModifyItemSecond {
     #[asn(optional_idx = 0)]
-    pub p_dp_type_information: Option<PDP_TypeInformation>,
+    pub pdp_type_information: Option<PDP_TypeInformation>,
     #[asn(optional_idx = 1)]
     pub data_volume_reporting_indication: Option<DataVolumeReportingIndication>,
     #[asn(optional_idx = 2)]
@@ -2997,7 +3001,7 @@ pub struct RAB_SetupOrModifyItemSecond {
     #[asn(optional_idx = 5)]
     pub ul_n_pdu_sequence_number: Option<UL_N_PDU_SequenceNumber>,
     #[asn(optional_idx = 6)]
-    pub i_e_extensions: Option<RAB_SetupOrModifyItemSecondiE_Extensions>,
+    pub ie_extensions: Option<RAB_SetupOrModifyItemSecondIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -3007,7 +3011,7 @@ pub struct RAB_SetupOrModifyItemSecond {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_SetupOrModifyList(Vec<RAB_SetupOrModifyList_Item>);
+pub struct RAB_SetupOrModifyList(Vec<RAB_SetupOrModifyList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "16000000")]
@@ -3016,10 +3020,10 @@ pub struct RAB_SubflowCombinationBitRate(u32);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RAB_ToBeReleasedItem_EnhancedRelocCompleteRes {
-    pub r_ab_id: RAB_ID,
+    pub rab_id: RAB_ID,
     pub cause: Cause,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<RAB_ToBeReleasedItem_EnhancedRelocCompleteResiE_Extensions>,
+    pub ie_extensions: Option<RAB_ToBeReleasedItem_EnhancedRelocCompleteResIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -3030,7 +3034,7 @@ pub struct RAB_ToBeReleasedItem_EnhancedRelocCompleteRes {
     sz_ub = "256"
 )]
 pub struct RAB_ToBeReleasedList_EnhancedRelocCompleteRes(
-    Vec<RAB_ToBeReleasedList_EnhancedRelocCompleteRes_Item>,
+    Vec<RAB_ToBeReleasedList_EnhancedRelocCompleteRes_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -3045,15 +3049,15 @@ pub struct RAB_TrCH_Mapping(Vec<RAB_TrCH_MappingItem>);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RAB_TrCH_MappingItem {
-    pub r_ab_id: RAB_ID,
+    pub rab_id: RAB_ID,
     pub tr_ch_id_list: TrCH_ID_List,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<RAB_TrCH_MappingItemiE_Extensions>,
+    pub ie_extensions: Option<RAB_TrCH_MappingItemIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "2")]
-pub struct RABDataVolumeReport(Vec<RABDataVolumeReport_Item>);
+pub struct RABDataVolumeReport(Vec<RABDataVolumeReport_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -3062,32 +3066,32 @@ pub struct RABDataVolumeReport(Vec<RABDataVolumeReport_Item>);
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RABParametersList(Vec<RABParametersList_Item>);
+pub struct RABParametersList(Vec<RABParametersList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RABased {
     pub rai_list: RAI_List,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<RABasediE_Extensions>,
+    pub ie_extensions: Option<RABasedIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RABs_ContextFailedtoTransferItem {
-    pub r_ab_id: RAB_ID,
+    pub rab_id: RAB_ID,
     pub cause: Cause,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<RABs_ContextFailedtoTransferItemiE_Extensions>,
+    pub ie_extensions: Option<RABs_ContextFailedtoTransferItemIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RABs_failed_to_reportItem {
-    pub r_ab_id: RAB_ID,
+    pub rab_id: RAB_ID,
     pub cause: Cause,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<RABs_failed_to_reportItemiE_Extensions>,
+    pub ie_extensions: Option<RABs_failed_to_reportItemIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -3097,10 +3101,10 @@ pub struct RAC(Vec<u8>);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RAI {
-    pub l_ai: LAI,
-    pub r_ac: RAC,
+    pub lai: LAI,
+    pub rac: RAC,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<RAIiE_Extensions>,
+    pub ie_extensions: Option<RAIIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -3111,9 +3115,9 @@ pub struct RAI_List(Vec<RAI>);
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = true)]
 pub enum RAListofIdleModeUEs {
     #[asn(key = 0, extended = false)]
-    notEmptyRAListofIdleModeUEs(NotEmptyRAListofIdleModeUEs),
+    NotEmptyRAListofIdleModeUEs(NotEmptyRAListofIdleModeUEs),
     #[asn(key = 1, extended = false)]
-    emptyFullRAListofIdleModeUEs(ENUMERATED_50),
+    EmptyFullRAListofIdleModeUEs(ENUMERATED_50),
 }
 
 #[derive(Debug, AperCodec)]
@@ -3128,38 +3132,38 @@ pub struct RAListwithNoIdleModeUEsAnyMore(Vec<RAC>);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RANAP_EnhancedRelocationInformationRequest {
-    pub protocol_i_es: RANAP_EnhancedRelocationInformationRequestprotocolIEs,
+    pub protocol_i_es: RANAP_EnhancedRelocationInformationRequestProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<RANAP_EnhancedRelocationInformationRequestprotocolExtensions>,
+    pub protocol_extensions: Option<RANAP_EnhancedRelocationInformationRequestProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RANAP_EnhancedRelocationInformationResponse {
-    pub protocol_i_es: RANAP_EnhancedRelocationInformationResponseprotocolIEs,
+    pub protocol_i_es: RANAP_EnhancedRelocationInformationResponseProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<RANAP_EnhancedRelocationInformationResponseprotocolExtensions>,
+    pub protocol_extensions: Option<RANAP_EnhancedRelocationInformationResponseProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "CHOICE", lb = "0", ub = "3", extensible = true)]
 pub enum RANAP_PDU {
     #[asn(key = 0, extended = false)]
-    initiatingMessage(InitiatingMessage),
+    InitiatingMessage(InitiatingMessage),
     #[asn(key = 1, extended = false)]
-    successfulOutcome(SuccessfulOutcome),
+    SuccessfulOutcome(SuccessfulOutcome),
     #[asn(key = 2, extended = false)]
-    unsuccessfulOutcome(UnsuccessfulOutcome),
+    UnsuccessfulOutcome(UnsuccessfulOutcome),
     #[asn(key = 3, extended = false)]
-    outcome(Outcome),
+    Outcome(Outcome),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RANAP_RelocationInformation {
-    pub protocol_i_es: RANAP_RelocationInformationprotocolIEs,
+    pub protocol_i_es: RANAP_RelocationInformationProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<RANAP_RelocationInformationprotocolExtensions>,
+    pub protocol_extensions: Option<RANAP_RelocationInformationProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -3182,11 +3186,11 @@ pub struct RAofIdleModeUEs(Vec<RAC>);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 2)]
 pub struct RIM_Transfer {
-    pub r_im_information: RIMInformation,
+    pub rim_information: RIMInformation,
     #[asn(optional_idx = 0)]
-    pub r_im_routing_address: Option<RIMRoutingAddress>,
+    pub rim_routing_address: Option<RIMRoutingAddress>,
     #[asn(optional_idx = 1)]
-    pub i_e_extensions: Option<RIM_TransferiE_Extensions>,
+    pub ie_extensions: Option<RIM_TransferIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -3197,11 +3201,11 @@ pub struct RIMInformation(Vec<u8>);
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = true)]
 pub enum RIMRoutingAddress {
     #[asn(key = 0, extended = false)]
-    targetRNC_ID(TargetRNC_ID),
+    TargetRNC_ID(TargetRNC_ID),
     #[asn(key = 1, extended = false)]
-    gERAN_Cell_ID(GERAN_Cell_ID),
+    GERAN_Cell_ID(GERAN_Cell_ID),
     #[asn(key = 0, extended = true)]
-    targeteNB_ID(TargetENB_ID),
+    TargeteNB_ID(TargetENB_ID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -3216,7 +3220,7 @@ pub struct RNCTraceInformation {
     #[asn(optional_idx = 0)]
     pub equipments_to_be_traced: Option<EquipmentsToBeTraced>,
     #[asn(optional_idx = 1)]
-    pub i_e_extensions: Option<RNCTraceInformationiE_Extensions>,
+    pub ie_extensions: Option<RNCTraceInformationIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -3231,7 +3235,7 @@ pub struct RNSAPRelocationParameters {
     #[asn(optional_idx = 3)]
     pub source_sai: Option<SAI>,
     #[asn(optional_idx = 4)]
-    pub i_e_extensions: Option<RNSAPRelocationParametersiE_Extensions>,
+    pub ie_extensions: Option<RNSAPRelocationParametersIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -3260,9 +3264,9 @@ impl RSRVCC_HO_Indication {
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RSRVCC_Information {
     pub nonce: BIT_STRING_54,
-    pub i_ms_information: OCTET_STRING_55,
+    pub ims_information: OCTET_STRING_55,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<RSRVCC_InformationiE_Extensions>,
+    pub ie_extensions: Option<RSRVCC_InformationIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -3302,7 +3306,7 @@ impl RedirectionCompleted {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RedirectionIndication(Vec<RedirectionIndication_Item>);
+pub struct RedirectionIndication(Vec<RedirectionIndication_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "5")]
@@ -3319,81 +3323,81 @@ impl RejectCauseValue {
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RelocationCancel {
-    pub protocol_i_es: RelocationCancelprotocolIEs,
+    pub protocol_i_es: RelocationCancelProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<RelocationCancelprotocolExtensions>,
+    pub protocol_extensions: Option<RelocationCancelProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RelocationCancelAcknowledge {
-    pub protocol_i_es: RelocationCancelAcknowledgeprotocolIEs,
+    pub protocol_i_es: RelocationCancelAcknowledgeProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<RelocationCancelAcknowledgeprotocolExtensions>,
+    pub protocol_extensions: Option<RelocationCancelAcknowledgeProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RelocationCommand {
-    pub protocol_i_es: RelocationCommandprotocolIEs,
+    pub protocol_i_es: RelocationCommandProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<RelocationCommandprotocolExtensions>,
+    pub protocol_extensions: Option<RelocationCommandProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RelocationComplete {
-    pub protocol_i_es: RelocationCompleteprotocolIEs,
+    pub protocol_i_es: RelocationCompleteProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<RelocationCompleteprotocolExtensions>,
+    pub protocol_extensions: Option<RelocationCompleteProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RelocationDetect {
-    pub protocol_i_es: RelocationDetectprotocolIEs,
+    pub protocol_i_es: RelocationDetectProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<RelocationDetectprotocolExtensions>,
+    pub protocol_extensions: Option<RelocationDetectProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RelocationFailure {
-    pub protocol_i_es: RelocationFailureprotocolIEs,
+    pub protocol_i_es: RelocationFailureProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<RelocationFailureprotocolExtensions>,
+    pub protocol_extensions: Option<RelocationFailureProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RelocationPreparationFailure {
-    pub protocol_i_es: RelocationPreparationFailureprotocolIEs,
+    pub protocol_i_es: RelocationPreparationFailureProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<RelocationPreparationFailureprotocolExtensions>,
+    pub protocol_extensions: Option<RelocationPreparationFailureProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RelocationRequest {
-    pub protocol_i_es: RelocationRequestprotocolIEs,
+    pub protocol_i_es: RelocationRequestProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<RelocationRequestprotocolExtensions>,
+    pub protocol_extensions: Option<RelocationRequestProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RelocationRequestAcknowledge {
-    pub protocol_i_es: RelocationRequestAcknowledgeprotocolIEs,
+    pub protocol_i_es: RelocationRequestAcknowledgeProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<RelocationRequestAcknowledgeprotocolExtensions>,
+    pub protocol_extensions: Option<RelocationRequestAcknowledgeProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RelocationRequired {
-    pub protocol_i_es: RelocationRequiredprotocolIEs,
+    pub protocol_i_es: RelocationRequiredProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<RelocationRequiredprotocolExtensions>,
+    pub protocol_extensions: Option<RelocationRequiredProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -3501,7 +3505,7 @@ pub struct Requested_RAB_Parameter_Values {
     #[asn(optional_idx = 1)]
     pub requested_guaranteed_bitrates: Option<Requested_RAB_Parameter_GuaranteedBitrateList>,
     #[asn(optional_idx = 2)]
-    pub i_e_extensions: Option<Requested_RAB_Parameter_ValuesiE_Extensions>,
+    pub ie_extensions: Option<Requested_RAB_Parameter_ValuesIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -3553,33 +3557,33 @@ pub struct RequestedMulticastServiceList(Vec<TMGI>);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct RerouteNASRequest {
-    pub protocol_i_es: RerouteNASRequestprotocolIEs,
+    pub protocol_i_es: RerouteNASRequestProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<RerouteNASRequestprotocolExtensions>,
+    pub protocol_extensions: Option<RerouteNASRequestProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct Reset {
-    pub protocol_i_es: ResetprotocolIEs,
+    pub protocol_i_es: ResetProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<ResetprotocolExtensions>,
+    pub protocol_extensions: Option<ResetProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct ResetAcknowledge {
-    pub protocol_i_es: ResetAcknowledgeprotocolIEs,
+    pub protocol_i_es: ResetAcknowledgeProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<ResetAcknowledgeprotocolExtensions>,
+    pub protocol_extensions: Option<ResetAcknowledgeProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct ResetResource {
-    pub protocol_i_es: ResetResourceprotocolIEs,
+    pub protocol_i_es: ResetResourceProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<ResetResourceprotocolExtensions>,
+    pub protocol_extensions: Option<ResetResourceProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -3587,7 +3591,7 @@ pub struct ResetResource {
 pub struct ResetResourceAckItem {
     pub iu_sig_con_id: IuSignallingConnectionIdentifier,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<ResetResourceAckItemiE_Extensions>,
+    pub ie_extensions: Option<ResetResourceAckItemIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -3597,14 +3601,14 @@ pub struct ResetResourceAckItem {
     sz_lb = "1",
     sz_ub = "250"
 )]
-pub struct ResetResourceAckList(Vec<ResetResourceAckList_Item>);
+pub struct ResetResourceAckList(Vec<ResetResourceAckList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct ResetResourceAcknowledge {
-    pub protocol_i_es: ResetResourceAcknowledgeprotocolIEs,
+    pub protocol_i_es: ResetResourceAcknowledgeProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<ResetResourceAcknowledgeprotocolExtensions>,
+    pub protocol_extensions: Option<ResetResourceAcknowledgeProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -3612,7 +3616,7 @@ pub struct ResetResourceAcknowledge {
 pub struct ResetResourceItem {
     pub iu_sig_con_id: IuSignallingConnectionIdentifier,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<ResetResourceItemiE_Extensions>,
+    pub ie_extensions: Option<ResetResourceItemIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -3622,7 +3626,7 @@ pub struct ResetResourceItem {
     sz_lb = "1",
     sz_ub = "250"
 )]
-pub struct ResetResourceList(Vec<ResetResourceList_Item>);
+pub struct ResetResourceList(Vec<ResetResourceList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 1)]
@@ -3630,7 +3634,7 @@ pub struct ResidualBitErrorRatio {
     pub mantissa: INTEGER_57,
     pub exponent: INTEGER_58,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<ResidualBitErrorRatioiE_Extensions>,
+    pub ie_extensions: Option<ResidualBitErrorRatioIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -3648,11 +3652,11 @@ pub struct SAC(Vec<u8>);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 1)]
 pub struct SAI {
-    pub p_lm_nidentity: PLMNidentity,
-    pub l_ac: LAC,
-    pub s_ac: SAC,
+    pub plm_nidentity: PLMNidentity,
+    pub lac: LAC,
+    pub sac: SAC,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<SAIiE_Extensions>,
+    pub ie_extensions: Option<SAIIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -3669,16 +3673,16 @@ pub struct SDU_ErrorRatio {
     pub mantissa: INTEGER_59,
     pub exponent: INTEGER_60,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<SDU_ErrorRatioiE_Extensions>,
+    pub ie_extensions: Option<SDU_ErrorRatioIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "64")]
-pub struct SDU_FormatInformationParameters(Vec<SDU_FormatInformationParameters_Item>);
+pub struct SDU_FormatInformationParameters(Vec<SDU_FormatInformationParameters_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "7")]
-pub struct SDU_Parameters(Vec<SDU_Parameters_Item>);
+pub struct SDU_Parameters(Vec<SDU_Parameters_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "2", sz_ub = "2")]
@@ -3688,9 +3692,9 @@ pub struct SGSN_Group_ID(Vec<u8>);
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = false)]
 pub enum SGSN_Group_Identity {
     #[asn(key = 0, extended = false)]
-    null_NRI(Null_NRI),
+    Null_NRI(Null_NRI),
     #[asn(key = 1, extended = false)]
-    sGSN_Group_ID(SGSN_Group_ID),
+    SGSN_Group_ID(SGSN_Group_ID),
 }
 
 #[derive(Debug, AperCodec)]
@@ -3698,7 +3702,7 @@ pub enum SGSN_Group_Identity {
 pub struct SNA_Access_Information {
     pub authorised_plm_ns: AuthorisedPLMNs,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<SNA_Access_InformationiE_Extensions>,
+    pub ie_extensions: Option<SNA_Access_InformationIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -3716,50 +3720,50 @@ pub struct SRB_TrCH_Mapping(Vec<SRB_TrCH_MappingItem>);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct SRB_TrCH_MappingItem {
-    pub s_rb_id: SRB_ID,
+    pub srb_id: SRB_ID,
     pub tr_ch_id: TrCH_ID,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<SRB_TrCH_MappingItemiE_Extensions>,
+    pub ie_extensions: Option<SRB_TrCH_MappingItemIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct SRNS_ContextRequest {
-    pub protocol_i_es: SRNS_ContextRequestprotocolIEs,
+    pub protocol_i_es: SRNS_ContextRequestProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<SRNS_ContextRequestprotocolExtensions>,
+    pub protocol_extensions: Option<SRNS_ContextRequestProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct SRNS_ContextResponse {
-    pub protocol_i_es: SRNS_ContextResponseprotocolIEs,
+    pub protocol_i_es: SRNS_ContextResponseProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<SRNS_ContextResponseprotocolExtensions>,
+    pub protocol_extensions: Option<SRNS_ContextResponseProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct SRNS_DataForwardCommand {
-    pub protocol_i_es: SRNS_DataForwardCommandprotocolIEs,
+    pub protocol_i_es: SRNS_DataForwardCommandProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<SRNS_DataForwardCommandprotocolExtensions>,
+    pub protocol_extensions: Option<SRNS_DataForwardCommandProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct SRVCC_CSKeysRequest {
-    pub protocol_i_es: SRVCC_CSKeysRequestprotocolIEs,
+    pub protocol_i_es: SRVCC_CSKeysRequestProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<SRVCC_CSKeysRequestprotocolExtensions>,
+    pub protocol_extensions: Option<SRVCC_CSKeysRequestProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct SRVCC_CSKeysResponse {
-    pub protocol_i_es: SRVCC_CSKeysResponseprotocolIEs,
+    pub protocol_i_es: SRVCC_CSKeysResponseProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<SRVCC_CSKeysResponseprotocolExtensions>,
+    pub protocol_extensions: Option<SRVCC_CSKeysResponseProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -3775,7 +3779,7 @@ impl SRVCC_HO_Indication {
 pub struct SRVCC_Information {
     pub nonce: BIT_STRING_61,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<SRVCC_InformationiE_Extensions>,
+    pub ie_extensions: Option<SRVCC_InformationIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -3795,25 +3799,25 @@ impl SRVCCSource {
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct SecurityModeCommand {
-    pub protocol_i_es: SecurityModeCommandprotocolIEs,
+    pub protocol_i_es: SecurityModeCommandProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<SecurityModeCommandprotocolExtensions>,
+    pub protocol_extensions: Option<SecurityModeCommandProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct SecurityModeComplete {
-    pub protocol_i_es: SecurityModeCompleteprotocolIEs,
+    pub protocol_i_es: SecurityModeCompleteProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<SecurityModeCompleteprotocolExtensions>,
+    pub protocol_extensions: Option<SecurityModeCompleteProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct SecurityModeReject {
-    pub protocol_i_es: SecurityModeRejectprotocolIEs,
+    pub protocol_i_es: SecurityModeRejectProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<SecurityModeRejectprotocolExtensions>,
+    pub protocol_extensions: Option<SecurityModeRejectProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -3847,9 +3851,9 @@ pub struct SessionUpdateID(u32);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct Shared_Network_Information {
-    pub p_lm_ns_in_shared_network: PLMNs_in_shared_network,
+    pub plm_ns_in_shared_network: PLMNs_in_shared_network,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<Shared_Network_InformationiE_Extensions>,
+    pub ie_extensions: Option<Shared_Network_InformationIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -3871,33 +3875,33 @@ pub struct SourceBSS_ToTargetBSS_TransparentContainer(Vec<u8>);
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = true)]
 pub enum SourceCellID {
     #[asn(key = 0, extended = false)]
-    sourceUTRANCellID(SourceUTRANCellID),
+    SourceUTRANCellID(SourceUTRANCellID),
     #[asn(key = 1, extended = false)]
-    sourceGERANCellID(CGI),
+    SourceGERANCellID(CGI),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = true)]
 pub enum SourceID {
     #[asn(key = 0, extended = false)]
-    sourceRNC_ID(SourceRNC_ID),
+    SourceRNC_ID(SourceRNC_ID),
     #[asn(key = 1, extended = false)]
-    sAI(SAI),
+    SAI(SAI),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 1)]
 pub struct SourceRNC_ID {
-    pub p_lm_nidentity: PLMNidentity,
-    pub r_nc_id: RNC_ID,
+    pub plm_nidentity: PLMNidentity,
+    pub rnc_id: RNC_ID,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<SourceRNC_IDiE_Extensions>,
+    pub ie_extensions: Option<SourceRNC_IDIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 10)]
 pub struct SourceRNC_ToTargetRNC_TransparentContainer {
-    pub r_rc_container: RRC_Container,
+    pub rrc_container: RRC_Container,
     pub number_of_iu_instances: NumberOfIuInstances,
     pub relocation_type: RelocationType,
     #[asn(optional_idx = 0)]
@@ -3917,9 +3921,9 @@ pub struct SourceRNC_ToTargetRNC_TransparentContainer {
     #[asn(optional_idx = 7)]
     pub target_cell_id: Option<TargetCellId>,
     #[asn(optional_idx = 8)]
-    pub r_ab_tr_ch_mapping: Option<RAB_TrCH_Mapping>,
+    pub rab_tr_ch_mapping: Option<RAB_TrCH_Mapping>,
     #[asn(optional_idx = 9)]
-    pub i_e_extensions: Option<SourceRNC_ToTargetRNC_TransparentContaineriE_Extensions>,
+    pub ie_extensions: Option<SourceRNC_ToTargetRNC_TransparentContainerIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -3933,10 +3937,10 @@ impl SourceStatisticsDescriptor {
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 1)]
 pub struct SourceUTRANCellID {
-    pub p_lm_nidentity: PLMNidentity,
-    pub u_tra_ncell_id: TargetCellId,
+    pub plm_nidentity: PLMNidentity,
+    pub utra_ncell_id: TargetCellId,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<SourceUTRANCellIDiE_Extensions>,
+    pub ie_extensions: Option<SourceUTRANCellIDIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -3957,7 +3961,7 @@ pub struct SuccessfulOutcome {
     #[asn(key_field = true)]
     pub procedure_code: ProcedureCode,
     pub criticality: Criticality,
-    pub value: SuccessfulOutcomevalue,
+    pub value: SuccessfulOutcomeValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -3975,10 +3979,10 @@ pub struct TAC(Vec<u8>);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 1)]
 pub struct TAI {
-    pub p_lm_nidentity: PLMNidentity,
-    pub t_ac: TAC,
+    pub plm_nidentity: PLMNidentity,
+    pub tac: TAC,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<TAIiE_Extensions>,
+    pub ie_extensions: Option<TAIIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -3988,10 +3992,10 @@ pub struct TBCD_STRING(Vec<u8>);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 1)]
 pub struct TMGI {
-    pub p_lm_nidentity: PLMNidentity,
+    pub plm_nidentity: PLMNidentity,
     pub service_id: OCTET_STRING_62,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<TMGIiE_Extensions>,
+    pub ie_extensions: Option<TMGIIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4004,7 +4008,7 @@ pub struct TNLInformationEnhRelInfoReq {
     pub transport_layer_address: TransportLayerAddress,
     pub iu_transport_association: IuTransportAssociation,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<TNLInformationEnhRelInfoReqiE_Extensions>,
+    pub ie_extensions: Option<TNLInformationEnhRelInfoReqIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4013,7 +4017,7 @@ pub struct TNLInformationEnhRelInfoRes {
     pub dl_forwarding_transport_layer_address: TransportLayerAddress,
     pub dl_forwarding_transport_association: IuTransportAssociation,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<TNLInformationEnhRelInfoResiE_Extensions>,
+    pub ie_extensions: Option<TNLInformationEnhRelInfoResIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4031,10 +4035,10 @@ pub struct TargetCellId(u32);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct TargetENB_ID {
-    pub p_lm_nidentity: PLMNidentity,
-    pub e_nb_id: ENB_ID,
+    pub plm_nidentity: PLMNidentity,
+    pub enb_id: ENB_ID,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<TargetENB_IDiE_Extensions>,
+    pub ie_extensions: Option<TargetENB_IDIE_Extensions>,
     pub selected_tai: TAI,
 }
 
@@ -4042,32 +4046,32 @@ pub struct TargetENB_ID {
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = true)]
 pub enum TargetID {
     #[asn(key = 0, extended = false)]
-    targetRNC_ID(TargetRNC_ID),
+    TargetRNC_ID(TargetRNC_ID),
     #[asn(key = 1, extended = false)]
-    cGI(CGI),
+    CGI(CGI),
     #[asn(key = 0, extended = true)]
-    targeteNB_ID(TargetENB_ID),
+    TargeteNB_ID(TargetENB_ID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 2)]
 pub struct TargetRNC_ID {
-    pub l_ai: LAI,
+    pub lai: LAI,
     #[asn(optional_idx = 0)]
-    pub r_ac: Option<RAC>,
-    pub r_nc_id: RNC_ID,
+    pub rac: Option<RAC>,
+    pub rnc_id: RNC_ID,
     #[asn(optional_idx = 1)]
-    pub i_e_extensions: Option<TargetRNC_IDiE_Extensions>,
+    pub ie_extensions: Option<TargetRNC_IDIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 2)]
 pub struct TargetRNC_ToSourceRNC_TransparentContainer {
-    pub r_rc_container: RRC_Container,
+    pub rrc_container: RRC_Container,
     #[asn(optional_idx = 0)]
     pub d_rnti: Option<D_RNTI>,
     #[asn(optional_idx = 1)]
-    pub i_e_extensions: Option<TargetRNC_ToSourceRNC_TransparentContaineriE_Extensions>,
+    pub ie_extensions: Option<TargetRNC_ToSourceRNC_TransparentContainerIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4078,9 +4082,9 @@ pub struct TargeteNodeB_ToSourceeNodeB_TransparentContainer(Vec<u8>);
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = true)]
 pub enum TemporaryUE_ID {
     #[asn(key = 0, extended = false)]
-    tMSI(TMSI),
+    TMSI(TMSI),
     #[asn(key = 1, extended = false)]
-    p_TMSI(P_TMSI),
+    P_TMSI(P_TMSI),
 }
 
 #[derive(Debug, AperCodec)]
@@ -4103,13 +4107,13 @@ pub struct TimingDifferenceULDL(Vec<u8>);
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 4)]
 pub struct TrCH_ID {
     #[asn(optional_idx = 0)]
-    pub d_ch_id: Option<DCH_ID>,
+    pub dch_id: Option<DCH_ID>,
     #[asn(optional_idx = 1)]
-    pub d_sch_id: Option<DSCH_ID>,
+    pub dsch_id: Option<DSCH_ID>,
     #[asn(optional_idx = 2)]
-    pub u_sch_id: Option<USCH_ID>,
+    pub usch_id: Option<USCH_ID>,
     #[asn(optional_idx = 3)]
-    pub i_e_extensions: Option<TrCH_IDiE_Extensions>,
+    pub ie_extensions: Option<TrCH_IDIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4133,7 +4137,7 @@ pub struct TraceInformation {
     #[asn(optional_idx = 0)]
     pub trace_propagation_parameters: Option<TracePropagationParameters>,
     #[asn(optional_idx = 1)]
-    pub i_e_extensions: Option<TraceInformationiE_Extensions>,
+    pub ie_extensions: Option<TraceInformationIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4144,7 +4148,7 @@ pub struct TracePropagationParameters {
     #[asn(optional_idx = 0)]
     pub list_of_interfaces_to_trace: Option<ListOfInterfacesToTrace>,
     #[asn(optional_idx = 1)]
-    pub i_e_extensions: Option<TracePropagationParametersiE_Extensions>,
+    pub ie_extensions: Option<TracePropagationParametersIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4153,7 +4157,7 @@ pub struct TraceRecordingSessionInformation {
     pub trace_reference: TraceReference,
     pub trace_recording_session_reference: TraceRecordingSessionReference,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<TraceRecordingSessionInformationiE_Extensions>,
+    pub ie_extensions: Option<TraceRecordingSessionInformationIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4196,7 +4200,7 @@ pub struct TransportLayerInformation {
     pub transport_layer_address: TransportLayerAddress,
     pub iu_transport_association: IuTransportAssociation,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<TransportLayerInformationiE_Extensions>,
+    pub ie_extensions: Option<TransportLayerInformationIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4223,9 +4227,9 @@ impl TriggeringMessage {
 pub struct TunnelInformation {
     pub transport_layer_address: TransportLayerAddress,
     #[asn(optional_idx = 0)]
-    pub u_dp_port_number: Option<Port_Number>,
+    pub udp_port_number: Option<Port_Number>,
     #[asn(optional_idx = 1)]
-    pub i_e_extensions: Option<TunnelInformationiE_Extensions>,
+    pub ie_extensions: Option<TunnelInformationIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4240,9 +4244,9 @@ impl TypeOfError {
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 2)]
 pub struct UE_AggregateMaximumBitRate {
     #[asn(optional_idx = 0)]
-    pub u_e_aggregate_maximum_bit_rate_downlink: Option<UE_AggregateMaximumBitRateDownlink>,
+    pub ue_aggregate_maximum_bit_rate_downlink: Option<UE_AggregateMaximumBitRateDownlink>,
     #[asn(optional_idx = 1)]
-    pub u_e_aggregate_maximum_bit_rate_uplink: Option<UE_AggregateMaximumBitRateUplink>,
+    pub ue_aggregate_maximum_bit_rate_uplink: Option<UE_AggregateMaximumBitRateUplink>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4287,11 +4291,11 @@ pub struct UE_History_Information(Vec<u8>);
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = true)]
 pub enum UE_ID {
     #[asn(key = 0, extended = false)]
-    imsi(IMSI),
+    Imsi(IMSI),
     #[asn(key = 1, extended = false)]
-    imei(IMEI),
+    Imei(IMEI),
     #[asn(key = 0, extended = true)]
-    imeisv(IMEISV),
+    Imeisv(IMEISV),
 }
 
 #[derive(Debug, AperCodec)]
@@ -4299,16 +4303,16 @@ pub enum UE_ID {
 pub struct UE_IsNotServed {
     pub permanent_nas_ue_id: PermanentNAS_UE_ID,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<UE_IsNotServediE_Extensions>,
+    pub ie_extensions: Option<UE_IsNotServedIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct UE_IsServed {
     pub permanent_nas_ue_id: PermanentNAS_UE_ID,
-    pub p_lm_nidentity: PLMNidentity,
+    pub plm_nidentity: PLMNidentity,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<UE_IsServediE_Extensions>,
+    pub ie_extensions: Option<UE_IsServedIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4319,20 +4323,20 @@ pub struct UE_Usage_Type(u8);
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = false)]
 pub enum UERegistrationQueryResult {
     #[asn(key = 0, extended = false)]
-    uE_IsServed(UE_IsServed),
+    UE_IsServed(UE_IsServed),
     #[asn(key = 1, extended = false)]
-    uE_IsNotServed(UE_IsNotServed),
+    UE_IsNotServed(UE_IsNotServed),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 3)]
 pub struct UESBI_Iu {
     #[asn(optional_idx = 0)]
-    pub u_esbi_iu_a: Option<UESBI_IuA>,
+    pub uesbi_iu_a: Option<UESBI_IuA>,
     #[asn(optional_idx = 1)]
-    pub u_esbi_iu_b: Option<UESBI_IuB>,
+    pub uesbi_iu_b: Option<UESBI_IuB>,
     #[asn(optional_idx = 2)]
-    pub i_e_extensions: Option<UESBI_IuiE_Extensions>,
+    pub ie_extensions: Option<UESBI_IuIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4346,9 +4350,9 @@ pub struct UESBI_IuB(BitVec<Msb0, u8>);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct UESpecificInformationIndication {
-    pub protocol_i_es: UESpecificInformationIndicationprotocolIEs,
+    pub protocol_i_es: UESpecificInformationIndicationProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<UESpecificInformationIndicationprotocolExtensions>,
+    pub protocol_extensions: Option<UESpecificInformationIndicationProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4373,7 +4377,7 @@ pub struct UPInformation {
     pub data_pdu_type: DataPDUType,
     pub upinitialisation_frame: UPInitialisationFrame,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<UPInformationiE_Extensions>,
+    pub ie_extensions: Option<UPInformationIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4387,10 +4391,10 @@ pub struct USCH_ID(u8);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 1)]
 pub struct UTRAN_CellID {
-    pub p_lm_nidentity: PLMNidentity,
+    pub plm_nidentity: PLMNidentity,
     pub cell_id: TargetCellId,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<UTRAN_CellIDiE_Extensions>,
+    pub ie_extensions: Option<UTRAN_CellIDIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4400,33 +4404,33 @@ pub struct UeApplicationLayerMeasurementSupportIndication(BitVec<Msb0, u8>);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct UeRadioCapabilityMatchRequest {
-    pub protocol_i_es: UeRadioCapabilityMatchRequestprotocolIEs,
+    pub protocol_i_es: UeRadioCapabilityMatchRequestProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<UeRadioCapabilityMatchRequestprotocolExtensions>,
+    pub protocol_extensions: Option<UeRadioCapabilityMatchRequestProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct UeRadioCapabilityMatchResponse {
-    pub protocol_i_es: UeRadioCapabilityMatchResponseprotocolIEs,
+    pub protocol_i_es: UeRadioCapabilityMatchResponseProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<UeRadioCapabilityMatchResponseprotocolExtensions>,
+    pub protocol_extensions: Option<UeRadioCapabilityMatchResponseProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct UeRegistrationQueryRequest {
-    pub protocol_i_es: UeRegistrationQueryRequestprotocolIEs,
+    pub protocol_i_es: UeRegistrationQueryRequestProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<UeRegistrationQueryRequestprotocolExtensions>,
+    pub protocol_extensions: Option<UeRegistrationQueryRequestProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct UeRegistrationQueryResponse {
-    pub protocol_i_es: UeRegistrationQueryResponseprotocolIEs,
+    pub protocol_i_es: UeRegistrationQueryResponseProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<UeRegistrationQueryResponseprotocolExtensions>,
+    pub protocol_extensions: Option<UeRegistrationQueryResponseProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4436,7 +4440,7 @@ pub struct UeRegistrationQueryResponse {
     sz_lb = "1",
     sz_ub = "128"
 )]
-pub struct UnsuccessfulLinking_IEs(Vec<UnsuccessfulLinking_IEs_Item>);
+pub struct UnsuccessfulLinking_IEs(Vec<UnsuccessfulLinking_IEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -4444,7 +4448,7 @@ pub struct UnsuccessfulOutcome {
     #[asn(key_field = true)]
     pub procedure_code: ProcedureCode,
     pub criticality: Criticality,
-    pub value: UnsuccessfulOutcomevalue,
+    pub value: UnsuccessfulOutcomeValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4454,34 +4458,34 @@ pub struct UnsuccessfullyTransmittedDataVolume(u32);
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct UplinkInformationExchangeFailure {
-    pub protocol_i_es: UplinkInformationExchangeFailureprotocolIEs,
+    pub protocol_i_es: UplinkInformationExchangeFailureProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<UplinkInformationExchangeFailureprotocolExtensions>,
+    pub protocol_extensions: Option<UplinkInformationExchangeFailureProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct UplinkInformationExchangeRequest {
-    pub protocol_i_es: UplinkInformationExchangeRequestprotocolIEs,
+    pub protocol_i_es: UplinkInformationExchangeRequestProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<UplinkInformationExchangeRequestprotocolExtensions>,
+    pub protocol_extensions: Option<UplinkInformationExchangeRequestProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct UplinkInformationExchangeResponse {
-    pub protocol_i_es: UplinkInformationExchangeResponseprotocolIEs,
+    pub protocol_i_es: UplinkInformationExchangeResponseProtocolIEs,
     #[asn(optional_idx = 0)]
-    pub protocol_extensions: Option<UplinkInformationExchangeResponseprotocolExtensions>,
+    pub protocol_extensions: Option<UplinkInformationExchangeResponseProtocolExtensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
 pub struct UserPlaneInformation {
     pub user_plane_mode: UserPlaneMode,
-    pub u_p_mode_versions: UP_ModeVersions,
+    pub up_mode_versions: UP_ModeVersions,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<UserPlaneInformationiE_Extensions>,
+    pub ie_extensions: Option<UserPlaneInformationIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4496,13 +4500,13 @@ impl UserPlaneMode {
 #[asn(type = "CHOICE", lb = "0", ub = "3", extensible = true)]
 pub enum VelocityEstimate {
     #[asn(key = 0, extended = false)]
-    horizontalVelocity(HorizontalVelocity),
+    HorizontalVelocity(HorizontalVelocity),
     #[asn(key = 1, extended = false)]
-    horizontalWithVerticalVelocity(HorizontalWithVerticalVelocity),
+    HorizontalWithVerticalVelocity(HorizontalWithVerticalVelocity),
     #[asn(key = 2, extended = false)]
-    horizontalVelocityWithUncertainty(HorizontalVelocityWithUncertainty),
+    HorizontalVelocityWithUncertainty(HorizontalVelocityWithUncertainty),
     #[asn(key = 3, extended = false)]
-    horizontalWithVeritcalVelocityAndUncertainty(HorizontalWithVerticalVelocityAndUncertainty),
+    HorizontalWithVeritcalVelocityAndUncertainty(HorizontalWithVerticalVelocityAndUncertainty),
 }
 
 #[derive(Debug, AperCodec)]
@@ -4542,7 +4546,7 @@ pub struct NULL_3;
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct Additional_CSPS_coordination_informationiE_Extensions_Item {}
+pub struct Additional_CSPS_coordination_informationIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -4551,13 +4555,13 @@ pub struct Additional_CSPS_coordination_informationiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct Additional_CSPS_coordination_informationiE_Extensions(
-    Vec<Additional_CSPS_coordination_informationiE_Extensions_Item>,
+pub struct Additional_CSPS_coordination_informationIE_Extensions(
+    Vec<Additional_CSPS_coordination_informationIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct AllocationOrRetentionPriorityiE_Extensions_Item {}
+pub struct AllocationOrRetentionPriorityIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -4566,13 +4570,13 @@ pub struct AllocationOrRetentionPriorityiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct AllocationOrRetentionPriorityiE_Extensions(
-    Vec<AllocationOrRetentionPriorityiE_Extensions_Item>,
+pub struct AllocationOrRetentionPriorityIE_Extensions(
+    Vec<AllocationOrRetentionPriorityIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct Alt_RAB_Parameter_SupportedGuaranteedBitrateInfiE_Extensions_Item {}
+pub struct Alt_RAB_Parameter_SupportedGuaranteedBitrateInfIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -4581,13 +4585,13 @@ pub struct Alt_RAB_Parameter_SupportedGuaranteedBitrateInfiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct Alt_RAB_Parameter_SupportedGuaranteedBitrateInfiE_Extensions(
-    Vec<Alt_RAB_Parameter_SupportedGuaranteedBitrateInfiE_Extensions_Item>,
+pub struct Alt_RAB_Parameter_SupportedGuaranteedBitrateInfIE_Extensions(
+    Vec<Alt_RAB_Parameter_SupportedGuaranteedBitrateInfIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct Alt_RAB_Parameter_SupportedMaxBitrateInfiE_Extensions_Item {}
+pub struct Alt_RAB_Parameter_SupportedMaxBitrateInfIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -4596,36 +4600,36 @@ pub struct Alt_RAB_Parameter_SupportedMaxBitrateInfiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct Alt_RAB_Parameter_SupportedMaxBitrateInfiE_Extensions(
-    Vec<Alt_RAB_Parameter_SupportedMaxBitrateInfiE_Extensions_Item>,
+pub struct Alt_RAB_Parameter_SupportedMaxBitrateInfIE_Extensions(
+    Vec<Alt_RAB_Parameter_SupportedMaxBitrateInfIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum Alt_RAB_ParametersiE_Extensions_ItemextensionValue {
+pub enum Alt_RAB_ParametersIE_Extensions_EntryExtensionValue {
     #[asn(key = 172)]
-    id_Alt_RAB_Parameter_ExtendedGuaranteedBitrateInf(
+    Id_Alt_RAB_Parameter_ExtendedGuaranteedBitrateInf(
         Alt_RAB_Parameter_ExtendedGuaranteedBitrateInf,
     ),
     #[asn(key = 173)]
-    id_Alt_RAB_Parameter_ExtendedMaxBitrateInf(Alt_RAB_Parameter_ExtendedMaxBitrateInf),
+    Id_Alt_RAB_Parameter_ExtendedMaxBitrateInf(Alt_RAB_Parameter_ExtendedMaxBitrateInf),
     #[asn(key = 214)]
-    id_Alt_RAB_Parameter_SupportedGuaranteedBitrateInf(
+    Id_Alt_RAB_Parameter_SupportedGuaranteedBitrateInf(
         Alt_RAB_Parameter_SupportedGuaranteedBitrateInf,
     ),
     #[asn(key = 215)]
-    id_Alt_RAB_Parameter_SupportedMaxBitrateInf(Alt_RAB_Parameter_SupportedMaxBitrateInf),
+    Id_Alt_RAB_Parameter_SupportedMaxBitrateInf(Alt_RAB_Parameter_SupportedMaxBitrateInf),
     #[asn(key = 158)]
-    id_AlternativeRABConfiguration(RAB_Parameters),
+    Id_AlternativeRABConfiguration(RAB_Parameters),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct Alt_RAB_ParametersiE_Extensions_Item {
+pub struct Alt_RAB_ParametersIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: Alt_RAB_ParametersiE_Extensions_ItemextensionValue,
+    pub extension_value: Alt_RAB_ParametersIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4635,30 +4639,30 @@ pub struct Alt_RAB_ParametersiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct Alt_RAB_ParametersiE_Extensions(Vec<Alt_RAB_ParametersiE_Extensions_Item>);
+pub struct Alt_RAB_ParametersIE_Extensions(Vec<Alt_RAB_ParametersIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum Ass_RAB_ParametersiE_Extensions_ItemextensionValue {
+pub enum Ass_RAB_ParametersIE_Extensions_EntryExtensionValue {
     #[asn(key = 174)]
-    id_Ass_RAB_Parameter_ExtendedGuaranteedBitrateList(
+    Id_Ass_RAB_Parameter_ExtendedGuaranteedBitrateList(
         Ass_RAB_Parameter_ExtendedGuaranteedBitrateList,
     ),
     #[asn(key = 175)]
-    id_Ass_RAB_Parameter_ExtendedMaxBitrateList(Ass_RAB_Parameter_ExtendedMaxBitrateList),
+    Id_Ass_RAB_Parameter_ExtendedMaxBitrateList(Ass_RAB_Parameter_ExtendedMaxBitrateList),
     #[asn(key = 216)]
-    id_Ass_RAB_Parameter_SupportedGuaranteedBitrateList(SupportedRAB_ParameterBitrateList),
+    Id_Ass_RAB_Parameter_SupportedGuaranteedBitrateList(SupportedRAB_ParameterBitrateList),
     #[asn(key = 217)]
-    id_Ass_RAB_Parameter_SupportedMaxBitrateList(SupportedRAB_ParameterBitrateList),
+    Id_Ass_RAB_Parameter_SupportedMaxBitrateList(SupportedRAB_ParameterBitrateList),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct Ass_RAB_ParametersiE_Extensions_Item {
+pub struct Ass_RAB_ParametersIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: Ass_RAB_ParametersiE_Extensions_ItemextensionValue,
+    pub extension_value: Ass_RAB_ParametersIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4668,11 +4672,11 @@ pub struct Ass_RAB_ParametersiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct Ass_RAB_ParametersiE_Extensions(Vec<Ass_RAB_ParametersiE_Extensions_Item>);
+pub struct Ass_RAB_ParametersIE_Extensions(Vec<Ass_RAB_ParametersIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct AuthorisedPLMNs_ItemiE_Extensions_Item {}
+pub struct AuthorisedPLMNs_EntryIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -4681,16 +4685,16 @@ pub struct AuthorisedPLMNs_ItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct AuthorisedPLMNs_ItemiE_Extensions(Vec<AuthorisedPLMNs_ItemiE_Extensions_Item>);
+pub struct AuthorisedPLMNs_EntryIE_Extensions(Vec<AuthorisedPLMNs_EntryIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 2)]
-pub struct AuthorisedPLMNs_Item {
-    pub p_lm_nidentity: PLMNidentity,
+pub struct AuthorisedPLMNs_Entry {
+    pub plm_nidentity: PLMNidentity,
     #[asn(optional_idx = 0)]
     pub authorised_sn_as_list: Option<AuthorisedSNAs>,
     #[asn(optional_idx = 1)]
-    pub i_e_extensions: Option<AuthorisedPLMNs_ItemiE_Extensions>,
+    pub ie_extensions: Option<AuthorisedPLMNs_EntryIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4707,18 +4711,18 @@ pub struct BIT_STRING_6(BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum CGIiE_Extensions_ItemextensionValue {
+pub enum CGIIE_Extensions_EntryExtensionValue {
     #[asn(key = 55)]
-    id_RAC(RAC),
+    Id_RAC(RAC),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct CGIiE_Extensions_Item {
+pub struct CGIIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: CGIiE_Extensions_ItemextensionValue,
+    pub extension_value: CGIIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4728,24 +4732,24 @@ pub struct CGIiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct CGIiE_Extensions(Vec<CGIiE_Extensions_Item>);
+pub struct CGIIE_Extensions(Vec<CGIIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum CN_DeactivateTraceprotocolIEs_Itemvalue {
+pub enum CN_DeactivateTraceProtocolIEs_EntryValue {
     #[asn(key = 65)]
-    id_TraceReference(TraceReference),
+    Id_TraceReference(TraceReference),
     #[asn(key = 68)]
-    id_TriggerID(TriggerID),
+    Id_TriggerID(TriggerID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct CN_DeactivateTraceprotocolIEs_Item {
+pub struct CN_DeactivateTraceProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: CN_DeactivateTraceprotocolIEs_Itemvalue,
+    pub value: CN_DeactivateTraceProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4755,11 +4759,11 @@ pub struct CN_DeactivateTraceprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct CN_DeactivateTraceprotocolIEs(Vec<CN_DeactivateTraceprotocolIEs_Item>);
+pub struct CN_DeactivateTraceProtocolIEs(Vec<CN_DeactivateTraceProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct CN_DeactivateTraceprotocolExtensions_Item {}
+pub struct CN_DeactivateTraceProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -4768,30 +4772,30 @@ pub struct CN_DeactivateTraceprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct CN_DeactivateTraceprotocolExtensions(Vec<CN_DeactivateTraceprotocolExtensions_Item>);
+pub struct CN_DeactivateTraceProtocolExtensions(Vec<CN_DeactivateTraceProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum CN_InvokeTraceprotocolIEs_Itemvalue {
+pub enum CN_InvokeTraceProtocolIEs_EntryValue {
     #[asn(key = 19)]
-    id_OMC_ID(OMC_ID),
+    Id_OMC_ID(OMC_ID),
     #[asn(key = 65)]
-    id_TraceReference(TraceReference),
+    Id_TraceReference(TraceReference),
     #[asn(key = 66)]
-    id_TraceType(TraceType),
+    Id_TraceType(TraceType),
     #[asn(key = 68)]
-    id_TriggerID(TriggerID),
+    Id_TriggerID(TriggerID),
     #[asn(key = 69)]
-    id_UE_ID(UE_ID),
+    Id_UE_ID(UE_ID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct CN_InvokeTraceprotocolIEs_Item {
+pub struct CN_InvokeTraceProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: CN_InvokeTraceprotocolIEs_Itemvalue,
+    pub value: CN_InvokeTraceProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4801,30 +4805,30 @@ pub struct CN_InvokeTraceprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct CN_InvokeTraceprotocolIEs(Vec<CN_InvokeTraceprotocolIEs_Item>);
+pub struct CN_InvokeTraceProtocolIEs(Vec<CN_InvokeTraceProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum CN_InvokeTraceprotocolExtensions_ItemextensionValue {
+pub enum CN_InvokeTraceProtocolExtensions_EntryExtensionValue {
     #[asn(key = 244)]
-    id_MDT_Configuration(MDT_Configuration),
+    Id_MDT_Configuration(MDT_Configuration),
     #[asn(key = 251)]
-    id_Trace_Collection_Entity_IP_Addess(TransportLayerAddress),
+    Id_Trace_Collection_Entity_IP_Addess(TransportLayerAddress),
     #[asn(key = 125)]
-    id_TracePropagationParameters(TracePropagationParameters),
+    Id_TracePropagationParameters(TracePropagationParameters),
     #[asn(key = 292)]
-    id_UE_Application_Layer_Measurement_Configuration(
+    Id_UE_Application_Layer_Measurement_Configuration(
         UE_Application_Layer_Measurement_Configuration,
     ),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct CN_InvokeTraceprotocolExtensions_Item {
+pub struct CN_InvokeTraceProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: CN_InvokeTraceprotocolExtensions_ItemextensionValue,
+    pub extension_value: CN_InvokeTraceProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4834,11 +4838,11 @@ pub struct CN_InvokeTraceprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct CN_InvokeTraceprotocolExtensions(Vec<CN_InvokeTraceprotocolExtensions_Item>);
+pub struct CN_InvokeTraceProtocolExtensions(Vec<CN_InvokeTraceProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct CNMBMSLinkingInformationiE_Extensions_Item {}
+pub struct CNMBMSLinkingInformationIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -4847,11 +4851,11 @@ pub struct CNMBMSLinkingInformationiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct CNMBMSLinkingInformationiE_Extensions(Vec<CNMBMSLinkingInformationiE_Extensions_Item>);
+pub struct CNMBMSLinkingInformationIE_Extensions(Vec<CNMBMSLinkingInformationIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct CellBasediE_Extensions_Item {}
+pub struct CellBasedIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -4860,11 +4864,11 @@ pub struct CellBasediE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct CellBasediE_Extensions(Vec<CellBasediE_Extensions_Item>);
+pub struct CellBasedIE_Extensions(Vec<CellBasedIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct CellLoadInformationiE_Extensions_Item {}
+pub struct CellLoadInformationIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -4873,11 +4877,11 @@ pub struct CellLoadInformationiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct CellLoadInformationiE_Extensions(Vec<CellLoadInformationiE_Extensions_Item>);
+pub struct CellLoadInformationIE_Extensions(Vec<CellLoadInformationIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct CellLoadInformationGroupiE_Extensions_Item {}
+pub struct CellLoadInformationGroupIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -4886,22 +4890,22 @@ pub struct CellLoadInformationGroupiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct CellLoadInformationGroupiE_Extensions(Vec<CellLoadInformationGroupiE_Extensions_Item>);
+pub struct CellLoadInformationGroupIE_Extensions(Vec<CellLoadInformationGroupIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum CommonIDprotocolIEs_Itemvalue {
+pub enum CommonIDProtocolIEs_EntryValue {
     #[asn(key = 23)]
-    id_PermanentNAS_UE_ID(PermanentNAS_UE_ID),
+    Id_PermanentNAS_UE_ID(PermanentNAS_UE_ID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct CommonIDprotocolIEs_Item {
+pub struct CommonIDProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: CommonIDprotocolIEs_Itemvalue,
+    pub value: CommonIDProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4911,42 +4915,42 @@ pub struct CommonIDprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct CommonIDprotocolIEs(Vec<CommonIDprotocolIEs_Item>);
+pub struct CommonIDProtocolIEs(Vec<CommonIDProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum CommonIDprotocolExtensions_ItemextensionValue {
+pub enum CommonIDProtocolExtensions_EntryExtensionValue {
     #[asn(key = 234)]
-    id_CSG_Membership_Status(CSG_Membership_Status),
+    Id_CSG_Membership_Status(CSG_Membership_Status),
     #[asn(key = 277)]
-    id_LastE_UTRANPLMNIdentity(PLMNidentity),
+    Id_LastE_UTRANPLMNIdentity(PLMNidentity),
     #[asn(key = 249)]
-    id_Management_Based_MDT_Allowed(Management_Based_MDT_Allowed),
+    Id_Management_Based_MDT_Allowed(Management_Based_MDT_Allowed),
     #[asn(key = 263)]
-    id_Management_Based_MDT_PLMN_List(MDT_PLMN_List),
+    Id_Management_Based_MDT_PLMN_List(MDT_PLMN_List),
     #[asn(key = 289)]
-    id_PowerSavingIndicator(PowerSavingIndicator),
+    Id_PowerSavingIndicator(PowerSavingIndicator),
     #[asn(key = 272)]
-    id_RSRVCC_Operation_Possible(RSRVCC_Operation_Possible),
+    Id_RSRVCC_Operation_Possible(RSRVCC_Operation_Possible),
     #[asn(key = 105)]
-    id_SNA_Access_Information(SNA_Access_Information),
+    Id_SNA_Access_Information(SNA_Access_Information),
     #[asn(key = 228)]
-    id_SRVCC_Operation_Possible(SRVCC_Operation_Possible),
+    Id_SRVCC_Operation_Possible(SRVCC_Operation_Possible),
     #[asn(key = 127)]
-    id_SelectedPLMN_ID(PLMNidentity),
+    Id_SelectedPLMN_ID(PLMNidentity),
     #[asn(key = 202)]
-    id_SubscriberProfileIDforRFP(SubscriberProfileIDforRFP),
+    Id_SubscriberProfileIDforRFP(SubscriberProfileIDforRFP),
     #[asn(key = 118)]
-    id_UESBI_Iu(UESBI_Iu),
+    Id_UESBI_Iu(UESBI_Iu),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct CommonIDprotocolExtensions_Item {
+pub struct CommonIDProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: CommonIDprotocolExtensions_ItemextensionValue,
+    pub extension_value: CommonIDProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4956,11 +4960,11 @@ pub struct CommonIDprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct CommonIDprotocolExtensions(Vec<CommonIDprotocolExtensions_Item>);
+pub struct CommonIDProtocolExtensions(Vec<CommonIDProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct CriticalityDiagnosticsiE_Extensions_Item {}
+pub struct CriticalityDiagnosticsIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -4969,24 +4973,24 @@ pub struct CriticalityDiagnosticsiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct CriticalityDiagnosticsiE_Extensions(Vec<CriticalityDiagnosticsiE_Extensions_Item>);
+pub struct CriticalityDiagnosticsIE_Extensions(Vec<CriticalityDiagnosticsIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum CriticalityDiagnostics_IE_List_ItemiE_Extensions_ItemextensionValue {
+pub enum CriticalityDiagnostics_IE_List_EntryIE_Extensions_EntryExtensionValue {
     #[asn(key = 88)]
-    id_MessageStructure(MessageStructure),
+    Id_MessageStructure(MessageStructure),
     #[asn(key = 93)]
-    id_TypeOfError(TypeOfError),
+    Id_TypeOfError(TypeOfError),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct CriticalityDiagnostics_IE_List_ItemiE_Extensions_Item {
+pub struct CriticalityDiagnostics_IE_List_EntryIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: CriticalityDiagnostics_IE_List_ItemiE_Extensions_ItemextensionValue,
+    pub extension_value: CriticalityDiagnostics_IE_List_EntryIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -4996,24 +5000,24 @@ pub struct CriticalityDiagnostics_IE_List_ItemiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct CriticalityDiagnostics_IE_List_ItemiE_Extensions(
-    Vec<CriticalityDiagnostics_IE_List_ItemiE_Extensions_Item>,
+pub struct CriticalityDiagnostics_IE_List_EntryIE_Extensions(
+    Vec<CriticalityDiagnostics_IE_List_EntryIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 2)]
-pub struct CriticalityDiagnostics_IE_List_Item {
-    pub i_e_criticality: Criticality,
-    pub i_e_id: ProtocolIE_ID,
+pub struct CriticalityDiagnostics_IE_List_Entry {
+    pub ie_criticality: Criticality,
+    pub ie_id: ProtocolIE_ID,
     #[asn(optional_idx = 0)]
     pub repetition_number: Option<RepetitionNumber0>,
     #[asn(optional_idx = 1)]
-    pub i_e_extensions: Option<CriticalityDiagnostics_IE_List_ItemiE_Extensions>,
+    pub ie_extensions: Option<CriticalityDiagnostics_IE_List_EntryIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct DataVolumeList_ItemiE_Extensions_Item {}
+pub struct DataVolumeList_EntryIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -5022,36 +5026,36 @@ pub struct DataVolumeList_ItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct DataVolumeList_ItemiE_Extensions(Vec<DataVolumeList_ItemiE_Extensions_Item>);
+pub struct DataVolumeList_EntryIE_Extensions(Vec<DataVolumeList_EntryIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 2)]
-pub struct DataVolumeList_Item {
+pub struct DataVolumeList_Entry {
     pub dl_unsuccessfully_transmitted_data_volume: UnsuccessfullyTransmittedDataVolume,
     #[asn(optional_idx = 0)]
     pub data_volume_reference: Option<DataVolumeReference>,
     #[asn(optional_idx = 1)]
-    pub i_e_extensions: Option<DataVolumeList_ItemiE_Extensions>,
+    pub ie_extensions: Option<DataVolumeList_EntryIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum DataVolumeReportprotocolIEs_Itemvalue {
+pub enum DataVolumeReportProtocolIEs_EntryValue {
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 31)]
-    id_RAB_DataVolumeReportList(RAB_DataVolumeReportList),
+    Id_RAB_DataVolumeReportList(RAB_DataVolumeReportList),
     #[asn(key = 72)]
-    id_RAB_FailedtoReportList(RAB_FailedtoReportList),
+    Id_RAB_FailedtoReportList(RAB_FailedtoReportList),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct DataVolumeReportprotocolIEs_Item {
+pub struct DataVolumeReportProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: DataVolumeReportprotocolIEs_Itemvalue,
+    pub value: DataVolumeReportProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -5061,11 +5065,11 @@ pub struct DataVolumeReportprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct DataVolumeReportprotocolIEs(Vec<DataVolumeReportprotocolIEs_Item>);
+pub struct DataVolumeReportProtocolIEs(Vec<DataVolumeReportProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct DataVolumeReportprotocolExtensions_Item {}
+pub struct DataVolumeReportProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -5074,22 +5078,22 @@ pub struct DataVolumeReportprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct DataVolumeReportprotocolExtensions(Vec<DataVolumeReportprotocolExtensions_Item>);
+pub struct DataVolumeReportProtocolExtensions(Vec<DataVolumeReportProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum DataVolumeReportRequestprotocolIEs_Itemvalue {
+pub enum DataVolumeReportRequestProtocolIEs_EntryValue {
     #[asn(key = 33)]
-    id_RAB_DataVolumeReportRequestList(RAB_DataVolumeReportRequestList),
+    Id_RAB_DataVolumeReportRequestList(RAB_DataVolumeReportRequestList),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct DataVolumeReportRequestprotocolIEs_Item {
+pub struct DataVolumeReportRequestProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: DataVolumeReportRequestprotocolIEs_Itemvalue,
+    pub value: DataVolumeReportRequestProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -5099,11 +5103,11 @@ pub struct DataVolumeReportRequestprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct DataVolumeReportRequestprotocolIEs(Vec<DataVolumeReportRequestprotocolIEs_Item>);
+pub struct DataVolumeReportRequestProtocolIEs(Vec<DataVolumeReportRequestProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct DataVolumeReportRequestprotocolExtensions_Item {}
+pub struct DataVolumeReportRequestProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -5112,26 +5116,26 @@ pub struct DataVolumeReportRequestprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct DataVolumeReportRequestprotocolExtensions(
-    Vec<DataVolumeReportRequestprotocolExtensions_Item>,
+pub struct DataVolumeReportRequestProtocolExtensions(
+    Vec<DataVolumeReportRequestProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum DeltaRAListofIdleModeUEsiE_Extensions_ItemextensionValue {
+pub enum DeltaRAListofIdleModeUEsIE_Extensions_EntryExtensionValue {
     #[asn(key = 182)]
-    id_LAListwithNoIdleModeUEsAnyMore(LAListofIdleModeUEs),
+    Id_LAListwithNoIdleModeUEsAnyMore(LAListofIdleModeUEs),
     #[asn(key = 181)]
-    id_newLAListofIdleModeUEs(LAListofIdleModeUEs),
+    Id_newLAListofIdleModeUEs(LAListofIdleModeUEs),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct DeltaRAListofIdleModeUEsiE_Extensions_Item {
+pub struct DeltaRAListofIdleModeUEsIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: DeltaRAListofIdleModeUEsiE_Extensions_ItemextensionValue,
+    pub extension_value: DeltaRAListofIdleModeUEsIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -5141,28 +5145,28 @@ pub struct DeltaRAListofIdleModeUEsiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct DeltaRAListofIdleModeUEsiE_Extensions(Vec<DeltaRAListofIdleModeUEsiE_Extensions_Item>);
+pub struct DeltaRAListofIdleModeUEsIE_Extensions(Vec<DeltaRAListofIdleModeUEsIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum DirectInformationTransferprotocolIEs_Itemvalue {
+pub enum DirectInformationTransferProtocolIEs_EntryValue {
     #[asn(key = 3)]
-    id_CN_DomainIndicator(CN_DomainIndicator),
+    Id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 96)]
-    id_GlobalCN_ID(GlobalCN_ID),
+    Id_GlobalCN_ID(GlobalCN_ID),
     #[asn(key = 86)]
-    id_GlobalRNC_ID(GlobalRNC_ID),
+    Id_GlobalRNC_ID(GlobalRNC_ID),
     #[asn(key = 126)]
-    id_InterSystemInformationTransferType(InterSystemInformationTransferType),
+    Id_InterSystemInformationTransferType(InterSystemInformationTransferType),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct DirectInformationTransferprotocolIEs_Item {
+pub struct DirectInformationTransferProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: DirectInformationTransferprotocolIEs_Itemvalue,
+    pub value: DirectInformationTransferProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -5172,22 +5176,22 @@ pub struct DirectInformationTransferprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct DirectInformationTransferprotocolIEs(Vec<DirectInformationTransferprotocolIEs_Item>);
+pub struct DirectInformationTransferProtocolIEs(Vec<DirectInformationTransferProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum DirectInformationTransferprotocolExtensions_ItemextensionValue {
+pub enum DirectInformationTransferProtocolExtensions_EntryExtensionValue {
     #[asn(key = 171)]
-    id_ExtendedRNC_ID(ExtendedRNC_ID),
+    Id_ExtendedRNC_ID(ExtendedRNC_ID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct DirectInformationTransferprotocolExtensions_Item {
+pub struct DirectInformationTransferProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: DirectInformationTransferprotocolExtensions_ItemextensionValue,
+    pub extension_value: DirectInformationTransferProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -5197,32 +5201,32 @@ pub struct DirectInformationTransferprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct DirectInformationTransferprotocolExtensions(
-    Vec<DirectInformationTransferprotocolExtensions_Item>,
+pub struct DirectInformationTransferProtocolExtensions(
+    Vec<DirectInformationTransferProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum DirectTransferprotocolIEs_Itemvalue {
+pub enum DirectTransferProtocolIEs_EntryValue {
     #[asn(key = 15)]
-    id_LAI(LAI),
+    Id_LAI(LAI),
     #[asn(key = 16)]
-    id_NAS_PDU(NAS_PDU),
+    Id_NAS_PDU(NAS_PDU),
     #[asn(key = 55)]
-    id_RAC(RAC),
+    Id_RAC(RAC),
     #[asn(key = 58)]
-    id_SAI(SAI),
+    Id_SAI(SAI),
     #[asn(key = 59)]
-    id_SAPI(SAPI),
+    Id_SAPI(SAPI),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct DirectTransferprotocolIEs_Item {
+pub struct DirectTransferProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: DirectTransferprotocolIEs_Itemvalue,
+    pub value: DirectTransferProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -5232,32 +5236,32 @@ pub struct DirectTransferprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct DirectTransferprotocolIEs(Vec<DirectTransferprotocolIEs_Item>);
+pub struct DirectTransferProtocolIEs(Vec<DirectTransferProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum DirectTransferprotocolExtensions_ItemextensionValue {
+pub enum DirectTransferProtocolExtensions_EntryExtensionValue {
     #[asn(key = 241)]
-    id_LGW_TransportLayerAddress(TransportLayerAddress),
+    Id_LGW_TransportLayerAddress(TransportLayerAddress),
     #[asn(key = 275)]
-    id_LHN_ID(LHN_ID),
+    Id_LHN_ID(LHN_ID),
     #[asn(key = 128)]
-    id_RedirectionCompleted(RedirectionCompleted),
+    Id_RedirectionCompleted(RedirectionCompleted),
     #[asn(key = 129)]
-    id_RedirectionIndication(RedirectionIndication),
+    Id_RedirectionIndication(RedirectionIndication),
     #[asn(key = 273)]
-    id_SIPTO_LGW_TransportLayerAddress(TransportLayerAddress),
+    Id_SIPTO_LGW_TransportLayerAddress(TransportLayerAddress),
     #[asn(key = 202)]
-    id_SubscriberProfileIDforRFP(SubscriberProfileIDforRFP),
+    Id_SubscriberProfileIDforRFP(SubscriberProfileIDforRFP),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct DirectTransferprotocolExtensions_Item {
+pub struct DirectTransferProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: DirectTransferprotocolExtensions_ItemextensionValue,
+    pub extension_value: DirectTransferProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -5267,11 +5271,11 @@ pub struct DirectTransferprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct DirectTransferprotocolExtensions(Vec<DirectTransferprotocolExtensions_Item>);
+pub struct DirectTransferProtocolExtensions(Vec<DirectTransferProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct DirectTransferInformationItem_RANAP_RelocInfiE_Extensions_Item {}
+pub struct DirectTransferInformationItem_RANAP_RelocInfIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -5280,24 +5284,24 @@ pub struct DirectTransferInformationItem_RANAP_RelocInfiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct DirectTransferInformationItem_RANAP_RelocInfiE_Extensions(
-    Vec<DirectTransferInformationItem_RANAP_RelocInfiE_Extensions_Item>,
+pub struct DirectTransferInformationItem_RANAP_RelocInfIE_Extensions(
+    Vec<DirectTransferInformationItem_RANAP_RelocInfIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum DirectTransferInformationList_RANAP_RelocInf_Item_Itemvalue {
+pub enum DirectTransferInformationList_RANAP_RelocInf_Entry_EntryValue {
     #[asn(key = 80)]
-    id_DirectTransferInformationItem_RANAP_RelocInf(DirectTransferInformationItem_RANAP_RelocInf),
+    Id_DirectTransferInformationItem_RANAP_RelocInf(DirectTransferInformationItem_RANAP_RelocInf),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct DirectTransferInformationList_RANAP_RelocInf_Item_Item {
+pub struct DirectTransferInformationList_RANAP_RelocInf_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: DirectTransferInformationList_RANAP_RelocInf_Item_Itemvalue,
+    pub value: DirectTransferInformationList_RANAP_RelocInf_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -5307,8 +5311,8 @@ pub struct DirectTransferInformationList_RANAP_RelocInf_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct DirectTransferInformationList_RANAP_RelocInf_Item(
-    Vec<DirectTransferInformationList_RANAP_RelocInf_Item_Item>,
+pub struct DirectTransferInformationList_RANAP_RelocInf_Entry(
+    Vec<DirectTransferInformationList_RANAP_RelocInf_Entry_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -5333,18 +5337,18 @@ pub struct INTEGER_11(u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum EUTRANFrequencies_ItemiE_Extensions_ItemextensionValue {
+pub enum EUTRANFrequencies_EntryIE_Extensions_EntryExtensionValue {
     #[asn(key = 271)]
-    id_EARFCN_Extended(EARFCN_Extended),
+    Id_EARFCN_Extended(EARFCN_Extended),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct EUTRANFrequencies_ItemiE_Extensions_Item {
+pub struct EUTRANFrequencies_EntryIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: EUTRANFrequencies_ItemiE_Extensions_ItemextensionValue,
+    pub extension_value: EUTRANFrequencies_EntryIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -5354,21 +5358,21 @@ pub struct EUTRANFrequencies_ItemiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct EUTRANFrequencies_ItemiE_Extensions(Vec<EUTRANFrequencies_ItemiE_Extensions_Item>);
+pub struct EUTRANFrequencies_EntryIE_Extensions(Vec<EUTRANFrequencies_EntryIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 2)]
-pub struct EUTRANFrequencies_Item {
+pub struct EUTRANFrequencies_Entry {
     pub earfcn: INTEGER_11,
     #[asn(optional_idx = 0)]
     pub meas_band: Option<MeasBand>,
     #[asn(optional_idx = 1)]
-    pub i_e_extensions: Option<EUTRANFrequencies_ItemiE_Extensions>,
+    pub ie_extensions: Option<EUTRANFrequencies_EntryIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct EncryptionInformationiE_Extensions_Item {}
+pub struct EncryptionInformationIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -5377,22 +5381,22 @@ pub struct EncryptionInformationiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct EncryptionInformationiE_Extensions(Vec<EncryptionInformationiE_Extensions_Item>);
+pub struct EncryptionInformationIE_Extensions(Vec<EncryptionInformationIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum EnhancedRelocationCompleteConfirmprotocolIEs_Itemvalue {
+pub enum EnhancedRelocationCompleteConfirmProtocolIEs_EntryValue {
     #[asn(key = 35)]
-    id_RAB_FailedList(RAB_FailedList),
+    Id_RAB_FailedList(RAB_FailedList),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct EnhancedRelocationCompleteConfirmprotocolIEs_Item {
+pub struct EnhancedRelocationCompleteConfirmProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: EnhancedRelocationCompleteConfirmprotocolIEs_Itemvalue,
+    pub value: EnhancedRelocationCompleteConfirmProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -5402,13 +5406,13 @@ pub struct EnhancedRelocationCompleteConfirmprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct EnhancedRelocationCompleteConfirmprotocolIEs(
-    Vec<EnhancedRelocationCompleteConfirmprotocolIEs_Item>,
+pub struct EnhancedRelocationCompleteConfirmProtocolIEs(
+    Vec<EnhancedRelocationCompleteConfirmProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct EnhancedRelocationCompleteConfirmprotocolExtensions_Item {}
+pub struct EnhancedRelocationCompleteConfirmProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -5417,26 +5421,26 @@ pub struct EnhancedRelocationCompleteConfirmprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct EnhancedRelocationCompleteConfirmprotocolExtensions(
-    Vec<EnhancedRelocationCompleteConfirmprotocolExtensions_Item>,
+pub struct EnhancedRelocationCompleteConfirmProtocolExtensions(
+    Vec<EnhancedRelocationCompleteConfirmProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum EnhancedRelocationCompleteFailureprotocolIEs_Itemvalue {
+pub enum EnhancedRelocationCompleteFailureProtocolIEs_EntryValue {
     #[asn(key = 4)]
-    id_Cause(Cause),
+    Id_Cause(Cause),
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct EnhancedRelocationCompleteFailureprotocolIEs_Item {
+pub struct EnhancedRelocationCompleteFailureProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: EnhancedRelocationCompleteFailureprotocolIEs_Itemvalue,
+    pub value: EnhancedRelocationCompleteFailureProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -5446,13 +5450,13 @@ pub struct EnhancedRelocationCompleteFailureprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct EnhancedRelocationCompleteFailureprotocolIEs(
-    Vec<EnhancedRelocationCompleteFailureprotocolIEs_Item>,
+pub struct EnhancedRelocationCompleteFailureProtocolIEs(
+    Vec<EnhancedRelocationCompleteFailureProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct EnhancedRelocationCompleteFailureprotocolExtensions_Item {}
+pub struct EnhancedRelocationCompleteFailureProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -5461,36 +5465,36 @@ pub struct EnhancedRelocationCompleteFailureprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct EnhancedRelocationCompleteFailureprotocolExtensions(
-    Vec<EnhancedRelocationCompleteFailureprotocolExtensions_Item>,
+pub struct EnhancedRelocationCompleteFailureProtocolExtensions(
+    Vec<EnhancedRelocationCompleteFailureProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum EnhancedRelocationCompleteRequestprotocolIEs_Itemvalue {
+pub enum EnhancedRelocationCompleteRequestProtocolIEs_EntryValue {
     #[asn(key = 79)]
-    id_IuSigConId(IuSignallingConnectionIdentifier),
+    Id_IuSigConId(IuSignallingConnectionIdentifier),
     #[asn(key = 196)]
-    id_OldIuSigConId(IuSignallingConnectionIdentifier),
+    Id_OldIuSigConId(IuSignallingConnectionIdentifier),
     #[asn(key = 188)]
-    id_RAB_SetupList_EnhancedRelocCompleteReq(RAB_SetupList_EnhancedRelocCompleteReq),
+    Id_RAB_SetupList_EnhancedRelocCompleteReq(RAB_SetupList_EnhancedRelocCompleteReq),
     #[asn(key = 223)]
-    id_Relocation_SourceExtendedRNC_ID(ExtendedRNC_ID),
+    Id_Relocation_SourceExtendedRNC_ID(ExtendedRNC_ID),
     #[asn(key = 222)]
-    id_Relocation_SourceRNC_ID(GlobalRNC_ID),
+    Id_Relocation_SourceRNC_ID(GlobalRNC_ID),
     #[asn(key = 213)]
-    id_Relocation_TargetExtendedRNC_ID(ExtendedRNC_ID),
+    Id_Relocation_TargetExtendedRNC_ID(ExtendedRNC_ID),
     #[asn(key = 212)]
-    id_Relocation_TargetRNC_ID(GlobalRNC_ID),
+    Id_Relocation_TargetRNC_ID(GlobalRNC_ID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct EnhancedRelocationCompleteRequestprotocolIEs_Item {
+pub struct EnhancedRelocationCompleteRequestProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: EnhancedRelocationCompleteRequestprotocolIEs_Itemvalue,
+    pub value: EnhancedRelocationCompleteRequestProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -5500,36 +5504,36 @@ pub struct EnhancedRelocationCompleteRequestprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct EnhancedRelocationCompleteRequestprotocolIEs(
-    Vec<EnhancedRelocationCompleteRequestprotocolIEs_Item>,
+pub struct EnhancedRelocationCompleteRequestProtocolIEs(
+    Vec<EnhancedRelocationCompleteRequestProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum EnhancedRelocationCompleteRequestprotocolExtensions_ItemextensionValue {
+pub enum EnhancedRelocationCompleteRequestProtocolExtensions_EntryExtensionValue {
     #[asn(key = 203)]
-    id_CSG_Id(CSG_Id),
+    Id_CSG_Id(CSG_Id),
     #[asn(key = 235)]
-    id_Cell_Access_Mode(Cell_Access_Mode),
+    Id_Cell_Access_Mode(Cell_Access_Mode),
     #[asn(key = 5)]
-    id_ChosenEncryptionAlgorithm(ChosenEncryptionAlgorithm),
+    Id_ChosenEncryptionAlgorithm(ChosenEncryptionAlgorithm),
     #[asn(key = 6)]
-    id_ChosenIntegrityProtectionAlgorithm(ChosenIntegrityProtectionAlgorithm),
+    Id_ChosenIntegrityProtectionAlgorithm(ChosenIntegrityProtectionAlgorithm),
     #[asn(key = 250)]
-    id_HigherBitratesThan16MbpsFlag(HigherBitratesThan16MbpsFlag),
+    Id_HigherBitratesThan16MbpsFlag(HigherBitratesThan16MbpsFlag),
     #[asn(key = 275)]
-    id_LHN_ID(LHN_ID),
+    Id_LHN_ID(LHN_ID),
     #[asn(key = 262)]
-    id_Tunnel_Information_for_BBF(TunnelInformation),
+    Id_Tunnel_Information_for_BBF(TunnelInformation),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct EnhancedRelocationCompleteRequestprotocolExtensions_Item {
+pub struct EnhancedRelocationCompleteRequestProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: EnhancedRelocationCompleteRequestprotocolExtensions_ItemextensionValue,
+    pub extension_value: EnhancedRelocationCompleteRequestProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -5539,28 +5543,28 @@ pub struct EnhancedRelocationCompleteRequestprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct EnhancedRelocationCompleteRequestprotocolExtensions(
-    Vec<EnhancedRelocationCompleteRequestprotocolExtensions_Item>,
+pub struct EnhancedRelocationCompleteRequestProtocolExtensions(
+    Vec<EnhancedRelocationCompleteRequestProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum EnhancedRelocationCompleteResponseprotocolIEs_Itemvalue {
+pub enum EnhancedRelocationCompleteResponseProtocolIEs_EntryValue {
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 190)]
-    id_RAB_SetupList_EnhancedRelocCompleteRes(RAB_SetupList_EnhancedRelocCompleteRes),
+    Id_RAB_SetupList_EnhancedRelocCompleteRes(RAB_SetupList_EnhancedRelocCompleteRes),
     #[asn(key = 210)]
-    id_RAB_ToBeReleasedList_EnhancedRelocCompleteRes(RAB_ToBeReleasedList_EnhancedRelocCompleteRes),
+    Id_RAB_ToBeReleasedList_EnhancedRelocCompleteRes(RAB_ToBeReleasedList_EnhancedRelocCompleteRes),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct EnhancedRelocationCompleteResponseprotocolIEs_Item {
+pub struct EnhancedRelocationCompleteResponseProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: EnhancedRelocationCompleteResponseprotocolIEs_Itemvalue,
+    pub value: EnhancedRelocationCompleteResponseProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -5570,28 +5574,28 @@ pub struct EnhancedRelocationCompleteResponseprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct EnhancedRelocationCompleteResponseprotocolIEs(
-    Vec<EnhancedRelocationCompleteResponseprotocolIEs_Item>,
+pub struct EnhancedRelocationCompleteResponseProtocolIEs(
+    Vec<EnhancedRelocationCompleteResponseProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum EnhancedRelocationCompleteResponseprotocolExtensions_ItemextensionValue {
+pub enum EnhancedRelocationCompleteResponseProtocolExtensions_EntryExtensionValue {
     #[asn(key = 234)]
-    id_CSG_Membership_Status(CSG_Membership_Status),
+    Id_CSG_Membership_Status(CSG_Membership_Status),
     #[asn(key = 239)]
-    id_MSISDN(MSISDN),
+    Id_MSISDN(MSISDN),
     #[asn(key = 233)]
-    id_UE_AggregateMaximumBitRate(UE_AggregateMaximumBitRate),
+    Id_UE_AggregateMaximumBitRate(UE_AggregateMaximumBitRate),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct EnhancedRelocationCompleteResponseprotocolExtensions_Item {
+pub struct EnhancedRelocationCompleteResponseProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: EnhancedRelocationCompleteResponseprotocolExtensions_ItemextensionValue,
+    pub extension_value: EnhancedRelocationCompleteResponseProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -5601,30 +5605,30 @@ pub struct EnhancedRelocationCompleteResponseprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct EnhancedRelocationCompleteResponseprotocolExtensions(
-    Vec<EnhancedRelocationCompleteResponseprotocolExtensions_Item>,
+pub struct EnhancedRelocationCompleteResponseProtocolExtensions(
+    Vec<EnhancedRelocationCompleteResponseProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum ErrorIndicationprotocolIEs_Itemvalue {
+pub enum ErrorIndicationProtocolIEs_EntryValue {
     #[asn(key = 3)]
-    id_CN_DomainIndicator(CN_DomainIndicator),
+    Id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 4)]
-    id_Cause(Cause),
+    Id_Cause(Cause),
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 86)]
-    id_GlobalRNC_ID(GlobalRNC_ID),
+    Id_GlobalRNC_ID(GlobalRNC_ID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct ErrorIndicationprotocolIEs_Item {
+pub struct ErrorIndicationProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: ErrorIndicationprotocolIEs_Itemvalue,
+    pub value: ErrorIndicationProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -5634,24 +5638,24 @@ pub struct ErrorIndicationprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct ErrorIndicationprotocolIEs(Vec<ErrorIndicationprotocolIEs_Item>);
+pub struct ErrorIndicationProtocolIEs(Vec<ErrorIndicationProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum ErrorIndicationprotocolExtensions_ItemextensionValue {
+pub enum ErrorIndicationProtocolExtensions_EntryExtensionValue {
     #[asn(key = 171)]
-    id_ExtendedRNC_ID(ExtendedRNC_ID),
+    Id_ExtendedRNC_ID(ExtendedRNC_ID),
     #[asn(key = 96)]
-    id_GlobalCN_ID(GlobalCN_ID),
+    Id_GlobalCN_ID(GlobalCN_ID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct ErrorIndicationprotocolExtensions_Item {
+pub struct ErrorIndicationProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: ErrorIndicationprotocolExtensions_ItemextensionValue,
+    pub extension_value: ErrorIndicationProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -5661,7 +5665,7 @@ pub struct ErrorIndicationprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct ErrorIndicationprotocolExtensions(Vec<ErrorIndicationprotocolExtensions_Item>);
+pub struct ErrorIndicationProtocolExtensions(Vec<ErrorIndicationProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "-120", ub = "165")]
@@ -5673,18 +5677,18 @@ pub struct INTEGER_13(i8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum ForwardSRNS_ContextprotocolIEs_Itemvalue {
+pub enum ForwardSRNS_ContextProtocolIEs_EntryValue {
     #[asn(key = 25)]
-    id_RAB_ContextList(RAB_ContextList),
+    Id_RAB_ContextList(RAB_ContextList),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct ForwardSRNS_ContextprotocolIEs_Item {
+pub struct ForwardSRNS_ContextProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: ForwardSRNS_ContextprotocolIEs_Itemvalue,
+    pub value: ForwardSRNS_ContextProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -5694,22 +5698,22 @@ pub struct ForwardSRNS_ContextprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct ForwardSRNS_ContextprotocolIEs(Vec<ForwardSRNS_ContextprotocolIEs_Item>);
+pub struct ForwardSRNS_ContextProtocolIEs(Vec<ForwardSRNS_ContextProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum ForwardSRNS_ContextprotocolExtensions_ItemextensionValue {
+pub enum ForwardSRNS_ContextProtocolExtensions_EntryExtensionValue {
     #[asn(key = 103)]
-    id_SourceRNC_PDCP_context_info(RRC_Container),
+    Id_SourceRNC_PDCP_context_info(RRC_Container),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct ForwardSRNS_ContextprotocolExtensions_Item {
+pub struct ForwardSRNS_ContextProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: ForwardSRNS_ContextprotocolExtensions_ItemextensionValue,
+    pub extension_value: ForwardSRNS_ContextProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -5719,7 +5723,7 @@ pub struct ForwardSRNS_ContextprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct ForwardSRNS_ContextprotocolExtensions(Vec<ForwardSRNS_ContextprotocolExtensions_Item>);
+pub struct ForwardSRNS_ContextProtocolExtensions(Vec<ForwardSRNS_ContextProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", lb = "0", ub = "1")]
@@ -5755,7 +5759,7 @@ pub struct INTEGER_20(u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct GA_EllipsoidArciE_Extensions_Item {}
+pub struct GA_EllipsoidArcIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -5764,11 +5768,11 @@ pub struct GA_EllipsoidArciE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct GA_EllipsoidArciE_Extensions(Vec<GA_EllipsoidArciE_Extensions_Item>);
+pub struct GA_EllipsoidArcIE_Extensions(Vec<GA_EllipsoidArcIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct GA_PointiE_Extensions_Item {}
+pub struct GA_PointIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -5777,11 +5781,11 @@ pub struct GA_PointiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct GA_PointiE_Extensions(Vec<GA_PointiE_Extensions_Item>);
+pub struct GA_PointIE_Extensions(Vec<GA_PointIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct GA_PointWithAltitudeiE_Extensions_Item {}
+pub struct GA_PointWithAltitudeIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -5790,7 +5794,7 @@ pub struct GA_PointWithAltitudeiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct GA_PointWithAltitudeiE_Extensions(Vec<GA_PointWithAltitudeiE_Extensions_Item>);
+pub struct GA_PointWithAltitudeIE_Extensions(Vec<GA_PointWithAltitudeIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "127")]
@@ -5802,7 +5806,7 @@ pub struct INTEGER_22(u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct GA_PointWithAltitudeAndUncertaintyEllipsoidiE_Extensions_Item {}
+pub struct GA_PointWithAltitudeAndUncertaintyEllipsoidIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -5811,13 +5815,13 @@ pub struct GA_PointWithAltitudeAndUncertaintyEllipsoidiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct GA_PointWithAltitudeAndUncertaintyEllipsoidiE_Extensions(
-    Vec<GA_PointWithAltitudeAndUncertaintyEllipsoidiE_Extensions_Item>,
+pub struct GA_PointWithAltitudeAndUncertaintyEllipsoidIE_Extensions(
+    Vec<GA_PointWithAltitudeAndUncertaintyEllipsoidIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct GA_PointWithUnCertaintyiE_Extensions_Item {}
+pub struct GA_PointWithUnCertaintyIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -5826,7 +5830,7 @@ pub struct GA_PointWithUnCertaintyiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct GA_PointWithUnCertaintyiE_Extensions(Vec<GA_PointWithUnCertaintyiE_Extensions_Item>);
+pub struct GA_PointWithUnCertaintyIE_Extensions(Vec<GA_PointWithUnCertaintyIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "127")]
@@ -5838,7 +5842,7 @@ pub struct INTEGER_24(u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct GA_PointWithUnCertaintyEllipseiE_Extensions_Item {}
+pub struct GA_PointWithUnCertaintyEllipseIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -5847,13 +5851,13 @@ pub struct GA_PointWithUnCertaintyEllipseiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct GA_PointWithUnCertaintyEllipseiE_Extensions(
-    Vec<GA_PointWithUnCertaintyEllipseiE_Extensions_Item>,
+pub struct GA_PointWithUnCertaintyEllipseIE_Extensions(
+    Vec<GA_PointWithUnCertaintyEllipseIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct GA_Polygon_ItemiE_Extensions_Item {}
+pub struct GA_Polygon_EntryIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -5862,14 +5866,14 @@ pub struct GA_Polygon_ItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct GA_Polygon_ItemiE_Extensions(Vec<GA_Polygon_ItemiE_Extensions_Item>);
+pub struct GA_Polygon_EntryIE_Extensions(Vec<GA_Polygon_EntryIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
-pub struct GA_Polygon_Item {
+pub struct GA_Polygon_Entry {
     pub geographical_coordinates: GeographicalCoordinates,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<GA_Polygon_ItemiE_Extensions>,
+    pub ie_extensions: Option<GA_Polygon_EntryIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
@@ -5886,7 +5890,7 @@ pub struct INTEGER_27(u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct GERAN_Cell_IDiE_Extensions_Item {}
+pub struct GERAN_Cell_IDIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -5895,11 +5899,11 @@ pub struct GERAN_Cell_IDiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct GERAN_Cell_IDiE_Extensions(Vec<GERAN_Cell_IDiE_Extensions_Item>);
+pub struct GERAN_Cell_IDIE_Extensions(Vec<GERAN_Cell_IDIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct GERAN_Iumode_RAB_Failed_RABAssgntResponse_ItemiE_Extensions_Item {}
+pub struct GERAN_Iumode_RAB_Failed_RABAssgntResponse_ItemIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -5908,26 +5912,26 @@ pub struct GERAN_Iumode_RAB_Failed_RABAssgntResponse_ItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct GERAN_Iumode_RAB_Failed_RABAssgntResponse_ItemiE_Extensions(
-    Vec<GERAN_Iumode_RAB_Failed_RABAssgntResponse_ItemiE_Extensions_Item>,
+pub struct GERAN_Iumode_RAB_Failed_RABAssgntResponse_ItemIE_Extensions(
+    Vec<GERAN_Iumode_RAB_Failed_RABAssgntResponse_ItemIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum GERAN_Iumode_RAB_FailedList_RABAssgntResponse_Item_Itemvalue {
+pub enum GERAN_Iumode_RAB_FailedList_RABAssgntResponse_Entry_EntryValue {
     #[asn(key = 109)]
-    id_GERAN_Iumode_RAB_Failed_RABAssgntResponse_Item(
+    Id_GERAN_Iumode_RAB_Failed_RABAssgntResponse_Item(
         GERAN_Iumode_RAB_Failed_RABAssgntResponse_Item,
     ),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct GERAN_Iumode_RAB_FailedList_RABAssgntResponse_Item_Item {
+pub struct GERAN_Iumode_RAB_FailedList_RABAssgntResponse_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: GERAN_Iumode_RAB_FailedList_RABAssgntResponse_Item_Itemvalue,
+    pub value: GERAN_Iumode_RAB_FailedList_RABAssgntResponse_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -5937,8 +5941,8 @@ pub struct GERAN_Iumode_RAB_FailedList_RABAssgntResponse_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct GERAN_Iumode_RAB_FailedList_RABAssgntResponse_Item(
-    Vec<GERAN_Iumode_RAB_FailedList_RABAssgntResponse_Item_Item>,
+pub struct GERAN_Iumode_RAB_FailedList_RABAssgntResponse_Entry(
+    Vec<GERAN_Iumode_RAB_FailedList_RABAssgntResponse_Entry_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -5959,7 +5963,7 @@ pub struct INTEGER_30(i32);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct GeographicalCoordinatesiE_Extensions_Item {}
+pub struct GeographicalCoordinatesIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -5968,7 +5972,7 @@ pub struct GeographicalCoordinatesiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct GeographicalCoordinatesiE_Extensions(Vec<GeographicalCoordinatesiE_Extensions_Item>);
+pub struct GeographicalCoordinatesIE_Extensions(Vec<GeographicalCoordinatesIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "359")]
@@ -5980,7 +5984,7 @@ pub struct INTEGER_32(u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct HorizontalVelocityiE_Extensions_Item {}
+pub struct HorizontalVelocityIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -5989,7 +5993,7 @@ pub struct HorizontalVelocityiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct HorizontalVelocityiE_Extensions(Vec<HorizontalVelocityiE_Extensions_Item>);
+pub struct HorizontalVelocityIE_Extensions(Vec<HorizontalVelocityIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "255")]
@@ -5997,7 +6001,7 @@ pub struct INTEGER_33(u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct HorizontalVelocityWithUncertaintyiE_Extensions_Item {}
+pub struct HorizontalVelocityWithUncertaintyIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -6006,13 +6010,13 @@ pub struct HorizontalVelocityWithUncertaintyiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct HorizontalVelocityWithUncertaintyiE_Extensions(
-    Vec<HorizontalVelocityWithUncertaintyiE_Extensions_Item>,
+pub struct HorizontalVelocityWithUncertaintyIE_Extensions(
+    Vec<HorizontalVelocityWithUncertaintyIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct HorizontalWithVerticalVelocityiE_Extensions_Item {}
+pub struct HorizontalWithVerticalVelocityIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -6021,8 +6025,8 @@ pub struct HorizontalWithVerticalVelocityiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct HorizontalWithVerticalVelocityiE_Extensions(
-    Vec<HorizontalWithVerticalVelocityiE_Extensions_Item>,
+pub struct HorizontalWithVerticalVelocityIE_Extensions(
+    Vec<HorizontalWithVerticalVelocityIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -6035,7 +6039,7 @@ pub struct INTEGER_35(u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct HorizontalWithVerticalVelocityAndUncertaintyiE_Extensions_Item {}
+pub struct HorizontalWithVerticalVelocityAndUncertaintyIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -6044,8 +6048,8 @@ pub struct HorizontalWithVerticalVelocityAndUncertaintyiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct HorizontalWithVerticalVelocityAndUncertaintyiE_Extensions(
-    Vec<HorizontalWithVerticalVelocityAndUncertaintyiE_Extensions_Item>,
+pub struct HorizontalWithVerticalVelocityAndUncertaintyIE_Extensions(
+    Vec<HorizontalWithVerticalVelocityAndUncertaintyIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -6054,7 +6058,7 @@ pub struct BIT_STRING_36(BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct IMEIGroupiE_Extensions_Item {}
+pub struct IMEIGroupIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -6063,7 +6067,7 @@ pub struct IMEIGroupiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct IMEIGroupiE_Extensions(Vec<IMEIGroupiE_Extensions_Item>);
+pub struct IMEIGroupIE_Extensions(Vec<IMEIGroupIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "7", sz_ub = "7")]
@@ -6071,7 +6075,7 @@ pub struct BIT_STRING_37(BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct IMEISVGroupiE_Extensions_Item {}
+pub struct IMEISVGroupIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -6080,7 +6084,7 @@ pub struct IMEISVGroupiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct IMEISVGroupiE_Extensions(Vec<IMEISVGroupiE_Extensions_Item>);
+pub struct IMEISVGroupIE_Extensions(Vec<IMEISVGroupIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "97")]
@@ -6092,20 +6096,20 @@ pub struct INTEGER_39(u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum IRAT_Measurement_ConfigurationiE_Extensions_ItemextensionValue {
+pub enum IRAT_Measurement_ConfigurationIE_Extensions_EntryExtensionValue {
     #[asn(key = 279)]
-    id_RSRQ_Extension(RSRQ_Extension),
+    Id_RSRQ_Extension(RSRQ_Extension),
     #[asn(key = 278)]
-    id_RSRQ_Type(RSRQ_Type),
+    Id_RSRQ_Type(RSRQ_Type),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct IRAT_Measurement_ConfigurationiE_Extensions_Item {
+pub struct IRAT_Measurement_ConfigurationIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: IRAT_Measurement_ConfigurationiE_Extensions_ItemextensionValue,
+    pub extension_value: IRAT_Measurement_ConfigurationIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -6115,8 +6119,8 @@ pub struct IRAT_Measurement_ConfigurationiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct IRAT_Measurement_ConfigurationiE_Extensions(
-    Vec<IRAT_Measurement_ConfigurationiE_Extensions_Item>,
+pub struct IRAT_Measurement_ConfigurationIE_Extensions(
+    Vec<IRAT_Measurement_ConfigurationIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -6125,7 +6129,7 @@ pub struct INTEGER_40(u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct IRATmeasurementParametersiE_Extensions_Item {}
+pub struct IRATmeasurementParametersIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -6134,28 +6138,30 @@ pub struct IRATmeasurementParametersiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct IRATmeasurementParametersiE_Extensions(Vec<IRATmeasurementParametersiE_Extensions_Item>);
+pub struct IRATmeasurementParametersIE_Extensions(
+    Vec<IRATmeasurementParametersIE_Extensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum ImmediateMDTiE_Extensions_ItemextensionValue {
+pub enum ImmediateMDTIE_Extensions_EntryExtensionValue {
     #[asn(key = 265)]
-    id_M4Report(M4Report),
+    Id_M4Report(M4Report),
     #[asn(key = 266)]
-    id_M5Report(M5Report),
+    Id_M5Report(M5Report),
     #[asn(key = 267)]
-    id_M6Report(M6Report),
+    Id_M6Report(M6Report),
     #[asn(key = 268)]
-    id_M7Report(M7Report),
+    Id_M7Report(M7Report),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct ImmediateMDTiE_Extensions_Item {
+pub struct ImmediateMDTIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: ImmediateMDTiE_Extensions_ItemextensionValue,
+    pub extension_value: ImmediateMDTIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -6165,28 +6171,28 @@ pub struct ImmediateMDTiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct ImmediateMDTiE_Extensions(Vec<ImmediateMDTiE_Extensions_Item>);
+pub struct ImmediateMDTIE_Extensions(Vec<ImmediateMDTIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum InformationTransferConfirmationprotocolIEs_Itemvalue {
+pub enum InformationTransferConfirmationProtocolIEs_EntryValue {
     #[asn(key = 3)]
-    id_CN_DomainIndicator(CN_DomainIndicator),
+    Id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 86)]
-    id_GlobalRNC_ID(GlobalRNC_ID),
+    Id_GlobalRNC_ID(GlobalRNC_ID),
     #[asn(key = 104)]
-    id_InformationTransferID(InformationTransferID),
+    Id_InformationTransferID(InformationTransferID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct InformationTransferConfirmationprotocolIEs_Item {
+pub struct InformationTransferConfirmationProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: InformationTransferConfirmationprotocolIEs_Itemvalue,
+    pub value: InformationTransferConfirmationProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -6196,24 +6202,24 @@ pub struct InformationTransferConfirmationprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct InformationTransferConfirmationprotocolIEs(
-    Vec<InformationTransferConfirmationprotocolIEs_Item>,
+pub struct InformationTransferConfirmationProtocolIEs(
+    Vec<InformationTransferConfirmationProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum InformationTransferConfirmationprotocolExtensions_ItemextensionValue {
+pub enum InformationTransferConfirmationProtocolExtensions_EntryExtensionValue {
     #[asn(key = 171)]
-    id_ExtendedRNC_ID(ExtendedRNC_ID),
+    Id_ExtendedRNC_ID(ExtendedRNC_ID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct InformationTransferConfirmationprotocolExtensions_Item {
+pub struct InformationTransferConfirmationProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: InformationTransferConfirmationprotocolExtensions_ItemextensionValue,
+    pub extension_value: InformationTransferConfirmationProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -6223,32 +6229,32 @@ pub struct InformationTransferConfirmationprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct InformationTransferConfirmationprotocolExtensions(
-    Vec<InformationTransferConfirmationprotocolExtensions_Item>,
+pub struct InformationTransferConfirmationProtocolExtensions(
+    Vec<InformationTransferConfirmationProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum InformationTransferFailureprotocolIEs_Itemvalue {
+pub enum InformationTransferFailureProtocolIEs_EntryValue {
     #[asn(key = 3)]
-    id_CN_DomainIndicator(CN_DomainIndicator),
+    Id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 4)]
-    id_Cause(Cause),
+    Id_Cause(Cause),
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 86)]
-    id_GlobalRNC_ID(GlobalRNC_ID),
+    Id_GlobalRNC_ID(GlobalRNC_ID),
     #[asn(key = 104)]
-    id_InformationTransferID(InformationTransferID),
+    Id_InformationTransferID(InformationTransferID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct InformationTransferFailureprotocolIEs_Item {
+pub struct InformationTransferFailureProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: InformationTransferFailureprotocolIEs_Itemvalue,
+    pub value: InformationTransferFailureProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -6258,22 +6264,22 @@ pub struct InformationTransferFailureprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct InformationTransferFailureprotocolIEs(Vec<InformationTransferFailureprotocolIEs_Item>);
+pub struct InformationTransferFailureProtocolIEs(Vec<InformationTransferFailureProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum InformationTransferFailureprotocolExtensions_ItemextensionValue {
+pub enum InformationTransferFailureProtocolExtensions_EntryExtensionValue {
     #[asn(key = 171)]
-    id_ExtendedRNC_ID(ExtendedRNC_ID),
+    Id_ExtendedRNC_ID(ExtendedRNC_ID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct InformationTransferFailureprotocolExtensions_Item {
+pub struct InformationTransferFailureProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: InformationTransferFailureprotocolExtensions_ItemextensionValue,
+    pub extension_value: InformationTransferFailureProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -6283,30 +6289,30 @@ pub struct InformationTransferFailureprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct InformationTransferFailureprotocolExtensions(
-    Vec<InformationTransferFailureprotocolExtensions_Item>,
+pub struct InformationTransferFailureProtocolExtensions(
+    Vec<InformationTransferFailureProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum InformationTransferIndicationprotocolIEs_Itemvalue {
+pub enum InformationTransferIndicationProtocolIEs_EntryValue {
     #[asn(key = 3)]
-    id_CN_DomainIndicator(CN_DomainIndicator),
+    Id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 96)]
-    id_GlobalCN_ID(GlobalCN_ID),
+    Id_GlobalCN_ID(GlobalCN_ID),
     #[asn(key = 104)]
-    id_InformationTransferID(InformationTransferID),
+    Id_InformationTransferID(InformationTransferID),
     #[asn(key = 106)]
-    id_ProvidedData(ProvidedData),
+    Id_ProvidedData(ProvidedData),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct InformationTransferIndicationprotocolIEs_Item {
+pub struct InformationTransferIndicationProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: InformationTransferIndicationprotocolIEs_Itemvalue,
+    pub value: InformationTransferIndicationProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -6316,13 +6322,13 @@ pub struct InformationTransferIndicationprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct InformationTransferIndicationprotocolIEs(
-    Vec<InformationTransferIndicationprotocolIEs_Item>,
+pub struct InformationTransferIndicationProtocolIEs(
+    Vec<InformationTransferIndicationProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct InformationTransferIndicationprotocolExtensions_Item {}
+pub struct InformationTransferIndicationProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -6331,36 +6337,36 @@ pub struct InformationTransferIndicationprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct InformationTransferIndicationprotocolExtensions(
-    Vec<InformationTransferIndicationprotocolExtensions_Item>,
+pub struct InformationTransferIndicationProtocolExtensions(
+    Vec<InformationTransferIndicationProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum InitialUE_MessageprotocolIEs_Itemvalue {
+pub enum InitialUE_MessageProtocolIEs_EntryValue {
     #[asn(key = 3)]
-    id_CN_DomainIndicator(CN_DomainIndicator),
+    Id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 86)]
-    id_GlobalRNC_ID(GlobalRNC_ID),
+    Id_GlobalRNC_ID(GlobalRNC_ID),
     #[asn(key = 79)]
-    id_IuSigConId(IuSignallingConnectionIdentifier),
+    Id_IuSigConId(IuSignallingConnectionIdentifier),
     #[asn(key = 15)]
-    id_LAI(LAI),
+    Id_LAI(LAI),
     #[asn(key = 16)]
-    id_NAS_PDU(NAS_PDU),
+    Id_NAS_PDU(NAS_PDU),
     #[asn(key = 55)]
-    id_RAC(RAC),
+    Id_RAC(RAC),
     #[asn(key = 58)]
-    id_SAI(SAI),
+    Id_SAI(SAI),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct InitialUE_MessageprotocolIEs_Item {
+pub struct InitialUE_MessageProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: InitialUE_MessageprotocolIEs_Itemvalue,
+    pub value: InitialUE_MessageProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -6370,54 +6376,54 @@ pub struct InitialUE_MessageprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct InitialUE_MessageprotocolIEs(Vec<InitialUE_MessageprotocolIEs_Item>);
+pub struct InitialUE_MessageProtocolIEs(Vec<InitialUE_MessageProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum InitialUE_MessageprotocolExtensions_ItemextensionValue {
+pub enum InitialUE_MessageProtocolExtensions_EntryExtensionValue {
     #[asn(key = 203)]
-    id_CSG_Id(CSG_Id),
+    Id_CSG_Id(CSG_Id),
     #[asn(key = 235)]
-    id_Cell_Access_Mode(Cell_Access_Mode),
+    Id_Cell_Access_Mode(Cell_Access_Mode),
     #[asn(key = 291)]
-    id_DCN_ID(DCN_ID),
+    Id_DCN_ID(DCN_ID),
     #[asn(key = 171)]
-    id_ExtendedRNC_ID(ExtendedRNC_ID),
+    Id_ExtendedRNC_ID(ExtendedRNC_ID),
     #[asn(key = 108)]
-    id_GERAN_Classmark(GERAN_Classmark),
+    Id_GERAN_Classmark(GERAN_Classmark),
     #[asn(key = 250)]
-    id_HigherBitratesThan16MbpsFlag(HigherBitratesThan16MbpsFlag),
+    Id_HigherBitratesThan16MbpsFlag(HigherBitratesThan16MbpsFlag),
     #[asn(key = 241)]
-    id_LGW_TransportLayerAddress(TransportLayerAddress),
+    Id_LGW_TransportLayerAddress(TransportLayerAddress),
     #[asn(key = 275)]
-    id_LHN_ID(LHN_ID),
+    Id_LHN_ID(LHN_ID),
     #[asn(key = 130)]
-    id_NAS_SequenceNumber(NAS_SequenceNumber),
+    Id_NAS_SequenceNumber(NAS_SequenceNumber),
     #[asn(key = 23)]
-    id_PermanentNAS_UE_ID(PermanentNAS_UE_ID),
+    Id_PermanentNAS_UE_ID(PermanentNAS_UE_ID),
     #[asn(key = 166)]
-    id_RedirectAttemptFlag(RedirectAttemptFlag),
+    Id_RedirectAttemptFlag(RedirectAttemptFlag),
     #[asn(key = 286)]
-    id_SGSN_Group_Identity(SGSN_Group_Identity),
+    Id_SGSN_Group_Identity(SGSN_Group_Identity),
     #[asn(key = 273)]
-    id_SIPTO_LGW_TransportLayerAddress(TransportLayerAddress),
+    Id_SIPTO_LGW_TransportLayerAddress(TransportLayerAddress),
     #[asn(key = 127)]
-    id_SelectedPLMN_ID(PLMNidentity),
+    Id_SelectedPLMN_ID(PLMNidentity),
     #[asn(key = 262)]
-    id_Tunnel_Information_for_BBF(TunnelInformation),
+    Id_Tunnel_Information_for_BBF(TunnelInformation),
     #[asn(key = 294)]
-    id_UE_Application_Layer_Measurement_Capability(UE_Application_Layer_Measurement_Capability),
+    Id_UE_Application_Layer_Measurement_Capability(UE_Application_Layer_Measurement_Capability),
     #[asn(key = 290)]
-    id_UE_Usage_Type(UE_Usage_Type),
+    Id_UE_Usage_Type(UE_Usage_Type),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct InitialUE_MessageprotocolExtensions_Item {
+pub struct InitialUE_MessageProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: InitialUE_MessageprotocolExtensions_ItemextensionValue,
+    pub extension_value: InitialUE_MessageProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -6427,114 +6433,114 @@ pub struct InitialUE_MessageprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct InitialUE_MessageprotocolExtensions(Vec<InitialUE_MessageprotocolExtensions_Item>);
+pub struct InitialUE_MessageProtocolExtensions(Vec<InitialUE_MessageProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum InitiatingMessagevalue {
+pub enum InitiatingMessageValue {
     #[asn(key = 26)]
-    id_CN_DeactivateTrace(CN_DeactivateTrace),
+    Id_CN_DeactivateTrace(CN_DeactivateTrace),
     #[asn(key = 16)]
-    id_CN_InvokeTrace(CN_InvokeTrace),
+    Id_CN_InvokeTrace(CN_InvokeTrace),
     #[asn(key = 15)]
-    id_CommonID(CommonID),
+    Id_CommonID(CommonID),
     #[asn(key = 7)]
-    id_DataVolumeReport(DataVolumeReportRequest),
+    Id_DataVolumeReport(DataVolumeReportRequest),
     #[asn(key = 34)]
-    id_DirectInformationTransfer(DirectInformationTransfer),
+    Id_DirectInformationTransfer(DirectInformationTransfer),
     #[asn(key = 20)]
-    id_DirectTransfer(DirectTransfer),
+    Id_DirectTransfer(DirectTransfer),
     #[asn(key = 22)]
-    id_ErrorIndication(ErrorIndication),
+    Id_ErrorIndication(ErrorIndication),
     #[asn(key = 24)]
-    id_ForwardSRNS_Context(ForwardSRNS_Context),
+    Id_ForwardSRNS_Context(ForwardSRNS_Context),
     #[asn(key = 31)]
-    id_InformationTransfer(InformationTransferIndication),
+    Id_InformationTransfer(InformationTransferIndication),
     #[asn(key = 19)]
-    id_InitialUE_Message(InitialUE_Message),
+    Id_InitialUE_Message(InitialUE_Message),
     #[asn(key = 1)]
-    id_Iu_Release(Iu_ReleaseCommand),
+    Id_Iu_Release(Iu_ReleaseCommand),
     #[asn(key = 11)]
-    id_Iu_ReleaseRequest(Iu_ReleaseRequest),
+    Id_Iu_ReleaseRequest(Iu_ReleaseRequest),
     #[asn(key = 30)]
-    id_LocationRelatedData(LocationRelatedDataRequest),
+    Id_LocationRelatedData(LocationRelatedDataRequest),
     #[asn(key = 18)]
-    id_LocationReport(LocationReport),
+    Id_LocationReport(LocationReport),
     #[asn(key = 17)]
-    id_LocationReportingControl(LocationReportingControl),
+    Id_LocationReportingControl(LocationReportingControl),
     #[asn(key = 40)]
-    id_MBMSCNDe_Registration_Procedure(MBMSCNDe_RegistrationRequest),
+    Id_MBMSCNDe_Registration_Procedure(MBMSCNDe_RegistrationRequest),
     #[asn(key = 41)]
-    id_MBMSRABEstablishmentIndication(MBMSRABEstablishmentIndication),
+    Id_MBMSRABEstablishmentIndication(MBMSRABEstablishmentIndication),
     #[asn(key = 42)]
-    id_MBMSRABRelease(MBMSRABReleaseRequest),
+    Id_MBMSRABRelease(MBMSRABReleaseRequest),
     #[asn(key = 39)]
-    id_MBMSRegistration(MBMSRegistrationRequest),
+    Id_MBMSRegistration(MBMSRegistrationRequest),
     #[asn(key = 35)]
-    id_MBMSSessionStart(MBMSSessionStart),
+    Id_MBMSSessionStart(MBMSSessionStart),
     #[asn(key = 37)]
-    id_MBMSSessionStop(MBMSSessionStop),
+    Id_MBMSSessionStop(MBMSSessionStop),
     #[asn(key = 36)]
-    id_MBMSSessionUpdate(MBMSSessionUpdate),
+    Id_MBMSSessionUpdate(MBMSSessionUpdate),
     #[asn(key = 38)]
-    id_MBMSUELinking(MBMSUELinkingRequest),
+    Id_MBMSUELinking(MBMSUELinkingRequest),
     #[asn(key = 21)]
-    id_OverloadControl(Overload),
+    Id_OverloadControl(Overload),
     #[asn(key = 14)]
-    id_Paging(Paging),
+    Id_Paging(Paging),
     #[asn(key = 0)]
-    id_RAB_Assignment(RAB_AssignmentRequest),
+    Id_RAB_Assignment(RAB_AssignmentRequest),
     #[asn(key = 29)]
-    id_RAB_ModifyRequest(RAB_ModifyRequest),
+    Id_RAB_ModifyRequest(RAB_ModifyRequest),
     #[asn(key = 10)]
-    id_RAB_ReleaseRequest(RAB_ReleaseRequest),
+    Id_RAB_ReleaseRequest(RAB_ReleaseRequest),
     #[asn(key = 28)]
-    id_RANAP_Relocation(RANAP_RelocationInformation),
+    Id_RANAP_Relocation(RANAP_RelocationInformation),
     #[asn(key = 45)]
-    id_RANAPenhancedRelocation(RANAP_EnhancedRelocationInformationRequest),
+    Id_RANAPenhancedRelocation(RANAP_EnhancedRelocationInformationRequest),
     #[asn(key = 4)]
-    id_RelocationCancel(RelocationCancel),
+    Id_RelocationCancel(RelocationCancel),
     #[asn(key = 13)]
-    id_RelocationComplete(RelocationComplete),
+    Id_RelocationComplete(RelocationComplete),
     #[asn(key = 12)]
-    id_RelocationDetect(RelocationDetect),
+    Id_RelocationDetect(RelocationDetect),
     #[asn(key = 2)]
-    id_RelocationPreparation(RelocationRequired),
+    Id_RelocationPreparation(RelocationRequired),
     #[asn(key = 3)]
-    id_RelocationResourceAllocation(RelocationRequest),
+    Id_RelocationResourceAllocation(RelocationRequest),
     #[asn(key = 49)]
-    id_RerouteNASRequest(RerouteNASRequest),
+    Id_RerouteNASRequest(RerouteNASRequest),
     #[asn(key = 9)]
-    id_Reset(Reset),
+    Id_Reset(Reset),
     #[asn(key = 27)]
-    id_ResetResource(ResetResource),
+    Id_ResetResource(ResetResource),
     #[asn(key = 5)]
-    id_SRNS_ContextTransfer(SRNS_ContextRequest),
+    Id_SRNS_ContextTransfer(SRNS_ContextRequest),
     #[asn(key = 23)]
-    id_SRNS_DataForward(SRNS_DataForwardCommand),
+    Id_SRNS_DataForward(SRNS_DataForwardCommand),
     #[asn(key = 46)]
-    id_SRVCCPreparation(SRVCC_CSKeysRequest),
+    Id_SRVCCPreparation(SRVCC_CSKeysRequest),
     #[asn(key = 6)]
-    id_SecurityModeControl(SecurityModeCommand),
+    Id_SecurityModeControl(SecurityModeCommand),
     #[asn(key = 32)]
-    id_UESpecificInformation(UESpecificInformationIndication),
+    Id_UESpecificInformation(UESpecificInformationIndication),
     #[asn(key = 47)]
-    id_UeRadioCapabilityMatch(UeRadioCapabilityMatchRequest),
+    Id_UeRadioCapabilityMatch(UeRadioCapabilityMatchRequest),
     #[asn(key = 48)]
-    id_UeRegistrationQuery(UeRegistrationQueryRequest),
+    Id_UeRegistrationQuery(UeRegistrationQueryRequest),
     #[asn(key = 33)]
-    id_UplinkInformationExchange(UplinkInformationExchangeRequest),
+    Id_UplinkInformationExchange(UplinkInformationExchangeRequest),
     #[asn(key = 43)]
-    id_enhancedRelocationComplete(EnhancedRelocationCompleteRequest),
+    Id_enhancedRelocationComplete(EnhancedRelocationCompleteRequest),
     #[asn(key = 44)]
-    id_enhancedRelocationCompleteConfirm(EnhancedRelocationCompleteConfirm),
+    Id_enhancedRelocationCompleteConfirm(EnhancedRelocationCompleteConfirm),
     #[asn(key = 25)]
-    id_privateMessage(PrivateMessage),
+    Id_privateMessage(PrivateMessage),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct IntegrityProtectionInformationiE_Extensions_Item {}
+pub struct IntegrityProtectionInformationIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -6543,13 +6549,13 @@ pub struct IntegrityProtectionInformationiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct IntegrityProtectionInformationiE_Extensions(
-    Vec<IntegrityProtectionInformationiE_Extensions_Item>,
+pub struct IntegrityProtectionInformationIE_Extensions(
+    Vec<IntegrityProtectionInformationIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct InterSystemInformation_TransparentContaineriE_Extensions_Item {}
+pub struct InterSystemInformation_TransparentContainerIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -6558,8 +6564,8 @@ pub struct InterSystemInformation_TransparentContaineriE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct InterSystemInformation_TransparentContaineriE_Extensions(
-    Vec<InterSystemInformation_TransparentContaineriE_Extensions_Item>,
+pub struct InterSystemInformation_TransparentContainerIE_Extensions(
+    Vec<InterSystemInformation_TransparentContainerIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -6575,7 +6581,7 @@ impl ENUMERATED_41 {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct InterfacesToTraceItemiE_Extensions_Item {}
+pub struct InterfacesToTraceItemIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -6584,22 +6590,22 @@ pub struct InterfacesToTraceItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct InterfacesToTraceItemiE_Extensions(Vec<InterfacesToTraceItemiE_Extensions_Item>);
+pub struct InterfacesToTraceItemIE_Extensions(Vec<InterfacesToTraceItemIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum Iu_ReleaseCommandprotocolIEs_Itemvalue {
+pub enum Iu_ReleaseCommandProtocolIEs_EntryValue {
     #[asn(key = 4)]
-    id_Cause(Cause),
+    Id_Cause(Cause),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct Iu_ReleaseCommandprotocolIEs_Item {
+pub struct Iu_ReleaseCommandProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: Iu_ReleaseCommandprotocolIEs_Itemvalue,
+    pub value: Iu_ReleaseCommandProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -6609,26 +6615,26 @@ pub struct Iu_ReleaseCommandprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct Iu_ReleaseCommandprotocolIEs(Vec<Iu_ReleaseCommandprotocolIEs_Item>);
+pub struct Iu_ReleaseCommandProtocolIEs(Vec<Iu_ReleaseCommandProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum Iu_ReleaseCommandprotocolExtensions_ItemextensionValue {
+pub enum Iu_ReleaseCommandProtocolExtensions_EntryExtensionValue {
     #[asn(key = 252)]
-    id_End_Of_CSFB(End_Of_CSFB),
+    Id_End_Of_CSFB(End_Of_CSFB),
     #[asn(key = 277)]
-    id_LastE_UTRANPLMNIdentity(PLMNidentity),
+    Id_LastE_UTRANPLMNIdentity(PLMNidentity),
     #[asn(key = 254)]
-    id_Out_Of_UTRAN(Out_Of_UTRAN),
+    Id_Out_Of_UTRAN(Out_Of_UTRAN),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct Iu_ReleaseCommandprotocolExtensions_Item {
+pub struct Iu_ReleaseCommandProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: Iu_ReleaseCommandprotocolExtensions_ItemextensionValue,
+    pub extension_value: Iu_ReleaseCommandProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -6638,26 +6644,26 @@ pub struct Iu_ReleaseCommandprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct Iu_ReleaseCommandprotocolExtensions(Vec<Iu_ReleaseCommandprotocolExtensions_Item>);
+pub struct Iu_ReleaseCommandProtocolExtensions(Vec<Iu_ReleaseCommandProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum Iu_ReleaseCompleteprotocolIEs_Itemvalue {
+pub enum Iu_ReleaseCompleteProtocolIEs_EntryValue {
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 31)]
-    id_RAB_DataVolumeReportList(RAB_DataVolumeReportList),
+    Id_RAB_DataVolumeReportList(RAB_DataVolumeReportList),
     #[asn(key = 44)]
-    id_RAB_ReleasedList_IuRelComp(RAB_ReleasedList_IuRelComp),
+    Id_RAB_ReleasedList_IuRelComp(RAB_ReleasedList_IuRelComp),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct Iu_ReleaseCompleteprotocolIEs_Item {
+pub struct Iu_ReleaseCompleteProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: Iu_ReleaseCompleteprotocolIEs_Itemvalue,
+    pub value: Iu_ReleaseCompleteProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -6667,11 +6673,11 @@ pub struct Iu_ReleaseCompleteprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct Iu_ReleaseCompleteprotocolIEs(Vec<Iu_ReleaseCompleteprotocolIEs_Item>);
+pub struct Iu_ReleaseCompleteProtocolIEs(Vec<Iu_ReleaseCompleteProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct Iu_ReleaseCompleteprotocolExtensions_Item {}
+pub struct Iu_ReleaseCompleteProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -6680,22 +6686,22 @@ pub struct Iu_ReleaseCompleteprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct Iu_ReleaseCompleteprotocolExtensions(Vec<Iu_ReleaseCompleteprotocolExtensions_Item>);
+pub struct Iu_ReleaseCompleteProtocolExtensions(Vec<Iu_ReleaseCompleteProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum Iu_ReleaseRequestprotocolIEs_Itemvalue {
+pub enum Iu_ReleaseRequestProtocolIEs_EntryValue {
     #[asn(key = 4)]
-    id_Cause(Cause),
+    Id_Cause(Cause),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct Iu_ReleaseRequestprotocolIEs_Item {
+pub struct Iu_ReleaseRequestProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: Iu_ReleaseRequestprotocolIEs_Itemvalue,
+    pub value: Iu_ReleaseRequestProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -6705,11 +6711,11 @@ pub struct Iu_ReleaseRequestprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct Iu_ReleaseRequestprotocolIEs(Vec<Iu_ReleaseRequestprotocolIEs_Item>);
+pub struct Iu_ReleaseRequestProtocolIEs(Vec<Iu_ReleaseRequestProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct Iu_ReleaseRequestprotocolExtensions_Item {}
+pub struct Iu_ReleaseRequestProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -6718,11 +6724,11 @@ pub struct Iu_ReleaseRequestprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct Iu_ReleaseRequestprotocolExtensions(Vec<Iu_ReleaseRequestprotocolExtensions_Item>);
+pub struct Iu_ReleaseRequestProtocolExtensions(Vec<Iu_ReleaseRequestProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct JoinedMBMSBearerService_IEs_ItemiE_Extensions_Item {}
+pub struct JoinedMBMSBearerService_IEs_EntryIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -6731,22 +6737,22 @@ pub struct JoinedMBMSBearerService_IEs_ItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct JoinedMBMSBearerService_IEs_ItemiE_Extensions(
-    Vec<JoinedMBMSBearerService_IEs_ItemiE_Extensions_Item>,
+pub struct JoinedMBMSBearerService_IEs_EntryIE_Extensions(
+    Vec<JoinedMBMSBearerService_IEs_EntryIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
-pub struct JoinedMBMSBearerService_IEs_Item {
-    pub t_mgi: TMGI,
-    pub m_bms_ptp_rab_id: MBMS_PTP_RAB_ID,
+pub struct JoinedMBMSBearerService_IEs_Entry {
+    pub tmgi: TMGI,
+    pub mbms_ptp_rab_id: MBMS_PTP_RAB_ID,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<JoinedMBMSBearerService_IEs_ItemiE_Extensions>,
+    pub ie_extensions: Option<JoinedMBMSBearerService_IEs_EntryIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct LA_LIST_ItemiE_Extensions_Item {}
+pub struct LA_LIST_EntryIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -6755,20 +6761,20 @@ pub struct LA_LIST_ItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct LA_LIST_ItemiE_Extensions(Vec<LA_LIST_ItemiE_Extensions_Item>);
+pub struct LA_LIST_EntryIE_Extensions(Vec<LA_LIST_EntryIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
-pub struct LA_LIST_Item {
-    pub l_ac: LAC,
+pub struct LA_LIST_Entry {
+    pub lac: LAC,
     pub list_of_sn_as: ListOF_SNAs,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<LA_LIST_ItemiE_Extensions>,
+    pub ie_extensions: Option<LA_LIST_EntryIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct LABasediE_Extensions_Item {}
+pub struct LABasedIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -6777,11 +6783,11 @@ pub struct LABasediE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct LABasediE_Extensions(Vec<LABasediE_Extensions_Item>);
+pub struct LABasedIE_Extensions(Vec<LABasedIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct LAIiE_Extensions_Item {}
+pub struct LAIIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -6790,7 +6796,7 @@ pub struct LAIiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct LAIiE_Extensions(Vec<LAIiE_Extensions_Item>);
+pub struct LAIIE_Extensions(Vec<LAIIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "32767")]
@@ -6798,7 +6804,7 @@ pub struct INTEGER_42(u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct LastKnownServiceAreaiE_Extensions_Item {}
+pub struct LastKnownServiceAreaIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -6807,24 +6813,24 @@ pub struct LastKnownServiceAreaiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct LastKnownServiceAreaiE_Extensions(Vec<LastKnownServiceAreaiE_Extensions_Item>);
+pub struct LastKnownServiceAreaIE_Extensions(Vec<LastKnownServiceAreaIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum LastVisitedUTRANCell_ItemiE_Extensions_ItemextensionValue {
+pub enum LastVisitedUTRANCell_ItemIE_Extensions_EntryExtensionValue {
     #[asn(key = 257)]
-    id_HO_Cause(Cause),
+    Id_HO_Cause(Cause),
     #[asn(key = 253)]
-    id_Time_UE_StayedInCell_EnhancedGranularity(Time_UE_StayedInCell_EnhancedGranularity),
+    Id_Time_UE_StayedInCell_EnhancedGranularity(Time_UE_StayedInCell_EnhancedGranularity),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct LastVisitedUTRANCell_ItemiE_Extensions_Item {
+pub struct LastVisitedUTRANCell_ItemIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: LastVisitedUTRANCell_ItemiE_Extensions_ItemextensionValue,
+    pub extension_value: LastVisitedUTRANCell_ItemIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -6834,11 +6840,13 @@ pub struct LastVisitedUTRANCell_ItemiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct LastVisitedUTRANCell_ItemiE_Extensions(Vec<LastVisitedUTRANCell_ItemiE_Extensions_Item>);
+pub struct LastVisitedUTRANCell_ItemIE_Extensions(
+    Vec<LastVisitedUTRANCell_ItemIE_Extensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct LeftMBMSBearerService_IEs_ItemiE_Extensions_Item {}
+pub struct LeftMBMSBearerService_IEs_EntryIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -6847,32 +6855,32 @@ pub struct LeftMBMSBearerService_IEs_ItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct LeftMBMSBearerService_IEs_ItemiE_Extensions(
-    Vec<LeftMBMSBearerService_IEs_ItemiE_Extensions_Item>,
+pub struct LeftMBMSBearerService_IEs_EntryIE_Extensions(
+    Vec<LeftMBMSBearerService_IEs_EntryIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
-pub struct LeftMBMSBearerService_IEs_Item {
-    pub t_mgi: TMGI,
+pub struct LeftMBMSBearerService_IEs_Entry {
+    pub tmgi: TMGI,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<LeftMBMSBearerService_IEs_ItemiE_Extensions>,
+    pub ie_extensions: Option<LeftMBMSBearerService_IEs_EntryIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum LocationRelatedDataFailureprotocolIEs_Itemvalue {
+pub enum LocationRelatedDataFailureProtocolIEs_EntryValue {
     #[asn(key = 4)]
-    id_Cause(Cause),
+    Id_Cause(Cause),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct LocationRelatedDataFailureprotocolIEs_Item {
+pub struct LocationRelatedDataFailureProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: LocationRelatedDataFailureprotocolIEs_Itemvalue,
+    pub value: LocationRelatedDataFailureProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -6882,22 +6890,22 @@ pub struct LocationRelatedDataFailureprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct LocationRelatedDataFailureprotocolIEs(Vec<LocationRelatedDataFailureprotocolIEs_Item>);
+pub struct LocationRelatedDataFailureProtocolIEs(Vec<LocationRelatedDataFailureProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum LocationRelatedDataFailureprotocolExtensions_ItemextensionValue {
+pub enum LocationRelatedDataFailureProtocolExtensions_EntryExtensionValue {
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct LocationRelatedDataFailureprotocolExtensions_Item {
+pub struct LocationRelatedDataFailureProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: LocationRelatedDataFailureprotocolExtensions_ItemextensionValue,
+    pub extension_value: LocationRelatedDataFailureProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -6907,24 +6915,24 @@ pub struct LocationRelatedDataFailureprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct LocationRelatedDataFailureprotocolExtensions(
-    Vec<LocationRelatedDataFailureprotocolExtensions_Item>,
+pub struct LocationRelatedDataFailureProtocolExtensions(
+    Vec<LocationRelatedDataFailureProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum LocationRelatedDataRequestprotocolIEs_Itemvalue {
+pub enum LocationRelatedDataRequestProtocolIEs_EntryValue {
     #[asn(key = 95)]
-    id_LocationRelatedDataRequestType(LocationRelatedDataRequestType),
+    Id_LocationRelatedDataRequestType(LocationRelatedDataRequestType),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct LocationRelatedDataRequestprotocolIEs_Item {
+pub struct LocationRelatedDataRequestProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: LocationRelatedDataRequestprotocolIEs_Itemvalue,
+    pub value: LocationRelatedDataRequestProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -6934,26 +6942,26 @@ pub struct LocationRelatedDataRequestprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct LocationRelatedDataRequestprotocolIEs(Vec<LocationRelatedDataRequestprotocolIEs_Item>);
+pub struct LocationRelatedDataRequestProtocolIEs(Vec<LocationRelatedDataRequestProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum LocationRelatedDataRequestprotocolExtensions_ItemextensionValue {
+pub enum LocationRelatedDataRequestProtocolExtensions_EntryExtensionValue {
     #[asn(key = 115)]
-    id_LocationRelatedDataRequestTypeSpecificToGERANIuMode(
+    Id_LocationRelatedDataRequestTypeSpecificToGERANIuMode(
         LocationRelatedDataRequestTypeSpecificToGERANIuMode,
     ),
     #[asn(key = 185)]
-    id_RequestedGANSSAssistanceData(RequestedGANSSAssistanceData),
+    Id_RequestedGANSSAssistanceData(RequestedGANSSAssistanceData),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct LocationRelatedDataRequestprotocolExtensions_Item {
+pub struct LocationRelatedDataRequestProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: LocationRelatedDataRequestprotocolExtensions_ItemextensionValue,
+    pub extension_value: LocationRelatedDataRequestProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -6963,24 +6971,24 @@ pub struct LocationRelatedDataRequestprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct LocationRelatedDataRequestprotocolExtensions(
-    Vec<LocationRelatedDataRequestprotocolExtensions_Item>,
+pub struct LocationRelatedDataRequestProtocolExtensions(
+    Vec<LocationRelatedDataRequestProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum LocationRelatedDataResponseprotocolIEs_Itemvalue {
+pub enum LocationRelatedDataResponseProtocolIEs_EntryValue {
     #[asn(key = 94)]
-    id_BroadcastAssistanceDataDecipheringKeys(BroadcastAssistanceDataDecipheringKeys),
+    Id_BroadcastAssistanceDataDecipheringKeys(BroadcastAssistanceDataDecipheringKeys),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct LocationRelatedDataResponseprotocolIEs_Item {
+pub struct LocationRelatedDataResponseProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: LocationRelatedDataResponseprotocolIEs_Itemvalue,
+    pub value: LocationRelatedDataResponseProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -6990,24 +6998,26 @@ pub struct LocationRelatedDataResponseprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct LocationRelatedDataResponseprotocolIEs(Vec<LocationRelatedDataResponseprotocolIEs_Item>);
+pub struct LocationRelatedDataResponseProtocolIEs(
+    Vec<LocationRelatedDataResponseProtocolIEs_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum LocationRelatedDataResponseprotocolExtensions_ItemextensionValue {
+pub enum LocationRelatedDataResponseProtocolExtensions_EntryExtensionValue {
     #[asn(key = 186)]
-    id_BroadcastGANSSAssistanceDataDecipheringKeys(BroadcastAssistanceDataDecipheringKeys),
+    Id_BroadcastGANSSAssistanceDataDecipheringKeys(BroadcastAssistanceDataDecipheringKeys),
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct LocationRelatedDataResponseprotocolExtensions_Item {
+pub struct LocationRelatedDataResponseProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: LocationRelatedDataResponseprotocolExtensions_ItemextensionValue,
+    pub extension_value: LocationRelatedDataResponseProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -7017,28 +7027,28 @@ pub struct LocationRelatedDataResponseprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct LocationRelatedDataResponseprotocolExtensions(
-    Vec<LocationRelatedDataResponseprotocolExtensions_Item>,
+pub struct LocationRelatedDataResponseProtocolExtensions(
+    Vec<LocationRelatedDataResponseProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum LocationReportprotocolIEs_Itemvalue {
+pub enum LocationReportProtocolIEs_EntryValue {
     #[asn(key = 0)]
-    id_AreaIdentity(AreaIdentity),
+    Id_AreaIdentity(AreaIdentity),
     #[asn(key = 4)]
-    id_Cause(Cause),
+    Id_Cause(Cause),
     #[asn(key = 57)]
-    id_RequestType(RequestType),
+    Id_RequestType(RequestType),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct LocationReportprotocolIEs_Item {
+pub struct LocationReportProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: LocationReportprotocolIEs_Itemvalue,
+    pub value: LocationReportProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -7048,34 +7058,34 @@ pub struct LocationReportprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct LocationReportprotocolIEs(Vec<LocationReportprotocolIEs_Item>);
+pub struct LocationReportProtocolIEs(Vec<LocationReportProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum LocationReportprotocolExtensions_ItemextensionValue {
+pub enum LocationReportProtocolExtensions_EntryExtensionValue {
     #[asn(key = 122)]
-    id_AccuracyFulfilmentIndicator(AccuracyFulfilmentIndicator),
+    Id_AccuracyFulfilmentIndicator(AccuracyFulfilmentIndicator),
     #[asn(key = 283)]
-    id_BarometricPressure(BarometricPressure),
+    Id_BarometricPressure(BarometricPressure),
     #[asn(key = 285)]
-    id_CivicAddress(CivicAddress),
+    Id_CivicAddress(CivicAddress),
     #[asn(key = 97)]
-    id_LastKnownServiceArea(LastKnownServiceArea),
+    Id_LastKnownServiceArea(LastKnownServiceArea),
     #[asn(key = 119)]
-    id_PositionData(PositionData),
+    Id_PositionData(PositionData),
     #[asn(key = 120)]
-    id_PositionDataSpecificToGERANIuMode(PositionDataSpecificToGERANIuMode),
+    Id_PositionDataSpecificToGERANIuMode(PositionDataSpecificToGERANIuMode),
     #[asn(key = 165)]
-    id_VelocityEstimate(VelocityEstimate),
+    Id_VelocityEstimate(VelocityEstimate),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct LocationReportprotocolExtensions_Item {
+pub struct LocationReportProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: LocationReportprotocolExtensions_ItemextensionValue,
+    pub extension_value: LocationReportProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -7085,22 +7095,22 @@ pub struct LocationReportprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct LocationReportprotocolExtensions(Vec<LocationReportprotocolExtensions_Item>);
+pub struct LocationReportProtocolExtensions(Vec<LocationReportProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum LocationReportingControlprotocolIEs_Itemvalue {
+pub enum LocationReportingControlProtocolIEs_EntryValue {
     #[asn(key = 57)]
-    id_RequestType(RequestType),
+    Id_RequestType(RequestType),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct LocationReportingControlprotocolIEs_Item {
+pub struct LocationReportingControlProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: LocationReportingControlprotocolIEs_Itemvalue,
+    pub value: LocationReportingControlProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -7110,32 +7120,32 @@ pub struct LocationReportingControlprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct LocationReportingControlprotocolIEs(Vec<LocationReportingControlprotocolIEs_Item>);
+pub struct LocationReportingControlProtocolIEs(Vec<LocationReportingControlProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum LocationReportingControlprotocolExtensions_ItemextensionValue {
+pub enum LocationReportingControlProtocolExtensions_EntryExtensionValue {
     #[asn(key = 114)]
-    id_ClientType(ClientType),
+    Id_ClientType(ClientType),
     #[asn(key = 164)]
-    id_IncludeVelocity(IncludeVelocity),
+    Id_IncludeVelocity(IncludeVelocity),
     #[asn(key = 168)]
-    id_PeriodicLocationInfo(PeriodicLocationInfo),
+    Id_PeriodicLocationInfo(PeriodicLocationInfo),
     #[asn(key = 113)]
-    id_PositioningPriority(PositioningPriority),
+    Id_PositioningPriority(PositioningPriority),
     #[asn(key = 112)]
-    id_ResponseTime(ResponseTime),
+    Id_ResponseTime(ResponseTime),
     #[asn(key = 111)]
-    id_VerticalAccuracyCode(VerticalAccuracyCode),
+    Id_VerticalAccuracyCode(VerticalAccuracyCode),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct LocationReportingControlprotocolExtensions_Item {
+pub struct LocationReportingControlProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: LocationReportingControlprotocolExtensions_ItemextensionValue,
+    pub extension_value: LocationReportingControlProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -7145,13 +7155,13 @@ pub struct LocationReportingControlprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct LocationReportingControlprotocolExtensions(
-    Vec<LocationReportingControlprotocolExtensions_Item>,
+pub struct LocationReportingControlProtocolExtensions(
+    Vec<LocationReportingControlProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct LocationReportingTransferInformationiE_Extensions_Item {}
+pub struct LocationReportingTransferInformationIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -7160,13 +7170,13 @@ pub struct LocationReportingTransferInformationiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct LocationReportingTransferInformationiE_Extensions(
-    Vec<LocationReportingTransferInformationiE_Extensions_Item>,
+pub struct LocationReportingTransferInformationIE_Extensions(
+    Vec<LocationReportingTransferInformationIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct LoggedMDTiE_Extensions_Item {}
+pub struct LoggedMDTIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -7175,11 +7185,11 @@ pub struct LoggedMDTiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct LoggedMDTiE_Extensions(Vec<LoggedMDTiE_Extensions_Item>);
+pub struct LoggedMDTIE_Extensions(Vec<LoggedMDTIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct M4_Collection_ParametersiE_Extensions_Item {}
+pub struct M4_Collection_ParametersIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -7188,7 +7198,7 @@ pub struct M4_Collection_ParametersiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct M4_Collection_ParametersiE_Extensions(Vec<M4_Collection_ParametersiE_Extensions_Item>);
+pub struct M4_Collection_ParametersIE_Extensions(Vec<M4_Collection_ParametersIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "NULL")]
@@ -7200,7 +7210,7 @@ pub struct NULL_44;
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct M6ReportiE_Extensions_Item {}
+pub struct M6ReportIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -7209,11 +7219,11 @@ pub struct M6ReportiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct M6ReportiE_Extensions(Vec<M6ReportiE_Extensions_Item>);
+pub struct M6ReportIE_Extensions(Vec<M6ReportIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct M7ReportiE_Extensions_Item {}
+pub struct M7ReportIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -7222,24 +7232,24 @@ pub struct M7ReportiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct M7ReportiE_Extensions(Vec<M7ReportiE_Extensions_Item>);
+pub struct M7ReportIE_Extensions(Vec<M7ReportIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum MBMSCNDe_RegistrationRequestprotocolIEs_Itemvalue {
+pub enum MBMSCNDe_RegistrationRequestProtocolIEs_EntryValue {
     #[asn(key = 96)]
-    id_GlobalCN_ID(GlobalCN_ID),
+    Id_GlobalCN_ID(GlobalCN_ID),
     #[asn(key = 153)]
-    id_TMGI(TMGI),
+    Id_TMGI(TMGI),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSCNDe_RegistrationRequestprotocolIEs_Item {
+pub struct MBMSCNDe_RegistrationRequestProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: MBMSCNDe_RegistrationRequestprotocolIEs_Itemvalue,
+    pub value: MBMSCNDe_RegistrationRequestProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -7249,13 +7259,13 @@ pub struct MBMSCNDe_RegistrationRequestprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSCNDe_RegistrationRequestprotocolIEs(
-    Vec<MBMSCNDe_RegistrationRequestprotocolIEs_Item>,
+pub struct MBMSCNDe_RegistrationRequestProtocolIEs(
+    Vec<MBMSCNDe_RegistrationRequestProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSCNDe_RegistrationRequestprotocolExtensions_Item {}
+pub struct MBMSCNDe_RegistrationRequestProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -7264,30 +7274,30 @@ pub struct MBMSCNDe_RegistrationRequestprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MBMSCNDe_RegistrationRequestprotocolExtensions(
-    Vec<MBMSCNDe_RegistrationRequestprotocolExtensions_Item>,
+pub struct MBMSCNDe_RegistrationRequestProtocolExtensions(
+    Vec<MBMSCNDe_RegistrationRequestProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum MBMSCNDe_RegistrationResponseprotocolIEs_Itemvalue {
+pub enum MBMSCNDe_RegistrationResponseProtocolIEs_EntryValue {
     #[asn(key = 4)]
-    id_Cause(Cause),
+    Id_Cause(Cause),
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 86)]
-    id_GlobalRNC_ID(GlobalRNC_ID),
+    Id_GlobalRNC_ID(GlobalRNC_ID),
     #[asn(key = 153)]
-    id_TMGI(TMGI),
+    Id_TMGI(TMGI),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSCNDe_RegistrationResponseprotocolIEs_Item {
+pub struct MBMSCNDe_RegistrationResponseProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: MBMSCNDe_RegistrationResponseprotocolIEs_Itemvalue,
+    pub value: MBMSCNDe_RegistrationResponseProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -7297,24 +7307,24 @@ pub struct MBMSCNDe_RegistrationResponseprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSCNDe_RegistrationResponseprotocolIEs(
-    Vec<MBMSCNDe_RegistrationResponseprotocolIEs_Item>,
+pub struct MBMSCNDe_RegistrationResponseProtocolIEs(
+    Vec<MBMSCNDe_RegistrationResponseProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum MBMSCNDe_RegistrationResponseprotocolExtensions_ItemextensionValue {
+pub enum MBMSCNDe_RegistrationResponseProtocolExtensions_EntryExtensionValue {
     #[asn(key = 171)]
-    id_ExtendedRNC_ID(ExtendedRNC_ID),
+    Id_ExtendedRNC_ID(ExtendedRNC_ID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSCNDe_RegistrationResponseprotocolExtensions_Item {
+pub struct MBMSCNDe_RegistrationResponseProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: MBMSCNDe_RegistrationResponseprotocolExtensions_ItemextensionValue,
+    pub extension_value: MBMSCNDe_RegistrationResponseProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -7324,13 +7334,13 @@ pub struct MBMSCNDe_RegistrationResponseprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MBMSCNDe_RegistrationResponseprotocolExtensions(
-    Vec<MBMSCNDe_RegistrationResponseprotocolExtensions_Item>,
+pub struct MBMSCNDe_RegistrationResponseProtocolExtensions(
+    Vec<MBMSCNDe_RegistrationResponseProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSIPMulticastAddressandAPNlistiE_Extensions_Item {}
+pub struct MBMSIPMulticastAddressandAPNlistIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -7339,24 +7349,24 @@ pub struct MBMSIPMulticastAddressandAPNlistiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MBMSIPMulticastAddressandAPNlistiE_Extensions(
-    Vec<MBMSIPMulticastAddressandAPNlistiE_Extensions_Item>,
+pub struct MBMSIPMulticastAddressandAPNlistIE_Extensions(
+    Vec<MBMSIPMulticastAddressandAPNlistIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum MBMSRABEstablishmentIndicationprotocolIEs_Itemvalue {
+pub enum MBMSRABEstablishmentIndicationProtocolIEs_EntryValue {
     #[asn(key = 154)]
-    id_TransportLayerInformation(TransportLayerInformation),
+    Id_TransportLayerInformation(TransportLayerInformation),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSRABEstablishmentIndicationprotocolIEs_Item {
+pub struct MBMSRABEstablishmentIndicationProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: MBMSRABEstablishmentIndicationprotocolIEs_Itemvalue,
+    pub value: MBMSRABEstablishmentIndicationProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -7366,13 +7376,13 @@ pub struct MBMSRABEstablishmentIndicationprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSRABEstablishmentIndicationprotocolIEs(
-    Vec<MBMSRABEstablishmentIndicationprotocolIEs_Item>,
+pub struct MBMSRABEstablishmentIndicationProtocolIEs(
+    Vec<MBMSRABEstablishmentIndicationProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSRABEstablishmentIndicationprotocolExtensions_Item {}
+pub struct MBMSRABEstablishmentIndicationProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -7381,26 +7391,26 @@ pub struct MBMSRABEstablishmentIndicationprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MBMSRABEstablishmentIndicationprotocolExtensions(
-    Vec<MBMSRABEstablishmentIndicationprotocolExtensions_Item>,
+pub struct MBMSRABEstablishmentIndicationProtocolExtensions(
+    Vec<MBMSRABEstablishmentIndicationProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum MBMSRABReleaseprotocolIEs_Itemvalue {
+pub enum MBMSRABReleaseProtocolIEs_EntryValue {
     #[asn(key = 4)]
-    id_Cause(Cause),
+    Id_Cause(Cause),
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSRABReleaseprotocolIEs_Item {
+pub struct MBMSRABReleaseProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: MBMSRABReleaseprotocolIEs_Itemvalue,
+    pub value: MBMSRABReleaseProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -7410,11 +7420,11 @@ pub struct MBMSRABReleaseprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSRABReleaseprotocolIEs(Vec<MBMSRABReleaseprotocolIEs_Item>);
+pub struct MBMSRABReleaseProtocolIEs(Vec<MBMSRABReleaseProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSRABReleaseprotocolExtensions_Item {}
+pub struct MBMSRABReleaseProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -7423,24 +7433,24 @@ pub struct MBMSRABReleaseprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MBMSRABReleaseprotocolExtensions(Vec<MBMSRABReleaseprotocolExtensions_Item>);
+pub struct MBMSRABReleaseProtocolExtensions(Vec<MBMSRABReleaseProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum MBMSRABReleaseFailureprotocolIEs_Itemvalue {
+pub enum MBMSRABReleaseFailureProtocolIEs_EntryValue {
     #[asn(key = 4)]
-    id_Cause(Cause),
+    Id_Cause(Cause),
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSRABReleaseFailureprotocolIEs_Item {
+pub struct MBMSRABReleaseFailureProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: MBMSRABReleaseFailureprotocolIEs_Itemvalue,
+    pub value: MBMSRABReleaseFailureProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -7450,11 +7460,11 @@ pub struct MBMSRABReleaseFailureprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSRABReleaseFailureprotocolIEs(Vec<MBMSRABReleaseFailureprotocolIEs_Item>);
+pub struct MBMSRABReleaseFailureProtocolIEs(Vec<MBMSRABReleaseFailureProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSRABReleaseFailureprotocolExtensions_Item {}
+pub struct MBMSRABReleaseFailureProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -7463,24 +7473,24 @@ pub struct MBMSRABReleaseFailureprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MBMSRABReleaseFailureprotocolExtensions(
-    Vec<MBMSRABReleaseFailureprotocolExtensions_Item>,
+pub struct MBMSRABReleaseFailureProtocolExtensions(
+    Vec<MBMSRABReleaseFailureProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum MBMSRABReleaseRequestprotocolIEs_Itemvalue {
+pub enum MBMSRABReleaseRequestProtocolIEs_EntryValue {
     #[asn(key = 4)]
-    id_Cause(Cause),
+    Id_Cause(Cause),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSRABReleaseRequestprotocolIEs_Item {
+pub struct MBMSRABReleaseRequestProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: MBMSRABReleaseRequestprotocolIEs_Itemvalue,
+    pub value: MBMSRABReleaseRequestProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -7490,11 +7500,11 @@ pub struct MBMSRABReleaseRequestprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSRABReleaseRequestprotocolIEs(Vec<MBMSRABReleaseRequestprotocolIEs_Item>);
+pub struct MBMSRABReleaseRequestProtocolIEs(Vec<MBMSRABReleaseRequestProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSRABReleaseRequestprotocolExtensions_Item {}
+pub struct MBMSRABReleaseRequestProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -7503,30 +7513,30 @@ pub struct MBMSRABReleaseRequestprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MBMSRABReleaseRequestprotocolExtensions(
-    Vec<MBMSRABReleaseRequestprotocolExtensions_Item>,
+pub struct MBMSRABReleaseRequestProtocolExtensions(
+    Vec<MBMSRABReleaseRequestProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum MBMSRegistrationFailureprotocolIEs_Itemvalue {
+pub enum MBMSRegistrationFailureProtocolIEs_EntryValue {
     #[asn(key = 4)]
-    id_Cause(Cause),
+    Id_Cause(Cause),
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 96)]
-    id_GlobalCN_ID(GlobalCN_ID),
+    Id_GlobalCN_ID(GlobalCN_ID),
     #[asn(key = 153)]
-    id_TMGI(TMGI),
+    Id_TMGI(TMGI),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSRegistrationFailureprotocolIEs_Item {
+pub struct MBMSRegistrationFailureProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: MBMSRegistrationFailureprotocolIEs_Itemvalue,
+    pub value: MBMSRegistrationFailureProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -7536,11 +7546,11 @@ pub struct MBMSRegistrationFailureprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSRegistrationFailureprotocolIEs(Vec<MBMSRegistrationFailureprotocolIEs_Item>);
+pub struct MBMSRegistrationFailureProtocolIEs(Vec<MBMSRegistrationFailureProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSRegistrationFailureprotocolExtensions_Item {}
+pub struct MBMSRegistrationFailureProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -7549,32 +7559,32 @@ pub struct MBMSRegistrationFailureprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MBMSRegistrationFailureprotocolExtensions(
-    Vec<MBMSRegistrationFailureprotocolExtensions_Item>,
+pub struct MBMSRegistrationFailureProtocolExtensions(
+    Vec<MBMSRegistrationFailureProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum MBMSRegistrationRequestprotocolIEs_Itemvalue {
+pub enum MBMSRegistrationRequestProtocolIEs_EntryValue {
     #[asn(key = 132)]
-    id_APN(APN),
+    Id_APN(APN),
     #[asn(key = 86)]
-    id_GlobalRNC_ID(GlobalRNC_ID),
+    Id_GlobalRNC_ID(GlobalRNC_ID),
     #[asn(key = 140)]
-    id_IPMulticastAddress(IPMulticastAddress),
+    Id_IPMulticastAddress(IPMulticastAddress),
     #[asn(key = 151)]
-    id_MBMSRegistrationRequestType(MBMSRegistrationRequestType),
+    Id_MBMSRegistrationRequestType(MBMSRegistrationRequestType),
     #[asn(key = 153)]
-    id_TMGI(TMGI),
+    Id_TMGI(TMGI),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSRegistrationRequestprotocolIEs_Item {
+pub struct MBMSRegistrationRequestProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: MBMSRegistrationRequestprotocolIEs_Itemvalue,
+    pub value: MBMSRegistrationRequestProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -7584,22 +7594,22 @@ pub struct MBMSRegistrationRequestprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSRegistrationRequestprotocolIEs(Vec<MBMSRegistrationRequestprotocolIEs_Item>);
+pub struct MBMSRegistrationRequestProtocolIEs(Vec<MBMSRegistrationRequestProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum MBMSRegistrationRequestprotocolExtensions_ItemextensionValue {
+pub enum MBMSRegistrationRequestProtocolExtensions_EntryExtensionValue {
     #[asn(key = 171)]
-    id_ExtendedRNC_ID(ExtendedRNC_ID),
+    Id_ExtendedRNC_ID(ExtendedRNC_ID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSRegistrationRequestprotocolExtensions_Item {
+pub struct MBMSRegistrationRequestProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: MBMSRegistrationRequestprotocolExtensions_ItemextensionValue,
+    pub extension_value: MBMSRegistrationRequestProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -7609,28 +7619,28 @@ pub struct MBMSRegistrationRequestprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MBMSRegistrationRequestprotocolExtensions(
-    Vec<MBMSRegistrationRequestprotocolExtensions_Item>,
+pub struct MBMSRegistrationRequestProtocolExtensions(
+    Vec<MBMSRegistrationRequestProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum MBMSRegistrationResponseprotocolIEs_Itemvalue {
+pub enum MBMSRegistrationResponseProtocolIEs_EntryValue {
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 96)]
-    id_GlobalCN_ID(GlobalCN_ID),
+    Id_GlobalCN_ID(GlobalCN_ID),
     #[asn(key = 153)]
-    id_TMGI(TMGI),
+    Id_TMGI(TMGI),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSRegistrationResponseprotocolIEs_Item {
+pub struct MBMSRegistrationResponseProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: MBMSRegistrationResponseprotocolIEs_Itemvalue,
+    pub value: MBMSRegistrationResponseProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -7640,11 +7650,11 @@ pub struct MBMSRegistrationResponseprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSRegistrationResponseprotocolIEs(Vec<MBMSRegistrationResponseprotocolIEs_Item>);
+pub struct MBMSRegistrationResponseProtocolIEs(Vec<MBMSRegistrationResponseProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSRegistrationResponseprotocolExtensions_Item {}
+pub struct MBMSRegistrationResponseProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -7653,48 +7663,48 @@ pub struct MBMSRegistrationResponseprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MBMSRegistrationResponseprotocolExtensions(
-    Vec<MBMSRegistrationResponseprotocolExtensions_Item>,
+pub struct MBMSRegistrationResponseProtocolExtensions(
+    Vec<MBMSRegistrationResponseProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum MBMSSessionStartprotocolIEs_Itemvalue {
+pub enum MBMSSessionStartProtocolIEs_EntryValue {
     #[asn(key = 135)]
-    id_FrequenceLayerConvergenceFlag(FrequenceLayerConvergenceFlag),
+    Id_FrequenceLayerConvergenceFlag(FrequenceLayerConvergenceFlag),
     #[asn(key = 96)]
-    id_GlobalCN_ID(GlobalCN_ID),
+    Id_GlobalCN_ID(GlobalCN_ID),
     #[asn(key = 79)]
-    id_IuSigConId(IuSignallingConnectionIdentifier),
+    Id_IuSigConId(IuSignallingConnectionIdentifier),
     #[asn(key = 143)]
-    id_MBMSBearerServiceType(MBMSBearerServiceType),
+    Id_MBMSBearerServiceType(MBMSBearerServiceType),
     #[asn(key = 145)]
-    id_MBMSServiceArea(MBMSServiceArea),
+    Id_MBMSServiceArea(MBMSServiceArea),
     #[asn(key = 146)]
-    id_MBMSSessionDuration(MBMSSessionDuration),
+    Id_MBMSSessionDuration(MBMSSessionDuration),
     #[asn(key = 147)]
-    id_MBMSSessionIdentity(MBMSSessionIdentity),
+    Id_MBMSSessionIdentity(MBMSSessionIdentity),
     #[asn(key = 157)]
-    id_MBMSSessionRepetitionNumber(MBMSSessionRepetitionNumber),
+    Id_MBMSSessionRepetitionNumber(MBMSSessionRepetitionNumber),
     #[asn(key = 148)]
-    id_PDP_TypeInformation(PDP_TypeInformation),
+    Id_PDP_TypeInformation(PDP_TypeInformation),
     #[asn(key = 149)]
-    id_RAB_Parameters(RAB_Parameters),
+    Id_RAB_Parameters(RAB_Parameters),
     #[asn(key = 150)]
-    id_RAListofIdleModeUEs(RAListofIdleModeUEs),
+    Id_RAListofIdleModeUEs(RAListofIdleModeUEs),
     #[asn(key = 153)]
-    id_TMGI(TMGI),
+    Id_TMGI(TMGI),
     #[asn(key = 163)]
-    id_TimeToMBMSDataTransfer(TimeToMBMSDataTransfer),
+    Id_TimeToMBMSDataTransfer(TimeToMBMSDataTransfer),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSSessionStartprotocolIEs_Item {
+pub struct MBMSSessionStartProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: MBMSSessionStartprotocolIEs_Itemvalue,
+    pub value: MBMSSessionStartProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -7704,28 +7714,28 @@ pub struct MBMSSessionStartprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionStartprotocolIEs(Vec<MBMSSessionStartprotocolIEs_Item>);
+pub struct MBMSSessionStartProtocolIEs(Vec<MBMSSessionStartProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum MBMSSessionStartprotocolExtensions_ItemextensionValue {
+pub enum MBMSSessionStartProtocolExtensions_EntryExtensionValue {
     #[asn(key = 169)]
-    id_MBMSCountingInformation(MBMSCountingInformation),
+    Id_MBMSCountingInformation(MBMSCountingInformation),
     #[asn(key = 201)]
-    id_MBMSSynchronisationInformation(MBMSSynchronisationInformation),
+    Id_MBMSSynchronisationInformation(MBMSSynchronisationInformation),
     #[asn(key = 238)]
-    id_PDP_TypeInformation_extension(PDP_TypeInformation_extension),
+    Id_PDP_TypeInformation_extension(PDP_TypeInformation_extension),
     #[asn(key = 276)]
-    id_Session_Re_establishment_Indicator(Session_Re_establishment_Indicator),
+    Id_Session_Re_establishment_Indicator(Session_Re_establishment_Indicator),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSSessionStartprotocolExtensions_Item {
+pub struct MBMSSessionStartProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: MBMSSessionStartprotocolExtensions_ItemextensionValue,
+    pub extension_value: MBMSSessionStartProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -7735,24 +7745,24 @@ pub struct MBMSSessionStartprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionStartprotocolExtensions(Vec<MBMSSessionStartprotocolExtensions_Item>);
+pub struct MBMSSessionStartProtocolExtensions(Vec<MBMSSessionStartProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum MBMSSessionStartFailureprotocolIEs_Itemvalue {
+pub enum MBMSSessionStartFailureProtocolIEs_EntryValue {
     #[asn(key = 4)]
-    id_Cause(Cause),
+    Id_Cause(Cause),
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSSessionStartFailureprotocolIEs_Item {
+pub struct MBMSSessionStartFailureProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: MBMSSessionStartFailureprotocolIEs_Itemvalue,
+    pub value: MBMSSessionStartFailureProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -7762,11 +7772,11 @@ pub struct MBMSSessionStartFailureprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionStartFailureprotocolIEs(Vec<MBMSSessionStartFailureprotocolIEs_Item>);
+pub struct MBMSSessionStartFailureProtocolIEs(Vec<MBMSSessionStartFailureProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSSessionStartFailureprotocolExtensions_Item {}
+pub struct MBMSSessionStartFailureProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -7775,28 +7785,28 @@ pub struct MBMSSessionStartFailureprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionStartFailureprotocolExtensions(
-    Vec<MBMSSessionStartFailureprotocolExtensions_Item>,
+pub struct MBMSSessionStartFailureProtocolExtensions(
+    Vec<MBMSSessionStartFailureProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum MBMSSessionStartResponseprotocolIEs_Itemvalue {
+pub enum MBMSSessionStartResponseProtocolIEs_EntryValue {
     #[asn(key = 4)]
-    id_Cause(Cause),
+    Id_Cause(Cause),
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 154)]
-    id_TransportLayerInformation(TransportLayerInformation),
+    Id_TransportLayerInformation(TransportLayerInformation),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSSessionStartResponseprotocolIEs_Item {
+pub struct MBMSSessionStartResponseProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: MBMSSessionStartResponseprotocolIEs_Itemvalue,
+    pub value: MBMSSessionStartResponseProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -7806,11 +7816,11 @@ pub struct MBMSSessionStartResponseprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionStartResponseprotocolIEs(Vec<MBMSSessionStartResponseprotocolIEs_Item>);
+pub struct MBMSSessionStartResponseProtocolIEs(Vec<MBMSSessionStartResponseProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSSessionStartResponseprotocolExtensions_Item {}
+pub struct MBMSSessionStartResponseProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -7819,24 +7829,24 @@ pub struct MBMSSessionStartResponseprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionStartResponseprotocolExtensions(
-    Vec<MBMSSessionStartResponseprotocolExtensions_Item>,
+pub struct MBMSSessionStartResponseProtocolExtensions(
+    Vec<MBMSSessionStartResponseProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum MBMSSessionStopprotocolIEs_Itemvalue {
+pub enum MBMSSessionStopProtocolIEs_EntryValue {
     #[asn(key = 144)]
-    id_MBMSCNDe_Registration(MBMSCNDe_Registration),
+    Id_MBMSCNDe_Registration(MBMSCNDe_Registration),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSSessionStopprotocolIEs_Item {
+pub struct MBMSSessionStopProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: MBMSSessionStopprotocolIEs_Itemvalue,
+    pub value: MBMSSessionStopProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -7846,11 +7856,11 @@ pub struct MBMSSessionStopprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionStopprotocolIEs(Vec<MBMSSessionStopprotocolIEs_Item>);
+pub struct MBMSSessionStopProtocolIEs(Vec<MBMSSessionStopProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSSessionStopprotocolExtensions_Item {}
+pub struct MBMSSessionStopProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -7859,24 +7869,24 @@ pub struct MBMSSessionStopprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionStopprotocolExtensions(Vec<MBMSSessionStopprotocolExtensions_Item>);
+pub struct MBMSSessionStopProtocolExtensions(Vec<MBMSSessionStopProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum MBMSSessionStopResponseprotocolIEs_Itemvalue {
+pub enum MBMSSessionStopResponseProtocolIEs_EntryValue {
     #[asn(key = 4)]
-    id_Cause(Cause),
+    Id_Cause(Cause),
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSSessionStopResponseprotocolIEs_Item {
+pub struct MBMSSessionStopResponseProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: MBMSSessionStopResponseprotocolIEs_Itemvalue,
+    pub value: MBMSSessionStopResponseProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -7886,11 +7896,11 @@ pub struct MBMSSessionStopResponseprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionStopResponseprotocolIEs(Vec<MBMSSessionStopResponseprotocolIEs_Item>);
+pub struct MBMSSessionStopResponseProtocolIEs(Vec<MBMSSessionStopResponseProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSSessionStopResponseprotocolExtensions_Item {}
+pub struct MBMSSessionStopResponseProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -7899,26 +7909,26 @@ pub struct MBMSSessionStopResponseprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionStopResponseprotocolExtensions(
-    Vec<MBMSSessionStopResponseprotocolExtensions_Item>,
+pub struct MBMSSessionStopResponseProtocolExtensions(
+    Vec<MBMSSessionStopResponseProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum MBMSSessionUpdateprotocolIEs_Itemvalue {
+pub enum MBMSSessionUpdateProtocolIEs_EntryValue {
     #[asn(key = 134)]
-    id_DeltaRAListofIdleModeUEs(DeltaRAListofIdleModeUEs),
+    Id_DeltaRAListofIdleModeUEs(DeltaRAListofIdleModeUEs),
     #[asn(key = 152)]
-    id_SessionUpdateID(SessionUpdateID),
+    Id_SessionUpdateID(SessionUpdateID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSSessionUpdateprotocolIEs_Item {
+pub struct MBMSSessionUpdateProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: MBMSSessionUpdateprotocolIEs_Itemvalue,
+    pub value: MBMSSessionUpdateProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -7928,11 +7938,11 @@ pub struct MBMSSessionUpdateprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionUpdateprotocolIEs(Vec<MBMSSessionUpdateprotocolIEs_Item>);
+pub struct MBMSSessionUpdateProtocolIEs(Vec<MBMSSessionUpdateProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSSessionUpdateprotocolExtensions_Item {}
+pub struct MBMSSessionUpdateProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -7941,26 +7951,26 @@ pub struct MBMSSessionUpdateprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionUpdateprotocolExtensions(Vec<MBMSSessionUpdateprotocolExtensions_Item>);
+pub struct MBMSSessionUpdateProtocolExtensions(Vec<MBMSSessionUpdateProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum MBMSSessionUpdateFailureprotocolIEs_Itemvalue {
+pub enum MBMSSessionUpdateFailureProtocolIEs_EntryValue {
     #[asn(key = 4)]
-    id_Cause(Cause),
+    Id_Cause(Cause),
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 152)]
-    id_SessionUpdateID(SessionUpdateID),
+    Id_SessionUpdateID(SessionUpdateID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSSessionUpdateFailureprotocolIEs_Item {
+pub struct MBMSSessionUpdateFailureProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: MBMSSessionUpdateFailureprotocolIEs_Itemvalue,
+    pub value: MBMSSessionUpdateFailureProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -7970,11 +7980,11 @@ pub struct MBMSSessionUpdateFailureprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionUpdateFailureprotocolIEs(Vec<MBMSSessionUpdateFailureprotocolIEs_Item>);
+pub struct MBMSSessionUpdateFailureProtocolIEs(Vec<MBMSSessionUpdateFailureProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSSessionUpdateFailureprotocolExtensions_Item {}
+pub struct MBMSSessionUpdateFailureProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -7983,30 +7993,30 @@ pub struct MBMSSessionUpdateFailureprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionUpdateFailureprotocolExtensions(
-    Vec<MBMSSessionUpdateFailureprotocolExtensions_Item>,
+pub struct MBMSSessionUpdateFailureProtocolExtensions(
+    Vec<MBMSSessionUpdateFailureProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum MBMSSessionUpdateResponseprotocolIEs_Itemvalue {
+pub enum MBMSSessionUpdateResponseProtocolIEs_EntryValue {
     #[asn(key = 4)]
-    id_Cause(Cause),
+    Id_Cause(Cause),
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 152)]
-    id_SessionUpdateID(SessionUpdateID),
+    Id_SessionUpdateID(SessionUpdateID),
     #[asn(key = 154)]
-    id_TransportLayerInformation(TransportLayerInformation),
+    Id_TransportLayerInformation(TransportLayerInformation),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSSessionUpdateResponseprotocolIEs_Item {
+pub struct MBMSSessionUpdateResponseProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: MBMSSessionUpdateResponseprotocolIEs_Itemvalue,
+    pub value: MBMSSessionUpdateResponseProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -8016,11 +8026,11 @@ pub struct MBMSSessionUpdateResponseprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionUpdateResponseprotocolIEs(Vec<MBMSSessionUpdateResponseprotocolIEs_Item>);
+pub struct MBMSSessionUpdateResponseProtocolIEs(Vec<MBMSSessionUpdateResponseProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSSessionUpdateResponseprotocolExtensions_Item {}
+pub struct MBMSSessionUpdateResponseProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -8029,24 +8039,24 @@ pub struct MBMSSessionUpdateResponseprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionUpdateResponseprotocolExtensions(
-    Vec<MBMSSessionUpdateResponseprotocolExtensions_Item>,
+pub struct MBMSSessionUpdateResponseProtocolExtensions(
+    Vec<MBMSSessionUpdateResponseProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum MBMSSynchronisationInformationiE_Extensions_ItemextensionValue {
+pub enum MBMSSynchronisationInformationIE_Extensions_EntryExtensionValue {
     #[asn(key = 236)]
-    id_IP_Source_Address(IPMulticastAddress),
+    Id_IP_Source_Address(IPMulticastAddress),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSSynchronisationInformationiE_Extensions_Item {
+pub struct MBMSSynchronisationInformationIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: MBMSSynchronisationInformationiE_Extensions_ItemextensionValue,
+    pub extension_value: MBMSSynchronisationInformationIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -8056,26 +8066,26 @@ pub struct MBMSSynchronisationInformationiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MBMSSynchronisationInformationiE_Extensions(
-    Vec<MBMSSynchronisationInformationiE_Extensions_Item>,
+pub struct MBMSSynchronisationInformationIE_Extensions(
+    Vec<MBMSSynchronisationInformationIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum MBMSUELinkingRequestprotocolIEs_Itemvalue {
+pub enum MBMSUELinkingRequestProtocolIEs_EntryValue {
     #[asn(key = 141)]
-    id_JoinedMBMSBearerServicesList(JoinedMBMSBearerService_IEs),
+    Id_JoinedMBMSBearerServicesList(JoinedMBMSBearerService_IEs),
     #[asn(key = 142)]
-    id_LeftMBMSBearerServicesList(LeftMBMSBearerService_IEs),
+    Id_LeftMBMSBearerServicesList(LeftMBMSBearerService_IEs),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSUELinkingRequestprotocolIEs_Item {
+pub struct MBMSUELinkingRequestProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: MBMSUELinkingRequestprotocolIEs_Itemvalue,
+    pub value: MBMSUELinkingRequestProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -8085,11 +8095,11 @@ pub struct MBMSUELinkingRequestprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSUELinkingRequestprotocolIEs(Vec<MBMSUELinkingRequestprotocolIEs_Item>);
+pub struct MBMSUELinkingRequestProtocolIEs(Vec<MBMSUELinkingRequestProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSUELinkingRequestprotocolExtensions_Item {}
+pub struct MBMSUELinkingRequestProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -8098,64 +8108,66 @@ pub struct MBMSUELinkingRequestprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MBMSUELinkingRequestprotocolExtensions(Vec<MBMSUELinkingRequestprotocolExtensions_Item>);
-
-#[derive(Debug, AperCodec)]
-#[asn(type = "OPEN")]
-pub enum MBMSUELinkingResponseprotocolIEs_Itemvalue {
-    #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
-    #[asn(key = 155)]
-    id_UnsuccessfulLinkingList(UnsuccessfulLinking_IEs),
-}
-
-#[derive(Debug, AperCodec)]
-#[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSUELinkingResponseprotocolIEs_Item {
-    #[asn(key_field = true)]
-    pub id: ProtocolIE_ID,
-    pub criticality: Criticality,
-    pub value: MBMSUELinkingResponseprotocolIEs_Itemvalue,
-}
-
-#[derive(Debug, AperCodec)]
-#[asn(
-    type = "SEQUENCE-OF",
-    sz_extensible = false,
-    sz_lb = "0",
-    sz_ub = "65535"
-)]
-pub struct MBMSUELinkingResponseprotocolIEs(Vec<MBMSUELinkingResponseprotocolIEs_Item>);
-
-#[derive(Debug, AperCodec)]
-#[asn(type = "SEQUENCE", extensible = false)]
-pub struct MBMSUELinkingResponseprotocolExtensions_Item {}
-
-#[derive(Debug, AperCodec)]
-#[asn(
-    type = "SEQUENCE-OF",
-    sz_extensible = false,
-    sz_lb = "1",
-    sz_ub = "65535"
-)]
-pub struct MBMSUELinkingResponseprotocolExtensions(
-    Vec<MBMSUELinkingResponseprotocolExtensions_Item>,
+pub struct MBMSUELinkingRequestProtocolExtensions(
+    Vec<MBMSUELinkingRequestProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum MDT_ConfigurationiE_Extensions_ItemextensionValue {
-    #[asn(key = 264)]
-    id_SignallingBasedMDTPLMNList(MDT_PLMN_List),
+pub enum MBMSUELinkingResponseProtocolIEs_EntryValue {
+    #[asn(key = 9)]
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
+    #[asn(key = 155)]
+    Id_UnsuccessfulLinkingList(UnsuccessfulLinking_IEs),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MDT_ConfigurationiE_Extensions_Item {
+pub struct MBMSUELinkingResponseProtocolIEs_Entry {
+    #[asn(key_field = true)]
+    pub id: ProtocolIE_ID,
+    pub criticality: Criticality,
+    pub value: MBMSUELinkingResponseProtocolIEs_EntryValue,
+}
+
+#[derive(Debug, AperCodec)]
+#[asn(
+    type = "SEQUENCE-OF",
+    sz_extensible = false,
+    sz_lb = "0",
+    sz_ub = "65535"
+)]
+pub struct MBMSUELinkingResponseProtocolIEs(Vec<MBMSUELinkingResponseProtocolIEs_Entry>);
+
+#[derive(Debug, AperCodec)]
+#[asn(type = "SEQUENCE", extensible = false)]
+pub struct MBMSUELinkingResponseProtocolExtensions_Entry {}
+
+#[derive(Debug, AperCodec)]
+#[asn(
+    type = "SEQUENCE-OF",
+    sz_extensible = false,
+    sz_lb = "1",
+    sz_ub = "65535"
+)]
+pub struct MBMSUELinkingResponseProtocolExtensions(
+    Vec<MBMSUELinkingResponseProtocolExtensions_Entry>,
+);
+
+#[derive(Debug, AperCodec)]
+#[asn(type = "OPEN")]
+pub enum MDT_ConfigurationIE_Extensions_EntryExtensionValue {
+    #[asn(key = 264)]
+    Id_SignallingBasedMDTPLMNList(MDT_PLMN_List),
+}
+
+#[derive(Debug, AperCodec)]
+#[asn(type = "SEQUENCE", extensible = false)]
+pub struct MDT_ConfigurationIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: MDT_ConfigurationiE_Extensions_ItemextensionValue,
+    pub extension_value: MDT_ConfigurationIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -8165,7 +8177,7 @@ pub struct MDT_ConfigurationiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MDT_ConfigurationiE_Extensions(Vec<MDT_ConfigurationiE_Extensions_Item>);
+pub struct MDT_ConfigurationIE_Extensions(Vec<MDT_ConfigurationIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "NULL")]
@@ -8173,7 +8185,7 @@ pub struct NULL_45;
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct MessageStructure_ItemiE_Extensions_Item {}
+pub struct MessageStructure_EntryIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -8182,32 +8194,32 @@ pub struct MessageStructure_ItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MessageStructure_ItemiE_Extensions(Vec<MessageStructure_ItemiE_Extensions_Item>);
+pub struct MessageStructure_EntryIE_Extensions(Vec<MessageStructure_EntryIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 2)]
-pub struct MessageStructure_Item {
-    pub i_e_id: ProtocolIE_ID,
+pub struct MessageStructure_Entry {
+    pub ie_id: ProtocolIE_ID,
     #[asn(optional_idx = 0)]
     pub repetition_number: Option<RepetitionNumber1>,
     #[asn(optional_idx = 1)]
-    pub i_e_extensions: Option<MessageStructure_ItemiE_Extensions>,
+    pub ie_extensions: Option<MessageStructure_EntryIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum NotEmptyRAListofIdleModeUEsiE_Extensions_ItemextensionValue {
+pub enum NotEmptyRAListofIdleModeUEsIE_Extensions_EntryExtensionValue {
     #[asn(key = 180)]
-    id_LAofIdleModeUEs(LAListofIdleModeUEs),
+    Id_LAofIdleModeUEs(LAListofIdleModeUEs),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct NotEmptyRAListofIdleModeUEsiE_Extensions_Item {
+pub struct NotEmptyRAListofIdleModeUEsIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: NotEmptyRAListofIdleModeUEsiE_Extensions_ItemextensionValue,
+    pub extension_value: NotEmptyRAListofIdleModeUEsIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -8217,13 +8229,13 @@ pub struct NotEmptyRAListofIdleModeUEsiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct NotEmptyRAListofIdleModeUEsiE_Extensions(
-    Vec<NotEmptyRAListofIdleModeUEsiE_Extensions_Item>,
+pub struct NotEmptyRAListofIdleModeUEsIE_Extensions(
+    Vec<NotEmptyRAListofIdleModeUEsIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct Offload_RAB_ParametersiE_Extensions_Item {}
+pub struct Offload_RAB_ParametersIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -8232,39 +8244,39 @@ pub struct Offload_RAB_ParametersiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct Offload_RAB_ParametersiE_Extensions(Vec<Offload_RAB_ParametersiE_Extensions_Item>);
+pub struct Offload_RAB_ParametersIE_Extensions(Vec<Offload_RAB_ParametersIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum Outcomevalue {
+pub enum OutcomeValue {
     #[asn(key = 38)]
-    id_MBMSUELinking(MBMSUELinkingResponse),
+    Id_MBMSUELinking(MBMSUELinkingResponse),
     #[asn(key = 0)]
-    id_RAB_Assignment(RAB_AssignmentResponse),
+    Id_RAB_Assignment(RAB_AssignmentResponse),
     #[asn(key = 46)]
-    id_SRVCCPreparation(SRVCC_CSKeysResponse),
+    Id_SRVCCPreparation(SRVCC_CSKeysResponse),
     #[asn(key = 47)]
-    id_UeRadioCapabilityMatch(UeRadioCapabilityMatchResponse),
+    Id_UeRadioCapabilityMatch(UeRadioCapabilityMatchResponse),
     #[asn(key = 48)]
-    id_UeRegistrationQuery(UeRegistrationQueryResponse),
+    Id_UeRegistrationQuery(UeRegistrationQueryResponse),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum OverloadprotocolIEs_Itemvalue {
+pub enum OverloadProtocolIEs_EntryValue {
     #[asn(key = 86)]
-    id_GlobalRNC_ID(GlobalRNC_ID),
+    Id_GlobalRNC_ID(GlobalRNC_ID),
     #[asn(key = 18)]
-    id_NumberOfSteps(NumberOfSteps),
+    Id_NumberOfSteps(NumberOfSteps),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct OverloadprotocolIEs_Item {
+pub struct OverloadProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: OverloadprotocolIEs_Itemvalue,
+    pub value: OverloadProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -8274,28 +8286,28 @@ pub struct OverloadprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct OverloadprotocolIEs(Vec<OverloadprotocolIEs_Item>);
+pub struct OverloadProtocolIEs(Vec<OverloadProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum OverloadprotocolExtensions_ItemextensionValue {
+pub enum OverloadProtocolExtensions_EntryExtensionValue {
     #[asn(key = 3)]
-    id_CN_DomainIndicator(CN_DomainIndicator),
+    Id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 171)]
-    id_ExtendedRNC_ID(ExtendedRNC_ID),
+    Id_ExtendedRNC_ID(ExtendedRNC_ID),
     #[asn(key = 96)]
-    id_GlobalCN_ID(GlobalCN_ID),
+    Id_GlobalCN_ID(GlobalCN_ID),
     #[asn(key = 245)]
-    id_Priority_Class_Indicator(Priority_Class_Indicator),
+    Id_Priority_Class_Indicator(Priority_Class_Indicator),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct OverloadprotocolExtensions_Item {
+pub struct OverloadProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: OverloadprotocolExtensions_ItemextensionValue,
+    pub extension_value: OverloadProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -8305,11 +8317,11 @@ pub struct OverloadprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct OverloadprotocolExtensions(Vec<OverloadprotocolExtensions_Item>);
+pub struct OverloadProtocolExtensions(Vec<OverloadProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct PLMNBasediE_Extensions_Item {}
+pub struct PLMNBasedIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -8318,11 +8330,11 @@ pub struct PLMNBasediE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct PLMNBasediE_Extensions(Vec<PLMNBasediE_Extensions_Item>);
+pub struct PLMNBasedIE_Extensions(Vec<PLMNBasedIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct PLMNs_in_shared_network_ItemiE_Extensions_Item {}
+pub struct PLMNs_in_shared_network_EntryIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -8331,45 +8343,45 @@ pub struct PLMNs_in_shared_network_ItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct PLMNs_in_shared_network_ItemiE_Extensions(
-    Vec<PLMNs_in_shared_network_ItemiE_Extensions_Item>,
+pub struct PLMNs_in_shared_network_EntryIE_Extensions(
+    Vec<PLMNs_in_shared_network_EntryIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
-pub struct PLMNs_in_shared_network_Item {
-    pub p_lm_nidentity: PLMNidentity,
-    pub l_a_list: LA_LIST,
+pub struct PLMNs_in_shared_network_Entry {
+    pub plm_nidentity: PLMNidentity,
+    pub la_list: LA_LIST,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<PLMNs_in_shared_network_ItemiE_Extensions>,
+    pub ie_extensions: Option<PLMNs_in_shared_network_EntryIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum PagingprotocolIEs_Itemvalue {
+pub enum PagingProtocolIEs_EntryValue {
     #[asn(key = 3)]
-    id_CN_DomainIndicator(CN_DomainIndicator),
+    Id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 76)]
-    id_DRX_CycleLengthCoefficient(DRX_CycleLengthCoefficient),
+    Id_DRX_CycleLengthCoefficient(DRX_CycleLengthCoefficient),
     #[asn(key = 17)]
-    id_NonSearchingIndication(NonSearchingIndication),
+    Id_NonSearchingIndication(NonSearchingIndication),
     #[asn(key = 21)]
-    id_PagingAreaID(PagingAreaID),
+    Id_PagingAreaID(PagingAreaID),
     #[asn(key = 22)]
-    id_PagingCause(PagingCause),
+    Id_PagingCause(PagingCause),
     #[asn(key = 23)]
-    id_PermanentNAS_UE_ID(PermanentNAS_UE_ID),
+    Id_PermanentNAS_UE_ID(PermanentNAS_UE_ID),
     #[asn(key = 64)]
-    id_TemporaryUE_ID(TemporaryUE_ID),
+    Id_TemporaryUE_ID(TemporaryUE_ID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct PagingprotocolIEs_Item {
+pub struct PagingProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: PagingprotocolIEs_Itemvalue,
+    pub value: PagingProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -8379,24 +8391,24 @@ pub struct PagingprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct PagingprotocolIEs(Vec<PagingprotocolIEs_Item>);
+pub struct PagingProtocolIEs(Vec<PagingProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum PagingprotocolExtensions_ItemextensionValue {
+pub enum PagingProtocolExtensions_EntryExtensionValue {
     #[asn(key = 229)]
-    id_CSG_Id_List(CSG_Id_List),
+    Id_CSG_Id_List(CSG_Id_List),
     #[asn(key = 96)]
-    id_GlobalCN_ID(GlobalCN_ID),
+    Id_GlobalCN_ID(GlobalCN_ID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct PagingprotocolExtensions_Item {
+pub struct PagingProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: PagingprotocolExtensions_ItemextensionValue,
+    pub extension_value: PagingProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -8406,7 +8418,7 @@ pub struct PagingprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct PagingprotocolExtensions(Vec<PagingprotocolExtensions_Item>);
+pub struct PagingProtocolExtensions(Vec<PagingProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "1", ub = "8639999", extensible = true)]
@@ -8418,7 +8430,7 @@ pub struct INTEGER_47(u32);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct PeriodicLocationInfoiE_Extensions_Item {}
+pub struct PeriodicLocationInfoIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -8427,24 +8439,24 @@ pub struct PeriodicLocationInfoiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct PeriodicLocationInfoiE_Extensions(Vec<PeriodicLocationInfoiE_Extensions_Item>);
+pub struct PeriodicLocationInfoIE_Extensions(Vec<PeriodicLocationInfoIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum PositionDataiE_Extensions_ItemextensionValue {
+pub enum PositionDataIE_Extensions_EntryExtensionValue {
     #[asn(key = 284)]
-    id_Additional_PositioningDataSet(Additional_PositioningDataSet),
+    Id_Additional_PositioningDataSet(Additional_PositioningDataSet),
     #[asn(key = 184)]
-    id_GANSS_PositioningDataSet(GANSS_PositioningDataSet),
+    Id_GANSS_PositioningDataSet(GANSS_PositioningDataSet),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct PositionDataiE_Extensions_Item {
+pub struct PositionDataIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: PositionDataiE_Extensions_ItemextensionValue,
+    pub extension_value: PositionDataIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -8454,7 +8466,7 @@ pub struct PositionDataiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct PositionDataiE_Extensions(Vec<PositionDataiE_Extensions_Item>);
+pub struct PositionDataIE_Extensions(Vec<PositionDataIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "65535")]
@@ -8466,7 +8478,7 @@ pub struct OBJECT_IDENTIFIER_49;
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct PrivateMessageprivateIEs_Item {}
+pub struct PrivateMessagePrivateIEs_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -8475,24 +8487,24 @@ pub struct PrivateMessageprivateIEs_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct PrivateMessageprivateIEs(Vec<PrivateMessageprivateIEs_Item>);
+pub struct PrivateMessagePrivateIEs(Vec<PrivateMessagePrivateIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_AssignmentRequestprotocolIEs_Itemvalue {
+pub enum RAB_AssignmentRequestProtocolIEs_EntryValue {
     #[asn(key = 41)]
-    id_RAB_ReleaseList(RAB_ReleaseList),
+    Id_RAB_ReleaseList(RAB_ReleaseList),
     #[asn(key = 54)]
-    id_RAB_SetupOrModifyList(RAB_SetupOrModifyList),
+    Id_RAB_SetupOrModifyList(RAB_SetupOrModifyList),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_AssignmentRequestprotocolIEs_Item {
+pub struct RAB_AssignmentRequestProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_AssignmentRequestprotocolIEs_Itemvalue,
+    pub value: RAB_AssignmentRequestProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -8502,24 +8514,24 @@ pub struct RAB_AssignmentRequestprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_AssignmentRequestprotocolIEs(Vec<RAB_AssignmentRequestprotocolIEs_Item>);
+pub struct RAB_AssignmentRequestProtocolIEs(Vec<RAB_AssignmentRequestProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_AssignmentRequestprotocolExtensions_ItemextensionValue {
+pub enum RAB_AssignmentRequestProtocolExtensions_EntryExtensionValue {
     #[asn(key = 239)]
-    id_MSISDN(MSISDN),
+    Id_MSISDN(MSISDN),
     #[asn(key = 233)]
-    id_UE_AggregateMaximumBitRate(UE_AggregateMaximumBitRate),
+    Id_UE_AggregateMaximumBitRate(UE_AggregateMaximumBitRate),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_AssignmentRequestprotocolExtensions_Item {
+pub struct RAB_AssignmentRequestProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: RAB_AssignmentRequestprotocolExtensions_ItemextensionValue,
+    pub extension_value: RAB_AssignmentRequestProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -8529,34 +8541,34 @@ pub struct RAB_AssignmentRequestprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_AssignmentRequestprotocolExtensions(
-    Vec<RAB_AssignmentRequestprotocolExtensions_Item>,
+pub struct RAB_AssignmentRequestProtocolExtensions(
+    Vec<RAB_AssignmentRequestProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_AssignmentResponseprotocolIEs_Itemvalue {
+pub enum RAB_AssignmentResponseProtocolIEs_EntryValue {
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 35)]
-    id_RAB_FailedList(RAB_FailedList),
+    Id_RAB_FailedList(RAB_FailedList),
     #[asn(key = 38)]
-    id_RAB_QueuedList(RAB_QueuedList),
+    Id_RAB_QueuedList(RAB_QueuedList),
     #[asn(key = 39)]
-    id_RAB_ReleaseFailedList(RAB_ReleaseFailedList),
+    Id_RAB_ReleaseFailedList(RAB_ReleaseFailedList),
     #[asn(key = 43)]
-    id_RAB_ReleasedList(RAB_ReleasedList),
+    Id_RAB_ReleasedList(RAB_ReleasedList),
     #[asn(key = 52)]
-    id_RAB_SetupOrModifiedList(RAB_SetupOrModifiedList),
+    Id_RAB_SetupOrModifiedList(RAB_SetupOrModifiedList),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_AssignmentResponseprotocolIEs_Item {
+pub struct RAB_AssignmentResponseProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_AssignmentResponseprotocolIEs_Itemvalue,
+    pub value: RAB_AssignmentResponseProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -8566,22 +8578,22 @@ pub struct RAB_AssignmentResponseprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_AssignmentResponseprotocolIEs(Vec<RAB_AssignmentResponseprotocolIEs_Item>);
+pub struct RAB_AssignmentResponseProtocolIEs(Vec<RAB_AssignmentResponseProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_AssignmentResponseprotocolExtensions_ItemextensionValue {
+pub enum RAB_AssignmentResponseProtocolExtensions_EntryExtensionValue {
     #[asn(key = 110)]
-    id_GERAN_Iumode_RAB_FailedList_RABAssgntResponse(GERAN_Iumode_RAB_FailedList_RABAssgntResponse),
+    Id_GERAN_Iumode_RAB_FailedList_RABAssgntResponse(GERAN_Iumode_RAB_FailedList_RABAssgntResponse),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_AssignmentResponseprotocolExtensions_Item {
+pub struct RAB_AssignmentResponseProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: RAB_AssignmentResponseprotocolExtensions_ItemextensionValue,
+    pub extension_value: RAB_AssignmentResponseProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -8591,24 +8603,24 @@ pub struct RAB_AssignmentResponseprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_AssignmentResponseprotocolExtensions(
-    Vec<RAB_AssignmentResponseprotocolExtensions_Item>,
+pub struct RAB_AssignmentResponseProtocolExtensions(
+    Vec<RAB_AssignmentResponseProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_ContextFailedtoTransferList_Item_Itemvalue {
+pub enum RAB_ContextFailedtoTransferList_Entry_EntryValue {
     #[asn(key = 84)]
-    id_RAB_ContextFailedtoTransferItem(RABs_ContextFailedtoTransferItem),
+    Id_RAB_ContextFailedtoTransferItem(RABs_ContextFailedtoTransferItem),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_ContextFailedtoTransferList_Item_Item {
+pub struct RAB_ContextFailedtoTransferList_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_ContextFailedtoTransferList_Item_Itemvalue,
+    pub value: RAB_ContextFailedtoTransferList_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -8618,11 +8630,11 @@ pub struct RAB_ContextFailedtoTransferList_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_ContextFailedtoTransferList_Item(Vec<RAB_ContextFailedtoTransferList_Item_Item>);
+pub struct RAB_ContextFailedtoTransferList_Entry(Vec<RAB_ContextFailedtoTransferList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_ContextItemiE_Extensions_Item {}
+pub struct RAB_ContextItemIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -8631,11 +8643,11 @@ pub struct RAB_ContextItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_ContextItemiE_Extensions(Vec<RAB_ContextItemiE_Extensions_Item>);
+pub struct RAB_ContextItemIE_Extensions(Vec<RAB_ContextItemIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_ContextItem_RANAP_RelocInfiE_Extensions_Item {}
+pub struct RAB_ContextItem_RANAP_RelocInfIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -8644,24 +8656,24 @@ pub struct RAB_ContextItem_RANAP_RelocInfiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_ContextItem_RANAP_RelocInfiE_Extensions(
-    Vec<RAB_ContextItem_RANAP_RelocInfiE_Extensions_Item>,
+pub struct RAB_ContextItem_RANAP_RelocInfIE_Extensions(
+    Vec<RAB_ContextItem_RANAP_RelocInfIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_ContextList_Item_Itemvalue {
+pub enum RAB_ContextList_Entry_EntryValue {
     #[asn(key = 24)]
-    id_RAB_ContextItem(RAB_ContextItem),
+    Id_RAB_ContextItem(RAB_ContextItem),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_ContextList_Item_Item {
+pub struct RAB_ContextList_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_ContextList_Item_Itemvalue,
+    pub value: RAB_ContextList_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -8671,22 +8683,22 @@ pub struct RAB_ContextList_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_ContextList_Item(Vec<RAB_ContextList_Item_Item>);
+pub struct RAB_ContextList_Entry(Vec<RAB_ContextList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_ContextList_RANAP_RelocInf_Item_Itemvalue {
+pub enum RAB_ContextList_RANAP_RelocInf_Entry_EntryValue {
     #[asn(key = 82)]
-    id_RAB_ContextItem_RANAP_RelocInf(RAB_ContextItem_RANAP_RelocInf),
+    Id_RAB_ContextItem_RANAP_RelocInf(RAB_ContextItem_RANAP_RelocInf),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_ContextList_RANAP_RelocInf_Item_Item {
+pub struct RAB_ContextList_RANAP_RelocInf_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_ContextList_RANAP_RelocInf_Item_Itemvalue,
+    pub value: RAB_ContextList_RANAP_RelocInf_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -8696,24 +8708,24 @@ pub struct RAB_ContextList_RANAP_RelocInf_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_ContextList_RANAP_RelocInf_Item(Vec<RAB_ContextList_RANAP_RelocInf_Item_Item>);
+pub struct RAB_ContextList_RANAP_RelocInf_Entry(Vec<RAB_ContextList_RANAP_RelocInf_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_DataForwardingItemiE_Extensions_ItemextensionValue {
+pub enum RAB_DataForwardingItemIE_Extensions_EntryExtensionValue {
     #[asn(key = 13)]
-    id_IuTransportAssociation(IuTransportAssociation),
+    Id_IuTransportAssociation(IuTransportAssociation),
     #[asn(key = 67)]
-    id_TransportLayerAddress(TransportLayerAddress),
+    Id_TransportLayerAddress(TransportLayerAddress),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_DataForwardingItemiE_Extensions_Item {
+pub struct RAB_DataForwardingItemIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: RAB_DataForwardingItemiE_Extensions_ItemextensionValue,
+    pub extension_value: RAB_DataForwardingItemIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -8723,11 +8735,11 @@ pub struct RAB_DataForwardingItemiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_DataForwardingItemiE_Extensions(Vec<RAB_DataForwardingItemiE_Extensions_Item>);
+pub struct RAB_DataForwardingItemIE_Extensions(Vec<RAB_DataForwardingItemIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_DataForwardingItem_SRNS_CtxReqiE_Extensions_Item {}
+pub struct RAB_DataForwardingItem_SRNS_CtxReqIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -8736,24 +8748,24 @@ pub struct RAB_DataForwardingItem_SRNS_CtxReqiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_DataForwardingItem_SRNS_CtxReqiE_Extensions(
-    Vec<RAB_DataForwardingItem_SRNS_CtxReqiE_Extensions_Item>,
+pub struct RAB_DataForwardingItem_SRNS_CtxReqIE_Extensions(
+    Vec<RAB_DataForwardingItem_SRNS_CtxReqIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_DataForwardingList_Item_Itemvalue {
+pub enum RAB_DataForwardingList_Entry_EntryValue {
     #[asn(key = 26)]
-    id_RAB_DataForwardingItem(RAB_DataForwardingItem),
+    Id_RAB_DataForwardingItem(RAB_DataForwardingItem),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_DataForwardingList_Item_Item {
+pub struct RAB_DataForwardingList_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_DataForwardingList_Item_Itemvalue,
+    pub value: RAB_DataForwardingList_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -8763,22 +8775,22 @@ pub struct RAB_DataForwardingList_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_DataForwardingList_Item(Vec<RAB_DataForwardingList_Item_Item>);
+pub struct RAB_DataForwardingList_Entry(Vec<RAB_DataForwardingList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_DataForwardingList_SRNS_CtxReq_Item_Itemvalue {
+pub enum RAB_DataForwardingList_SRNS_CtxReq_Entry_EntryValue {
     #[asn(key = 27)]
-    id_RAB_DataForwardingItem_SRNS_CtxReq(RAB_DataForwardingItem_SRNS_CtxReq),
+    Id_RAB_DataForwardingItem_SRNS_CtxReq(RAB_DataForwardingItem_SRNS_CtxReq),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_DataForwardingList_SRNS_CtxReq_Item_Item {
+pub struct RAB_DataForwardingList_SRNS_CtxReq_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_DataForwardingList_SRNS_CtxReq_Item_Itemvalue,
+    pub value: RAB_DataForwardingList_SRNS_CtxReq_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -8788,13 +8800,13 @@ pub struct RAB_DataForwardingList_SRNS_CtxReq_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_DataForwardingList_SRNS_CtxReq_Item(
-    Vec<RAB_DataForwardingList_SRNS_CtxReq_Item_Item>,
+pub struct RAB_DataForwardingList_SRNS_CtxReq_Entry(
+    Vec<RAB_DataForwardingList_SRNS_CtxReq_Entry_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_DataVolumeReportItemiE_Extensions_Item {}
+pub struct RAB_DataVolumeReportItemIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -8803,22 +8815,22 @@ pub struct RAB_DataVolumeReportItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_DataVolumeReportItemiE_Extensions(Vec<RAB_DataVolumeReportItemiE_Extensions_Item>);
+pub struct RAB_DataVolumeReportItemIE_Extensions(Vec<RAB_DataVolumeReportItemIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_DataVolumeReportList_Item_Itemvalue {
+pub enum RAB_DataVolumeReportList_Entry_EntryValue {
     #[asn(key = 30)]
-    id_RAB_DataVolumeReportItem(RAB_DataVolumeReportItem),
+    Id_RAB_DataVolumeReportItem(RAB_DataVolumeReportItem),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_DataVolumeReportList_Item_Item {
+pub struct RAB_DataVolumeReportList_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_DataVolumeReportList_Item_Itemvalue,
+    pub value: RAB_DataVolumeReportList_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -8828,11 +8840,11 @@ pub struct RAB_DataVolumeReportList_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_DataVolumeReportList_Item(Vec<RAB_DataVolumeReportList_Item_Item>);
+pub struct RAB_DataVolumeReportList_Entry(Vec<RAB_DataVolumeReportList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_DataVolumeReportRequestItemiE_Extensions_Item {}
+pub struct RAB_DataVolumeReportRequestItemIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -8841,24 +8853,24 @@ pub struct RAB_DataVolumeReportRequestItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_DataVolumeReportRequestItemiE_Extensions(
-    Vec<RAB_DataVolumeReportRequestItemiE_Extensions_Item>,
+pub struct RAB_DataVolumeReportRequestItemIE_Extensions(
+    Vec<RAB_DataVolumeReportRequestItemIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_DataVolumeReportRequestList_Item_Itemvalue {
+pub enum RAB_DataVolumeReportRequestList_Entry_EntryValue {
     #[asn(key = 32)]
-    id_RAB_DataVolumeReportRequestItem(RAB_DataVolumeReportRequestItem),
+    Id_RAB_DataVolumeReportRequestItem(RAB_DataVolumeReportRequestItem),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_DataVolumeReportRequestList_Item_Item {
+pub struct RAB_DataVolumeReportRequestList_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_DataVolumeReportRequestList_Item_Itemvalue,
+    pub value: RAB_DataVolumeReportRequestList_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -8868,11 +8880,11 @@ pub struct RAB_DataVolumeReportRequestList_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_DataVolumeReportRequestList_Item(Vec<RAB_DataVolumeReportRequestList_Item_Item>);
+pub struct RAB_DataVolumeReportRequestList_Entry(Vec<RAB_DataVolumeReportRequestList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_FailedItemiE_Extensions_Item {}
+pub struct RAB_FailedItemIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -8881,11 +8893,11 @@ pub struct RAB_FailedItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_FailedItemiE_Extensions(Vec<RAB_FailedItemiE_Extensions_Item>);
+pub struct RAB_FailedItemIE_Extensions(Vec<RAB_FailedItemIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_FailedItem_EnhRelocInfoResiE_Extensions_Item {}
+pub struct RAB_FailedItem_EnhRelocInfoResIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -8894,24 +8906,24 @@ pub struct RAB_FailedItem_EnhRelocInfoResiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_FailedItem_EnhRelocInfoResiE_Extensions(
-    Vec<RAB_FailedItem_EnhRelocInfoResiE_Extensions_Item>,
+pub struct RAB_FailedItem_EnhRelocInfoResIE_Extensions(
+    Vec<RAB_FailedItem_EnhRelocInfoResIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_FailedList_Item_Itemvalue {
+pub enum RAB_FailedList_Entry_EntryValue {
     #[asn(key = 34)]
-    id_RAB_FailedItem(RAB_FailedItem),
+    Id_RAB_FailedItem(RAB_FailedItem),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_FailedList_Item_Item {
+pub struct RAB_FailedList_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_FailedList_Item_Itemvalue,
+    pub value: RAB_FailedList_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -8921,22 +8933,22 @@ pub struct RAB_FailedList_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_FailedList_Item(Vec<RAB_FailedList_Item_Item>);
+pub struct RAB_FailedList_Entry(Vec<RAB_FailedList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_FailedList_EnhRelocInfoRes_Item_Itemvalue {
+pub enum RAB_FailedList_EnhRelocInfoRes_Entry_EntryValue {
     #[asn(key = 198)]
-    id_RAB_FailedItem_EnhRelocInfoRes(RAB_FailedItem_EnhRelocInfoRes),
+    Id_RAB_FailedItem_EnhRelocInfoRes(RAB_FailedItem_EnhRelocInfoRes),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_FailedList_EnhRelocInfoRes_Item_Item {
+pub struct RAB_FailedList_EnhRelocInfoRes_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_FailedList_EnhRelocInfoRes_Item_Itemvalue,
+    pub value: RAB_FailedList_EnhRelocInfoRes_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -8946,22 +8958,22 @@ pub struct RAB_FailedList_EnhRelocInfoRes_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_FailedList_EnhRelocInfoRes_Item(Vec<RAB_FailedList_EnhRelocInfoRes_Item_Item>);
+pub struct RAB_FailedList_EnhRelocInfoRes_Entry(Vec<RAB_FailedList_EnhRelocInfoRes_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_FailedtoReportList_Item_Itemvalue {
+pub enum RAB_FailedtoReportList_Entry_EntryValue {
     #[asn(key = 71)]
-    id_RAB_FailedtoReportItem(RABs_failed_to_reportItem),
+    Id_RAB_FailedtoReportItem(RABs_failed_to_reportItem),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_FailedtoReportList_Item_Item {
+pub struct RAB_FailedtoReportList_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_FailedtoReportList_Item_Itemvalue,
+    pub value: RAB_FailedtoReportList_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -8971,11 +8983,11 @@ pub struct RAB_FailedtoReportList_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_FailedtoReportList_Item(Vec<RAB_FailedtoReportList_Item_Item>);
+pub struct RAB_FailedtoReportList_Entry(Vec<RAB_FailedtoReportList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_ModifyItemiE_Extensions_Item {}
+pub struct RAB_ModifyItemIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -8984,22 +8996,22 @@ pub struct RAB_ModifyItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_ModifyItemiE_Extensions(Vec<RAB_ModifyItemiE_Extensions_Item>);
+pub struct RAB_ModifyItemIE_Extensions(Vec<RAB_ModifyItemIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_ModifyList_Item_Itemvalue {
+pub enum RAB_ModifyList_Entry_EntryValue {
     #[asn(key = 92)]
-    id_RAB_ModifyItem(RAB_ModifyItem),
+    Id_RAB_ModifyItem(RAB_ModifyItem),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_ModifyList_Item_Item {
+pub struct RAB_ModifyList_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_ModifyList_Item_Itemvalue,
+    pub value: RAB_ModifyList_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9009,22 +9021,22 @@ pub struct RAB_ModifyList_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_ModifyList_Item(Vec<RAB_ModifyList_Item_Item>);
+pub struct RAB_ModifyList_Entry(Vec<RAB_ModifyList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_ModifyRequestprotocolIEs_Itemvalue {
+pub enum RAB_ModifyRequestProtocolIEs_EntryValue {
     #[asn(key = 91)]
-    id_RAB_ModifyList(RAB_ModifyList),
+    Id_RAB_ModifyList(RAB_ModifyList),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_ModifyRequestprotocolIEs_Item {
+pub struct RAB_ModifyRequestProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_ModifyRequestprotocolIEs_Itemvalue,
+    pub value: RAB_ModifyRequestProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9034,11 +9046,11 @@ pub struct RAB_ModifyRequestprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_ModifyRequestprotocolIEs(Vec<RAB_ModifyRequestprotocolIEs_Item>);
+pub struct RAB_ModifyRequestProtocolIEs(Vec<RAB_ModifyRequestProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_ModifyRequestprotocolExtensions_Item {}
+pub struct RAB_ModifyRequestProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -9047,30 +9059,30 @@ pub struct RAB_ModifyRequestprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_ModifyRequestprotocolExtensions(Vec<RAB_ModifyRequestprotocolExtensions_Item>);
+pub struct RAB_ModifyRequestProtocolExtensions(Vec<RAB_ModifyRequestProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_ParametersiE_Extensions_ItemextensionValue {
+pub enum RAB_ParametersIE_Extensions_EntryExtensionValue {
     #[asn(key = 176)]
-    id_RAB_Parameter_ExtendedGuaranteedBitrateList(RAB_Parameter_ExtendedGuaranteedBitrateList),
+    Id_RAB_Parameter_ExtendedGuaranteedBitrateList(RAB_Parameter_ExtendedGuaranteedBitrateList),
     #[asn(key = 177)]
-    id_RAB_Parameter_ExtendedMaxBitrateList(RAB_Parameter_ExtendedMaxBitrateList),
+    Id_RAB_Parameter_ExtendedMaxBitrateList(RAB_Parameter_ExtendedMaxBitrateList),
     #[asn(key = 218)]
-    id_RAB_Parameter_SupportedGuaranteedBitrateList(SupportedRAB_ParameterBitrateList),
+    Id_RAB_Parameter_SupportedGuaranteedBitrateList(SupportedRAB_ParameterBitrateList),
     #[asn(key = 219)]
-    id_RAB_Parameter_SupportedMaxBitrateList(SupportedRAB_ParameterBitrateList),
+    Id_RAB_Parameter_SupportedMaxBitrateList(SupportedRAB_ParameterBitrateList),
     #[asn(key = 116)]
-    id_SignallingIndication(SignallingIndication),
+    Id_SignallingIndication(SignallingIndication),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_ParametersiE_Extensions_Item {
+pub struct RAB_ParametersIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: RAB_ParametersiE_Extensions_ItemextensionValue,
+    pub extension_value: RAB_ParametersIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9080,11 +9092,11 @@ pub struct RAB_ParametersiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_ParametersiE_Extensions(Vec<RAB_ParametersiE_Extensions_Item>);
+pub struct RAB_ParametersIE_Extensions(Vec<RAB_ParametersIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_QueuedItemiE_Extensions_Item {}
+pub struct RAB_QueuedItemIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -9093,22 +9105,22 @@ pub struct RAB_QueuedItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_QueuedItemiE_Extensions(Vec<RAB_QueuedItemiE_Extensions_Item>);
+pub struct RAB_QueuedItemIE_Extensions(Vec<RAB_QueuedItemIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_QueuedList_Item_Itemvalue {
+pub enum RAB_QueuedList_Entry_EntryValue {
     #[asn(key = 37)]
-    id_RAB_QueuedItem(RAB_QueuedItem),
+    Id_RAB_QueuedItem(RAB_QueuedItem),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_QueuedList_Item_Item {
+pub struct RAB_QueuedList_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_QueuedList_Item_Itemvalue,
+    pub value: RAB_QueuedList_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9118,11 +9130,11 @@ pub struct RAB_QueuedList_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_QueuedList_Item(Vec<RAB_QueuedList_Item_Item>);
+pub struct RAB_QueuedList_Entry(Vec<RAB_QueuedList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_ReleaseItemiE_Extensions_Item {}
+pub struct RAB_ReleaseItemIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -9131,22 +9143,22 @@ pub struct RAB_ReleaseItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_ReleaseItemiE_Extensions(Vec<RAB_ReleaseItemiE_Extensions_Item>);
+pub struct RAB_ReleaseItemIE_Extensions(Vec<RAB_ReleaseItemIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_ReleaseList_Item_Itemvalue {
+pub enum RAB_ReleaseList_Entry_EntryValue {
     #[asn(key = 40)]
-    id_RAB_ReleaseItem(RAB_ReleaseItem),
+    Id_RAB_ReleaseItem(RAB_ReleaseItem),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_ReleaseList_Item_Item {
+pub struct RAB_ReleaseList_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_ReleaseList_Item_Itemvalue,
+    pub value: RAB_ReleaseList_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9156,22 +9168,22 @@ pub struct RAB_ReleaseList_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_ReleaseList_Item(Vec<RAB_ReleaseList_Item_Item>);
+pub struct RAB_ReleaseList_Entry(Vec<RAB_ReleaseList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_ReleaseRequestprotocolIEs_Itemvalue {
+pub enum RAB_ReleaseRequestProtocolIEs_EntryValue {
     #[asn(key = 41)]
-    id_RAB_ReleaseList(RAB_ReleaseList),
+    Id_RAB_ReleaseList(RAB_ReleaseList),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_ReleaseRequestprotocolIEs_Item {
+pub struct RAB_ReleaseRequestProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_ReleaseRequestprotocolIEs_Itemvalue,
+    pub value: RAB_ReleaseRequestProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9181,11 +9193,11 @@ pub struct RAB_ReleaseRequestprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_ReleaseRequestprotocolIEs(Vec<RAB_ReleaseRequestprotocolIEs_Item>);
+pub struct RAB_ReleaseRequestProtocolIEs(Vec<RAB_ReleaseRequestProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_ReleaseRequestprotocolExtensions_Item {}
+pub struct RAB_ReleaseRequestProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -9194,11 +9206,11 @@ pub struct RAB_ReleaseRequestprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_ReleaseRequestprotocolExtensions(Vec<RAB_ReleaseRequestprotocolExtensions_Item>);
+pub struct RAB_ReleaseRequestProtocolExtensions(Vec<RAB_ReleaseRequestProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_ReleasedItemiE_Extensions_Item {}
+pub struct RAB_ReleasedItemIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -9207,11 +9219,11 @@ pub struct RAB_ReleasedItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_ReleasedItemiE_Extensions(Vec<RAB_ReleasedItemiE_Extensions_Item>);
+pub struct RAB_ReleasedItemIE_Extensions(Vec<RAB_ReleasedItemIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_ReleasedItem_IuRelCompiE_Extensions_Item {}
+pub struct RAB_ReleasedItem_IuRelCompIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -9220,24 +9232,24 @@ pub struct RAB_ReleasedItem_IuRelCompiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_ReleasedItem_IuRelCompiE_Extensions(
-    Vec<RAB_ReleasedItem_IuRelCompiE_Extensions_Item>,
+pub struct RAB_ReleasedItem_IuRelCompIE_Extensions(
+    Vec<RAB_ReleasedItem_IuRelCompIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_ReleasedList_Item_Itemvalue {
+pub enum RAB_ReleasedList_Entry_EntryValue {
     #[asn(key = 42)]
-    id_RAB_ReleasedItem(RAB_ReleasedItem),
+    Id_RAB_ReleasedItem(RAB_ReleasedItem),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_ReleasedList_Item_Item {
+pub struct RAB_ReleasedList_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_ReleasedList_Item_Itemvalue,
+    pub value: RAB_ReleasedList_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9247,22 +9259,22 @@ pub struct RAB_ReleasedList_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_ReleasedList_Item(Vec<RAB_ReleasedList_Item_Item>);
+pub struct RAB_ReleasedList_Entry(Vec<RAB_ReleasedList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_ReleasedList_IuRelComp_Item_Itemvalue {
+pub enum RAB_ReleasedList_IuRelComp_Entry_EntryValue {
     #[asn(key = 87)]
-    id_RAB_ReleasedItem_IuRelComp(RAB_ReleasedItem_IuRelComp),
+    Id_RAB_ReleasedItem_IuRelComp(RAB_ReleasedItem_IuRelComp),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_ReleasedList_IuRelComp_Item_Item {
+pub struct RAB_ReleasedList_IuRelComp_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_ReleasedList_IuRelComp_Item_Itemvalue,
+    pub value: RAB_ReleasedList_IuRelComp_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9272,11 +9284,11 @@ pub struct RAB_ReleasedList_IuRelComp_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_ReleasedList_IuRelComp_Item(Vec<RAB_ReleasedList_IuRelComp_Item_Item>);
+pub struct RAB_ReleasedList_IuRelComp_Entry(Vec<RAB_ReleasedList_IuRelComp_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_RelocationReleaseItemiE_Extensions_Item {}
+pub struct RAB_RelocationReleaseItemIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -9285,22 +9297,24 @@ pub struct RAB_RelocationReleaseItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_RelocationReleaseItemiE_Extensions(Vec<RAB_RelocationReleaseItemiE_Extensions_Item>);
+pub struct RAB_RelocationReleaseItemIE_Extensions(
+    Vec<RAB_RelocationReleaseItemIE_Extensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_RelocationReleaseList_Item_Itemvalue {
+pub enum RAB_RelocationReleaseList_Entry_EntryValue {
     #[asn(key = 45)]
-    id_RAB_RelocationReleaseItem(RAB_RelocationReleaseItem),
+    Id_RAB_RelocationReleaseItem(RAB_RelocationReleaseItem),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_RelocationReleaseList_Item_Item {
+pub struct RAB_RelocationReleaseList_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_RelocationReleaseList_Item_Itemvalue,
+    pub value: RAB_RelocationReleaseList_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9310,24 +9324,24 @@ pub struct RAB_RelocationReleaseList_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_RelocationReleaseList_Item(Vec<RAB_RelocationReleaseList_Item_Item>);
+pub struct RAB_RelocationReleaseList_Entry(Vec<RAB_RelocationReleaseList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_SetupItem_EnhRelocInfoReqiE_Extensions_ItemextensionValue {
+pub enum RAB_SetupItem_EnhRelocInfoReqIE_Extensions_EntryExtensionValue {
     #[asn(key = 231)]
-    id_E_UTRAN_Service_Handover(E_UTRAN_Service_Handover),
+    Id_E_UTRAN_Service_Handover(E_UTRAN_Service_Handover),
     #[asn(key = 238)]
-    id_PDP_TypeInformation_extension(PDP_TypeInformation_extension),
+    Id_PDP_TypeInformation_extension(PDP_TypeInformation_extension),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_SetupItem_EnhRelocInfoReqiE_Extensions_Item {
+pub struct RAB_SetupItem_EnhRelocInfoReqIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: RAB_SetupItem_EnhRelocInfoReqiE_Extensions_ItemextensionValue,
+    pub extension_value: RAB_SetupItem_EnhRelocInfoReqIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9337,13 +9351,13 @@ pub struct RAB_SetupItem_EnhRelocInfoReqiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_SetupItem_EnhRelocInfoReqiE_Extensions(
-    Vec<RAB_SetupItem_EnhRelocInfoReqiE_Extensions_Item>,
+pub struct RAB_SetupItem_EnhRelocInfoReqIE_Extensions(
+    Vec<RAB_SetupItem_EnhRelocInfoReqIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_SetupItem_EnhRelocInfoResiE_Extensions_Item {}
+pub struct RAB_SetupItem_EnhRelocInfoResIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -9352,13 +9366,13 @@ pub struct RAB_SetupItem_EnhRelocInfoResiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_SetupItem_EnhRelocInfoResiE_Extensions(
-    Vec<RAB_SetupItem_EnhRelocInfoResiE_Extensions_Item>,
+pub struct RAB_SetupItem_EnhRelocInfoResIE_Extensions(
+    Vec<RAB_SetupItem_EnhRelocInfoResIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_SetupItem_EnhancedRelocCompleteReqiE_Extensions_Item {}
+pub struct RAB_SetupItem_EnhancedRelocCompleteReqIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -9367,24 +9381,24 @@ pub struct RAB_SetupItem_EnhancedRelocCompleteReqiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_SetupItem_EnhancedRelocCompleteReqiE_Extensions(
-    Vec<RAB_SetupItem_EnhancedRelocCompleteReqiE_Extensions_Item>,
+pub struct RAB_SetupItem_EnhancedRelocCompleteReqIE_Extensions(
+    Vec<RAB_SetupItem_EnhancedRelocCompleteReqIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_SetupItem_EnhancedRelocCompleteResiE_Extensions_ItemextensionValue {
+pub enum RAB_SetupItem_EnhancedRelocCompleteResIE_Extensions_EntryExtensionValue {
     #[asn(key = 240)]
-    id_Offload_RAB_Parameters(Offload_RAB_Parameters),
+    Id_Offload_RAB_Parameters(Offload_RAB_Parameters),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_SetupItem_EnhancedRelocCompleteResiE_Extensions_Item {
+pub struct RAB_SetupItem_EnhancedRelocCompleteResIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: RAB_SetupItem_EnhancedRelocCompleteResiE_Extensions_ItemextensionValue,
+    pub extension_value: RAB_SetupItem_EnhancedRelocCompleteResIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9394,32 +9408,32 @@ pub struct RAB_SetupItem_EnhancedRelocCompleteResiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_SetupItem_EnhancedRelocCompleteResiE_Extensions(
-    Vec<RAB_SetupItem_EnhancedRelocCompleteResiE_Extensions_Item>,
+pub struct RAB_SetupItem_EnhancedRelocCompleteResIE_Extensions(
+    Vec<RAB_SetupItem_EnhancedRelocCompleteResIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_SetupItem_RelocReqiE_Extensions_ItemextensionValue {
+pub enum RAB_SetupItem_RelocReqIE_Extensions_EntryExtensionValue {
     #[asn(key = 89)]
-    id_Alt_RAB_Parameters(Alt_RAB_Parameters),
+    Id_Alt_RAB_Parameters(Alt_RAB_Parameters),
     #[asn(key = 231)]
-    id_E_UTRAN_Service_Handover(E_UTRAN_Service_Handover),
+    Id_E_UTRAN_Service_Handover(E_UTRAN_Service_Handover),
     #[asn(key = 107)]
-    id_GERAN_BSC_Container(GERAN_BSC_Container),
+    Id_GERAN_BSC_Container(GERAN_BSC_Container),
     #[asn(key = 240)]
-    id_Offload_RAB_Parameters(Offload_RAB_Parameters),
+    Id_Offload_RAB_Parameters(Offload_RAB_Parameters),
     #[asn(key = 238)]
-    id_PDP_TypeInformation_extension(PDP_TypeInformation_extension),
+    Id_PDP_TypeInformation_extension(PDP_TypeInformation_extension),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_SetupItem_RelocReqiE_Extensions_Item {
+pub struct RAB_SetupItem_RelocReqIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: RAB_SetupItem_RelocReqiE_Extensions_ItemextensionValue,
+    pub extension_value: RAB_SetupItem_RelocReqIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9429,26 +9443,26 @@ pub struct RAB_SetupItem_RelocReqiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_SetupItem_RelocReqiE_Extensions(Vec<RAB_SetupItem_RelocReqiE_Extensions_Item>);
+pub struct RAB_SetupItem_RelocReqIE_Extensions(Vec<RAB_SetupItem_RelocReqIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_SetupItem_RelocReqAckiE_Extensions_ItemextensionValue {
+pub enum RAB_SetupItem_RelocReqAckIE_Extensions_EntryExtensionValue {
     #[asn(key = 90)]
-    id_Ass_RAB_Parameters(Ass_RAB_Parameters),
+    Id_Ass_RAB_Parameters(Ass_RAB_Parameters),
     #[asn(key = 13)]
-    id_IuTransportAssociation(IuTransportAssociation),
+    Id_IuTransportAssociation(IuTransportAssociation),
     #[asn(key = 67)]
-    id_TransportLayerAddress(TransportLayerAddress),
+    Id_TransportLayerAddress(TransportLayerAddress),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_SetupItem_RelocReqAckiE_Extensions_Item {
+pub struct RAB_SetupItem_RelocReqAckIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: RAB_SetupItem_RelocReqAckiE_Extensions_ItemextensionValue,
+    pub extension_value: RAB_SetupItem_RelocReqAckIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9458,22 +9472,24 @@ pub struct RAB_SetupItem_RelocReqAckiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_SetupItem_RelocReqAckiE_Extensions(Vec<RAB_SetupItem_RelocReqAckiE_Extensions_Item>);
+pub struct RAB_SetupItem_RelocReqAckIE_Extensions(
+    Vec<RAB_SetupItem_RelocReqAckIE_Extensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_SetupList_EnhRelocInfoReq_Item_Itemvalue {
+pub enum RAB_SetupList_EnhRelocInfoReq_Entry_EntryValue {
     #[asn(key = 193)]
-    id_RAB_SetupItem_EnhRelocInfoReq(RAB_SetupItem_EnhRelocInfoReq),
+    Id_RAB_SetupItem_EnhRelocInfoReq(RAB_SetupItem_EnhRelocInfoReq),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_SetupList_EnhRelocInfoReq_Item_Item {
+pub struct RAB_SetupList_EnhRelocInfoReq_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_SetupList_EnhRelocInfoReq_Item_Itemvalue,
+    pub value: RAB_SetupList_EnhRelocInfoReq_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9483,22 +9499,22 @@ pub struct RAB_SetupList_EnhRelocInfoReq_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_SetupList_EnhRelocInfoReq_Item(Vec<RAB_SetupList_EnhRelocInfoReq_Item_Item>);
+pub struct RAB_SetupList_EnhRelocInfoReq_Entry(Vec<RAB_SetupList_EnhRelocInfoReq_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_SetupList_EnhRelocInfoRes_Item_Itemvalue {
+pub enum RAB_SetupList_EnhRelocInfoRes_Entry_EntryValue {
     #[asn(key = 195)]
-    id_RAB_SetupItem_EnhRelocInfoRes(RAB_SetupItem_EnhRelocInfoRes),
+    Id_RAB_SetupItem_EnhRelocInfoRes(RAB_SetupItem_EnhRelocInfoRes),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_SetupList_EnhRelocInfoRes_Item_Item {
+pub struct RAB_SetupList_EnhRelocInfoRes_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_SetupList_EnhRelocInfoRes_Item_Itemvalue,
+    pub value: RAB_SetupList_EnhRelocInfoRes_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9508,22 +9524,22 @@ pub struct RAB_SetupList_EnhRelocInfoRes_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_SetupList_EnhRelocInfoRes_Item(Vec<RAB_SetupList_EnhRelocInfoRes_Item_Item>);
+pub struct RAB_SetupList_EnhRelocInfoRes_Entry(Vec<RAB_SetupList_EnhRelocInfoRes_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_SetupList_EnhancedRelocCompleteReq_Item_Itemvalue {
+pub enum RAB_SetupList_EnhancedRelocCompleteReq_Entry_EntryValue {
     #[asn(key = 189)]
-    id_RAB_SetupItem_EnhancedRelocCompleteReq(RAB_SetupItem_EnhancedRelocCompleteReq),
+    Id_RAB_SetupItem_EnhancedRelocCompleteReq(RAB_SetupItem_EnhancedRelocCompleteReq),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_SetupList_EnhancedRelocCompleteReq_Item_Item {
+pub struct RAB_SetupList_EnhancedRelocCompleteReq_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_SetupList_EnhancedRelocCompleteReq_Item_Itemvalue,
+    pub value: RAB_SetupList_EnhancedRelocCompleteReq_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9533,24 +9549,24 @@ pub struct RAB_SetupList_EnhancedRelocCompleteReq_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_SetupList_EnhancedRelocCompleteReq_Item(
-    Vec<RAB_SetupList_EnhancedRelocCompleteReq_Item_Item>,
+pub struct RAB_SetupList_EnhancedRelocCompleteReq_Entry(
+    Vec<RAB_SetupList_EnhancedRelocCompleteReq_Entry_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_SetupList_EnhancedRelocCompleteRes_Item_Itemvalue {
+pub enum RAB_SetupList_EnhancedRelocCompleteRes_Entry_EntryValue {
     #[asn(key = 191)]
-    id_RAB_SetupItem_EnhancedRelocCompleteRes(RAB_SetupItem_EnhancedRelocCompleteRes),
+    Id_RAB_SetupItem_EnhancedRelocCompleteRes(RAB_SetupItem_EnhancedRelocCompleteRes),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_SetupList_EnhancedRelocCompleteRes_Item_Item {
+pub struct RAB_SetupList_EnhancedRelocCompleteRes_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_SetupList_EnhancedRelocCompleteRes_Item_Itemvalue,
+    pub value: RAB_SetupList_EnhancedRelocCompleteRes_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9560,24 +9576,24 @@ pub struct RAB_SetupList_EnhancedRelocCompleteRes_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_SetupList_EnhancedRelocCompleteRes_Item(
-    Vec<RAB_SetupList_EnhancedRelocCompleteRes_Item_Item>,
+pub struct RAB_SetupList_EnhancedRelocCompleteRes_Entry(
+    Vec<RAB_SetupList_EnhancedRelocCompleteRes_Entry_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_SetupList_RelocReq_Item_Itemvalue {
+pub enum RAB_SetupList_RelocReq_Entry_EntryValue {
     #[asn(key = 47)]
-    id_RAB_SetupItem_RelocReq(RAB_SetupItem_RelocReq),
+    Id_RAB_SetupItem_RelocReq(RAB_SetupItem_RelocReq),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_SetupList_RelocReq_Item_Item {
+pub struct RAB_SetupList_RelocReq_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_SetupList_RelocReq_Item_Itemvalue,
+    pub value: RAB_SetupList_RelocReq_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9587,22 +9603,22 @@ pub struct RAB_SetupList_RelocReq_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_SetupList_RelocReq_Item(Vec<RAB_SetupList_RelocReq_Item_Item>);
+pub struct RAB_SetupList_RelocReq_Entry(Vec<RAB_SetupList_RelocReq_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_SetupList_RelocReqAck_Item_Itemvalue {
+pub enum RAB_SetupList_RelocReqAck_Entry_EntryValue {
     #[asn(key = 48)]
-    id_RAB_SetupItem_RelocReqAck(RAB_SetupItem_RelocReqAck),
+    Id_RAB_SetupItem_RelocReqAck(RAB_SetupItem_RelocReqAck),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_SetupList_RelocReqAck_Item_Item {
+pub struct RAB_SetupList_RelocReqAck_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_SetupList_RelocReqAck_Item_Itemvalue,
+    pub value: RAB_SetupList_RelocReqAck_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9612,22 +9628,22 @@ pub struct RAB_SetupList_RelocReqAck_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_SetupList_RelocReqAck_Item(Vec<RAB_SetupList_RelocReqAck_Item_Item>);
+pub struct RAB_SetupList_RelocReqAck_Entry(Vec<RAB_SetupList_RelocReqAck_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_SetupOrModifiedItemiE_Extensions_ItemextensionValue {
+pub enum RAB_SetupOrModifiedItemIE_Extensions_EntryExtensionValue {
     #[asn(key = 90)]
-    id_Ass_RAB_Parameters(Ass_RAB_Parameters),
+    Id_Ass_RAB_Parameters(Ass_RAB_Parameters),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_SetupOrModifiedItemiE_Extensions_Item {
+pub struct RAB_SetupOrModifiedItemIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: RAB_SetupOrModifiedItemiE_Extensions_ItemextensionValue,
+    pub extension_value: RAB_SetupOrModifiedItemIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9637,22 +9653,22 @@ pub struct RAB_SetupOrModifiedItemiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_SetupOrModifiedItemiE_Extensions(Vec<RAB_SetupOrModifiedItemiE_Extensions_Item>);
+pub struct RAB_SetupOrModifiedItemIE_Extensions(Vec<RAB_SetupOrModifiedItemIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_SetupOrModifiedList_Item_Itemvalue {
+pub enum RAB_SetupOrModifiedList_Entry_EntryValue {
     #[asn(key = 51)]
-    id_RAB_SetupOrModifiedItem(RAB_SetupOrModifiedItem),
+    Id_RAB_SetupOrModifiedItem(RAB_SetupOrModifiedItem),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_SetupOrModifiedList_Item_Item {
+pub struct RAB_SetupOrModifiedList_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_SetupOrModifiedList_Item_Itemvalue,
+    pub value: RAB_SetupOrModifiedList_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9662,26 +9678,26 @@ pub struct RAB_SetupOrModifiedList_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_SetupOrModifiedList_Item(Vec<RAB_SetupOrModifiedList_Item_Item>);
+pub struct RAB_SetupOrModifiedList_Entry(Vec<RAB_SetupOrModifiedList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_SetupOrModifyItemFirstiE_Extensions_ItemextensionValue {
+pub enum RAB_SetupOrModifyItemFirstIE_Extensions_EntryExtensionValue {
     #[asn(key = 242)]
-    id_Correlation_ID(Correlation_ID),
+    Id_Correlation_ID(Correlation_ID),
     #[asn(key = 231)]
-    id_E_UTRAN_Service_Handover(E_UTRAN_Service_Handover),
+    Id_E_UTRAN_Service_Handover(E_UTRAN_Service_Handover),
     #[asn(key = 274)]
-    id_SIPTO_Correlation_ID(Correlation_ID),
+    Id_SIPTO_Correlation_ID(Correlation_ID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_SetupOrModifyItemFirstiE_Extensions_Item {
+pub struct RAB_SetupOrModifyItemFirstIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: RAB_SetupOrModifyItemFirstiE_Extensions_ItemextensionValue,
+    pub extension_value: RAB_SetupOrModifyItemFirstIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9691,30 +9707,30 @@ pub struct RAB_SetupOrModifyItemFirstiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_SetupOrModifyItemFirstiE_Extensions(
-    Vec<RAB_SetupOrModifyItemFirstiE_Extensions_Item>,
+pub struct RAB_SetupOrModifyItemFirstIE_Extensions(
+    Vec<RAB_SetupOrModifyItemFirstIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_SetupOrModifyItemSecondiE_Extensions_ItemextensionValue {
+pub enum RAB_SetupOrModifyItemSecondIE_Extensions_EntryExtensionValue {
     #[asn(key = 89)]
-    id_Alt_RAB_Parameters(Alt_RAB_Parameters),
+    Id_Alt_RAB_Parameters(Alt_RAB_Parameters),
     #[asn(key = 107)]
-    id_GERAN_BSC_Container(GERAN_BSC_Container),
+    Id_GERAN_BSC_Container(GERAN_BSC_Container),
     #[asn(key = 240)]
-    id_Offload_RAB_Parameters(Offload_RAB_Parameters),
+    Id_Offload_RAB_Parameters(Offload_RAB_Parameters),
     #[asn(key = 238)]
-    id_PDP_TypeInformation_extension(PDP_TypeInformation_extension),
+    Id_PDP_TypeInformation_extension(PDP_TypeInformation_extension),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_SetupOrModifyItemSecondiE_Extensions_Item {
+pub struct RAB_SetupOrModifyItemSecondIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: RAB_SetupOrModifyItemSecondiE_Extensions_ItemextensionValue,
+    pub extension_value: RAB_SetupOrModifyItemSecondIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9724,33 +9740,33 @@ pub struct RAB_SetupOrModifyItemSecondiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_SetupOrModifyItemSecondiE_Extensions(
-    Vec<RAB_SetupOrModifyItemSecondiE_Extensions_Item>,
+pub struct RAB_SetupOrModifyItemSecondIE_Extensions(
+    Vec<RAB_SetupOrModifyItemSecondIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_SetupOrModifyList_Item_ItemfirstValue {
+pub enum RAB_SetupOrModifyList_Entry_EntryFirstValue {
     #[asn(key = 53)]
-    id_RAB_SetupOrModifyItem(RAB_SetupOrModifyItemFirst),
+    Id_RAB_SetupOrModifyItem(RAB_SetupOrModifyItemFirst),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_SetupOrModifyList_Item_ItemsecondValue {
+pub enum RAB_SetupOrModifyList_Entry_EntrySecondValue {
     #[asn(key = 53)]
-    id_RAB_SetupOrModifyItem(RAB_SetupOrModifyItemSecond),
+    Id_RAB_SetupOrModifyItem(RAB_SetupOrModifyItemSecond),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_SetupOrModifyList_Item_Item {
+pub struct RAB_SetupOrModifyList_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub first_criticality: Criticality,
-    pub first_value: RAB_SetupOrModifyList_Item_ItemfirstValue,
+    pub first_value: RAB_SetupOrModifyList_Entry_EntryFirstValue,
     pub second_criticality: Criticality,
-    pub second_value: RAB_SetupOrModifyList_Item_ItemsecondValue,
+    pub second_value: RAB_SetupOrModifyList_Entry_EntrySecondValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9760,11 +9776,11 @@ pub struct RAB_SetupOrModifyList_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_SetupOrModifyList_Item(Vec<RAB_SetupOrModifyList_Item_Item>);
+pub struct RAB_SetupOrModifyList_Entry(Vec<RAB_SetupOrModifyList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_ToBeReleasedItem_EnhancedRelocCompleteResiE_Extensions_Item {}
+pub struct RAB_ToBeReleasedItem_EnhancedRelocCompleteResIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -9773,24 +9789,24 @@ pub struct RAB_ToBeReleasedItem_EnhancedRelocCompleteResiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_ToBeReleasedItem_EnhancedRelocCompleteResiE_Extensions(
-    Vec<RAB_ToBeReleasedItem_EnhancedRelocCompleteResiE_Extensions_Item>,
+pub struct RAB_ToBeReleasedItem_EnhancedRelocCompleteResIE_Extensions(
+    Vec<RAB_ToBeReleasedItem_EnhancedRelocCompleteResIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_ToBeReleasedList_EnhancedRelocCompleteRes_Item_Itemvalue {
+pub enum RAB_ToBeReleasedList_EnhancedRelocCompleteRes_Entry_EntryValue {
     #[asn(key = 209)]
-    id_RAB_ToBeReleasedItem_EnhancedRelocCompleteRes(RAB_ToBeReleasedItem_EnhancedRelocCompleteRes),
+    Id_RAB_ToBeReleasedItem_EnhancedRelocCompleteRes(RAB_ToBeReleasedItem_EnhancedRelocCompleteRes),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_ToBeReleasedList_EnhancedRelocCompleteRes_Item_Item {
+pub struct RAB_ToBeReleasedList_EnhancedRelocCompleteRes_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RAB_ToBeReleasedList_EnhancedRelocCompleteRes_Item_Itemvalue,
+    pub value: RAB_ToBeReleasedList_EnhancedRelocCompleteRes_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9800,24 +9816,24 @@ pub struct RAB_ToBeReleasedList_EnhancedRelocCompleteRes_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_ToBeReleasedList_EnhancedRelocCompleteRes_Item(
-    Vec<RAB_ToBeReleasedList_EnhancedRelocCompleteRes_Item_Item>,
+pub struct RAB_ToBeReleasedList_EnhancedRelocCompleteRes_Entry(
+    Vec<RAB_ToBeReleasedList_EnhancedRelocCompleteRes_Entry_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RAB_TrCH_MappingItemiE_Extensions_ItemextensionValue {
+pub enum RAB_TrCH_MappingItemIE_Extensions_EntryExtensionValue {
     #[asn(key = 3)]
-    id_CN_DomainIndicator(CN_DomainIndicator),
+    Id_CN_DomainIndicator(CN_DomainIndicator),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAB_TrCH_MappingItemiE_Extensions_Item {
+pub struct RAB_TrCH_MappingItemIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: RAB_TrCH_MappingItemiE_Extensions_ItemextensionValue,
+    pub extension_value: RAB_TrCH_MappingItemIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9827,11 +9843,11 @@ pub struct RAB_TrCH_MappingItemiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_TrCH_MappingItemiE_Extensions(Vec<RAB_TrCH_MappingItemiE_Extensions_Item>);
+pub struct RAB_TrCH_MappingItemIE_Extensions(Vec<RAB_TrCH_MappingItemIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RABDataVolumeReport_ItemiE_Extensions_Item {}
+pub struct RABDataVolumeReport_EntryIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -9840,21 +9856,23 @@ pub struct RABDataVolumeReport_ItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RABDataVolumeReport_ItemiE_Extensions(Vec<RABDataVolumeReport_ItemiE_Extensions_Item>);
+pub struct RABDataVolumeReport_EntryIE_Extensions(
+    Vec<RABDataVolumeReport_EntryIE_Extensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 2)]
-pub struct RABDataVolumeReport_Item {
+pub struct RABDataVolumeReport_Entry {
     pub dl_unsuccessfully_transmitted_data_volume: UnsuccessfullyTransmittedDataVolume,
     #[asn(optional_idx = 0)]
     pub data_volume_reference: Option<DataVolumeReference>,
     #[asn(optional_idx = 1)]
-    pub i_e_extensions: Option<RABDataVolumeReport_ItemiE_Extensions>,
+    pub ie_extensions: Option<RABDataVolumeReport_EntryIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RABParametersList_ItemiE_Extensions_Item {}
+pub struct RABParametersList_EntryIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -9863,11 +9881,11 @@ pub struct RABParametersList_ItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RABParametersList_ItemiE_Extensions(Vec<RABParametersList_ItemiE_Extensions_Item>);
+pub struct RABParametersList_EntryIE_Extensions(Vec<RABParametersList_EntryIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 3)]
-pub struct RABParametersList_Item {
+pub struct RABParametersList_Entry {
     pub rab_id: RAB_ID,
     pub cn_domain: CN_DomainIndicator,
     #[asn(optional_idx = 0)]
@@ -9875,12 +9893,12 @@ pub struct RABParametersList_Item {
     #[asn(optional_idx = 1)]
     pub up_information: Option<UPInformation>,
     #[asn(optional_idx = 2)]
-    pub i_e_extensions: Option<RABParametersList_ItemiE_Extensions>,
+    pub ie_extensions: Option<RABParametersList_EntryIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RABasediE_Extensions_Item {}
+pub struct RABasedIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -9889,11 +9907,11 @@ pub struct RABasediE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RABasediE_Extensions(Vec<RABasediE_Extensions_Item>);
+pub struct RABasedIE_Extensions(Vec<RABasedIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RABs_ContextFailedtoTransferItemiE_Extensions_Item {}
+pub struct RABs_ContextFailedtoTransferItemIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -9902,13 +9920,13 @@ pub struct RABs_ContextFailedtoTransferItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RABs_ContextFailedtoTransferItemiE_Extensions(
-    Vec<RABs_ContextFailedtoTransferItemiE_Extensions_Item>,
+pub struct RABs_ContextFailedtoTransferItemIE_Extensions(
+    Vec<RABs_ContextFailedtoTransferItemIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RABs_failed_to_reportItemiE_Extensions_Item {}
+pub struct RABs_failed_to_reportItemIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -9917,11 +9935,13 @@ pub struct RABs_failed_to_reportItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RABs_failed_to_reportItemiE_Extensions(Vec<RABs_failed_to_reportItemiE_Extensions_Item>);
+pub struct RABs_failed_to_reportItemIE_Extensions(
+    Vec<RABs_failed_to_reportItemIE_Extensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RAIiE_Extensions_Item {}
+pub struct RAIIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -9930,7 +9950,7 @@ pub struct RAIiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAIiE_Extensions(Vec<RAIiE_Extensions_Item>);
+pub struct RAIIE_Extensions(Vec<RAIIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
@@ -9942,36 +9962,36 @@ impl ENUMERATED_50 {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RANAP_EnhancedRelocationInformationRequestprotocolIEs_Itemvalue {
+pub enum RANAP_EnhancedRelocationInformationRequestProtocolIEs_EntryValue {
     #[asn(key = 133)]
-    id_CNMBMSLinkingInformation(CNMBMSLinkingInformation),
+    Id_CNMBMSLinkingInformation(CNMBMSLinkingInformation),
     #[asn(key = 206)]
-    id_GlobalCN_IDCS(GlobalCN_ID),
+    Id_GlobalCN_IDCS(GlobalCN_ID),
     #[asn(key = 207)]
-    id_GlobalCN_IDPS(GlobalCN_ID),
+    Id_GlobalCN_IDPS(GlobalCN_ID),
     #[asn(key = 204)]
-    id_OldIuSigConIdCS(IuSignallingConnectionIdentifier),
+    Id_OldIuSigConIdCS(IuSignallingConnectionIdentifier),
     #[asn(key = 205)]
-    id_OldIuSigConIdPS(IuSignallingConnectionIdentifier),
+    Id_OldIuSigConIdPS(IuSignallingConnectionIdentifier),
     #[asn(key = 192)]
-    id_RAB_SetupList_EnhRelocInfoReq(RAB_SetupList_EnhRelocInfoReq),
+    Id_RAB_SetupList_EnhRelocInfoReq(RAB_SetupList_EnhRelocInfoReq),
     #[asn(key = 105)]
-    id_SNA_Access_Information(SNA_Access_Information),
+    Id_SNA_Access_Information(SNA_Access_Information),
     #[asn(key = 127)]
-    id_SelectedPLMN_ID(PLMNidentity),
+    Id_SelectedPLMN_ID(PLMNidentity),
     #[asn(key = 61)]
-    id_Source_ToTarget_TransparentContainer(SourceRNC_ToTargetRNC_TransparentContainer),
+    Id_Source_ToTarget_TransparentContainer(SourceRNC_ToTargetRNC_TransparentContainer),
     #[asn(key = 118)]
-    id_UESBI_Iu(UESBI_Iu),
+    Id_UESBI_Iu(UESBI_Iu),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RANAP_EnhancedRelocationInformationRequestprotocolIEs_Item {
+pub struct RANAP_EnhancedRelocationInformationRequestProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RANAP_EnhancedRelocationInformationRequestprotocolIEs_Itemvalue,
+    pub value: RANAP_EnhancedRelocationInformationRequestProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -9981,37 +10001,37 @@ pub struct RANAP_EnhancedRelocationInformationRequestprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RANAP_EnhancedRelocationInformationRequestprotocolIEs(
-    Vec<RANAP_EnhancedRelocationInformationRequestprotocolIEs_Item>,
+pub struct RANAP_EnhancedRelocationInformationRequestProtocolIEs(
+    Vec<RANAP_EnhancedRelocationInformationRequestProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RANAP_EnhancedRelocationInformationRequestprotocolExtensions_ItemextensionValue {
+pub enum RANAP_EnhancedRelocationInformationRequestProtocolExtensions_EntryExtensionValue {
     #[asn(key = 261)]
-    id_AnchorPLMN_ID(PLMNidentity),
+    Id_AnchorPLMN_ID(PLMNidentity),
     #[asn(key = 203)]
-    id_CSG_Id(CSG_Id),
+    Id_CSG_Id(CSG_Id),
     #[asn(key = 234)]
-    id_CSG_Membership_Status(CSG_Membership_Status),
+    Id_CSG_Membership_Status(CSG_Membership_Status),
     #[asn(key = 11)]
-    id_EncryptionInformation(EncryptionInformation),
+    Id_EncryptionInformation(EncryptionInformation),
     #[asn(key = 12)]
-    id_IntegrityProtectionInformation(IntegrityProtectionInformation),
+    Id_IntegrityProtectionInformation(IntegrityProtectionInformation),
     #[asn(key = 248)]
-    id_RABParametersList(RABParametersList),
+    Id_RABParametersList(RABParametersList),
     #[asn(key = 233)]
-    id_UE_AggregateMaximumBitRate(UE_AggregateMaximumBitRate),
+    Id_UE_AggregateMaximumBitRate(UE_AggregateMaximumBitRate),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RANAP_EnhancedRelocationInformationRequestprotocolExtensions_Item {
+pub struct RANAP_EnhancedRelocationInformationRequestProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
     pub extension_value:
-        RANAP_EnhancedRelocationInformationRequestprotocolExtensions_ItemextensionValue,
+        RANAP_EnhancedRelocationInformationRequestProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -10021,30 +10041,30 @@ pub struct RANAP_EnhancedRelocationInformationRequestprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RANAP_EnhancedRelocationInformationRequestprotocolExtensions(
-    Vec<RANAP_EnhancedRelocationInformationRequestprotocolExtensions_Item>,
+pub struct RANAP_EnhancedRelocationInformationRequestProtocolExtensions(
+    Vec<RANAP_EnhancedRelocationInformationRequestProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RANAP_EnhancedRelocationInformationResponseprotocolIEs_Itemvalue {
+pub enum RANAP_EnhancedRelocationInformationResponseProtocolIEs_EntryValue {
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 197)]
-    id_RAB_FailedList_EnhRelocInfoRes(RAB_FailedList_EnhRelocInfoRes),
+    Id_RAB_FailedList_EnhRelocInfoRes(RAB_FailedList_EnhRelocInfoRes),
     #[asn(key = 194)]
-    id_RAB_SetupList_EnhRelocInfoRes(RAB_SetupList_EnhRelocInfoRes),
+    Id_RAB_SetupList_EnhRelocInfoRes(RAB_SetupList_EnhRelocInfoRes),
     #[asn(key = 63)]
-    id_Target_ToSource_TransparentContainer(TargetRNC_ToSourceRNC_TransparentContainer),
+    Id_Target_ToSource_TransparentContainer(TargetRNC_ToSourceRNC_TransparentContainer),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RANAP_EnhancedRelocationInformationResponseprotocolIEs_Item {
+pub struct RANAP_EnhancedRelocationInformationResponseProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RANAP_EnhancedRelocationInformationResponseprotocolIEs_Itemvalue,
+    pub value: RANAP_EnhancedRelocationInformationResponseProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -10054,13 +10074,13 @@ pub struct RANAP_EnhancedRelocationInformationResponseprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RANAP_EnhancedRelocationInformationResponseprotocolIEs(
-    Vec<RANAP_EnhancedRelocationInformationResponseprotocolIEs_Item>,
+pub struct RANAP_EnhancedRelocationInformationResponseProtocolIEs(
+    Vec<RANAP_EnhancedRelocationInformationResponseProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RANAP_EnhancedRelocationInformationResponseprotocolExtensions_Item {}
+pub struct RANAP_EnhancedRelocationInformationResponseProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -10069,26 +10089,26 @@ pub struct RANAP_EnhancedRelocationInformationResponseprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RANAP_EnhancedRelocationInformationResponseprotocolExtensions(
-    Vec<RANAP_EnhancedRelocationInformationResponseprotocolExtensions_Item>,
+pub struct RANAP_EnhancedRelocationInformationResponseProtocolExtensions(
+    Vec<RANAP_EnhancedRelocationInformationResponseProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RANAP_RelocationInformationprotocolIEs_Itemvalue {
+pub enum RANAP_RelocationInformationProtocolIEs_EntryValue {
     #[asn(key = 81)]
-    id_DirectTransferInformationList_RANAP_RelocInf(DirectTransferInformationList_RANAP_RelocInf),
+    Id_DirectTransferInformationList_RANAP_RelocInf(DirectTransferInformationList_RANAP_RelocInf),
     #[asn(key = 83)]
-    id_RAB_ContextList_RANAP_RelocInf(RAB_ContextList_RANAP_RelocInf),
+    Id_RAB_ContextList_RANAP_RelocInf(RAB_ContextList_RANAP_RelocInf),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RANAP_RelocationInformationprotocolIEs_Item {
+pub struct RANAP_RelocationInformationProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RANAP_RelocationInformationprotocolIEs_Itemvalue,
+    pub value: RANAP_RelocationInformationProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -10098,24 +10118,26 @@ pub struct RANAP_RelocationInformationprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RANAP_RelocationInformationprotocolIEs(Vec<RANAP_RelocationInformationprotocolIEs_Item>);
+pub struct RANAP_RelocationInformationProtocolIEs(
+    Vec<RANAP_RelocationInformationProtocolIEs_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RANAP_RelocationInformationprotocolExtensions_ItemextensionValue {
+pub enum RANAP_RelocationInformationProtocolExtensions_EntryExtensionValue {
     #[asn(key = 247)]
-    id_RNSAPRelocationParameters(RNSAPRelocationParameters),
+    Id_RNSAPRelocationParameters(RNSAPRelocationParameters),
     #[asn(key = 103)]
-    id_SourceRNC_PDCP_context_info(RRC_Container),
+    Id_SourceRNC_PDCP_context_info(RRC_Container),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RANAP_RelocationInformationprotocolExtensions_Item {
+pub struct RANAP_RelocationInformationProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: RANAP_RelocationInformationprotocolExtensions_ItemextensionValue,
+    pub extension_value: RANAP_RelocationInformationProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -10125,13 +10147,13 @@ pub struct RANAP_RelocationInformationprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RANAP_RelocationInformationprotocolExtensions(
-    Vec<RANAP_RelocationInformationprotocolExtensions_Item>,
+pub struct RANAP_RelocationInformationProtocolExtensions(
+    Vec<RANAP_RelocationInformationProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RIM_TransferiE_Extensions_Item {}
+pub struct RIM_TransferIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -10140,7 +10162,7 @@ pub struct RIM_TransferiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RIM_TransferiE_Extensions(Vec<RIM_TransferiE_Extensions_Item>);
+pub struct RIM_TransferIE_Extensions(Vec<RIM_TransferIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", lb = "0", ub = "1")]
@@ -10152,24 +10174,24 @@ impl ENUMERATED_51 {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RNCTraceInformationiE_Extensions_ItemextensionValue {
+pub enum RNCTraceInformationIE_Extensions_EntryExtensionValue {
     #[asn(key = 256)]
-    id_IMSI(IMSI),
+    Id_IMSI(IMSI),
     #[asn(key = 270)]
-    id_Serving_Cell_Identifier(UTRAN_CellID),
+    Id_Serving_Cell_Identifier(UTRAN_CellID),
     #[asn(key = 251)]
-    id_Trace_Collection_Entity_IP_Addess(TransportLayerAddress),
+    Id_Trace_Collection_Entity_IP_Addess(TransportLayerAddress),
     #[asn(key = 255)]
-    id_TraceRecordingSessionReference(TraceRecordingSessionReference),
+    Id_TraceRecordingSessionReference(TraceRecordingSessionReference),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RNCTraceInformationiE_Extensions_Item {
+pub struct RNCTraceInformationIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: RNCTraceInformationiE_Extensions_ItemextensionValue,
+    pub extension_value: RNCTraceInformationIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -10179,11 +10201,11 @@ pub struct RNCTraceInformationiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RNCTraceInformationiE_Extensions(Vec<RNCTraceInformationiE_Extensions_Item>);
+pub struct RNCTraceInformationIE_Extensions(Vec<RNCTraceInformationIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RNSAPRelocationParametersiE_Extensions_Item {}
+pub struct RNSAPRelocationParametersIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -10192,7 +10214,9 @@ pub struct RNSAPRelocationParametersiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RNSAPRelocationParametersiE_Extensions(Vec<RNSAPRelocationParametersiE_Extensions_Item>);
+pub struct RNSAPRelocationParametersIE_Extensions(
+    Vec<RNSAPRelocationParametersIE_Extensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BOOLEAN")]
@@ -10222,7 +10246,7 @@ pub struct OCTET_STRING_55(Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RSRVCC_InformationiE_Extensions_Item {}
+pub struct RSRVCC_InformationIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -10231,46 +10255,46 @@ pub struct RSRVCC_InformationiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RSRVCC_InformationiE_Extensions(Vec<RSRVCC_InformationiE_Extensions_Item>);
+pub struct RSRVCC_InformationIE_Extensions(Vec<RSRVCC_InformationIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RedirectionIndication_Itemvalue {
+pub enum RedirectionIndication_EntryValue {
     #[asn(key = 280)]
-    id_Additional_CSPS_coordination_information(Additional_CSPS_coordination_information),
+    Id_Additional_CSPS_coordination_information(Additional_CSPS_coordination_information),
     #[asn(key = 16)]
-    id_NAS_PDU(NAS_PDU),
+    Id_NAS_PDU(NAS_PDU),
     #[asn(key = 130)]
-    id_NAS_SequenceNumber(NAS_SequenceNumber),
+    Id_NAS_SequenceNumber(NAS_SequenceNumber),
     #[asn(key = 23)]
-    id_PermanentNAS_UE_ID(PermanentNAS_UE_ID),
+    Id_PermanentNAS_UE_ID(PermanentNAS_UE_ID),
     #[asn(key = 131)]
-    id_RejectCauseValue(RejectCauseValue),
+    Id_RejectCauseValue(RejectCauseValue),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RedirectionIndication_Item {
+pub struct RedirectionIndication_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RedirectionIndication_Itemvalue,
+    pub value: RedirectionIndication_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RelocationCancelprotocolIEs_Itemvalue {
+pub enum RelocationCancelProtocolIEs_EntryValue {
     #[asn(key = 4)]
-    id_Cause(Cause),
+    Id_Cause(Cause),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RelocationCancelprotocolIEs_Item {
+pub struct RelocationCancelProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RelocationCancelprotocolIEs_Itemvalue,
+    pub value: RelocationCancelProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -10280,11 +10304,11 @@ pub struct RelocationCancelprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RelocationCancelprotocolIEs(Vec<RelocationCancelprotocolIEs_Item>);
+pub struct RelocationCancelProtocolIEs(Vec<RelocationCancelProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RelocationCancelprotocolExtensions_Item {}
+pub struct RelocationCancelProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -10293,22 +10317,22 @@ pub struct RelocationCancelprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RelocationCancelprotocolExtensions(Vec<RelocationCancelprotocolExtensions_Item>);
+pub struct RelocationCancelProtocolExtensions(Vec<RelocationCancelProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RelocationCancelAcknowledgeprotocolIEs_Itemvalue {
+pub enum RelocationCancelAcknowledgeProtocolIEs_EntryValue {
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RelocationCancelAcknowledgeprotocolIEs_Item {
+pub struct RelocationCancelAcknowledgeProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RelocationCancelAcknowledgeprotocolIEs_Itemvalue,
+    pub value: RelocationCancelAcknowledgeProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -10318,11 +10342,13 @@ pub struct RelocationCancelAcknowledgeprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RelocationCancelAcknowledgeprotocolIEs(Vec<RelocationCancelAcknowledgeprotocolIEs_Item>);
+pub struct RelocationCancelAcknowledgeProtocolIEs(
+    Vec<RelocationCancelAcknowledgeProtocolIEs_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RelocationCancelAcknowledgeprotocolExtensions_Item {}
+pub struct RelocationCancelAcknowledgeProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -10331,32 +10357,32 @@ pub struct RelocationCancelAcknowledgeprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RelocationCancelAcknowledgeprotocolExtensions(
-    Vec<RelocationCancelAcknowledgeprotocolExtensions_Item>,
+pub struct RelocationCancelAcknowledgeProtocolExtensions(
+    Vec<RelocationCancelAcknowledgeProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RelocationCommandprotocolIEs_Itemvalue {
+pub enum RelocationCommandProtocolIEs_EntryValue {
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 14)]
-    id_L3_Information(L3_Information),
+    Id_L3_Information(L3_Information),
     #[asn(key = 28)]
-    id_RAB_DataForwardingList(RAB_DataForwardingList),
+    Id_RAB_DataForwardingList(RAB_DataForwardingList),
     #[asn(key = 46)]
-    id_RAB_RelocationReleaseList(RAB_RelocationReleaseList),
+    Id_RAB_RelocationReleaseList(RAB_RelocationReleaseList),
     #[asn(key = 63)]
-    id_Target_ToSource_TransparentContainer(Target_ToSource_TransparentContainer),
+    Id_Target_ToSource_TransparentContainer(Target_ToSource_TransparentContainer),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RelocationCommandprotocolIEs_Item {
+pub struct RelocationCommandProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RelocationCommandprotocolIEs_Itemvalue,
+    pub value: RelocationCommandProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -10366,28 +10392,28 @@ pub struct RelocationCommandprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RelocationCommandprotocolIEs(Vec<RelocationCommandprotocolIEs_Item>);
+pub struct RelocationCommandProtocolIEs(Vec<RelocationCommandProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RelocationCommandprotocolExtensions_ItemextensionValue {
+pub enum RelocationCommandProtocolExtensions_EntryExtensionValue {
     #[asn(key = 99)]
-    id_InterSystemInformation_TransparentContainer(InterSystemInformation_TransparentContainer),
+    Id_InterSystemInformation_TransparentContainer(InterSystemInformation_TransparentContainer),
     #[asn(key = 260)]
-    id_RSRVCC_Information(RSRVCC_Information),
+    Id_RSRVCC_Information(RSRVCC_Information),
     #[asn(key = 227)]
-    id_SRVCC_Information(SRVCC_Information),
+    Id_SRVCC_Information(SRVCC_Information),
     #[asn(key = 162)]
-    id_TargetBSS_ToSourceBSS_TransparentContainer(TargetBSS_ToSourceBSS_TransparentContainer),
+    Id_TargetBSS_ToSourceBSS_TransparentContainer(TargetBSS_ToSourceBSS_TransparentContainer),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RelocationCommandprotocolExtensions_Item {
+pub struct RelocationCommandProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: RelocationCommandprotocolExtensions_ItemextensionValue,
+    pub extension_value: RelocationCommandProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -10397,11 +10423,11 @@ pub struct RelocationCommandprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RelocationCommandprotocolExtensions(Vec<RelocationCommandprotocolExtensions_Item>);
+pub struct RelocationCommandProtocolExtensions(Vec<RelocationCommandProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RelocationCompleteprotocolIEs_Item {}
+pub struct RelocationCompleteProtocolIEs_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -10410,26 +10436,26 @@ pub struct RelocationCompleteprotocolIEs_Item {}
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RelocationCompleteprotocolIEs(Vec<RelocationCompleteprotocolIEs_Item>);
+pub struct RelocationCompleteProtocolIEs(Vec<RelocationCompleteProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RelocationCompleteprotocolExtensions_ItemextensionValue {
+pub enum RelocationCompleteProtocolExtensions_EntryExtensionValue {
     #[asn(key = 250)]
-    id_HigherBitratesThan16MbpsFlag(HigherBitratesThan16MbpsFlag),
+    Id_HigherBitratesThan16MbpsFlag(HigherBitratesThan16MbpsFlag),
     #[asn(key = 275)]
-    id_LHN_ID(LHN_ID),
+    Id_LHN_ID(LHN_ID),
     #[asn(key = 262)]
-    id_Tunnel_Information_for_BBF(TunnelInformation),
+    Id_Tunnel_Information_for_BBF(TunnelInformation),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RelocationCompleteprotocolExtensions_Item {
+pub struct RelocationCompleteProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: RelocationCompleteprotocolExtensions_ItemextensionValue,
+    pub extension_value: RelocationCompleteProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -10439,11 +10465,11 @@ pub struct RelocationCompleteprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RelocationCompleteprotocolExtensions(Vec<RelocationCompleteprotocolExtensions_Item>);
+pub struct RelocationCompleteProtocolExtensions(Vec<RelocationCompleteProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RelocationDetectprotocolIEs_Item {}
+pub struct RelocationDetectProtocolIEs_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -10452,11 +10478,11 @@ pub struct RelocationDetectprotocolIEs_Item {}
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RelocationDetectprotocolIEs(Vec<RelocationDetectprotocolIEs_Item>);
+pub struct RelocationDetectProtocolIEs(Vec<RelocationDetectProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RelocationDetectprotocolExtensions_Item {}
+pub struct RelocationDetectProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -10465,24 +10491,24 @@ pub struct RelocationDetectprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RelocationDetectprotocolExtensions(Vec<RelocationDetectprotocolExtensions_Item>);
+pub struct RelocationDetectProtocolExtensions(Vec<RelocationDetectProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RelocationFailureprotocolIEs_Itemvalue {
+pub enum RelocationFailureProtocolIEs_EntryValue {
     #[asn(key = 4)]
-    id_Cause(Cause),
+    Id_Cause(Cause),
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RelocationFailureprotocolIEs_Item {
+pub struct RelocationFailureProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RelocationFailureprotocolIEs_Itemvalue,
+    pub value: RelocationFailureProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -10492,24 +10518,24 @@ pub struct RelocationFailureprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RelocationFailureprotocolIEs(Vec<RelocationFailureprotocolIEs_Item>);
+pub struct RelocationFailureProtocolIEs(Vec<RelocationFailureProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RelocationFailureprotocolExtensions_ItemextensionValue {
+pub enum RelocationFailureProtocolExtensions_EntryExtensionValue {
     #[asn(key = 108)]
-    id_GERAN_Classmark(GERAN_Classmark),
+    Id_GERAN_Classmark(GERAN_Classmark),
     #[asn(key = 100)]
-    id_NewBSS_To_OldBSS_Information(NewBSS_To_OldBSS_Information),
+    Id_NewBSS_To_OldBSS_Information(NewBSS_To_OldBSS_Information),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RelocationFailureprotocolExtensions_Item {
+pub struct RelocationFailureProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: RelocationFailureprotocolExtensions_ItemextensionValue,
+    pub extension_value: RelocationFailureProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -10519,24 +10545,24 @@ pub struct RelocationFailureprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RelocationFailureprotocolExtensions(Vec<RelocationFailureprotocolExtensions_Item>);
+pub struct RelocationFailureProtocolExtensions(Vec<RelocationFailureProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RelocationPreparationFailureprotocolIEs_Itemvalue {
+pub enum RelocationPreparationFailureProtocolIEs_EntryValue {
     #[asn(key = 4)]
-    id_Cause(Cause),
+    Id_Cause(Cause),
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RelocationPreparationFailureprotocolIEs_Item {
+pub struct RelocationPreparationFailureProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RelocationPreparationFailureprotocolIEs_Itemvalue,
+    pub value: RelocationPreparationFailureProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -10546,24 +10572,24 @@ pub struct RelocationPreparationFailureprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RelocationPreparationFailureprotocolIEs(
-    Vec<RelocationPreparationFailureprotocolIEs_Item>,
+pub struct RelocationPreparationFailureProtocolIEs(
+    Vec<RelocationPreparationFailureProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RelocationPreparationFailureprotocolExtensions_ItemextensionValue {
+pub enum RelocationPreparationFailureProtocolExtensions_EntryExtensionValue {
     #[asn(key = 99)]
-    id_InterSystemInformation_TransparentContainer(InterSystemInformation_TransparentContainer),
+    Id_InterSystemInformation_TransparentContainer(InterSystemInformation_TransparentContainer),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RelocationPreparationFailureprotocolExtensions_Item {
+pub struct RelocationPreparationFailureProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: RelocationPreparationFailureprotocolExtensions_ItemextensionValue,
+    pub extension_value: RelocationPreparationFailureProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -10573,38 +10599,38 @@ pub struct RelocationPreparationFailureprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RelocationPreparationFailureprotocolExtensions(
-    Vec<RelocationPreparationFailureprotocolExtensions_Item>,
+pub struct RelocationPreparationFailureProtocolExtensions(
+    Vec<RelocationPreparationFailureProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RelocationRequestprotocolIEs_Itemvalue {
+pub enum RelocationRequestProtocolIEs_EntryValue {
     #[asn(key = 3)]
-    id_CN_DomainIndicator(CN_DomainIndicator),
+    Id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 4)]
-    id_Cause(Cause),
+    Id_Cause(Cause),
     #[asn(key = 11)]
-    id_EncryptionInformation(EncryptionInformation),
+    Id_EncryptionInformation(EncryptionInformation),
     #[asn(key = 12)]
-    id_IntegrityProtectionInformation(IntegrityProtectionInformation),
+    Id_IntegrityProtectionInformation(IntegrityProtectionInformation),
     #[asn(key = 79)]
-    id_IuSigConId(IuSignallingConnectionIdentifier),
+    Id_IuSigConId(IuSignallingConnectionIdentifier),
     #[asn(key = 23)]
-    id_PermanentNAS_UE_ID(PermanentNAS_UE_ID),
+    Id_PermanentNAS_UE_ID(PermanentNAS_UE_ID),
     #[asn(key = 49)]
-    id_RAB_SetupList_RelocReq(RAB_SetupList_RelocReq),
+    Id_RAB_SetupList_RelocReq(RAB_SetupList_RelocReq),
     #[asn(key = 61)]
-    id_Source_ToTarget_TransparentContainer(SourceRNC_ToTargetRNC_TransparentContainer),
+    Id_Source_ToTarget_TransparentContainer(SourceRNC_ToTargetRNC_TransparentContainer),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RelocationRequestprotocolIEs_Item {
+pub struct RelocationRequestProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RelocationRequestprotocolIEs_Itemvalue,
+    pub value: RelocationRequestProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -10614,46 +10640,46 @@ pub struct RelocationRequestprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RelocationRequestprotocolIEs(Vec<RelocationRequestprotocolIEs_Item>);
+pub struct RelocationRequestProtocolIEs(Vec<RelocationRequestProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RelocationRequestprotocolExtensions_ItemextensionValue {
+pub enum RelocationRequestProtocolExtensions_EntryExtensionValue {
     #[asn(key = 261)]
-    id_AnchorPLMN_ID(PLMNidentity),
+    Id_AnchorPLMN_ID(PLMNidentity),
     #[asn(key = 133)]
-    id_CNMBMSLinkingInformation(CNMBMSLinkingInformation),
+    Id_CNMBMSLinkingInformation(CNMBMSLinkingInformation),
     #[asn(key = 203)]
-    id_CSG_Id(CSG_Id),
+    Id_CSG_Id(CSG_Id),
     #[asn(key = 234)]
-    id_CSG_Membership_Status(CSG_Membership_Status),
+    Id_CSG_Membership_Status(CSG_Membership_Status),
     #[asn(key = 96)]
-    id_GlobalCN_ID(GlobalCN_ID),
+    Id_GlobalCN_ID(GlobalCN_ID),
     #[asn(key = 239)]
-    id_MSISDN(MSISDN),
+    Id_MSISDN(MSISDN),
     #[asn(key = 289)]
-    id_PowerSavingIndicator(PowerSavingIndicator),
+    Id_PowerSavingIndicator(PowerSavingIndicator),
     #[asn(key = 105)]
-    id_SNA_Access_Information(SNA_Access_Information),
+    Id_SNA_Access_Information(SNA_Access_Information),
     #[asn(key = 127)]
-    id_SelectedPLMN_ID(PLMNidentity),
+    Id_SelectedPLMN_ID(PLMNidentity),
     #[asn(key = 233)]
-    id_UE_AggregateMaximumBitRate(UE_AggregateMaximumBitRate),
+    Id_UE_AggregateMaximumBitRate(UE_AggregateMaximumBitRate),
     #[asn(key = 293)]
-    id_UE_Application_Layer_Measurement_Configuration_For_Relocation(
+    Id_UE_Application_Layer_Measurement_Configuration_For_Relocation(
         UE_Application_Layer_Measurement_Configuration_For_Relocation,
     ),
     #[asn(key = 118)]
-    id_UESBI_Iu(UESBI_Iu),
+    Id_UESBI_Iu(UESBI_Iu),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RelocationRequestprotocolExtensions_Item {
+pub struct RelocationRequestProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: RelocationRequestprotocolExtensions_ItemextensionValue,
+    pub extension_value: RelocationRequestProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -10663,32 +10689,32 @@ pub struct RelocationRequestprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RelocationRequestprotocolExtensions(Vec<RelocationRequestprotocolExtensions_Item>);
+pub struct RelocationRequestProtocolExtensions(Vec<RelocationRequestProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RelocationRequestAcknowledgeprotocolIEs_Itemvalue {
+pub enum RelocationRequestAcknowledgeProtocolIEs_EntryValue {
     #[asn(key = 5)]
-    id_ChosenEncryptionAlgorithm(ChosenEncryptionAlgorithm),
+    Id_ChosenEncryptionAlgorithm(ChosenEncryptionAlgorithm),
     #[asn(key = 6)]
-    id_ChosenIntegrityProtectionAlgorithm(ChosenIntegrityProtectionAlgorithm),
+    Id_ChosenIntegrityProtectionAlgorithm(ChosenIntegrityProtectionAlgorithm),
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 35)]
-    id_RAB_FailedList(RAB_FailedList),
+    Id_RAB_FailedList(RAB_FailedList),
     #[asn(key = 50)]
-    id_RAB_SetupList_RelocReqAck(RAB_SetupList_RelocReqAck),
+    Id_RAB_SetupList_RelocReqAck(RAB_SetupList_RelocReqAck),
     #[asn(key = 63)]
-    id_Target_ToSource_TransparentContainer(TargetRNC_ToSourceRNC_TransparentContainer),
+    Id_Target_ToSource_TransparentContainer(TargetRNC_ToSourceRNC_TransparentContainer),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RelocationRequestAcknowledgeprotocolIEs_Item {
+pub struct RelocationRequestAcknowledgeProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RelocationRequestAcknowledgeprotocolIEs_Itemvalue,
+    pub value: RelocationRequestAcknowledgeProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -10698,26 +10724,26 @@ pub struct RelocationRequestAcknowledgeprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RelocationRequestAcknowledgeprotocolIEs(
-    Vec<RelocationRequestAcknowledgeprotocolIEs_Item>,
+pub struct RelocationRequestAcknowledgeProtocolIEs(
+    Vec<RelocationRequestAcknowledgeProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RelocationRequestAcknowledgeprotocolExtensions_ItemextensionValue {
+pub enum RelocationRequestAcknowledgeProtocolExtensions_EntryExtensionValue {
     #[asn(key = 203)]
-    id_CSG_Id(CSG_Id),
+    Id_CSG_Id(CSG_Id),
     #[asn(key = 100)]
-    id_NewBSS_To_OldBSS_Information(NewBSS_To_OldBSS_Information),
+    Id_NewBSS_To_OldBSS_Information(NewBSS_To_OldBSS_Information),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RelocationRequestAcknowledgeprotocolExtensions_Item {
+pub struct RelocationRequestAcknowledgeProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: RelocationRequestAcknowledgeprotocolExtensions_ItemextensionValue,
+    pub extension_value: RelocationRequestAcknowledgeProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -10727,38 +10753,38 @@ pub struct RelocationRequestAcknowledgeprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RelocationRequestAcknowledgeprotocolExtensions(
-    Vec<RelocationRequestAcknowledgeprotocolExtensions_Item>,
+pub struct RelocationRequestAcknowledgeProtocolExtensions(
+    Vec<RelocationRequestAcknowledgeProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RelocationRequiredprotocolIEs_Itemvalue {
+pub enum RelocationRequiredProtocolIEs_EntryValue {
     #[asn(key = 4)]
-    id_Cause(Cause),
+    Id_Cause(Cause),
     #[asn(key = 7)]
-    id_ClassmarkInformation2(ClassmarkInformation2),
+    Id_ClassmarkInformation2(ClassmarkInformation2),
     #[asn(key = 8)]
-    id_ClassmarkInformation3(ClassmarkInformation3),
+    Id_ClassmarkInformation3(ClassmarkInformation3),
     #[asn(key = 20)]
-    id_OldBSS_ToNewBSS_Information(OldBSS_ToNewBSS_Information),
+    Id_OldBSS_ToNewBSS_Information(OldBSS_ToNewBSS_Information),
     #[asn(key = 56)]
-    id_RelocationType(RelocationType),
+    Id_RelocationType(RelocationType),
     #[asn(key = 61)]
-    id_Source_ToTarget_TransparentContainer(Source_ToTarget_TransparentContainer),
+    Id_Source_ToTarget_TransparentContainer(Source_ToTarget_TransparentContainer),
     #[asn(key = 60)]
-    id_SourceID(SourceID),
+    Id_SourceID(SourceID),
     #[asn(key = 62)]
-    id_TargetID(TargetID),
+    Id_TargetID(TargetID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RelocationRequiredprotocolIEs_Item {
+pub struct RelocationRequiredProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RelocationRequiredprotocolIEs_Itemvalue,
+    pub value: RelocationRequiredProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -10768,36 +10794,36 @@ pub struct RelocationRequiredprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RelocationRequiredprotocolIEs(Vec<RelocationRequiredprotocolIEs_Item>);
+pub struct RelocationRequiredProtocolIEs(Vec<RelocationRequiredProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RelocationRequiredprotocolExtensions_ItemextensionValue {
+pub enum RelocationRequiredProtocolExtensions_EntryExtensionValue {
     #[asn(key = 203)]
-    id_CSG_Id(CSG_Id),
+    Id_CSG_Id(CSG_Id),
     #[asn(key = 235)]
-    id_Cell_Access_Mode(Cell_Access_Mode),
+    Id_Cell_Access_Mode(Cell_Access_Mode),
     #[asn(key = 108)]
-    id_GERAN_Classmark(GERAN_Classmark),
+    Id_GERAN_Classmark(GERAN_Classmark),
     #[asn(key = 259)]
-    id_RSRVCC_HO_Indication(RSRVCC_HO_Indication),
+    Id_RSRVCC_HO_Indication(RSRVCC_HO_Indication),
     #[asn(key = 226)]
-    id_SRVCC_HO_Indication(SRVCC_HO_Indication),
+    Id_SRVCC_HO_Indication(SRVCC_HO_Indication),
     #[asn(key = 161)]
-    id_SourceBSS_ToTargetBSS_TransparentContainer(SourceBSS_ToTargetBSS_TransparentContainer),
+    Id_SourceBSS_ToTargetBSS_TransparentContainer(SourceBSS_ToTargetBSS_TransparentContainer),
     #[asn(key = 293)]
-    id_UE_Application_Layer_Measurement_Configuration_For_Relocation(
+    Id_UE_Application_Layer_Measurement_Configuration_For_Relocation(
         UE_Application_Layer_Measurement_Configuration_For_Relocation,
     ),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RelocationRequiredprotocolExtensions_Item {
+pub struct RelocationRequiredProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: RelocationRequiredprotocolExtensions_ItemextensionValue,
+    pub extension_value: RelocationRequiredProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -10807,7 +10833,7 @@ pub struct RelocationRequiredprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RelocationRequiredprotocolExtensions(Vec<RelocationRequiredprotocolExtensions_Item>);
+pub struct RelocationRequiredProtocolExtensions(Vec<RelocationRequiredProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "127")]
@@ -10815,30 +10841,30 @@ pub struct INTEGER_56(u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum Requested_RAB_Parameter_ValuesiE_Extensions_ItemextensionValue {
+pub enum Requested_RAB_Parameter_ValuesIE_Extensions_EntryExtensionValue {
     #[asn(key = 159)]
-    id_AlternativeRABConfigurationRequest(AlternativeRABConfigurationRequest),
+    Id_AlternativeRABConfigurationRequest(AlternativeRABConfigurationRequest),
     #[asn(key = 179)]
-    id_Requested_RAB_Parameter_ExtendedGuaranteedBitrateList(
+    Id_Requested_RAB_Parameter_ExtendedGuaranteedBitrateList(
         Requested_RAB_Parameter_ExtendedGuaranteedBitrateList,
     ),
     #[asn(key = 178)]
-    id_Requested_RAB_Parameter_ExtendedMaxBitrateList(
+    Id_Requested_RAB_Parameter_ExtendedMaxBitrateList(
         Requested_RAB_Parameter_ExtendedMaxBitrateList,
     ),
     #[asn(key = 221)]
-    id_Requested_RAB_Parameter_SupportedGuaranteedBitrateList(SupportedRAB_ParameterBitrateList),
+    Id_Requested_RAB_Parameter_SupportedGuaranteedBitrateList(SupportedRAB_ParameterBitrateList),
     #[asn(key = 220)]
-    id_Requested_RAB_Parameter_SupportedMaxBitrateList(SupportedRAB_ParameterBitrateList),
+    Id_Requested_RAB_Parameter_SupportedMaxBitrateList(SupportedRAB_ParameterBitrateList),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct Requested_RAB_Parameter_ValuesiE_Extensions_Item {
+pub struct Requested_RAB_Parameter_ValuesIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: Requested_RAB_Parameter_ValuesiE_Extensions_ItemextensionValue,
+    pub extension_value: Requested_RAB_Parameter_ValuesIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -10848,28 +10874,28 @@ pub struct Requested_RAB_Parameter_ValuesiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct Requested_RAB_Parameter_ValuesiE_Extensions(
-    Vec<Requested_RAB_Parameter_ValuesiE_Extensions_Item>,
+pub struct Requested_RAB_Parameter_ValuesIE_Extensions(
+    Vec<Requested_RAB_Parameter_ValuesIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum RerouteNASRequestprotocolIEs_Itemvalue {
+pub enum RerouteNASRequestProtocolIEs_EntryValue {
     #[asn(key = 287)]
-    id_P_TMSI(P_TMSI),
+    Id_P_TMSI(P_TMSI),
     #[asn(key = 286)]
-    id_SGSN_Group_Identity(SGSN_Group_Identity),
+    Id_SGSN_Group_Identity(SGSN_Group_Identity),
     #[asn(key = 290)]
-    id_UE_Usage_Type(UE_Usage_Type),
+    Id_UE_Usage_Type(UE_Usage_Type),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RerouteNASRequestprotocolIEs_Item {
+pub struct RerouteNASRequestProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: RerouteNASRequestprotocolIEs_Itemvalue,
+    pub value: RerouteNASRequestProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -10879,11 +10905,11 @@ pub struct RerouteNASRequestprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RerouteNASRequestprotocolIEs(Vec<RerouteNASRequestprotocolIEs_Item>);
+pub struct RerouteNASRequestProtocolIEs(Vec<RerouteNASRequestProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct RerouteNASRequestprotocolExtensions_Item {}
+pub struct RerouteNASRequestProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -10892,26 +10918,26 @@ pub struct RerouteNASRequestprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RerouteNASRequestprotocolExtensions(Vec<RerouteNASRequestprotocolExtensions_Item>);
+pub struct RerouteNASRequestProtocolExtensions(Vec<RerouteNASRequestProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum ResetprotocolIEs_Itemvalue {
+pub enum ResetProtocolIEs_EntryValue {
     #[asn(key = 3)]
-    id_CN_DomainIndicator(CN_DomainIndicator),
+    Id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 4)]
-    id_Cause(Cause),
+    Id_Cause(Cause),
     #[asn(key = 86)]
-    id_GlobalRNC_ID(GlobalRNC_ID),
+    Id_GlobalRNC_ID(GlobalRNC_ID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct ResetprotocolIEs_Item {
+pub struct ResetProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: ResetprotocolIEs_Itemvalue,
+    pub value: ResetProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -10921,24 +10947,24 @@ pub struct ResetprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct ResetprotocolIEs(Vec<ResetprotocolIEs_Item>);
+pub struct ResetProtocolIEs(Vec<ResetProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum ResetprotocolExtensions_ItemextensionValue {
+pub enum ResetProtocolExtensions_EntryExtensionValue {
     #[asn(key = 171)]
-    id_ExtendedRNC_ID(ExtendedRNC_ID),
+    Id_ExtendedRNC_ID(ExtendedRNC_ID),
     #[asn(key = 96)]
-    id_GlobalCN_ID(GlobalCN_ID),
+    Id_GlobalCN_ID(GlobalCN_ID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct ResetprotocolExtensions_Item {
+pub struct ResetProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: ResetprotocolExtensions_ItemextensionValue,
+    pub extension_value: ResetProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -10948,26 +10974,26 @@ pub struct ResetprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct ResetprotocolExtensions(Vec<ResetprotocolExtensions_Item>);
+pub struct ResetProtocolExtensions(Vec<ResetProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum ResetAcknowledgeprotocolIEs_Itemvalue {
+pub enum ResetAcknowledgeProtocolIEs_EntryValue {
     #[asn(key = 3)]
-    id_CN_DomainIndicator(CN_DomainIndicator),
+    Id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 86)]
-    id_GlobalRNC_ID(GlobalRNC_ID),
+    Id_GlobalRNC_ID(GlobalRNC_ID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct ResetAcknowledgeprotocolIEs_Item {
+pub struct ResetAcknowledgeProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: ResetAcknowledgeprotocolIEs_Itemvalue,
+    pub value: ResetAcknowledgeProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -10977,24 +11003,24 @@ pub struct ResetAcknowledgeprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct ResetAcknowledgeprotocolIEs(Vec<ResetAcknowledgeprotocolIEs_Item>);
+pub struct ResetAcknowledgeProtocolIEs(Vec<ResetAcknowledgeProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum ResetAcknowledgeprotocolExtensions_ItemextensionValue {
+pub enum ResetAcknowledgeProtocolExtensions_EntryExtensionValue {
     #[asn(key = 171)]
-    id_ExtendedRNC_ID(ExtendedRNC_ID),
+    Id_ExtendedRNC_ID(ExtendedRNC_ID),
     #[asn(key = 96)]
-    id_GlobalCN_ID(GlobalCN_ID),
+    Id_GlobalCN_ID(GlobalCN_ID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct ResetAcknowledgeprotocolExtensions_Item {
+pub struct ResetAcknowledgeProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: ResetAcknowledgeprotocolExtensions_ItemextensionValue,
+    pub extension_value: ResetAcknowledgeProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -11004,28 +11030,28 @@ pub struct ResetAcknowledgeprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct ResetAcknowledgeprotocolExtensions(Vec<ResetAcknowledgeprotocolExtensions_Item>);
+pub struct ResetAcknowledgeProtocolExtensions(Vec<ResetAcknowledgeProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum ResetResourceprotocolIEs_Itemvalue {
+pub enum ResetResourceProtocolIEs_EntryValue {
     #[asn(key = 3)]
-    id_CN_DomainIndicator(CN_DomainIndicator),
+    Id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 4)]
-    id_Cause(Cause),
+    Id_Cause(Cause),
     #[asn(key = 86)]
-    id_GlobalRNC_ID(GlobalRNC_ID),
+    Id_GlobalRNC_ID(GlobalRNC_ID),
     #[asn(key = 77)]
-    id_IuSigConIdList(ResetResourceList),
+    Id_IuSigConIdList(ResetResourceList),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct ResetResourceprotocolIEs_Item {
+pub struct ResetResourceProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: ResetResourceprotocolIEs_Itemvalue,
+    pub value: ResetResourceProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -11035,24 +11061,24 @@ pub struct ResetResourceprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct ResetResourceprotocolIEs(Vec<ResetResourceprotocolIEs_Item>);
+pub struct ResetResourceProtocolIEs(Vec<ResetResourceProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum ResetResourceprotocolExtensions_ItemextensionValue {
+pub enum ResetResourceProtocolExtensions_EntryExtensionValue {
     #[asn(key = 171)]
-    id_ExtendedRNC_ID(ExtendedRNC_ID),
+    Id_ExtendedRNC_ID(ExtendedRNC_ID),
     #[asn(key = 96)]
-    id_GlobalCN_ID(GlobalCN_ID),
+    Id_GlobalCN_ID(GlobalCN_ID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct ResetResourceprotocolExtensions_Item {
+pub struct ResetResourceProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: ResetResourceprotocolExtensions_ItemextensionValue,
+    pub extension_value: ResetResourceProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -11062,22 +11088,22 @@ pub struct ResetResourceprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct ResetResourceprotocolExtensions(Vec<ResetResourceprotocolExtensions_Item>);
+pub struct ResetResourceProtocolExtensions(Vec<ResetResourceProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum ResetResourceAckItemiE_Extensions_ItemextensionValue {
+pub enum ResetResourceAckItemIE_Extensions_EntryExtensionValue {
     #[asn(key = 282)]
-    id_IuSigConIdRangeEnd(IuSignallingConnectionIdentifier),
+    Id_IuSigConIdRangeEnd(IuSignallingConnectionIdentifier),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct ResetResourceAckItemiE_Extensions_Item {
+pub struct ResetResourceAckItemIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: ResetResourceAckItemiE_Extensions_ItemextensionValue,
+    pub extension_value: ResetResourceAckItemIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -11087,22 +11113,22 @@ pub struct ResetResourceAckItemiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct ResetResourceAckItemiE_Extensions(Vec<ResetResourceAckItemiE_Extensions_Item>);
+pub struct ResetResourceAckItemIE_Extensions(Vec<ResetResourceAckItemIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum ResetResourceAckList_Item_Itemvalue {
+pub enum ResetResourceAckList_Entry_EntryValue {
     #[asn(key = 78)]
-    id_IuSigConIdItem(ResetResourceAckItem),
+    Id_IuSigConIdItem(ResetResourceAckItem),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct ResetResourceAckList_Item_Item {
+pub struct ResetResourceAckList_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: ResetResourceAckList_Item_Itemvalue,
+    pub value: ResetResourceAckList_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -11112,28 +11138,28 @@ pub struct ResetResourceAckList_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct ResetResourceAckList_Item(Vec<ResetResourceAckList_Item_Item>);
+pub struct ResetResourceAckList_Entry(Vec<ResetResourceAckList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum ResetResourceAcknowledgeprotocolIEs_Itemvalue {
+pub enum ResetResourceAcknowledgeProtocolIEs_EntryValue {
     #[asn(key = 3)]
-    id_CN_DomainIndicator(CN_DomainIndicator),
+    Id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 86)]
-    id_GlobalRNC_ID(GlobalRNC_ID),
+    Id_GlobalRNC_ID(GlobalRNC_ID),
     #[asn(key = 77)]
-    id_IuSigConIdList(ResetResourceAckList),
+    Id_IuSigConIdList(ResetResourceAckList),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct ResetResourceAcknowledgeprotocolIEs_Item {
+pub struct ResetResourceAcknowledgeProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: ResetResourceAcknowledgeprotocolIEs_Itemvalue,
+    pub value: ResetResourceAcknowledgeProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -11143,24 +11169,24 @@ pub struct ResetResourceAcknowledgeprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct ResetResourceAcknowledgeprotocolIEs(Vec<ResetResourceAcknowledgeprotocolIEs_Item>);
+pub struct ResetResourceAcknowledgeProtocolIEs(Vec<ResetResourceAcknowledgeProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum ResetResourceAcknowledgeprotocolExtensions_ItemextensionValue {
+pub enum ResetResourceAcknowledgeProtocolExtensions_EntryExtensionValue {
     #[asn(key = 171)]
-    id_ExtendedRNC_ID(ExtendedRNC_ID),
+    Id_ExtendedRNC_ID(ExtendedRNC_ID),
     #[asn(key = 96)]
-    id_GlobalCN_ID(GlobalCN_ID),
+    Id_GlobalCN_ID(GlobalCN_ID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct ResetResourceAcknowledgeprotocolExtensions_Item {
+pub struct ResetResourceAcknowledgeProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: ResetResourceAcknowledgeprotocolExtensions_ItemextensionValue,
+    pub extension_value: ResetResourceAcknowledgeProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -11170,24 +11196,24 @@ pub struct ResetResourceAcknowledgeprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct ResetResourceAcknowledgeprotocolExtensions(
-    Vec<ResetResourceAcknowledgeprotocolExtensions_Item>,
+pub struct ResetResourceAcknowledgeProtocolExtensions(
+    Vec<ResetResourceAcknowledgeProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum ResetResourceItemiE_Extensions_ItemextensionValue {
+pub enum ResetResourceItemIE_Extensions_EntryExtensionValue {
     #[asn(key = 282)]
-    id_IuSigConIdRangeEnd(IuSignallingConnectionIdentifier),
+    Id_IuSigConIdRangeEnd(IuSignallingConnectionIdentifier),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct ResetResourceItemiE_Extensions_Item {
+pub struct ResetResourceItemIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: ResetResourceItemiE_Extensions_ItemextensionValue,
+    pub extension_value: ResetResourceItemIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -11197,22 +11223,22 @@ pub struct ResetResourceItemiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct ResetResourceItemiE_Extensions(Vec<ResetResourceItemiE_Extensions_Item>);
+pub struct ResetResourceItemIE_Extensions(Vec<ResetResourceItemIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum ResetResourceList_Item_Itemvalue {
+pub enum ResetResourceList_Entry_EntryValue {
     #[asn(key = 78)]
-    id_IuSigConIdItem(ResetResourceItem),
+    Id_IuSigConIdItem(ResetResourceItem),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct ResetResourceList_Item_Item {
+pub struct ResetResourceList_Entry_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: ResetResourceList_Item_Itemvalue,
+    pub value: ResetResourceList_Entry_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -11222,7 +11248,7 @@ pub struct ResetResourceList_Item_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct ResetResourceList_Item(Vec<ResetResourceList_Item_Item>);
+pub struct ResetResourceList_Entry(Vec<ResetResourceList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "1", ub = "9")]
@@ -11234,7 +11260,7 @@ pub struct INTEGER_58(u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct ResidualBitErrorRatioiE_Extensions_Item {}
+pub struct ResidualBitErrorRatioIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -11243,11 +11269,11 @@ pub struct ResidualBitErrorRatioiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct ResidualBitErrorRatioiE_Extensions(Vec<ResidualBitErrorRatioiE_Extensions_Item>);
+pub struct ResidualBitErrorRatioIE_Extensions(Vec<ResidualBitErrorRatioIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct SAIiE_Extensions_Item {}
+pub struct SAIIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -11256,7 +11282,7 @@ pub struct SAIiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SAIiE_Extensions(Vec<SAIiE_Extensions_Item>);
+pub struct SAIIE_Extensions(Vec<SAIIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "1", ub = "9")]
@@ -11268,7 +11294,7 @@ pub struct INTEGER_60(u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct SDU_ErrorRatioiE_Extensions_Item {}
+pub struct SDU_ErrorRatioIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -11277,11 +11303,11 @@ pub struct SDU_ErrorRatioiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SDU_ErrorRatioiE_Extensions(Vec<SDU_ErrorRatioiE_Extensions_Item>);
+pub struct SDU_ErrorRatioIE_Extensions(Vec<SDU_ErrorRatioIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct SDU_FormatInformationParameters_ItemiE_Extensions_Item {}
+pub struct SDU_FormatInformationParameters_EntryIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -11290,24 +11316,24 @@ pub struct SDU_FormatInformationParameters_ItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SDU_FormatInformationParameters_ItemiE_Extensions(
-    Vec<SDU_FormatInformationParameters_ItemiE_Extensions_Item>,
+pub struct SDU_FormatInformationParameters_EntryIE_Extensions(
+    Vec<SDU_FormatInformationParameters_EntryIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 3)]
-pub struct SDU_FormatInformationParameters_Item {
+pub struct SDU_FormatInformationParameters_Entry {
     #[asn(optional_idx = 0)]
     pub subflow_sdu_size: Option<SubflowSDU_Size>,
     #[asn(optional_idx = 1)]
-    pub r_ab_subflow_combination_bit_rate: Option<RAB_SubflowCombinationBitRate>,
+    pub rab_subflow_combination_bit_rate: Option<RAB_SubflowCombinationBitRate>,
     #[asn(optional_idx = 2)]
-    pub i_e_extensions: Option<SDU_FormatInformationParameters_ItemiE_Extensions>,
+    pub ie_extensions: Option<SDU_FormatInformationParameters_EntryIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct SDU_Parameters_ItemiE_Extensions_Item {}
+pub struct SDU_Parameters_EntryIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -11316,24 +11342,24 @@ pub struct SDU_Parameters_ItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SDU_Parameters_ItemiE_Extensions(Vec<SDU_Parameters_ItemiE_Extensions_Item>);
+pub struct SDU_Parameters_EntryIE_Extensions(Vec<SDU_Parameters_EntryIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 3)]
-pub struct SDU_Parameters_Item {
+pub struct SDU_Parameters_Entry {
     #[asn(optional_idx = 0)]
-    pub s_du_error_ratio: Option<SDU_ErrorRatio>,
+    pub sdu_error_ratio: Option<SDU_ErrorRatio>,
     pub residual_bit_error_ratio: ResidualBitErrorRatio,
     pub delivery_of_erroneous_sdu: DeliveryOfErroneousSDU,
     #[asn(optional_idx = 1)]
-    pub s_du_format_information_parameters: Option<SDU_FormatInformationParameters>,
+    pub sdu_format_information_parameters: Option<SDU_FormatInformationParameters>,
     #[asn(optional_idx = 2)]
-    pub i_e_extensions: Option<SDU_Parameters_ItemiE_Extensions>,
+    pub ie_extensions: Option<SDU_Parameters_EntryIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct SNA_Access_InformationiE_Extensions_Item {}
+pub struct SNA_Access_InformationIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -11342,11 +11368,11 @@ pub struct SNA_Access_InformationiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SNA_Access_InformationiE_Extensions(Vec<SNA_Access_InformationiE_Extensions_Item>);
+pub struct SNA_Access_InformationIE_Extensions(Vec<SNA_Access_InformationIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct SRB_TrCH_MappingItemiE_Extensions_Item {}
+pub struct SRB_TrCH_MappingItemIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -11355,22 +11381,22 @@ pub struct SRB_TrCH_MappingItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SRB_TrCH_MappingItemiE_Extensions(Vec<SRB_TrCH_MappingItemiE_Extensions_Item>);
+pub struct SRB_TrCH_MappingItemIE_Extensions(Vec<SRB_TrCH_MappingItemIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum SRNS_ContextRequestprotocolIEs_Itemvalue {
+pub enum SRNS_ContextRequestProtocolIEs_EntryValue {
     #[asn(key = 29)]
-    id_RAB_DataForwardingList_SRNS_CtxReq(RAB_DataForwardingList_SRNS_CtxReq),
+    Id_RAB_DataForwardingList_SRNS_CtxReq(RAB_DataForwardingList_SRNS_CtxReq),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct SRNS_ContextRequestprotocolIEs_Item {
+pub struct SRNS_ContextRequestProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: SRNS_ContextRequestprotocolIEs_Itemvalue,
+    pub value: SRNS_ContextRequestProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -11380,22 +11406,22 @@ pub struct SRNS_ContextRequestprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct SRNS_ContextRequestprotocolIEs(Vec<SRNS_ContextRequestprotocolIEs_Item>);
+pub struct SRNS_ContextRequestProtocolIEs(Vec<SRNS_ContextRequestProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum SRNS_ContextRequestprotocolExtensions_ItemextensionValue {
+pub enum SRNS_ContextRequestProtocolExtensions_EntryExtensionValue {
     #[asn(key = 167)]
-    id_RAT_Type(RAT_Type),
+    Id_RAT_Type(RAT_Type),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct SRNS_ContextRequestprotocolExtensions_Item {
+pub struct SRNS_ContextRequestProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: SRNS_ContextRequestprotocolExtensions_ItemextensionValue,
+    pub extension_value: SRNS_ContextRequestProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -11405,26 +11431,26 @@ pub struct SRNS_ContextRequestprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SRNS_ContextRequestprotocolExtensions(Vec<SRNS_ContextRequestprotocolExtensions_Item>);
+pub struct SRNS_ContextRequestProtocolExtensions(Vec<SRNS_ContextRequestProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum SRNS_ContextResponseprotocolIEs_Itemvalue {
+pub enum SRNS_ContextResponseProtocolIEs_EntryValue {
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 85)]
-    id_RAB_ContextFailedtoTransferList(RAB_ContextFailedtoTransferList),
+    Id_RAB_ContextFailedtoTransferList(RAB_ContextFailedtoTransferList),
     #[asn(key = 25)]
-    id_RAB_ContextList(RAB_ContextList),
+    Id_RAB_ContextList(RAB_ContextList),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct SRNS_ContextResponseprotocolIEs_Item {
+pub struct SRNS_ContextResponseProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: SRNS_ContextResponseprotocolIEs_Itemvalue,
+    pub value: SRNS_ContextResponseProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -11434,11 +11460,11 @@ pub struct SRNS_ContextResponseprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct SRNS_ContextResponseprotocolIEs(Vec<SRNS_ContextResponseprotocolIEs_Item>);
+pub struct SRNS_ContextResponseProtocolIEs(Vec<SRNS_ContextResponseProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct SRNS_ContextResponseprotocolExtensions_Item {}
+pub struct SRNS_ContextResponseProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -11447,22 +11473,24 @@ pub struct SRNS_ContextResponseprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SRNS_ContextResponseprotocolExtensions(Vec<SRNS_ContextResponseprotocolExtensions_Item>);
+pub struct SRNS_ContextResponseProtocolExtensions(
+    Vec<SRNS_ContextResponseProtocolExtensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum SRNS_DataForwardCommandprotocolIEs_Itemvalue {
+pub enum SRNS_DataForwardCommandProtocolIEs_EntryValue {
     #[asn(key = 28)]
-    id_RAB_DataForwardingList(RAB_DataForwardingList),
+    Id_RAB_DataForwardingList(RAB_DataForwardingList),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct SRNS_DataForwardCommandprotocolIEs_Item {
+pub struct SRNS_DataForwardCommandProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: SRNS_DataForwardCommandprotocolIEs_Itemvalue,
+    pub value: SRNS_DataForwardCommandProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -11472,11 +11500,11 @@ pub struct SRNS_DataForwardCommandprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct SRNS_DataForwardCommandprotocolIEs(Vec<SRNS_DataForwardCommandprotocolIEs_Item>);
+pub struct SRNS_DataForwardCommandProtocolIEs(Vec<SRNS_DataForwardCommandProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct SRNS_DataForwardCommandprotocolExtensions_Item {}
+pub struct SRNS_DataForwardCommandProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -11485,13 +11513,13 @@ pub struct SRNS_DataForwardCommandprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SRNS_DataForwardCommandprotocolExtensions(
-    Vec<SRNS_DataForwardCommandprotocolExtensions_Item>,
+pub struct SRNS_DataForwardCommandProtocolExtensions(
+    Vec<SRNS_DataForwardCommandProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct SRVCC_CSKeysRequestprotocolIEs_Item {}
+pub struct SRVCC_CSKeysRequestProtocolIEs_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -11500,11 +11528,11 @@ pub struct SRVCC_CSKeysRequestprotocolIEs_Item {}
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct SRVCC_CSKeysRequestprotocolIEs(Vec<SRVCC_CSKeysRequestprotocolIEs_Item>);
+pub struct SRVCC_CSKeysRequestProtocolIEs(Vec<SRVCC_CSKeysRequestProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct SRVCC_CSKeysRequestprotocolExtensions_Item {}
+pub struct SRVCC_CSKeysRequestProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -11513,28 +11541,28 @@ pub struct SRVCC_CSKeysRequestprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SRVCC_CSKeysRequestprotocolExtensions(Vec<SRVCC_CSKeysRequestprotocolExtensions_Item>);
+pub struct SRVCC_CSKeysRequestProtocolExtensions(Vec<SRVCC_CSKeysRequestProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum SRVCC_CSKeysResponseprotocolIEs_Itemvalue {
+pub enum SRVCC_CSKeysResponseProtocolIEs_EntryValue {
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 224)]
-    id_EncryptionKey(EncryptionKey),
+    Id_EncryptionKey(EncryptionKey),
     #[asn(key = 225)]
-    id_IntegrityProtectionKey(IntegrityProtectionKey),
+    Id_IntegrityProtectionKey(IntegrityProtectionKey),
     #[asn(key = 227)]
-    id_SRVCC_Information(SRVCC_Information),
+    Id_SRVCC_Information(SRVCC_Information),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct SRVCC_CSKeysResponseprotocolIEs_Item {
+pub struct SRVCC_CSKeysResponseProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: SRVCC_CSKeysResponseprotocolIEs_Itemvalue,
+    pub value: SRVCC_CSKeysResponseProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -11544,11 +11572,11 @@ pub struct SRVCC_CSKeysResponseprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct SRVCC_CSKeysResponseprotocolIEs(Vec<SRVCC_CSKeysResponseprotocolIEs_Item>);
+pub struct SRVCC_CSKeysResponseProtocolIEs(Vec<SRVCC_CSKeysResponseProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct SRVCC_CSKeysResponseprotocolExtensions_Item {}
+pub struct SRVCC_CSKeysResponseProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -11557,7 +11585,9 @@ pub struct SRVCC_CSKeysResponseprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SRVCC_CSKeysResponseprotocolExtensions(Vec<SRVCC_CSKeysResponseprotocolExtensions_Item>);
+pub struct SRVCC_CSKeysResponseProtocolExtensions(
+    Vec<SRVCC_CSKeysResponseProtocolExtensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -11570,7 +11600,7 @@ pub struct BIT_STRING_61(BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct SRVCC_InformationiE_Extensions_Item {}
+pub struct SRVCC_InformationIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -11579,26 +11609,26 @@ pub struct SRVCC_InformationiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SRVCC_InformationiE_Extensions(Vec<SRVCC_InformationiE_Extensions_Item>);
+pub struct SRVCC_InformationIE_Extensions(Vec<SRVCC_InformationIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum SecurityModeCommandprotocolIEs_Itemvalue {
+pub enum SecurityModeCommandProtocolIEs_EntryValue {
     #[asn(key = 11)]
-    id_EncryptionInformation(EncryptionInformation),
+    Id_EncryptionInformation(EncryptionInformation),
     #[asn(key = 12)]
-    id_IntegrityProtectionInformation(IntegrityProtectionInformation),
+    Id_IntegrityProtectionInformation(IntegrityProtectionInformation),
     #[asn(key = 75)]
-    id_KeyStatus(KeyStatus),
+    Id_KeyStatus(KeyStatus),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct SecurityModeCommandprotocolIEs_Item {
+pub struct SecurityModeCommandProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: SecurityModeCommandprotocolIEs_Itemvalue,
+    pub value: SecurityModeCommandProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -11608,11 +11638,11 @@ pub struct SecurityModeCommandprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct SecurityModeCommandprotocolIEs(Vec<SecurityModeCommandprotocolIEs_Item>);
+pub struct SecurityModeCommandProtocolIEs(Vec<SecurityModeCommandProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct SecurityModeCommandprotocolExtensions_Item {}
+pub struct SecurityModeCommandProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -11621,26 +11651,26 @@ pub struct SecurityModeCommandprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SecurityModeCommandprotocolExtensions(Vec<SecurityModeCommandprotocolExtensions_Item>);
+pub struct SecurityModeCommandProtocolExtensions(Vec<SecurityModeCommandProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum SecurityModeCompleteprotocolIEs_Itemvalue {
+pub enum SecurityModeCompleteProtocolIEs_EntryValue {
     #[asn(key = 5)]
-    id_ChosenEncryptionAlgorithm(ChosenEncryptionAlgorithm),
+    Id_ChosenEncryptionAlgorithm(ChosenEncryptionAlgorithm),
     #[asn(key = 6)]
-    id_ChosenIntegrityProtectionAlgorithm(ChosenIntegrityProtectionAlgorithm),
+    Id_ChosenIntegrityProtectionAlgorithm(ChosenIntegrityProtectionAlgorithm),
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct SecurityModeCompleteprotocolIEs_Item {
+pub struct SecurityModeCompleteProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: SecurityModeCompleteprotocolIEs_Itemvalue,
+    pub value: SecurityModeCompleteProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -11650,11 +11680,11 @@ pub struct SecurityModeCompleteprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct SecurityModeCompleteprotocolIEs(Vec<SecurityModeCompleteprotocolIEs_Item>);
+pub struct SecurityModeCompleteProtocolIEs(Vec<SecurityModeCompleteProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct SecurityModeCompleteprotocolExtensions_Item {}
+pub struct SecurityModeCompleteProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -11663,77 +11693,79 @@ pub struct SecurityModeCompleteprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SecurityModeCompleteprotocolExtensions(Vec<SecurityModeCompleteprotocolExtensions_Item>);
-
-#[derive(Debug, AperCodec)]
-#[asn(type = "OPEN")]
-pub enum SecurityModeRejectprotocolIEs_Itemvalue {
-    #[asn(key = 4)]
-    id_Cause(Cause),
-    #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
-}
-
-#[derive(Debug, AperCodec)]
-#[asn(type = "SEQUENCE", extensible = false)]
-pub struct SecurityModeRejectprotocolIEs_Item {
-    #[asn(key_field = true)]
-    pub id: ProtocolIE_ID,
-    pub criticality: Criticality,
-    pub value: SecurityModeRejectprotocolIEs_Itemvalue,
-}
-
-#[derive(Debug, AperCodec)]
-#[asn(
-    type = "SEQUENCE-OF",
-    sz_extensible = false,
-    sz_lb = "0",
-    sz_ub = "65535"
-)]
-pub struct SecurityModeRejectprotocolIEs(Vec<SecurityModeRejectprotocolIEs_Item>);
-
-#[derive(Debug, AperCodec)]
-#[asn(type = "SEQUENCE", extensible = false)]
-pub struct SecurityModeRejectprotocolExtensions_Item {}
-
-#[derive(Debug, AperCodec)]
-#[asn(
-    type = "SEQUENCE-OF",
-    sz_extensible = false,
-    sz_lb = "1",
-    sz_ub = "65535"
-)]
-pub struct SecurityModeRejectprotocolExtensions(Vec<SecurityModeRejectprotocolExtensions_Item>);
-
-#[derive(Debug, AperCodec)]
-#[asn(type = "SEQUENCE", extensible = false)]
-pub struct Shared_Network_InformationiE_Extensions_Item {}
-
-#[derive(Debug, AperCodec)]
-#[asn(
-    type = "SEQUENCE-OF",
-    sz_extensible = false,
-    sz_lb = "1",
-    sz_ub = "65535"
-)]
-pub struct Shared_Network_InformationiE_Extensions(
-    Vec<Shared_Network_InformationiE_Extensions_Item>,
+pub struct SecurityModeCompleteProtocolExtensions(
+    Vec<SecurityModeCompleteProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum SourceRNC_IDiE_Extensions_ItemextensionValue {
+pub enum SecurityModeRejectProtocolIEs_EntryValue {
+    #[asn(key = 4)]
+    Id_Cause(Cause),
+    #[asn(key = 9)]
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
+}
+
+#[derive(Debug, AperCodec)]
+#[asn(type = "SEQUENCE", extensible = false)]
+pub struct SecurityModeRejectProtocolIEs_Entry {
+    #[asn(key_field = true)]
+    pub id: ProtocolIE_ID,
+    pub criticality: Criticality,
+    pub value: SecurityModeRejectProtocolIEs_EntryValue,
+}
+
+#[derive(Debug, AperCodec)]
+#[asn(
+    type = "SEQUENCE-OF",
+    sz_extensible = false,
+    sz_lb = "0",
+    sz_ub = "65535"
+)]
+pub struct SecurityModeRejectProtocolIEs(Vec<SecurityModeRejectProtocolIEs_Entry>);
+
+#[derive(Debug, AperCodec)]
+#[asn(type = "SEQUENCE", extensible = false)]
+pub struct SecurityModeRejectProtocolExtensions_Entry {}
+
+#[derive(Debug, AperCodec)]
+#[asn(
+    type = "SEQUENCE-OF",
+    sz_extensible = false,
+    sz_lb = "1",
+    sz_ub = "65535"
+)]
+pub struct SecurityModeRejectProtocolExtensions(Vec<SecurityModeRejectProtocolExtensions_Entry>);
+
+#[derive(Debug, AperCodec)]
+#[asn(type = "SEQUENCE", extensible = false)]
+pub struct Shared_Network_InformationIE_Extensions_Entry {}
+
+#[derive(Debug, AperCodec)]
+#[asn(
+    type = "SEQUENCE-OF",
+    sz_extensible = false,
+    sz_lb = "1",
+    sz_ub = "65535"
+)]
+pub struct Shared_Network_InformationIE_Extensions(
+    Vec<Shared_Network_InformationIE_Extensions_Entry>,
+);
+
+#[derive(Debug, AperCodec)]
+#[asn(type = "OPEN")]
+pub enum SourceRNC_IDIE_Extensions_EntryExtensionValue {
     #[asn(key = 171)]
-    id_ExtendedRNC_ID(ExtendedRNC_ID),
+    Id_ExtendedRNC_ID(ExtendedRNC_ID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct SourceRNC_IDiE_Extensions_Item {
+pub struct SourceRNC_IDIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: SourceRNC_IDiE_Extensions_ItemextensionValue,
+    pub extension_value: SourceRNC_IDIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -11743,50 +11775,51 @@ pub struct SourceRNC_IDiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SourceRNC_IDiE_Extensions(Vec<SourceRNC_IDiE_Extensions_Item>);
+pub struct SourceRNC_IDIE_Extensions(Vec<SourceRNC_IDIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum SourceRNC_ToTargetRNC_TransparentContaineriE_Extensions_ItemextensionValue {
+pub enum SourceRNC_ToTargetRNC_TransparentContainerIE_Extensions_EntryExtensionValue {
     #[asn(key = 237)]
-    id_CSFB_Information(CSFB_Information),
+    Id_CSFB_Information(CSFB_Information),
     #[asn(key = 121)]
-    id_CellLoadInformationGroup(CellLoadInformationGroup),
+    Id_CellLoadInformationGroup(CellLoadInformationGroup),
     #[asn(key = 243)]
-    id_IRAT_Measurement_Configuration(IRAT_Measurement_Configuration),
+    Id_IRAT_Measurement_Configuration(IRAT_Measurement_Configuration),
     #[asn(key = 277)]
-    id_LastE_UTRANPLMNIdentity(PLMNidentity),
+    Id_LastE_UTRANPLMNIdentity(PLMNidentity),
     #[asn(key = 156)]
-    id_MBMSLinkingInformation(MBMSLinkingInformation),
+    Id_MBMSLinkingInformation(MBMSLinkingInformation),
     #[asn(key = 249)]
-    id_Management_Based_MDT_Allowed(Management_Based_MDT_Allowed),
+    Id_Management_Based_MDT_Allowed(Management_Based_MDT_Allowed),
     #[asn(key = 263)]
-    id_Management_Based_MDT_PLMN_List(MDT_PLMN_List),
+    Id_Management_Based_MDT_PLMN_List(MDT_PLMN_List),
     #[asn(key = 230)]
-    id_PSRABtobeReplaced(RAB_ID),
+    Id_PSRABtobeReplaced(RAB_ID),
     #[asn(key = 98)]
-    id_SRB_TrCH_Mapping(SRB_TrCH_Mapping),
+    Id_SRB_TrCH_Mapping(SRB_TrCH_Mapping),
     #[asn(key = 227)]
-    id_SRVCC_Information(SRVCC_Information),
+    Id_SRVCC_Information(SRVCC_Information),
     #[asn(key = 296)]
-    id_SRVCCSource(SRVCCSource),
+    Id_SRVCCSource(SRVCCSource),
     #[asn(key = 202)]
-    id_SubscriberProfileIDforRFP(SubscriberProfileIDforRFP),
+    Id_SubscriberProfileIDforRFP(SubscriberProfileIDforRFP),
     #[asn(key = 124)]
-    id_TraceRecordingSessionInformation(TraceRecordingSessionInformation),
+    Id_TraceRecordingSessionInformation(TraceRecordingSessionInformation),
     #[asn(key = 200)]
-    id_UE_History_Information(UE_History_Information),
+    Id_UE_History_Information(UE_History_Information),
     #[asn(key = 187)]
-    id_d_RNTI_for_NoIuCSUP(D_RNTI),
+    Id_d_RNTI_for_NoIuCSUP(D_RNTI),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct SourceRNC_ToTargetRNC_TransparentContaineriE_Extensions_Item {
+pub struct SourceRNC_ToTargetRNC_TransparentContainerIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: SourceRNC_ToTargetRNC_TransparentContaineriE_Extensions_ItemextensionValue,
+    pub extension_value:
+        SourceRNC_ToTargetRNC_TransparentContainerIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -11796,13 +11829,13 @@ pub struct SourceRNC_ToTargetRNC_TransparentContaineriE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SourceRNC_ToTargetRNC_TransparentContaineriE_Extensions(
-    Vec<SourceRNC_ToTargetRNC_TransparentContaineriE_Extensions_Item>,
+pub struct SourceRNC_ToTargetRNC_TransparentContainerIE_Extensions(
+    Vec<SourceRNC_ToTargetRNC_TransparentContainerIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct SourceUTRANCellIDiE_Extensions_Item {}
+pub struct SourceUTRANCellIDIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -11811,56 +11844,56 @@ pub struct SourceUTRANCellIDiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SourceUTRANCellIDiE_Extensions(Vec<SourceUTRANCellIDiE_Extensions_Item>);
+pub struct SourceUTRANCellIDIE_Extensions(Vec<SourceUTRANCellIDIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum SuccessfulOutcomevalue {
+pub enum SuccessfulOutcomeValue {
     #[asn(key = 7)]
-    id_DataVolumeReport(DataVolumeReport),
+    Id_DataVolumeReport(DataVolumeReport),
     #[asn(key = 31)]
-    id_InformationTransfer(InformationTransferConfirmation),
+    Id_InformationTransfer(InformationTransferConfirmation),
     #[asn(key = 1)]
-    id_Iu_Release(Iu_ReleaseComplete),
+    Id_Iu_Release(Iu_ReleaseComplete),
     #[asn(key = 30)]
-    id_LocationRelatedData(LocationRelatedDataResponse),
+    Id_LocationRelatedData(LocationRelatedDataResponse),
     #[asn(key = 40)]
-    id_MBMSCNDe_Registration_Procedure(MBMSCNDe_RegistrationResponse),
+    Id_MBMSCNDe_Registration_Procedure(MBMSCNDe_RegistrationResponse),
     #[asn(key = 42)]
-    id_MBMSRABRelease(MBMSRABRelease),
+    Id_MBMSRABRelease(MBMSRABRelease),
     #[asn(key = 39)]
-    id_MBMSRegistration(MBMSRegistrationResponse),
+    Id_MBMSRegistration(MBMSRegistrationResponse),
     #[asn(key = 35)]
-    id_MBMSSessionStart(MBMSSessionStartResponse),
+    Id_MBMSSessionStart(MBMSSessionStartResponse),
     #[asn(key = 37)]
-    id_MBMSSessionStop(MBMSSessionStopResponse),
+    Id_MBMSSessionStop(MBMSSessionStopResponse),
     #[asn(key = 36)]
-    id_MBMSSessionUpdate(MBMSSessionUpdateResponse),
+    Id_MBMSSessionUpdate(MBMSSessionUpdateResponse),
     #[asn(key = 45)]
-    id_RANAPenhancedRelocation(RANAP_EnhancedRelocationInformationResponse),
+    Id_RANAPenhancedRelocation(RANAP_EnhancedRelocationInformationResponse),
     #[asn(key = 4)]
-    id_RelocationCancel(RelocationCancelAcknowledge),
+    Id_RelocationCancel(RelocationCancelAcknowledge),
     #[asn(key = 2)]
-    id_RelocationPreparation(RelocationCommand),
+    Id_RelocationPreparation(RelocationCommand),
     #[asn(key = 3)]
-    id_RelocationResourceAllocation(RelocationRequestAcknowledge),
+    Id_RelocationResourceAllocation(RelocationRequestAcknowledge),
     #[asn(key = 9)]
-    id_Reset(ResetAcknowledge),
+    Id_Reset(ResetAcknowledge),
     #[asn(key = 27)]
-    id_ResetResource(ResetResourceAcknowledge),
+    Id_ResetResource(ResetResourceAcknowledge),
     #[asn(key = 5)]
-    id_SRNS_ContextTransfer(SRNS_ContextResponse),
+    Id_SRNS_ContextTransfer(SRNS_ContextResponse),
     #[asn(key = 6)]
-    id_SecurityModeControl(SecurityModeComplete),
+    Id_SecurityModeControl(SecurityModeComplete),
     #[asn(key = 33)]
-    id_UplinkInformationExchange(UplinkInformationExchangeResponse),
+    Id_UplinkInformationExchange(UplinkInformationExchangeResponse),
     #[asn(key = 43)]
-    id_enhancedRelocationComplete(EnhancedRelocationCompleteResponse),
+    Id_enhancedRelocationComplete(EnhancedRelocationCompleteResponse),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct TAIiE_Extensions_Item {}
+pub struct TAIIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -11869,7 +11902,7 @@ pub struct TAIiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct TAIiE_Extensions(Vec<TAIiE_Extensions_Item>);
+pub struct TAIIE_Extensions(Vec<TAIIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "3", sz_ub = "3")]
@@ -11877,7 +11910,7 @@ pub struct OCTET_STRING_62(Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct TMGIiE_Extensions_Item {}
+pub struct TMGIIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -11886,11 +11919,11 @@ pub struct TMGIiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct TMGIiE_Extensions(Vec<TMGIiE_Extensions_Item>);
+pub struct TMGIIE_Extensions(Vec<TMGIIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct TNLInformationEnhRelInfoReqiE_Extensions_Item {}
+pub struct TNLInformationEnhRelInfoReqIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -11899,13 +11932,13 @@ pub struct TNLInformationEnhRelInfoReqiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct TNLInformationEnhRelInfoReqiE_Extensions(
-    Vec<TNLInformationEnhRelInfoReqiE_Extensions_Item>,
+pub struct TNLInformationEnhRelInfoReqIE_Extensions(
+    Vec<TNLInformationEnhRelInfoReqIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct TNLInformationEnhRelInfoResiE_Extensions_Item {}
+pub struct TNLInformationEnhRelInfoResIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -11914,13 +11947,13 @@ pub struct TNLInformationEnhRelInfoResiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct TNLInformationEnhRelInfoResiE_Extensions(
-    Vec<TNLInformationEnhRelInfoResiE_Extensions_Item>,
+pub struct TNLInformationEnhRelInfoResIE_Extensions(
+    Vec<TNLInformationEnhRelInfoResIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct TargetENB_IDiE_Extensions_Item {}
+pub struct TargetENB_IDIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -11929,22 +11962,22 @@ pub struct TargetENB_IDiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct TargetENB_IDiE_Extensions(Vec<TargetENB_IDiE_Extensions_Item>);
+pub struct TargetENB_IDIE_Extensions(Vec<TargetENB_IDIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum TargetRNC_IDiE_Extensions_ItemextensionValue {
+pub enum TargetRNC_IDIE_Extensions_EntryExtensionValue {
     #[asn(key = 171)]
-    id_ExtendedRNC_ID(ExtendedRNC_ID),
+    Id_ExtendedRNC_ID(ExtendedRNC_ID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct TargetRNC_IDiE_Extensions_Item {
+pub struct TargetRNC_IDIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: TargetRNC_IDiE_Extensions_ItemextensionValue,
+    pub extension_value: TargetRNC_IDIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -11954,24 +11987,25 @@ pub struct TargetRNC_IDiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct TargetRNC_IDiE_Extensions(Vec<TargetRNC_IDiE_Extensions_Item>);
+pub struct TargetRNC_IDIE_Extensions(Vec<TargetRNC_IDIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum TargetRNC_ToSourceRNC_TransparentContaineriE_Extensions_ItemextensionValue {
+pub enum TargetRNC_ToSourceRNC_TransparentContainerIE_Extensions_EntryExtensionValue {
     #[asn(key = 295)]
-    id_UeApplicationLayerMeasurementSupportIndication(
+    Id_UeApplicationLayerMeasurementSupportIndication(
         UeApplicationLayerMeasurementSupportIndication,
     ),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct TargetRNC_ToSourceRNC_TransparentContaineriE_Extensions_Item {
+pub struct TargetRNC_ToSourceRNC_TransparentContainerIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: TargetRNC_ToSourceRNC_TransparentContaineriE_Extensions_ItemextensionValue,
+    pub extension_value:
+        TargetRNC_ToSourceRNC_TransparentContainerIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -11981,26 +12015,26 @@ pub struct TargetRNC_ToSourceRNC_TransparentContaineriE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct TargetRNC_ToSourceRNC_TransparentContaineriE_Extensions(
-    Vec<TargetRNC_ToSourceRNC_TransparentContaineriE_Extensions_Item>,
+pub struct TargetRNC_ToSourceRNC_TransparentContainerIE_Extensions(
+    Vec<TargetRNC_ToSourceRNC_TransparentContainerIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum TrCH_IDiE_Extensions_ItemextensionValue {
+pub enum TrCH_IDIE_Extensions_EntryExtensionValue {
     #[asn(key = 160)]
-    id_E_DCH_MAC_d_Flow_ID(E_DCH_MAC_d_Flow_ID),
+    Id_E_DCH_MAC_d_Flow_ID(E_DCH_MAC_d_Flow_ID),
     #[asn(key = 117)]
-    id_hS_DSCH_MAC_d_Flow_ID(HS_DSCH_MAC_d_Flow_ID),
+    Id_hS_DSCH_MAC_d_Flow_ID(HS_DSCH_MAC_d_Flow_ID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct TrCH_IDiE_Extensions_Item {
+pub struct TrCH_IDIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: TrCH_IDiE_Extensions_ItemextensionValue,
+    pub extension_value: TrCH_IDIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -12010,11 +12044,11 @@ pub struct TrCH_IDiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct TrCH_IDiE_Extensions(Vec<TrCH_IDiE_Extensions_Item>);
+pub struct TrCH_IDIE_Extensions(Vec<TrCH_IDIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct TraceInformationiE_Extensions_Item {}
+pub struct TraceInformationIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -12023,11 +12057,11 @@ pub struct TraceInformationiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct TraceInformationiE_Extensions(Vec<TraceInformationiE_Extensions_Item>);
+pub struct TraceInformationIE_Extensions(Vec<TraceInformationIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct TracePropagationParametersiE_Extensions_Item {}
+pub struct TracePropagationParametersIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -12036,13 +12070,13 @@ pub struct TracePropagationParametersiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct TracePropagationParametersiE_Extensions(
-    Vec<TracePropagationParametersiE_Extensions_Item>,
+pub struct TracePropagationParametersIE_Extensions(
+    Vec<TracePropagationParametersIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct TraceRecordingSessionInformationiE_Extensions_Item {}
+pub struct TraceRecordingSessionInformationIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -12051,13 +12085,13 @@ pub struct TraceRecordingSessionInformationiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct TraceRecordingSessionInformationiE_Extensions(
-    Vec<TraceRecordingSessionInformationiE_Extensions_Item>,
+pub struct TraceRecordingSessionInformationIE_Extensions(
+    Vec<TraceRecordingSessionInformationIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct TransportLayerInformationiE_Extensions_Item {}
+pub struct TransportLayerInformationIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -12066,11 +12100,13 @@ pub struct TransportLayerInformationiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct TransportLayerInformationiE_Extensions(Vec<TransportLayerInformationiE_Extensions_Item>);
+pub struct TransportLayerInformationIE_Extensions(
+    Vec<TransportLayerInformationIE_Extensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct TunnelInformationiE_Extensions_Item {}
+pub struct TunnelInformationIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -12079,7 +12115,7 @@ pub struct TunnelInformationiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct TunnelInformationiE_Extensions(Vec<TunnelInformationiE_Extensions_Item>);
+pub struct TunnelInformationIE_Extensions(Vec<TunnelInformationIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -12092,7 +12128,7 @@ pub struct OCTET_STRING_63(Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct UE_IsNotServediE_Extensions_Item {}
+pub struct UE_IsNotServedIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -12101,11 +12137,11 @@ pub struct UE_IsNotServediE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct UE_IsNotServediE_Extensions(Vec<UE_IsNotServediE_Extensions_Item>);
+pub struct UE_IsNotServedIE_Extensions(Vec<UE_IsNotServedIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct UE_IsServediE_Extensions_Item {}
+pub struct UE_IsServedIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -12114,11 +12150,11 @@ pub struct UE_IsServediE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct UE_IsServediE_Extensions(Vec<UE_IsServediE_Extensions_Item>);
+pub struct UE_IsServedIE_Extensions(Vec<UE_IsServedIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct UESBI_IuiE_Extensions_Item {}
+pub struct UESBI_IuIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -12127,22 +12163,22 @@ pub struct UESBI_IuiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct UESBI_IuiE_Extensions(Vec<UESBI_IuiE_Extensions_Item>);
+pub struct UESBI_IuIE_Extensions(Vec<UESBI_IuIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum UESpecificInformationIndicationprotocolIEs_Itemvalue {
+pub enum UESpecificInformationIndicationProtocolIEs_EntryValue {
     #[asn(key = 118)]
-    id_UESBI_Iu(UESBI_Iu),
+    Id_UESBI_Iu(UESBI_Iu),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct UESpecificInformationIndicationprotocolIEs_Item {
+pub struct UESpecificInformationIndicationProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: UESpecificInformationIndicationprotocolIEs_Itemvalue,
+    pub value: UESpecificInformationIndicationProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -12152,13 +12188,13 @@ pub struct UESpecificInformationIndicationprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct UESpecificInformationIndicationprotocolIEs(
-    Vec<UESpecificInformationIndicationprotocolIEs_Item>,
+pub struct UESpecificInformationIndicationProtocolIEs(
+    Vec<UESpecificInformationIndicationProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct UESpecificInformationIndicationprotocolExtensions_Item {}
+pub struct UESpecificInformationIndicationProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -12167,24 +12203,24 @@ pub struct UESpecificInformationIndicationprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct UESpecificInformationIndicationprotocolExtensions(
-    Vec<UESpecificInformationIndicationprotocolExtensions_Item>,
+pub struct UESpecificInformationIndicationProtocolExtensions(
+    Vec<UESpecificInformationIndicationProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum UPInformationiE_Extensions_ItemextensionValue {
+pub enum UPInformationIE_Extensions_EntryExtensionValue {
     #[asn(key = 269)]
-    id_TimingDifferenceULDL(TimingDifferenceULDL),
+    Id_TimingDifferenceULDL(TimingDifferenceULDL),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct UPInformationiE_Extensions_Item {
+pub struct UPInformationIE_Extensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: UPInformationiE_Extensions_ItemextensionValue,
+    pub extension_value: UPInformationIE_Extensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -12194,11 +12230,11 @@ pub struct UPInformationiE_Extensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct UPInformationiE_Extensions(Vec<UPInformationiE_Extensions_Item>);
+pub struct UPInformationIE_Extensions(Vec<UPInformationIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct UTRAN_CellIDiE_Extensions_Item {}
+pub struct UTRAN_CellIDIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -12207,11 +12243,11 @@ pub struct UTRAN_CellIDiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct UTRAN_CellIDiE_Extensions(Vec<UTRAN_CellIDiE_Extensions_Item>);
+pub struct UTRAN_CellIDIE_Extensions(Vec<UTRAN_CellIDIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct UeRadioCapabilityMatchRequestprotocolIEs_Item {}
+pub struct UeRadioCapabilityMatchRequestProtocolIEs_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -12220,13 +12256,13 @@ pub struct UeRadioCapabilityMatchRequestprotocolIEs_Item {}
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct UeRadioCapabilityMatchRequestprotocolIEs(
-    Vec<UeRadioCapabilityMatchRequestprotocolIEs_Item>,
+pub struct UeRadioCapabilityMatchRequestProtocolIEs(
+    Vec<UeRadioCapabilityMatchRequestProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct UeRadioCapabilityMatchRequestprotocolExtensions_Item {}
+pub struct UeRadioCapabilityMatchRequestProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -12235,24 +12271,24 @@ pub struct UeRadioCapabilityMatchRequestprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct UeRadioCapabilityMatchRequestprotocolExtensions(
-    Vec<UeRadioCapabilityMatchRequestprotocolExtensions_Item>,
+pub struct UeRadioCapabilityMatchRequestProtocolExtensions(
+    Vec<UeRadioCapabilityMatchRequestProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum UeRadioCapabilityMatchResponseprotocolIEs_Itemvalue {
+pub enum UeRadioCapabilityMatchResponseProtocolIEs_EntryValue {
     #[asn(key = 258)]
-    id_VoiceSupportMatchIndicator(VoiceSupportMatchIndicator),
+    Id_VoiceSupportMatchIndicator(VoiceSupportMatchIndicator),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct UeRadioCapabilityMatchResponseprotocolIEs_Item {
+pub struct UeRadioCapabilityMatchResponseProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: UeRadioCapabilityMatchResponseprotocolIEs_Itemvalue,
+    pub value: UeRadioCapabilityMatchResponseProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -12262,13 +12298,13 @@ pub struct UeRadioCapabilityMatchResponseprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct UeRadioCapabilityMatchResponseprotocolIEs(
-    Vec<UeRadioCapabilityMatchResponseprotocolIEs_Item>,
+pub struct UeRadioCapabilityMatchResponseProtocolIEs(
+    Vec<UeRadioCapabilityMatchResponseProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct UeRadioCapabilityMatchResponseprotocolExtensions_Item {}
+pub struct UeRadioCapabilityMatchResponseProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -12277,26 +12313,26 @@ pub struct UeRadioCapabilityMatchResponseprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct UeRadioCapabilityMatchResponseprotocolExtensions(
-    Vec<UeRadioCapabilityMatchResponseprotocolExtensions_Item>,
+pub struct UeRadioCapabilityMatchResponseProtocolExtensions(
+    Vec<UeRadioCapabilityMatchResponseProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum UeRegistrationQueryRequestprotocolIEs_Itemvalue {
+pub enum UeRegistrationQueryRequestProtocolIEs_EntryValue {
     #[asn(key = 79)]
-    id_IuSigConId(IuSignallingConnectionIdentifier),
+    Id_IuSigConId(IuSignallingConnectionIdentifier),
     #[asn(key = 23)]
-    id_PermanentNAS_UE_ID(PermanentNAS_UE_ID),
+    Id_PermanentNAS_UE_ID(PermanentNAS_UE_ID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct UeRegistrationQueryRequestprotocolIEs_Item {
+pub struct UeRegistrationQueryRequestProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: UeRegistrationQueryRequestprotocolIEs_Itemvalue,
+    pub value: UeRegistrationQueryRequestProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -12306,11 +12342,11 @@ pub struct UeRegistrationQueryRequestprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct UeRegistrationQueryRequestprotocolIEs(Vec<UeRegistrationQueryRequestprotocolIEs_Item>);
+pub struct UeRegistrationQueryRequestProtocolIEs(Vec<UeRegistrationQueryRequestProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct UeRegistrationQueryRequestprotocolExtensions_Item {}
+pub struct UeRegistrationQueryRequestProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -12319,24 +12355,24 @@ pub struct UeRegistrationQueryRequestprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct UeRegistrationQueryRequestprotocolExtensions(
-    Vec<UeRegistrationQueryRequestprotocolExtensions_Item>,
+pub struct UeRegistrationQueryRequestProtocolExtensions(
+    Vec<UeRegistrationQueryRequestProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum UeRegistrationQueryResponseprotocolIEs_Itemvalue {
+pub enum UeRegistrationQueryResponseProtocolIEs_EntryValue {
     #[asn(key = 281)]
-    id_UERegistrationQueryResult(UERegistrationQueryResult),
+    Id_UERegistrationQueryResult(UERegistrationQueryResult),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct UeRegistrationQueryResponseprotocolIEs_Item {
+pub struct UeRegistrationQueryResponseProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: UeRegistrationQueryResponseprotocolIEs_Itemvalue,
+    pub value: UeRegistrationQueryResponseProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -12346,26 +12382,13 @@ pub struct UeRegistrationQueryResponseprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct UeRegistrationQueryResponseprotocolIEs(Vec<UeRegistrationQueryResponseprotocolIEs_Item>);
-
-#[derive(Debug, AperCodec)]
-#[asn(type = "SEQUENCE", extensible = false)]
-pub struct UeRegistrationQueryResponseprotocolExtensions_Item {}
-
-#[derive(Debug, AperCodec)]
-#[asn(
-    type = "SEQUENCE-OF",
-    sz_extensible = false,
-    sz_lb = "1",
-    sz_ub = "65535"
-)]
-pub struct UeRegistrationQueryResponseprotocolExtensions(
-    Vec<UeRegistrationQueryResponseprotocolExtensions_Item>,
+pub struct UeRegistrationQueryResponseProtocolIEs(
+    Vec<UeRegistrationQueryResponseProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct UnsuccessfulLinking_IEs_ItemiE_Extensions_Item {}
+pub struct UeRegistrationQueryResponseProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -12374,68 +12397,83 @@ pub struct UnsuccessfulLinking_IEs_ItemiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct UnsuccessfulLinking_IEs_ItemiE_Extensions(
-    Vec<UnsuccessfulLinking_IEs_ItemiE_Extensions_Item>,
+pub struct UeRegistrationQueryResponseProtocolExtensions(
+    Vec<UeRegistrationQueryResponseProtocolExtensions_Entry>,
+);
+
+#[derive(Debug, AperCodec)]
+#[asn(type = "SEQUENCE", extensible = false)]
+pub struct UnsuccessfulLinking_IEs_EntryIE_Extensions_Entry {}
+
+#[derive(Debug, AperCodec)]
+#[asn(
+    type = "SEQUENCE-OF",
+    sz_extensible = false,
+    sz_lb = "1",
+    sz_ub = "65535"
+)]
+pub struct UnsuccessfulLinking_IEs_EntryIE_Extensions(
+    Vec<UnsuccessfulLinking_IEs_EntryIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
-pub struct UnsuccessfulLinking_IEs_Item {
-    pub t_mgi: TMGI,
+pub struct UnsuccessfulLinking_IEs_Entry {
+    pub tmgi: TMGI,
     pub cause: Cause,
     #[asn(optional_idx = 0)]
-    pub i_e_extensions: Option<UnsuccessfulLinking_IEs_ItemiE_Extensions>,
+    pub ie_extensions: Option<UnsuccessfulLinking_IEs_EntryIE_Extensions>,
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum UnsuccessfulOutcomevalue {
+pub enum UnsuccessfulOutcomeValue {
     #[asn(key = 31)]
-    id_InformationTransfer(InformationTransferFailure),
+    Id_InformationTransfer(InformationTransferFailure),
     #[asn(key = 30)]
-    id_LocationRelatedData(LocationRelatedDataFailure),
+    Id_LocationRelatedData(LocationRelatedDataFailure),
     #[asn(key = 42)]
-    id_MBMSRABRelease(MBMSRABReleaseFailure),
+    Id_MBMSRABRelease(MBMSRABReleaseFailure),
     #[asn(key = 39)]
-    id_MBMSRegistration(MBMSRegistrationFailure),
+    Id_MBMSRegistration(MBMSRegistrationFailure),
     #[asn(key = 35)]
-    id_MBMSSessionStart(MBMSSessionStartFailure),
+    Id_MBMSSessionStart(MBMSSessionStartFailure),
     #[asn(key = 36)]
-    id_MBMSSessionUpdate(MBMSSessionUpdateFailure),
+    Id_MBMSSessionUpdate(MBMSSessionUpdateFailure),
     #[asn(key = 2)]
-    id_RelocationPreparation(RelocationPreparationFailure),
+    Id_RelocationPreparation(RelocationPreparationFailure),
     #[asn(key = 3)]
-    id_RelocationResourceAllocation(RelocationFailure),
+    Id_RelocationResourceAllocation(RelocationFailure),
     #[asn(key = 6)]
-    id_SecurityModeControl(SecurityModeReject),
+    Id_SecurityModeControl(SecurityModeReject),
     #[asn(key = 33)]
-    id_UplinkInformationExchange(UplinkInformationExchangeFailure),
+    Id_UplinkInformationExchange(UplinkInformationExchangeFailure),
     #[asn(key = 43)]
-    id_enhancedRelocationComplete(EnhancedRelocationCompleteFailure),
+    Id_enhancedRelocationComplete(EnhancedRelocationCompleteFailure),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum UplinkInformationExchangeFailureprotocolIEs_Itemvalue {
+pub enum UplinkInformationExchangeFailureProtocolIEs_EntryValue {
     #[asn(key = 3)]
-    id_CN_DomainIndicator(CN_DomainIndicator),
+    Id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 4)]
-    id_Cause(Cause),
+    Id_Cause(Cause),
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 96)]
-    id_GlobalCN_ID(GlobalCN_ID),
+    Id_GlobalCN_ID(GlobalCN_ID),
     #[asn(key = 136)]
-    id_InformationExchangeID(InformationExchangeID),
+    Id_InformationExchangeID(InformationExchangeID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct UplinkInformationExchangeFailureprotocolIEs_Item {
+pub struct UplinkInformationExchangeFailureProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: UplinkInformationExchangeFailureprotocolIEs_Itemvalue,
+    pub value: UplinkInformationExchangeFailureProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -12445,13 +12483,13 @@ pub struct UplinkInformationExchangeFailureprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct UplinkInformationExchangeFailureprotocolIEs(
-    Vec<UplinkInformationExchangeFailureprotocolIEs_Item>,
+pub struct UplinkInformationExchangeFailureProtocolIEs(
+    Vec<UplinkInformationExchangeFailureProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct UplinkInformationExchangeFailureprotocolExtensions_Item {}
+pub struct UplinkInformationExchangeFailureProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -12460,34 +12498,34 @@ pub struct UplinkInformationExchangeFailureprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct UplinkInformationExchangeFailureprotocolExtensions(
-    Vec<UplinkInformationExchangeFailureprotocolExtensions_Item>,
+pub struct UplinkInformationExchangeFailureProtocolExtensions(
+    Vec<UplinkInformationExchangeFailureProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum UplinkInformationExchangeRequestprotocolIEs_Itemvalue {
+pub enum UplinkInformationExchangeRequestProtocolIEs_EntryValue {
     #[asn(key = 3)]
-    id_CN_DomainIndicator(CN_DomainIndicator),
+    Id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 86)]
-    id_GlobalRNC_ID(GlobalRNC_ID),
+    Id_GlobalRNC_ID(GlobalRNC_ID),
     #[asn(key = 136)]
-    id_InformationExchangeID(InformationExchangeID),
+    Id_InformationExchangeID(InformationExchangeID),
     #[asn(key = 137)]
-    id_InformationExchangeType(InformationExchangeType),
+    Id_InformationExchangeType(InformationExchangeType),
     #[asn(key = 139)]
-    id_InformationRequestType(InformationRequestType),
+    Id_InformationRequestType(InformationRequestType),
     #[asn(key = 123)]
-    id_InformationTransferType(InformationTransferType),
+    Id_InformationTransferType(InformationTransferType),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct UplinkInformationExchangeRequestprotocolIEs_Item {
+pub struct UplinkInformationExchangeRequestProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: UplinkInformationExchangeRequestprotocolIEs_Itemvalue,
+    pub value: UplinkInformationExchangeRequestProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -12497,24 +12535,24 @@ pub struct UplinkInformationExchangeRequestprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct UplinkInformationExchangeRequestprotocolIEs(
-    Vec<UplinkInformationExchangeRequestprotocolIEs_Item>,
+pub struct UplinkInformationExchangeRequestProtocolIEs(
+    Vec<UplinkInformationExchangeRequestProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum UplinkInformationExchangeRequestprotocolExtensions_ItemextensionValue {
+pub enum UplinkInformationExchangeRequestProtocolExtensions_EntryExtensionValue {
     #[asn(key = 171)]
-    id_ExtendedRNC_ID(ExtendedRNC_ID),
+    Id_ExtendedRNC_ID(ExtendedRNC_ID),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct UplinkInformationExchangeRequestprotocolExtensions_Item {
+pub struct UplinkInformationExchangeRequestProtocolExtensions_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolExtensionID,
     pub criticality: Criticality,
-    pub extension_value: UplinkInformationExchangeRequestprotocolExtensions_ItemextensionValue,
+    pub extension_value: UplinkInformationExchangeRequestProtocolExtensions_EntryExtensionValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -12524,32 +12562,32 @@ pub struct UplinkInformationExchangeRequestprotocolExtensions_Item {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct UplinkInformationExchangeRequestprotocolExtensions(
-    Vec<UplinkInformationExchangeRequestprotocolExtensions_Item>,
+pub struct UplinkInformationExchangeRequestProtocolExtensions(
+    Vec<UplinkInformationExchangeRequestProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
-pub enum UplinkInformationExchangeResponseprotocolIEs_Itemvalue {
+pub enum UplinkInformationExchangeResponseProtocolIEs_EntryValue {
     #[asn(key = 3)]
-    id_CN_DomainIndicator(CN_DomainIndicator),
+    Id_CN_DomainIndicator(CN_DomainIndicator),
     #[asn(key = 9)]
-    id_CriticalityDiagnostics(CriticalityDiagnostics),
+    Id_CriticalityDiagnostics(CriticalityDiagnostics),
     #[asn(key = 96)]
-    id_GlobalCN_ID(GlobalCN_ID),
+    Id_GlobalCN_ID(GlobalCN_ID),
     #[asn(key = 136)]
-    id_InformationExchangeID(InformationExchangeID),
+    Id_InformationExchangeID(InformationExchangeID),
     #[asn(key = 138)]
-    id_InformationRequested(InformationRequested),
+    Id_InformationRequested(InformationRequested),
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct UplinkInformationExchangeResponseprotocolIEs_Item {
+pub struct UplinkInformationExchangeResponseProtocolIEs_Entry {
     #[asn(key_field = true)]
     pub id: ProtocolIE_ID,
     pub criticality: Criticality,
-    pub value: UplinkInformationExchangeResponseprotocolIEs_Itemvalue,
+    pub value: UplinkInformationExchangeResponseProtocolIEs_EntryValue,
 }
 
 #[derive(Debug, AperCodec)]
@@ -12559,13 +12597,13 @@ pub struct UplinkInformationExchangeResponseprotocolIEs_Item {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct UplinkInformationExchangeResponseprotocolIEs(
-    Vec<UplinkInformationExchangeResponseprotocolIEs_Item>,
+pub struct UplinkInformationExchangeResponseProtocolIEs(
+    Vec<UplinkInformationExchangeResponseProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct UplinkInformationExchangeResponseprotocolExtensions_Item {}
+pub struct UplinkInformationExchangeResponseProtocolExtensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -12574,13 +12612,13 @@ pub struct UplinkInformationExchangeResponseprotocolExtensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct UplinkInformationExchangeResponseprotocolExtensions(
-    Vec<UplinkInformationExchangeResponseprotocolExtensions_Item>,
+pub struct UplinkInformationExchangeResponseProtocolExtensions(
+    Vec<UplinkInformationExchangeResponseProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
-pub struct UserPlaneInformationiE_Extensions_Item {}
+pub struct UserPlaneInformationIE_Extensions_Entry {}
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -12589,7 +12627,7 @@ pub struct UserPlaneInformationiE_Extensions_Item {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct UserPlaneInformationiE_Extensions(Vec<UserPlaneInformationiE_Extensions_Item>);
+pub struct UserPlaneInformationIE_Extensions(Vec<UserPlaneInformationIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "255")]

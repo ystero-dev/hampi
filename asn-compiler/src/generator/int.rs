@@ -1,6 +1,6 @@
 //! Code Generation module
 
-use heck::{ToShoutySnakeCase, ToSnakeCase, ToUpperCamelCase};
+use heck::{ToShoutySnakeCase, ToSnakeCase};
 use proc_macro2::{Ident, Literal, Span, TokenStream};
 
 use quote::quote;
@@ -68,8 +68,10 @@ impl Generator {
     }
 
     pub(crate) fn to_type_ident(&self, name: &str) -> Ident {
-        let val = capitalize_first(name).to_snake_case().to_upper_camel_case();
-        Ident::new(&val, Span::call_site())
+        Ident::new(
+            &capitalize_first(name).replace("-", "_").replace(" ", "_"),
+            Span::call_site(),
+        )
     }
 
     pub(crate) fn to_const_ident(&self, name: &str) -> Ident {
@@ -132,7 +134,7 @@ impl Generator {
 
     fn generate_use_tokens(&self) -> TokenStream {
         quote! {
-            #![allow(dead_code, unreachable_patterns)]
+            #![allow(dead_code, unreachable_patterns, non_camel_case_types)]
 
             use bitvec::vec::BitVec;
             use bitvec::order::Msb0;
@@ -144,10 +146,41 @@ impl Generator {
     }
 }
 
-fn capitalize_first(s: &str) -> String {
-    let mut cs = s.chars();
-    match cs.next() {
-        None => String::new(),
-        Some(first) => first.to_uppercase().collect::<String>() + cs.as_str(),
+fn capitalize_first(input: &str) -> String {
+    if input.len() > 0 {
+        let mut input = input.to_string();
+        let (first, _) = input.split_at_mut(1);
+        first.make_ascii_uppercase();
+
+        input
+    } else {
+        input.to_string()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    #[test]
+    fn test_capitalize_first_empty() {
+        let empty = "".to_string();
+        let capitalized = capitalize_first(&empty);
+        assert_eq!(capitalized, empty);
+    }
+
+    #[test]
+    fn test_capitalize_first_single_letter() {
+        let empty = "a".to_string();
+        let capitalized = capitalize_first(&empty);
+        assert_eq!(capitalized, "A");
+    }
+
+    #[test]
+    fn test_capitalize_first_word() {
+        let empty = "amfTnlAssociationToAddItem".to_string();
+        let capitalized = capitalize_first(&empty);
+        assert_eq!(capitalized, "AmfTnlAssociationToAddItem");
     }
 }
