@@ -28,36 +28,24 @@ impl ConstraintValues {
     pub(crate) fn min(&self) -> Option<i128> {
         let values_min = self.values.iter().min();
         let ranges_min = self.ranges.iter().map(|r| r.start).min();
-        if values_min.is_none() {
-            if ranges_min.is_none() {
-                None
-            } else {
-                ranges_min
-            }
-        } else {
-            if ranges_min.is_none() {
-                Some(*values_min.unwrap())
-            } else {
-                Some(std::cmp::min(ranges_min.unwrap(), *values_min.unwrap()))
-            }
+        match values_min {
+            None => ranges_min,
+            Some(vals_min) => match ranges_min {
+                None => Some(*vals_min),
+                Some(rnges_min) => Some(std::cmp::min(rnges_min, *vals_min)),
+            },
         }
     }
 
     pub(crate) fn max(&self) -> Option<i128> {
         let values_max = self.values.iter().max();
         let ranges_max = self.ranges.iter().map(|r| r.end - 1).max();
-        if values_max.is_none() {
-            if ranges_max.is_none() {
-                None
-            } else {
-                ranges_max
-            }
-        } else {
-            if ranges_max.is_none() {
-                Some(*values_max.unwrap())
-            } else {
-                Some(std::cmp::min(ranges_max.unwrap(), *values_max.unwrap()))
-            }
+        match values_max {
+            None => ranges_max,
+            Some(vals_max) => match ranges_max {
+                None => Some(*vals_max),
+                Some(rnges_max) => Some(std::cmp::min(rnges_max, *vals_max)), // FIXME: This should be std::cmp::max?
+            },
         }
     }
 }

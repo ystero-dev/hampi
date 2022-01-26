@@ -63,9 +63,8 @@ fn resolve_reference_type(
         match reference {
             Asn1TypeReference::Reference(ref r) => {
                 let resolved = resolver.resolved_defs.get(r);
-                if resolved.is_some() {
-                    let resolved = resolved.unwrap();
-                    match resolved {
+                match resolved {
+                    Some(res) => match res {
                         Asn1ResolvedDefinition::Type(..) => {
                             Ok(Asn1ResolvedType::Reference(r.to_string()))
                         }
@@ -73,25 +72,24 @@ fn resolve_reference_type(
                             "Expected a Resolved Type, found {:#?}",
                             resolved
                         )),
-                    }
-                } else {
-                    Err(resolve_error!(
+                    },
+                    None => Err(resolve_error!(
                         "Referenced Type for '{}' Not resolved yet!",
                         r
-                    ))
+                    )),
                 }
             }
             Asn1TypeReference::Parameterized { typeref, params } => {
                 let def = resolver.parameterized_defs.get(typeref);
-                if def.is_some() {
-                    let def = def.unwrap().clone();
-                    let params_resolved_type = def.apply_params(params)?;
-                    resolve_type(&params_resolved_type, resolver)
-                } else {
-                    Err(resolve_error!(
+                match def {
+                    Some(d) => {
+                        let params_resolved_type = d.clone().apply_params(params)?;
+                        resolve_type(&params_resolved_type, resolver)
+                    }
+                    None => Err(resolve_error!(
                         "Parameterized Type for '{:#?}' Not found!",
                         reference
-                    ))
+                    )),
                 }
             }
             Asn1TypeReference::ClassField { .. } => Err(resolve_error!(

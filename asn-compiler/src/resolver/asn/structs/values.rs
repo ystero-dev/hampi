@@ -52,10 +52,7 @@ pub(crate) enum Asn1ResolvedValue {
 impl Asn1ResolvedValue {
     pub(crate) fn get_base_integer_value(&self) -> Option<i128> {
         match self {
-            Self::Base(ref b) => match b {
-                ResolvedBaseValue::Integer(ref i) => Some(i.value as i128),
-                _ => None,
-            },
+            Self::Base(ResolvedBaseValue::Integer(ref i)) => Some(i.value as i128),
             Self::ReferencedType { value, .. } => value.get_base_integer_value(),
             _ => None,
         }

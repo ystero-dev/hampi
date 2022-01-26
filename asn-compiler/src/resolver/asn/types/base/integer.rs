@@ -45,8 +45,7 @@ impl Asn1ResolvedInteger {
                 8_u32
             } else {
                 let max = value_set.root_values.max().unwrap();
-                let bits_needed_max = 128 - max.leading_zeros();
-                bits_needed_max
+                128 - max.leading_zeros()
             }
         };
 

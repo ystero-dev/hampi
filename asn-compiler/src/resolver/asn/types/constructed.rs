@@ -201,7 +201,7 @@ fn resolve_sequence_classfield_components(
 }
 
 fn resolve_seq_components_for_objects(
-    input_components: &Vec<Component>,
+    input_components: &[Component],
     set_reference: &str,
     objects: &ResolvedObjectSet,
 ) -> Result<Vec<ResolvedSeqComponent>, Error> {
@@ -258,7 +258,7 @@ fn resolve_seq_components_for_objects(
 }
 
 fn get_seq_component_for_object_set(
-    fieldref: &String,
+    fieldref: &str,
     objects: &ResolvedObjectSet,
 ) -> Result<BTreeMap<(String, String), (String, Asn1ResolvedType)>, Error> {
     let mut types = BTreeMap::new();

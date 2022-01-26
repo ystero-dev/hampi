@@ -1,6 +1,7 @@
 //! Functionality for handling Resolved ASN.1 ENUMERATED Types
 
 use std::collections::BTreeSet;
+use std::convert::TryInto;
 
 use crate::error::Error;
 
@@ -17,9 +18,10 @@ impl Asn1ResolvedEnumerated {
         e: &Asn1TypeEnumerated,
         _resolver: &Resolver,
     ) -> Result<Asn1ResolvedEnumerated, Error> {
-        let mut base = Asn1ResolvedEnumerated::default();
-
-        base.extensible = e.ext_marker_index.is_some();
+        let mut base = Asn1ResolvedEnumerated {
+            extensible: e.ext_marker_index.is_some(),
+            ..Default::default()
+        };
 
         // FIXME: TODO Constraints
 
@@ -33,12 +35,10 @@ impl Asn1ResolvedEnumerated {
         }
         // TODO: Support all crazy Enumerations.
         if root_values.is_empty() {
-            let mut value = 0_i128;
-            for v in &e.root_values {
-                base.named_root_values.push((v.name.clone(), value));
-                root_values.insert(value);
-
-                value += 1;
+            for (value, v) in e.root_values.iter().enumerate() {
+                base.named_root_values
+                    .push((v.name.clone(), value.try_into().unwrap()));
+                root_values.insert(value.try_into().unwrap());
             }
         }
 
@@ -52,12 +52,10 @@ impl Asn1ResolvedEnumerated {
         }
         // TODO: Support all crazy Enumerations.
         if ext_values.is_empty() {
-            let mut value = 0_i128;
-            for v in &e.ext_values {
-                base.named_ext_values.push((v.name.clone(), value));
-                ext_values.insert(value);
-
-                value += 1;
+            for (value, v) in e.ext_values.iter().enumerate() {
+                base.named_ext_values
+                    .push((v.name.clone(), value.try_into().unwrap()));
+                ext_values.insert(value.try_into().unwrap());
             }
         }
 

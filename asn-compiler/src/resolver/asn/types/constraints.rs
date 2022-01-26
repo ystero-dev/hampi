@@ -114,13 +114,10 @@ impl Asn1Constraint {
             if iset.len() != 1 {
                 false
             } else {
-                match iset[0].elements[0] {
-                    Elements::Subtype(ref s) => match s {
-                        SubtypeElements::SizeConstraint(..) => true,
-                        _ => false,
-                    },
-                    _ => false,
-                }
+                matches!(
+                    iset[0].elements[0],
+                    Elements::Subtype(SubtypeElements::SizeConstraint(..))
+                )
             }
         } else {
             false
@@ -182,16 +179,16 @@ impl ElementSet {
     fn get_integer_valueset(&self, resolver: &Resolver) -> Result<Asn1ConstraintValueSet, Error> {
         let mut root_values = ConstraintValues::new();
         for element in self.get_inner_elements() {
-            let mut element_values = element.get_integer_valueset(resolver)?;
-            root_values.append(&mut element_values);
+            let element_values = element.get_integer_valueset(resolver)?;
+            root_values.append(&element_values);
         }
 
         let additional_values = if self.additional_elements.is_some() {
             let additional_elements = self.additional_elements.as_ref().unwrap();
             let mut additional_values = ConstraintValues::new();
             for element in &additional_elements.elements {
-                let mut element_values = element.get_integer_valueset(resolver)?;
-                additional_values.append(&mut element_values);
+                let element_values = element.get_integer_valueset(resolver)?;
+                additional_values.append(&element_values);
             }
             Some(additional_values)
         } else {
@@ -242,10 +239,10 @@ impl IntersectionSet {
     fn get_integer_valueset(&self, resolver: &Resolver) -> Result<ConstraintValues, Error> {
         let mut value_set = ConstraintValues::new();
         for element in &self.elements {
-            let mut element_set = element.get_integer_valueset(resolver)?;
+            let element_set = element.get_integer_valueset(resolver)?;
             if value_set.is_empty() {
                 // If Empty Set, it's okay to union, but not otherwise
-                value_set.append(&mut element_set);
+                value_set.append(&element_set);
             } else {
                 value_set.values = value_set
                     .values
@@ -309,8 +306,8 @@ impl SubtypeElements {
                     .push(Self::parse_or_resolve_value(value, resolver)?);
             }
             Self::ConstrainedSubtype(ref ty) => {
-                let mut all_values_set = ty.get_integer_valueset_from_constraint(resolver)?;
-                value_set.append(&mut all_values_set.root_values); // We only care about Root Elements
+                let all_values_set = ty.get_integer_valueset_from_constraint(resolver)?;
+                value_set.append(&all_values_set.root_values); // We only care about Root Elements
             }
             Self::ValueRange {
                 lower,
@@ -332,10 +329,10 @@ impl SubtypeElements {
                 });
             }
             Self::SizeConstraint(ref elems) => {
-                let mut size_elements = elems.get_integer_valueset(resolver)?;
-                value_set.append(&mut size_elements.root_values);
+                let size_elements = elems.get_integer_valueset(resolver)?;
+                value_set.append(&size_elements.root_values);
                 if size_elements.additional_values.is_some() {
-                    value_set.append(&mut size_elements.additional_values.unwrap());
+                    value_set.append(&size_elements.additional_values.unwrap());
                 }
             }
             _ => {
@@ -348,30 +345,30 @@ impl SubtypeElements {
         Ok(value_set)
     }
 
-    fn parse_or_resolve_value(value: &String, resolver: &Resolver) -> Result<i128, Error> {
+    fn parse_or_resolve_value(value: &str, resolver: &Resolver) -> Result<i128, Error> {
         // FIXME : do the 'resolve part'
         let parsed = value.parse::<i128>();
         match parsed {
             Ok(x) => Ok(x),
             Err(_) => {
                 let resolved = resolver.resolved_defs.get(value);
-                if resolved.is_none() {
-                    Err(constraint_error!(
+                match resolved {
+                    None => Err(constraint_error!(
                         "Unable To Resolve '{}'. Not Found!",
                         value
-                    ))
-                } else {
-                    let resolved = resolved.unwrap();
-                    if let Asn1ResolvedDefinition::Value(Asn1ResolvedValue::Base(
-                        ResolvedBaseValue::Integer(ref i),
-                    )) = resolved
-                    {
-                        Ok(i.value)
-                    } else {
-                        Err(constraint_error!(
-                            "Resolved Value {:#?} of different type!",
-                            resolved
-                        ))
+                    )),
+                    Some(res) => {
+                        if let Asn1ResolvedDefinition::Value(Asn1ResolvedValue::Base(
+                            ResolvedBaseValue::Integer(ref i),
+                        )) = res
+                        {
+                            Ok(i.value)
+                        } else {
+                            Err(constraint_error!(
+                                "Resolved Value {:#?} of different type!",
+                                res
+                            ))
+                        }
                     }
                 }
             }
