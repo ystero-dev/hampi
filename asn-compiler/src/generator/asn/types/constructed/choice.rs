@@ -72,7 +72,7 @@ impl ResolvedConstructedType {
 
     fn generate_struct_tokens_for_asn_choice_type(
         type_name: &Ident,
-        root_tokens: &Vec<ChoiceComponentToken>,
+        root_tokens: &[ChoiceComponentToken],
         addition_tokens: &Option<Vec<ChoiceComponentToken>>,
     ) -> Result<TokenStream, Error> {
         let mut root_comp_tokens = TokenStream::new();
@@ -136,7 +136,7 @@ impl ResolvedConstructedType {
 
     fn generate_impl_tokens_for_asn_choice_type(
         type_name: &Ident,
-        root_tokens: &Vec<ChoiceComponentToken>,
+        root_tokens: &[ChoiceComponentToken],
         addition_tokens: &Option<Vec<ChoiceComponentToken>>,
     ) -> Result<TokenStream, Error> {
         let lb_token = quote! { 0i128 };
@@ -182,7 +182,7 @@ impl ResolvedConstructedType {
     }
 
     fn choice_component_impl_decode_aper_tokens(
-        components: &Vec<ChoiceComponentToken>,
+        components: &[ChoiceComponentToken],
     ) -> Result<TokenStream, Error> {
         let mut tokens = TokenStream::new();
         if !components.is_empty() {
@@ -202,7 +202,7 @@ impl ResolvedConstructedType {
     }
 
     fn get_component_tokens(
-        components: &Vec<ResolvedComponent>,
+        components: &[ResolvedComponent],
         name: &str,
         generator: &mut Generator,
     ) -> Result<Vec<ChoiceComponentToken>, Error> {

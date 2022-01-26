@@ -58,31 +58,21 @@ impl ResolvedConstructedType {
         input: Option<&String>,
     ) -> Result<Ident, Error> {
         let unique_name = match self {
-            ResolvedConstructedType::Sequence { name, .. } => {
-                if input.is_some() {
-                    input.unwrap().clone()
-                } else {
-                    if name.is_some() {
-                        name.as_ref().unwrap().clone()
-                    } else {
-                        generator.to_unique_name("Sequence")
-                    }
-                }
-            }
-            ResolvedConstructedType::Choice { .. } => {
-                if input.is_some() {
-                    input.unwrap().clone()
-                } else {
-                    generator.to_unique_name("Choice")
-                }
-            }
-            ResolvedConstructedType::SequenceOf { .. } => {
-                if input.is_some() {
-                    input.unwrap().clone()
-                } else {
-                    generator.to_unique_name("SeqOf")
-                }
-            }
+            ResolvedConstructedType::Sequence { name, .. } => match input {
+                Some(ref inp) => inp.to_string(),
+                None => match name {
+                    Some(ref n) => n.to_string(),
+                    None => generator.to_unique_name("Sequence"),
+                },
+            },
+            ResolvedConstructedType::Choice { .. } => match input {
+                Some(ref inp) => inp.to_string(),
+                None => generator.to_unique_name("Choice"),
+            },
+            ResolvedConstructedType::SequenceOf { .. } => match input {
+                Some(ref inp) => inp.to_string(),
+                None => generator.to_unique_name("SeqOf"),
+            },
         };
 
         let generated_type = self.generate(&unique_name, generator)?;

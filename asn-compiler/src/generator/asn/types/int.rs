@@ -87,10 +87,9 @@ impl ResolvedSetType {
         input: Option<&String>,
     ) -> Result<Ident, Error> {
         // FIXME: This is perhaps not right
-        let ty_ident = if input.is_none() {
-            generator.to_type_ident(&self.setref)
-        } else {
-            generator.to_type_ident(input.unwrap())
+        let ty_ident = match input {
+            None => generator.to_type_ident(&self.setref),
+            Some(ref inp) => generator.to_type_ident(inp),
         };
         let ty_elements = self.generate_aux_types(generator)?;
 
@@ -112,7 +111,7 @@ impl ResolvedSetType {
         for (name, ty) in &self.types {
             let variant_ident = generator.to_type_ident(&name.0);
             let ty_ident = Asn1ResolvedType::generate_name_maybe_aux_type(&ty.1, generator, None)?;
-            let key: proc_macro2::TokenStream = format!("{}", ty.0).parse().unwrap();
+            let key: proc_macro2::TokenStream = ty.0.to_string().parse().unwrap();
             let key_tokens = quote! {
                 #[asn(key = #key)]
             };

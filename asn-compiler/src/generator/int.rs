@@ -46,8 +46,8 @@ impl Generator {
         let mut items = vec![];
         for (k, t) in resolver.get_resolved_types() {
             let item = Asn1ResolvedType::generate_for_type(k, t, self)?;
-            if item.is_some() {
-                items.push(item.unwrap())
+            if let Some(it) = item {
+                items.push(it)
             }
         }
 
@@ -57,14 +57,12 @@ impl Generator {
 
         self.items.extend(items);
 
-        Ok(format!(
-            "{}",
-            self.items
-                .iter()
-                .map(|t| t.to_string())
-                .collect::<Vec<String>>()
-                .join("\n\n")
-        ))
+        Ok(self
+            .items
+            .iter()
+            .map(|t| t.to_string())
+            .collect::<Vec<String>>()
+            .join("\n\n"))
     }
 
     pub(crate) fn to_type_ident(&self, name: &str) -> Ident {
@@ -80,7 +78,7 @@ impl Generator {
 
     pub(crate) fn to_value_ident(&self, name: &str) -> Ident {
         let mut val = capitalize_first(name).to_snake_case();
-        if val == "type".to_string() {
+        if val == *"type" {
             val = "typ".to_string()
         }
         Ident::new(&val, Span::call_site())
@@ -147,7 +145,7 @@ impl Generator {
 }
 
 fn capitalize_first(input: &str) -> String {
-    if input.len() > 0 {
+    if !input.is_empty() {
         let mut input = input.to_string();
         let (first, _) = input.split_at_mut(1);
         first.make_ascii_uppercase();

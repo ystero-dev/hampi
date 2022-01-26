@@ -58,7 +58,7 @@ impl ResolvedConstructedType {
                     fld_attrs.push(quote! { key_field = true })
                 }
 
-                let fld_attr_tokens = if fld_attrs.len() > 0 {
+                let fld_attr_tokens = if !fld_attrs.is_empty() {
                     quote! { #[asn(#(#fld_attrs),*)] }
                 } else {
                     quote! {}
