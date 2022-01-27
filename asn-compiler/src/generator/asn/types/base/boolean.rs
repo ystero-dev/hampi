@@ -25,7 +25,7 @@ impl Asn1ResolvedBoolean {
         &self,
         generator: &mut Generator,
     ) -> Result<Ident, Error> {
-        let unique_name = generator.to_unique_name("BOOLEAN");
+        let unique_name = generator.get_unique_name("BOOLEAN");
 
         let item = self.generate(&unique_name, generator)?;
         generator.aux_items.push(item);

@@ -30,6 +30,12 @@ pub struct Asn1Compiler {
     generator: Generator,
 }
 
+impl Default for Asn1Compiler {
+    fn default() -> Self {
+        Asn1Compiler::new()
+    }
+}
+
 impl Asn1Compiler {
     /// Create a new Instance of the Compiler structure.
     pub fn new() -> Self {
@@ -44,8 +50,9 @@ impl Asn1Compiler {
     ///
     /// If the module alredy exists, returns `false` else returns `true`.
     pub fn add_module(&mut self, module: Asn1Module) -> bool {
-        let old = self.modules.insert(module.get_module_name(), module);
-        !old.is_none()
+        self.modules
+            .insert(module.get_module_name(), module)
+            .is_some()
     }
 
     /// Resolve Modules order and definitions within those modules.

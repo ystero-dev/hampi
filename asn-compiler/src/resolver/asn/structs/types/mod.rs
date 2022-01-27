@@ -10,10 +10,12 @@ pub(crate) mod ioc;
 
 pub(crate) mod constraints;
 
+pub(crate) type ResolvedSetTypeMap = BTreeMap<(String, String), (String, Asn1ResolvedType)>;
+
 #[derive(Debug, Clone)]
 pub(crate) struct ResolvedSetType {
     pub(crate) setref: String,
-    pub(crate) types: BTreeMap<(String, String), (String, Asn1ResolvedType)>,
+    pub(crate) types: ResolvedSetTypeMap,
 }
 
 #[derive(Debug, Clone)]

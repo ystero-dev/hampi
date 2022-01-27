@@ -124,7 +124,7 @@ impl Generator {
         }
     }
 
-    pub(crate) fn to_unique_name(&mut self, name: &str) -> String {
+    pub(crate) fn get_unique_name(&mut self, name: &str) -> String {
         self.counter += 1;
 
         format!("{} {}", name, self.counter)

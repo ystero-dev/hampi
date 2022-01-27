@@ -17,7 +17,7 @@ use crate::resolver::{
                     ResolvedSeqComponent,
                 },
                 ioc::{ResolvedFieldSpec, ResolvedObjectSet, ResolvedObjectSetElement},
-                Asn1ResolvedType, ResolvedSetType,
+                Asn1ResolvedType, ResolvedSetType, ResolvedSetTypeMap,
             },
         },
         types::resolve_type,
@@ -260,7 +260,7 @@ fn resolve_seq_components_for_objects(
 fn get_seq_component_for_object_set(
     fieldref: &str,
     objects: &ResolvedObjectSet,
-) -> Result<BTreeMap<(String, String), (String, Asn1ResolvedType)>, Error> {
+) -> Result<ResolvedSetTypeMap, Error> {
     let mut types = BTreeMap::new();
     for (key, object) in &objects.lookup_table {
         if let ResolvedObjectSetElement::Object(ref o) = object {

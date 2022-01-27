@@ -62,16 +62,16 @@ impl ResolvedConstructedType {
                 Some(ref inp) => inp.to_string(),
                 None => match name {
                     Some(ref n) => n.to_string(),
-                    None => generator.to_unique_name("Sequence"),
+                    None => generator.get_unique_name("Sequence"),
                 },
             },
             ResolvedConstructedType::Choice { .. } => match input {
                 Some(ref inp) => inp.to_string(),
-                None => generator.to_unique_name("Choice"),
+                None => generator.get_unique_name("Choice"),
             },
             ResolvedConstructedType::SequenceOf { .. } => match input {
                 Some(ref inp) => inp.to_string(),
-                None => generator.to_unique_name("SeqOf"),
+                None => generator.get_unique_name("SeqOf"),
             },
         };
 
