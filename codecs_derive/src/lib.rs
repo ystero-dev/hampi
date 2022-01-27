@@ -23,14 +23,14 @@ pub fn derive(input: TokenStream) -> TokenStream {
 
     let codec_params = codec_params.unwrap();
     if codec_params.attr.is_none() {
-        return syn::Error::new_spanned(ast.clone(), "Missing attribute 'asn' for the struct.")
+        return syn::Error::new_spanned(ast, "Missing attribute 'asn' for the struct.")
             .to_compile_error()
             .into();
     }
 
     if codec_params.ty.is_none() {
         return syn::Error::new_spanned(
-            codec_params.attr.as_ref().clone(),
+            codec_params.attr,
             "Missing parameter 'type' for the attribute.",
         )
         .to_compile_error()

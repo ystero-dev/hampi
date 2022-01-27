@@ -48,71 +48,73 @@ fn generate_seq_field_tokens_using_attrs(
         if let syn::Fields::Named(ref fields) = data.fields {
             for field in &fields.named {
                 let codec_params = parse_fld_meta_as_codec_params(&field.attrs);
-                if codec_params.is_err() {
-                    errors.push(codec_params.err().unwrap());
-                } else {
-                    let codec_params = codec_params.unwrap();
-                    let field_type = get_field_type(field);
-                    if field_type.ty.is_none() {
-                        errors.push(syn::Error::new_spanned(
-                            field,
-                            "Field Type is not in supported Format!",
-                        ));
-                        continue;
-                    } else {
-                        let ty_ident = field_type.ty.unwrap();
-                        let optional = field_type.is_optional;
-                        let decode_tokens = if optional {
-                            let optional_idx = codec_params.optional_idx.as_ref();
+                match codec_params {
+                    Err(e) => errors.push(e),
+                    Ok(cp) => {
+                        let field_type = get_field_type(field);
+                        if field_type.ty.is_none() {
+                            errors.push(syn::Error::new_spanned(
+                                field,
+                                "Field Type is not in supported Format!",
+                            ));
+                            continue;
+                        } else {
+                            let ty_ident = field_type.ty.unwrap();
+                            let optional = field_type.is_optional;
+                            let decode_tokens = if optional {
+                                let optional_idx = cp.optional_idx.as_ref();
 
-                            if optional_idx.is_none() {
-                                errors.push(syn::Error::new_spanned(
-                                    field,
-                                    "Optional Field without Optional Index.",
-                                ));
-                                // Just pass empty quote
-                                quote! {}
-                            } else {
-                                let optional_idx = optional_idx.unwrap();
-                                quote! {
-                                    {
-                                    let present = bitmap[#optional_idx];
-                                    if present {
-                                        Some(#ty_ident::decode(data)?)
-                                    } else {
-                                        None
+                                match optional_idx {
+                                    None => {
+                                        errors.push(syn::Error::new_spanned(
+                                            field,
+                                            "Optional Field without Optional Index.",
+                                        ));
+                                        // Just pass empty quote
+                                        quote! {}
                                     }
+                                    Some(optidx) => {
+                                        quote! {
+                                            {
+                                            let present = bitmap[#optidx];
+                                            if present {
+                                                Some(#ty_ident::decode(data)?)
+                                            } else {
+                                                None
+                                            }
+                                            }
+                                        }
                                     }
                                 }
-                            }
-                        } else {
-                            let key_field = codec_params.key_field.as_ref();
-                            let is_key_field = if key_field.is_some() {
-                                key_field.unwrap().value()
                             } else {
-                                false
+                                let key_field = cp.key_field.as_ref();
+                                let is_key_field = if let Some(kf) = key_field {
+                                    kf.value()
+                                } else {
+                                    false
+                                };
+
+                                if !is_key_field {
+                                    quote! {
+                                        {
+                                        #ty_ident::decode(data)?
+                                        }
+                                    }
+                                } else {
+                                    quote! {
+                                        {
+                                        let value = #ty_ident::decode(data)?;
+                                        let _ = data.set_key(value.0 as i128);
+                                        value
+                                        }
+                                    }
+                                }
                             };
 
-                            if !is_key_field {
-                                quote! {
-                                    {
-                                    #ty_ident::decode(data)?
-                                    }
-                                }
-                            } else {
-                                quote! {
-                                    {
-                                    let value = #ty_ident::decode(data)?;
-                                    let _ = data.set_key(value.0 as i128);
-                                    value
-                                    }
-                                }
-                            }
-                        };
-
-                        let id = field.ident.as_ref().unwrap();
-                        let field_token = quote! { #id: #decode_tokens, };
-                        tokens.push(field_token);
+                            let id = field.ident.as_ref().unwrap();
+                            let field_token = quote! { #id: #decode_tokens, };
+                            tokens.push(field_token);
+                        }
                     }
                 }
             }
@@ -153,12 +155,8 @@ fn get_field_type(field: &syn::Field) -> StructFieldType {
             match type_params {
                 syn::PathArguments::AngleBracketed(params) => {
                     let generic_args = params.args.iter().next().unwrap();
-                    if let syn::GenericArgument::Type(ty) = generic_args {
-                        if let syn::Type::Path(tpinner) = ty {
-                            Some(tpinner.path.segments.iter().next().unwrap().ident.clone())
-                        } else {
-                            None
-                        }
+                    if let syn::GenericArgument::Type(syn::Type::Path(tpinner)) = generic_args {
+                        Some(tpinner.path.segments.iter().next().unwrap().ident.clone())
                     } else {
                         None
                     }
@@ -168,12 +166,10 @@ fn get_field_type(field: &syn::Field) -> StructFieldType {
         } else {
             None
         }
+    } else if let syn::Type::Path(ref tp) = field.ty {
+        Some(tp.path.segments.iter().next().unwrap().ident.clone())
     } else {
-        if let syn::Type::Path(ref tp) = field.ty {
-            Some(tp.path.segments.iter().next().unwrap().ident.clone())
-        } else {
-            None
-        }
+        None
     };
 
     StructFieldType { ty, is_optional }

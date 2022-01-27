@@ -67,12 +67,8 @@ fn get_inner_ty_for_vec(field: &syn::Field) -> Option<syn::Ident> {
         match type_params {
             syn::PathArguments::AngleBracketed(params) => {
                 let generic_args = params.args.iter().next().unwrap();
-                if let syn::GenericArgument::Type(ty) = generic_args {
-                    if let syn::Type::Path(tpinner) = ty {
-                        Some(tpinner.path.segments.iter().next().unwrap().ident.clone())
-                    } else {
-                        None
-                    }
+                if let syn::GenericArgument::Type(syn::Type::Path(tpinner)) = generic_args {
+                    Some(tpinner.path.segments.iter().next().unwrap().ident.clone())
                 } else {
                     None
                 }

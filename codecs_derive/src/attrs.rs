@@ -40,7 +40,7 @@ pub(crate) struct TyCodecParams {
 // The attributes of the `Struct` or `Enum` are parsed and a `TyCodecParams` structure is generated.
 // This stucture will hold the values that will be used by the individual `decode` functions.
 pub(crate) fn parse_ty_meta_as_codec_params(
-    attrs: &Vec<syn::Attribute>,
+    attrs: &[syn::Attribute],
 ) -> Result<TyCodecParams, syn::Error> {
     let mut codec_params = TyCodecParams::default();
 
@@ -49,7 +49,7 @@ pub(crate) fn parse_ty_meta_as_codec_params(
         if attr.path != ASN {
             errors.push(syn::Error::new_spanned(
                 attr,
-                format!("Unsupported attribute"),
+                "Unsupported attribute".to_string(),
             ));
             continue;
         }
@@ -214,7 +214,7 @@ pub(crate) struct FieldVarCodecParams {
 
 // Parses attributes of the field (struct) or a variant (enum) to generate codec params.
 pub(crate) fn parse_fld_meta_as_codec_params(
-    attrs: &Vec<syn::Attribute>,
+    attrs: &[syn::Attribute],
 ) -> Result<FieldVarCodecParams, syn::Error> {
     let mut codec_params = FieldVarCodecParams::default();
 
@@ -223,7 +223,7 @@ pub(crate) fn parse_fld_meta_as_codec_params(
         if attr.path != ASN {
             errors.push(syn::Error::new_spanned(
                 attr,
-                format!("Unsupported attribute"),
+                "Unsupported attribute".to_string(),
             ));
             continue;
         }

@@ -18,7 +18,7 @@ pub(super) fn generate_aper_decode_for_asn_charstring(
         _ => syn::Ident::new("unsupported", Span::call_site()),
     };
 
-    if decode_fn_name.to_string() == "unspported" {
+    if decode_fn_name == "unspported" {
         return syn::Error::new_spanned(ty_attr, "Character String Type is not supported.")
             .to_compile_error()
             .into();
