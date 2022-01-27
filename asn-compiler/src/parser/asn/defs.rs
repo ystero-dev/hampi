@@ -28,10 +28,10 @@ use super::values::parse_value;
 
 impl Asn1Definition {
     pub fn is_object_or_object_set(&self) -> bool {
-        match self.kind {
-            Asn1AssignmentKind::ObjectSet(..) | Asn1AssignmentKind::Object(..) => true,
-            _ => false,
-        }
+        matches!(
+            self.kind,
+            Asn1AssignmentKind::ObjectSet(..) | Asn1AssignmentKind::Object(..)
+        )
     }
 
     pub fn get_object_class(&self) -> Option<String> {
@@ -60,7 +60,7 @@ impl Asn1Definition {
         Ok(())
     }
 
-    pub fn apply_params(&self, actual_params: &Vec<ActualParam>) -> Result<Asn1Type, Error> {
+    pub fn apply_params(&self, actual_params: &[ActualParam]) -> Result<Asn1Type, Error> {
         if self.params.is_none() {
             return Err(parse_error!("apply_params: No Params for the definition!"));
         }
@@ -93,9 +93,7 @@ impl Asn1Definition {
 // or `ObjectAssigmnet` or `ObjectSetAssignment`
 //
 // `ParameterizedAssignment` is supported for only `TypeAssignment`.
-pub(super) fn parse_definition<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Asn1Definition, usize), Error> {
+pub(super) fn parse_definition(tokens: &[Token]) -> Result<(Asn1Definition, usize), Error> {
     let consumed = 0;
 
     if expect_one_of_tokens(
@@ -119,21 +117,13 @@ pub(super) fn parse_definition<'parser>(
 // All the above assignments start with a lowe-case letter and will have to be parsed into their
 // respective 'values'. Returns the corresponding variant of the `Asn1Definition` and  the number
 // of tokens consumed or error.
-fn parse_valueish_definition<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Asn1Definition, usize), Error> {
-    match parse_object_assignment(tokens) {
-        Ok(x) => {
-            return Ok(x);
-        }
-        Err(_) => {}
+fn parse_valueish_definition(tokens: &[Token]) -> Result<(Asn1Definition, usize), Error> {
+    if let Ok(x) = parse_object_assignment(tokens) {
+        return Ok(x);
     }
 
-    match parse_value_assignment(tokens) {
-        Ok(x) => {
-            return Ok(x);
-        }
-        Err(_) => {}
+    if let Ok(x) = parse_value_assignment(tokens) {
+        return Ok(x);
     }
 
     Err(parse_error!(
@@ -145,9 +135,7 @@ fn parse_valueish_definition<'parser>(
 // Parse object Assginemtnt
 //
 // object CLASS ::= { ... -- Object Defined Syntax -- }
-fn parse_object_assignment<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Asn1Definition, usize), Error> {
+fn parse_object_assignment(tokens: &[Token]) -> Result<(Asn1Definition, usize), Error> {
     let mut consumed = 0;
 
     if !expect_tokens(
@@ -195,9 +183,7 @@ fn parse_object_assignment<'parser>(
 // Parse object Assginemtnt
 //
 // value Type ::= ValueDefinition -- Value Definition can be anything for now.
-fn parse_value_assignment<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Asn1Definition, usize), Error> {
+fn parse_value_assignment(tokens: &[Token]) -> Result<(Asn1Definition, usize), Error> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_value_reference)? {
@@ -232,29 +218,18 @@ fn parse_value_assignment<'parser>(
 // All the above assignments start with a lowe-case letter and will have to be parsed into their
 // respective 'values'. Returns the corresponding variant of the `Asn1Definition` and  the number
 // of tokens consumed or error.
-fn parse_typeish_definition<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Asn1Definition, usize), Error> {
+fn parse_typeish_definition(tokens: &[Token]) -> Result<(Asn1Definition, usize), Error> {
     // Try to parse a type_definition
-    match parse_type_assignment(tokens) {
-        Ok(x) => {
-            return Ok(x);
-        }
-        Err(_) => {}
+    if let Ok(x) = parse_type_assignment(tokens) {
+        return Ok(x);
     }
 
-    match parse_class_assignment(tokens) {
-        Ok(x) => {
-            return Ok(x);
-        }
-        Err(_) => {}
+    if let Ok(x) = parse_class_assignment(tokens) {
+        return Ok(x);
     }
 
-    match parse_object_set_assignment(tokens) {
-        Ok(x) => {
-            return Ok(x);
-        }
-        Err(_) => {}
+    if let Ok(x) = parse_object_set_assignment(tokens) {
+        return Ok(x);
     }
 
     Err(parse_error!(
@@ -266,9 +241,7 @@ fn parse_typeish_definition<'parser>(
 // Parse a Type Assignment
 //
 // Identifier [{Params}] :== {Type|Refere} [(Constraints)]
-fn parse_type_assignment<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Asn1Definition, usize), Error> {
+fn parse_type_assignment(tokens: &[Token]) -> Result<(Asn1Definition, usize), Error> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_type_reference)? {
@@ -294,12 +267,12 @@ fn parse_type_assignment<'parser>(
     let (typeref, typeref_consumed) = parse_type(&tokens[consumed..])?;
     consumed += typeref_consumed;
 
-    let params = if params.is_some() {
-        let mut params = params.unwrap();
-        params.type_tokens = tokens[start..start + typeref_consumed].to_vec();
-        Some(params)
-    } else {
-        None
+    let params = match params {
+        Some(mut pars) => {
+            pars.type_tokens = tokens[start..start + typeref_consumed].to_vec();
+            Some(pars)
+        }
+        None => None,
     };
 
     Ok((
@@ -316,9 +289,7 @@ fn parse_type_assignment<'parser>(
 //
 // CLASS-NAME :== CLASS { .... -- CLASS DEFINITION -- }
 // Parameterized Class assignment not supported.
-fn parse_class_assignment<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Asn1Definition, usize), Error> {
+fn parse_class_assignment(tokens: &[Token]) -> Result<(Asn1Definition, usize), Error> {
     let mut consumed = 0;
     if !expect_token(&tokens[consumed..], Token::is_object_class_reference)? {
         return Err(unexpected_token!("CLASS Reference", tokens[consumed]));
@@ -351,9 +322,7 @@ fn parse_class_assignment<'parser>(
 // Parse an Object Set Assignment
 //
 // ObjectSetName CLASS ::= { Objects } -- Where Objects can be an Object/ObjectSet/Reference
-fn parse_object_set_assignment<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Asn1Definition, usize), Error> {
+fn parse_object_set_assignment(tokens: &[Token]) -> Result<(Asn1Definition, usize), Error> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_type_reference)? {
@@ -389,7 +358,7 @@ fn parse_object_set_assignment<'parser>(
     ))
 }
 
-fn parse_params<'parser>(tokens: &'parser [Token]) -> Result<(DefinitionParams, usize), Error> {
+fn parse_params(tokens: &[Token]) -> Result<(DefinitionParams, usize), Error> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_curly_begin)? {
@@ -436,17 +405,15 @@ fn parse_params<'parser>(tokens: &'parser [Token]) -> Result<(DefinitionParams, 
                         kind: DummyReferenceKind::Value,
                     }
                 }
+            } else if governer.kind == GovernerKind::Class {
+                ParamDummyReference {
+                    name: r.text.clone(),
+                    kind: DummyReferenceKind::ObjectSet,
+                }
             } else {
-                if governer.kind == GovernerKind::Class {
-                    ParamDummyReference {
-                        name: r.text.clone(),
-                        kind: DummyReferenceKind::ObjectSet,
-                    }
-                } else {
-                    ParamDummyReference {
-                        name: r.text.clone(),
-                        kind: DummyReferenceKind::ValueSet,
-                    }
+                ParamDummyReference {
+                    name: r.text.clone(),
+                    kind: DummyReferenceKind::ValueSet,
                 }
             };
             consumed += 3;

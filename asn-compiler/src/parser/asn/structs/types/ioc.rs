@@ -75,12 +75,9 @@ impl Asn1ObjectClass {
     pub(crate) fn dependent_references(&self) -> Vec<String> {
         let mut output = vec![];
         for field in self.fields.values() {
-            match field {
-                ObjectClassFieldSpec::FixedTypeValue { field_type, .. } => {
-                    let mut field_references = field_type.dependent_references();
-                    output.append(&mut field_references);
-                }
-                _ => {}
+            if let ObjectClassFieldSpec::FixedTypeValue { field_type, .. } = field {
+                let mut field_references = field_type.dependent_references();
+                output.append(&mut field_references);
             }
         }
         output
@@ -156,13 +153,10 @@ pub(crate) enum Asn1ObjectValue {
 impl Asn1ObjectValue {
     fn dependent_references(&self) -> Vec<String> {
         let mut output = vec![];
-        match self {
-            Self::Asn1ObjectFromClass { fields } => {
-                for field in fields.values() {
-                    output.extend(field.dependent_references());
-                }
+        if let Self::Asn1ObjectFromClass { fields } = self {
+            for field in fields.values() {
+                output.extend(field.dependent_references());
             }
-            _ => {}
         }
         output
     }

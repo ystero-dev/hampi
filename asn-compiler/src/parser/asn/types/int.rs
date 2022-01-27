@@ -14,7 +14,7 @@ use super::{
 };
 
 // Parses the `Type` Expansion in the ASN.1 Grammar.
-pub(crate) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Type, usize), Error> {
+pub(crate) fn parse_type(tokens: &[Token]) -> Result<(Asn1Type, usize), Error> {
     let mut consumed = 0;
 
     if !expect_one_of_tokens(
@@ -109,12 +109,10 @@ pub(crate) fn parse_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1Type,
     Ok((Asn1Type { kind, constraints }, consumed))
 }
 
-fn parse_referenced_type<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Asn1TypeKind, usize), Error> {
+fn parse_referenced_type(tokens: &[Token]) -> Result<(Asn1TypeKind, usize), Error> {
     let mut consumed = 0;
 
-    match expect_tokens(
+    if let Ok(success) = expect_tokens(
         &tokens[consumed..],
         &[
             &[Token::is_object_class_reference],
@@ -125,17 +123,14 @@ fn parse_referenced_type<'parser>(
             ],
         ],
     ) {
-        Ok(success) => {
-            if success {
-                let classref = tokens[consumed].text.clone();
-                let fieldref = tokens[consumed + 2].text.clone();
-                return Ok((
-                    Asn1TypeKind::Reference(Asn1TypeReference::ClassField { classref, fieldref }),
-                    3,
-                ));
-            }
+        if success {
+            let classref = tokens[consumed].text.clone();
+            let fieldref = tokens[consumed + 2].text.clone();
+            return Ok((
+                Asn1TypeKind::Reference(Asn1TypeReference::ClassField { classref, fieldref }),
+                3,
+            ));
         }
-        Err(_) => {}
     }
 
     let (reference, reference_consumed) = match expect_tokens(
@@ -175,25 +170,22 @@ fn parse_referenced_type<'parser>(
         };
     consumed += actual_params_consumed;
 
-    if actual_params.is_some() {
-        Ok((
+    match actual_params {
+        Some(params) => Ok((
             Asn1TypeKind::Reference(Asn1TypeReference::Parameterized {
                 typeref: reference,
-                params: actual_params.unwrap(),
+                params,
             }),
             consumed,
-        ))
-    } else {
-        Ok((
+        )),
+        None => Ok((
             Asn1TypeKind::Reference(Asn1TypeReference::Reference(reference)),
             consumed,
-        ))
+        )),
     }
 }
 
-fn parse_actual_params<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Vec<ActualParam>, usize), Error> {
+fn parse_actual_params(tokens: &[Token]) -> Result<(Vec<ActualParam>, usize), Error> {
     let mut consumed = 0;
     if !expect_token(&tokens[consumed..], Token::is_curly_begin)? {
         return Err(unexpected_token!("'{'", tokens[consumed]));

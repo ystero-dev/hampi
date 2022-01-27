@@ -9,9 +9,7 @@ use crate::parser::asn::structs::types::base::Asn1TypeInteger;
 
 use super::utils::parse_named_values;
 
-pub(crate) fn parse_integer_type<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Asn1TypeInteger, usize), Error> {
+pub(crate) fn parse_integer_type(tokens: &[Token]) -> Result<(Asn1TypeInteger, usize), Error> {
     let mut consumed = 0;
 
     if !expect_keyword(&tokens[consumed..], "INTEGER")? {

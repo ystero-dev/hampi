@@ -8,8 +8,8 @@ use crate::parser::utils::expect_token;
 use crate::parser::asn::structs::types::base::NamedValue;
 
 // Parse a name(value). `(value)` component is optional
-pub(crate) fn parse_named_maybe_value<'parser>(
-    tokens: &'parser [Token],
+pub(crate) fn parse_named_maybe_value(
+    tokens: &[Token],
 ) -> Result<((String, Option<NamedValue>), usize), Error> {
     let mut consumed = 0;
 
@@ -54,8 +54,8 @@ pub(crate) fn parse_named_maybe_value<'parser>(
     Ok(((identifier, named_value), consumed))
 }
 
-pub(crate) fn parse_named_values<'parser>(
-    tokens: &'parser [Token],
+pub(crate) fn parse_named_values(
+    tokens: &[Token],
 ) -> Result<(Vec<(String, NamedValue)>, usize), Error> {
     let mut consumed = 0;
 

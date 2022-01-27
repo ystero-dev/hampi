@@ -31,9 +31,7 @@ lazy_static! {
 // Parses a named OID component
 //
 // Parses named OID components of the form `iso` or `iso(1)`
-fn parse_named_oid_component<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(OIDComponent, usize), Error> {
+fn parse_named_oid_component(tokens: &[Token]) -> Result<(OIDComponent, usize), Error> {
     if !expect_token(&tokens, Token::is_value_reference)? {
         return Err(unexpected_token!("'IDENTIFIER'", tokens[0]));
     }
@@ -78,7 +76,7 @@ fn parse_named_oid_component<'parser>(
 // Wrapper for Parsing an OID Component
 //
 // Parses Either Numbered or Named/Numbered OID components
-fn parse_oid_component<'parser>(tokens: &'parser [Token]) -> Result<(OIDComponent, usize), Error> {
+fn parse_oid_component(tokens: &[Token]) -> Result<(OIDComponent, usize), Error> {
     let consumed = 0;
 
     if expect_one_of_tokens(
@@ -103,8 +101,8 @@ fn parse_oid_component<'parser>(tokens: &'parser [Token]) -> Result<(OIDComponen
     }
 }
 
-pub(super) fn parse_object_identifier<'parser>(
-    tokens: &'parser [Token],
+pub(super) fn parse_object_identifier(
+    tokens: &[Token],
 ) -> Result<(ObjectIdentifier, usize), Error> {
     let mut consumed = 0;
 

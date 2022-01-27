@@ -14,29 +14,18 @@ use crate::parser::asn::structs::types::constraints::*;
 
 use super::parse_type;
 
-pub(super) fn parse_constraints<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Vec<Asn1Constraint>, usize), Error> {
+pub(super) fn parse_constraints(tokens: &[Token]) -> Result<(Vec<Asn1Constraint>, usize), Error> {
     let mut consumed = 0;
 
     let mut constraints = vec![];
-    loop {
-        match parse_constraint(&tokens[consumed..]) {
-            Ok(result) => {
-                constraints.push(result.0);
-                consumed += result.1;
-            }
-            Err(_) => {
-                break;
-            }
-        }
+    while let Ok(result) = parse_constraint(&tokens[consumed..]) {
+        constraints.push(result.0);
+        consumed += result.1;
     }
     Ok((constraints, consumed))
 }
 
-pub(crate) fn parse_constraint<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Asn1Constraint, usize), Error> {
+pub(crate) fn parse_constraint(tokens: &[Token]) -> Result<(Asn1Constraint, usize), Error> {
     if let Ok(subtype) = parse_subtype_constraint(tokens) {
         Ok(subtype)
     } else if let Ok(table) = parse_table_constraint(tokens) {
@@ -50,9 +39,7 @@ pub(crate) fn parse_constraint<'parser>(
     }
 }
 
-fn parse_table_constraint<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Asn1Constraint, usize), Error> {
+fn parse_table_constraint(tokens: &[Token]) -> Result<(Asn1Constraint, usize), Error> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_round_begin)? {
@@ -95,13 +82,11 @@ fn parse_table_constraint<'parser>(
         Err(_) => None,
     };
 
-    let constraint = if component.is_some() {
-        Asn1Constraint::Table(TableConstraint::ComponentRelation {
-            table,
-            component: component.unwrap(),
-        })
-    } else {
-        Asn1Constraint::Table(TableConstraint::Simple(ObjectSet::DefinedObjectSet(table)))
+    let constraint = match component {
+        Some(component) => {
+            Asn1Constraint::Table(TableConstraint::ComponentRelation { table, component })
+        }
+        None => Asn1Constraint::Table(TableConstraint::Simple(ObjectSet::DefinedObjectSet(table))),
     };
 
     if !expect_token(&tokens[consumed..], Token::is_round_end)? {
@@ -112,14 +97,12 @@ fn parse_table_constraint<'parser>(
     Ok((constraint, consumed))
 }
 
-fn parse_subtype_constraint<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Asn1Constraint, usize), Error> {
+fn parse_subtype_constraint(tokens: &[Token]) -> Result<(Asn1Constraint, usize), Error> {
     let (element_set, element_set_consumed) = parse_element_set(tokens)?;
     Ok((Asn1Constraint::Subtype(element_set), element_set_consumed))
 }
 
-fn parse_element_set<'parser>(tokens: &'parser [Token]) -> Result<(ElementSet, usize), Error> {
+fn parse_element_set(tokens: &[Token]) -> Result<(ElementSet, usize), Error> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_round_begin)? {
@@ -149,12 +132,9 @@ fn parse_element_set<'parser>(tokens: &'parser [Token]) -> Result<(ElementSet, u
         }
 
         // Potentially Empty additional_elements
-        match parse_union_set(&tokens[consumed..]) {
-            Ok(result) => {
-                additional_elements = Some(result.0);
-                consumed += result.1;
-            }
-            Err(_) => {}
+        if let Ok(result) = parse_union_set(&tokens[consumed..]) {
+            additional_elements = Some(result.0);
+            consumed += result.1;
         }
     }
 
@@ -172,7 +152,7 @@ fn parse_element_set<'parser>(tokens: &'parser [Token]) -> Result<(ElementSet, u
     ))
 }
 
-fn parse_union_set<'parser>(tokens: &'parser [Token]) -> Result<(UnionSet, usize), Error> {
+fn parse_union_set(tokens: &[Token]) -> Result<(UnionSet, usize), Error> {
     let mut consumed = 0;
 
     let mut elements = vec![];
@@ -221,7 +201,7 @@ fn parse_union_set<'parser>(tokens: &'parser [Token]) -> Result<(UnionSet, usize
 //
 // This avoid having to write a lot of boiler-plate code to check for `(` or `)` in a few
 // functions (typically inside `parse_intersection_set`.)
-fn parse_intersection_set<'parser>(tokens: &'parser [Token]) -> Result<(Elements, usize), Error> {
+fn parse_intersection_set(tokens: &[Token]) -> Result<(Elements, usize), Error> {
     let mut consumed = 0;
 
     // First try to Parse a Size
@@ -243,14 +223,11 @@ fn parse_intersection_set<'parser>(tokens: &'parser [Token]) -> Result<(Elements
     }
 
     // Parse Range Value
-    match parse_range_elements(&tokens[consumed..]) {
-        Ok(result) => {
-            let range_elements = result.0;
-            consumed += result.1;
+    if let Ok(result) = parse_range_elements(&tokens[consumed..]) {
+        let range_elements = result.0;
+        consumed += result.1;
 
-            return Ok((Elements::Subtype(range_elements), consumed));
-        }
-        Err(_) => {}
+        return Ok((Elements::Subtype(range_elements), consumed));
     }
 
     // Parse nested UnionSet Constraint
@@ -262,32 +239,26 @@ fn parse_intersection_set<'parser>(tokens: &'parser [Token]) -> Result<(Elements
     }
 
     // Parse a simple `Value`
-    match parse_value(&tokens[consumed..]) {
-        Ok(result) => {
-            let value = result.0;
-            consumed += result.1;
+    if let Ok(result) = parse_value(&tokens[consumed..]) {
+        let value = result.0;
+        consumed += result.1;
 
-            return Ok((
-                Elements::Subtype(SubtypeElements::SingleValue { value }),
-                consumed,
-            ));
-        }
-        Err(_) => {}
+        return Ok((
+            Elements::Subtype(SubtypeElements::SingleValue { value }),
+            consumed,
+        ));
     }
 
     // Parse ContainedSubtype. Note: While the actual grammar specifies `Type` production, In
     // reality, this should just be a TypeReference. But we parse it as a full Type regardless.
-    match parse_type(&tokens[consumed..]) {
-        Ok(result) => {
-            let parsed_type = result.0;
-            consumed += result.1;
+    if let Ok(result) = parse_type(&tokens[consumed..]) {
+        let parsed_type = result.0;
+        consumed += result.1;
 
-            return Ok((
-                Elements::Subtype(SubtypeElements::ConstrainedSubtype(parsed_type)),
-                consumed,
-            ));
-        }
-        Err(_) => {}
+        return Ok((
+            Elements::Subtype(SubtypeElements::ConstrainedSubtype(parsed_type)),
+            consumed,
+        ));
     }
 
     Err(parse_error!("parse_intersection_set: Not Implmented"))
@@ -298,9 +269,7 @@ fn parse_intersection_set<'parser>(tokens: &'parser [Token]) -> Result<(Elements
 // If parsing fails (tokens of not adequate length or tokens don't match) returns an Error. The
 // caller should do the error handling. Note: Typically caller will simply say Oh it didn't match,
 // let's try next.
-fn parse_range_elements<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(SubtypeElements, usize), Error> {
+fn parse_range_elements(tokens: &[Token]) -> Result<(SubtypeElements, usize), Error> {
     let mut consumed = 0;
 
     fn is_min_max_keyword(token: &Token) -> bool {
@@ -372,9 +341,7 @@ fn parse_range_elements<'parser>(
     ))
 }
 
-fn parse_contents_constraint<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Asn1Constraint, usize), Error> {
+fn parse_contents_constraint(tokens: &[Token]) -> Result<(Asn1Constraint, usize), Error> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_round_begin)? {

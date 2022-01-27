@@ -4,11 +4,8 @@ use crate::error::Error;
 use crate::tokenizer::{types::TokenChecker, Token};
 
 // Returns true if the first `token`'s text is same as the passed `keyword`
-pub(super) fn expect_keyword<'parser>(
-    tokens: &'parser [Token],
-    keyword: &str,
-) -> Result<bool, Error> {
-    if tokens.len() == 0 {
+pub(super) fn expect_keyword(tokens: &[Token], keyword: &str) -> Result<bool, Error> {
+    if tokens.is_empty() {
         Err(unexpected_end!())
     } else {
         Ok(tokens[0].is_given_keyword(keyword))
@@ -16,10 +13,7 @@ pub(super) fn expect_keyword<'parser>(
 }
 
 // Returns true if all the given keywords are matched.
-pub(super) fn expect_keywords<'parser>(
-    tokens: &'parser [Token],
-    keywords: &[&str],
-) -> Result<bool, Error> {
+pub(super) fn expect_keywords(tokens: &[Token], keywords: &[&str]) -> Result<bool, Error> {
     if tokens.len() < keywords.len() {
         Err(unexpected_end!())
     } else {
@@ -31,11 +25,8 @@ pub(super) fn expect_keywords<'parser>(
 }
 
 // Returns true if the first `token`'s text is one of the passed `keywords`.
-pub(super) fn expect_one_of_keywords<'parser>(
-    tokens: &'parser [Token],
-    keywords: &[&str],
-) -> Result<bool, Error> {
-    if tokens.len() == 0 {
+pub(super) fn expect_one_of_keywords(tokens: &[Token], keywords: &[&str]) -> Result<bool, Error> {
+    if tokens.is_empty() {
         Err(unexpected_end!())
     } else {
         Ok(keywords.iter().any(|&k| expect_keyword(tokens, k).unwrap()))
@@ -43,11 +34,8 @@ pub(super) fn expect_one_of_keywords<'parser>(
 }
 
 // Returns `checker(token)` for the first `token`.
-pub(super) fn expect_token<'parser>(
-    tokens: &'parser [Token],
-    checker: TokenChecker,
-) -> Result<bool, Error> {
-    if tokens.len() == 0 {
+pub(super) fn expect_token(tokens: &[Token], checker: TokenChecker) -> Result<bool, Error> {
+    if tokens.is_empty() {
         Err(unexpected_end!())
     } else {
         Ok(checker(&tokens[0]))
@@ -55,11 +43,11 @@ pub(super) fn expect_token<'parser>(
 }
 
 // Returns if any of the `checker(token)` returns true (short-circuiting)
-pub(super) fn expect_one_of_tokens<'parser>(
-    tokens: &'parser [Token],
-    checkers: &'parser [TokenChecker],
+pub(super) fn expect_one_of_tokens(
+    tokens: &[Token],
+    checkers: &[TokenChecker],
 ) -> Result<bool, Error> {
-    if tokens.len() == 0 {
+    if tokens.is_empty() {
         Err(unexpected_end!())
     } else {
         Ok(checkers.iter().any(|&c| expect_token(tokens, c).unwrap()))
@@ -67,10 +55,7 @@ pub(super) fn expect_one_of_tokens<'parser>(
 }
 
 // Returns success if 'all' the 'tokens' return 'true' for `checker(token)`.
-pub(super) fn expect_tokens<'parser>(
-    tokens: &'parser [Token],
-    checkers: &'parser [&'parser [TokenChecker]],
-) -> Result<bool, Error> {
+pub(super) fn expect_tokens(tokens: &[Token], checkers: &[&[TokenChecker]]) -> Result<bool, Error> {
     if tokens.len() < checkers.len() {
         Err(unexpected_end!())
     } else {
@@ -84,9 +69,7 @@ pub(super) fn expect_tokens<'parser>(
 // Consumes every thing between balanced "{" and "}" or "(" and ")".
 //
 // Unbalanced paranthesis is an error.
-pub(super) fn parse_set_ish_value<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(String, usize), Error> {
+pub(super) fn parse_set_ish_value(tokens: &[Token]) -> Result<(String, usize), Error> {
     let (begin_token, end_token): (TokenChecker, TokenChecker) =
         if expect_token(tokens, Token::is_curly_begin)? {
             (Token::is_curly_begin, Token::is_curly_end)

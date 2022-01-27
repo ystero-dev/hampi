@@ -9,9 +9,7 @@ use crate::parser::asn::structs::types::base::Asn1TypeBitString;
 
 use super::utils::parse_named_values;
 
-pub(crate) fn parse_bitstring_type<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Asn1TypeBitString, usize), Error> {
+pub(crate) fn parse_bitstring_type(tokens: &[Token]) -> Result<(Asn1TypeBitString, usize), Error> {
     let mut consumed = 0;
 
     if !expect_keywords(&tokens[consumed..], &["BIT", "STRING"])? {

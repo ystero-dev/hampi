@@ -42,9 +42,7 @@ impl Asn1Module {
     }
 }
 
-pub(in crate::parser) fn parse_module<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Asn1Module, usize), Error>
+pub(in crate::parser) fn parse_module(tokens: &[Token]) -> Result<(Asn1Module, usize), Error>
 where
 {
     let mut consumed = 0;
@@ -98,8 +96,8 @@ where
     Ok((module, consumed))
 }
 
-fn parse_module_imports<'parser>(
-    tokens: &'parser [Token],
+fn parse_module_imports(
+    tokens: &[Token],
 ) -> Result<(HashMap<String, Asn1ModuleName>, usize), Error> {
     let mut consumed = 0;
 
@@ -141,9 +139,7 @@ fn parse_module_imports<'parser>(
     Ok((imports, consumed))
 }
 
-fn maybe_parse_header_tags<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Asn1ModuleTag, usize), Error> {
+fn maybe_parse_header_tags(tokens: &[Token]) -> Result<(Asn1ModuleTag, usize), Error> {
     let mut consumed = 0;
 
     let tag =
@@ -171,7 +167,7 @@ fn maybe_parse_header_tags<'parser>(
     Ok((tag, consumed))
 }
 
-fn parse_module_name<'parser>(tokens: &'parser [Token]) -> Result<(Asn1ModuleName, usize), Error> {
+fn parse_module_name(tokens: &[Token]) -> Result<(Asn1ModuleName, usize), Error> {
     let mut consumed = 0;
     // First Name
 
@@ -193,17 +189,16 @@ fn parse_module_name<'parser>(tokens: &'parser [Token]) -> Result<(Asn1ModuleNam
     Ok((Asn1ModuleName::new(name, oid), consumed))
 }
 
-fn maybe_parse_object_identifer<'parser>(
-    tokens: &'parser [Token],
+fn maybe_parse_object_identifer(
+    tokens: &[Token],
 ) -> Result<(Option<ObjectIdentifier>, usize), Error> {
     match expect_token(tokens, Token::is_curly_begin) {
         Ok(success) => {
             if success {
-                let out = match parse_object_identifier(tokens) {
+                match parse_object_identifier(tokens) {
                     Ok((oid, consumed)) => Ok((Some(oid), consumed)),
                     Err(e) => Err(e),
-                };
-                out
+                }
             } else {
                 Ok((None, 0))
             }

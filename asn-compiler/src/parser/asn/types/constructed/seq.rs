@@ -16,9 +16,7 @@ use crate::parser::asn::{
 
 use super::utils::parse_component;
 
-pub(crate) fn parse_seq_or_seq_of_type<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Asn1TypeKind, usize), Error> {
+pub(crate) fn parse_seq_or_seq_of_type(tokens: &[Token]) -> Result<(Asn1TypeKind, usize), Error> {
     if !expect_keyword(tokens, "SEQUENCE")? {
         return Err(unexpected_token!("'SEQUENCE'", tokens[0]));
     }
@@ -30,7 +28,7 @@ pub(crate) fn parse_seq_or_seq_of_type<'parser>(
     }
 }
 
-fn parse_sequence_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1TypeKind, usize), Error> {
+fn parse_sequence_type(tokens: &[Token]) -> Result<(Asn1TypeKind, usize), Error> {
     let mut consumed = 0;
     // Initial 'SEQUENCE' is consumed by the caller. We start with '{'
 
@@ -49,9 +47,8 @@ fn parse_sequence_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1TypeKin
             Ok(result) => result,
             Err(_) => (None, 0),
         };
-        if component.is_some() {
-            let component = component.unwrap();
-            root_components.push(component);
+        if let Some(root_comp) = component {
+            root_components.push(root_comp);
         }
         consumed += component_consumed;
 
@@ -99,9 +96,7 @@ fn parse_sequence_type<'parser>(tokens: &'parser [Token]) -> Result<(Asn1TypeKin
     ))
 }
 
-fn parse_sequence_of_type<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Asn1TypeKind, usize), Error> {
+fn parse_sequence_of_type(tokens: &[Token]) -> Result<(Asn1TypeKind, usize), Error> {
     let mut consumed = 0;
 
     // Initial SEQUENCE is already consumed.
@@ -131,9 +126,7 @@ fn parse_sequence_of_type<'parser>(
     ))
 }
 
-fn parse_seq_component<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Option<SeqComponent>, usize), Error> {
+fn parse_seq_component(tokens: &[Token]) -> Result<(Option<SeqComponent>, usize), Error> {
     let mut consumed = 0;
 
     let (component, component_consumed) = match parse_component(&tokens[consumed..]) {
@@ -178,9 +171,7 @@ fn parse_seq_component<'parser>(
     }
 }
 
-fn parse_seq_addition_group<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(SeqAdditionGroup, usize), Error> {
+fn parse_seq_addition_group(tokens: &[Token]) -> Result<(SeqAdditionGroup, usize), Error> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_addition_groups_begin)? {
@@ -221,19 +212,17 @@ fn parse_seq_addition_group<'parser>(
 
     if components.is_empty() {
         Err(parse_error!("Empty Addition Groups not allowed!"))
+    } else if expect_token(&tokens[consumed..], Token::is_addition_groups_end)? {
+        consumed += 1;
+        Ok((
+            SeqAdditionGroup {
+                version,
+                components,
+            },
+            consumed,
+        ))
     } else {
-        if expect_token(&tokens[consumed..], Token::is_addition_groups_end)? {
-            consumed += 1;
-            Ok((
-                SeqAdditionGroup {
-                    version,
-                    components,
-                },
-                consumed,
-            ))
-        } else {
-            Err(unexpected_token!("']]'", tokens[consumed]))
-        }
+        Err(unexpected_token!("']]'", tokens[consumed]))
     }
 }
 

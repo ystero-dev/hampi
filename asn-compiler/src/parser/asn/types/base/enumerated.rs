@@ -10,7 +10,7 @@ use crate::parser::asn::structs::types::base::{Asn1TypeEnumerated, EnumValue};
 use super::utils::parse_named_maybe_value;
 
 // Parses values in an Enum. Used for parsing values either in the root or extension.
-fn parse_enum_values<'parser>(tokens: &'parser [Token]) -> Result<(Vec<EnumValue>, usize), Error> {
+fn parse_enum_values(tokens: &[Token]) -> Result<(Vec<EnumValue>, usize), Error> {
     let mut consumed = 0;
 
     let mut values = vec![];
@@ -40,8 +40,8 @@ fn parse_enum_values<'parser>(tokens: &'parser [Token]) -> Result<(Vec<EnumValue
 }
 
 // Parse an enumerated type
-pub(crate) fn parse_enumerated_type<'parser>(
-    tokens: &'parser [Token],
+pub(crate) fn parse_enumerated_type(
+    tokens: &[Token],
 ) -> Result<(Asn1TypeEnumerated, usize), Error> {
     let mut consumed = 0;
 

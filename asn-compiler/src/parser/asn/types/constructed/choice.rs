@@ -14,9 +14,7 @@ use super::utils::parse_component;
 // The current implementation supports a very simple choice definition, where, everything is dumped
 // into 'root' components. Additional extension components or version groups etc. are not supported
 // for now. May be supported later if needed.
-pub(crate) fn parse_choice_type<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Asn1TypeChoice, usize), Error> {
+pub(crate) fn parse_choice_type(tokens: &[Token]) -> Result<(Asn1TypeChoice, usize), Error> {
     let mut consumed = 0;
 
     if !expect_keyword(&tokens[consumed..], "CHOICE")? {
@@ -38,15 +36,15 @@ pub(crate) fn parse_choice_type<'parser>(
             Ok(result) => (Some(result.0), result.1),
             Err(_) => (None, 0),
         };
-        if component.is_some() {
+        if let Some(c) = component {
             // We have a component that needs to be added in the `additions` list and not in the
             // `root_components`. All such components that are not part of `ChoiceAdditionGroup`
             // (ie. one without `version`, are pulled into one `ChoiceAdditionGroup` with version
             // as `None`. And are added separately.
             if extension_markers > 0 {
-                no_ver_additions_components.push(component.unwrap());
+                no_ver_additions_components.push(c);
             } else {
-                root_components.push(component.unwrap());
+                root_components.push(c);
             }
             consumed += component_consumed;
         }
@@ -89,7 +87,7 @@ pub(crate) fn parse_choice_type<'parser>(
     }
 
     let additions = if extension_markers > 0 {
-        if no_ver_additions_components.len() > 0 {
+        if !no_ver_additions_components.is_empty() {
             let new_addition = ChoiceAdditionGroup {
                 version: None,
                 components: no_ver_additions_components,
@@ -110,9 +108,7 @@ pub(crate) fn parse_choice_type<'parser>(
     ))
 }
 
-fn parse_choice_addition_group<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(ChoiceAdditionGroup, usize), Error> {
+fn parse_choice_addition_group(tokens: &[Token]) -> Result<(ChoiceAdditionGroup, usize), Error> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_addition_groups_begin)? {
@@ -139,8 +135,8 @@ fn parse_choice_addition_group<'parser>(
             Err(_) => (None, 0),
         };
 
-        if component.is_some() {
-            components.push(component.unwrap());
+        if let Some(c) = component {
+            components.push(c);
         }
         consumed += component_consumed;
 

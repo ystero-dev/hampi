@@ -16,9 +16,7 @@ use crate::parser::asn::structs::types::ioc::*;
 
 use super::parse_type;
 
-pub(crate) fn parse_class<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(Asn1ObjectClass, usize), Error> {
+pub(crate) fn parse_class(tokens: &[Token]) -> Result<(Asn1ObjectClass, usize), Error> {
     let mut consumed = 0;
 
     if !expect_keyword(&tokens[consumed..], "CLASS")? {
@@ -41,13 +39,11 @@ pub(crate) fn parse_class<'parser>(
 
         if expect_token(&tokens[consumed..], Token::is_comma)? {
             consumed += 1;
+        } else if expect_token(&tokens[consumed..], Token::is_curly_end)? {
+            consumed += 1;
+            break;
         } else {
-            if expect_token(&tokens[consumed..], Token::is_curly_end)? {
-                consumed += 1;
-                break;
-            } else {
-                return Err(unexpected_token!("',' or '}'", tokens[consumed]));
-            }
+            return Err(unexpected_token!("',' or '}'", tokens[consumed]));
         }
     }
 
@@ -57,9 +53,7 @@ pub(crate) fn parse_class<'parser>(
     Ok((Asn1ObjectClass { fields }, consumed))
 }
 
-fn parse_field_spec<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(ObjectClassFieldSpec, usize), Error> {
+fn parse_field_spec(tokens: &[Token]) -> Result<(ObjectClassFieldSpec, usize), Error> {
     if expect_token(tokens, Token::is_value_field_reference)? {
         parse_fixed_type_value_field_spec(tokens)
     } else if expect_token(tokens, Token::is_type_field_reference)? {
@@ -69,8 +63,8 @@ fn parse_field_spec<'parser>(
     }
 }
 
-fn parse_fixed_type_value_field_spec<'parser>(
-    tokens: &'parser [Token],
+fn parse_fixed_type_value_field_spec(
+    tokens: &[Token],
 ) -> Result<(ObjectClassFieldSpec, usize), Error> {
     let mut consumed = 0;
 
@@ -150,9 +144,7 @@ fn parse_fixed_type_value_field_spec<'parser>(
     ))
 }
 
-fn parse_type_field_spec<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(ObjectClassFieldSpec, usize), Error> {
+fn parse_type_field_spec(tokens: &[Token]) -> Result<(ObjectClassFieldSpec, usize), Error> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_type_field_reference)? {
@@ -208,9 +200,9 @@ fn parse_type_field_spec<'parser>(
     ))
 }
 
-fn parse_with_syntax_for_fields<'parser>(
-    tokens: &'parser [Token],
-    fields: &'parser mut HashMap<String, ObjectClassFieldSpec>,
+fn parse_with_syntax_for_fields(
+    tokens: &[Token],
+    fields: &mut HashMap<String, ObjectClassFieldSpec>,
 ) -> Result<usize, Error> {
     let mut consumed = 0;
     if !expect_keywords(&tokens[consumed..], &["WITH", "SYNTAX"])? {
@@ -274,13 +266,11 @@ fn parse_with_syntax_for_fields<'parser>(
                     optional,
                     ..
                 } => {
-                    if in_optional_group && !*optional {
-                        if is_default_none {
-                            return Err(parse_error!(
+                    if in_optional_group && !*optional && is_default_none {
+                        return Err(parse_error!(
                                 "Optional Group for a field that is not Optional and No default : '{:#?}'",
                                 field
                             ));
-                        }
                     }
                     *with_syntax = Some(words);
                 }
@@ -312,9 +302,7 @@ fn parse_with_syntax_for_fields<'parser>(
     Ok(consumed)
 }
 
-pub(crate) fn parse_object_set<'parser>(
-    tokens: &'parser [Token],
-) -> Result<(ObjectSet, usize), Error> {
+pub(crate) fn parse_object_set(tokens: &[Token]) -> Result<(ObjectSet, usize), Error> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_curly_begin)? {
@@ -363,12 +351,11 @@ pub(crate) fn parse_object_set<'parser>(
             } // Empty Values permitted
         };
 
-        if element.is_some() {
-            let element = element.unwrap();
+        if let Some(ele) = element {
             if extension_token_count == 0 {
-                root_elements.push(element);
+                root_elements.push(ele);
             } else {
-                additional_elements.push(element);
+                additional_elements.push(ele);
             }
         }
 
@@ -407,14 +394,10 @@ pub(crate) fn parse_object_set_from_class(
             break;
         }
         let element = element.unwrap();
-        if let ObjectSetElement::Object(ref o) = element {
-            if let Asn1ObjectValue::Input(s) = o {
-                let parsed = parse_object_from_class(&s, class)?;
-                let element = ObjectSetElement::Object(parsed);
-                root_elements.push(element);
-            } else {
-                root_elements.push(element);
-            }
+        if let ObjectSetElement::Object(Asn1ObjectValue::Input(s)) = element {
+            let parsed = parse_object_from_class(&s, class)?;
+            let element = ObjectSetElement::Object(parsed);
+            root_elements.push(element);
         } else {
             root_elements.push(element);
         }
@@ -429,14 +412,10 @@ pub(crate) fn parse_object_set_from_class(
             break;
         }
         let element = element.unwrap();
-        if let ObjectSetElement::Object(ref o) = element {
-            if let Asn1ObjectValue::Input(s) = o {
-                let parsed = parse_object_from_class(&s, class)?;
-                let element = ObjectSetElement::Object(parsed);
-                additional_elements.push(element);
-            } else {
-                additional_elements.push(element);
-            }
+        if let ObjectSetElement::Object(Asn1ObjectValue::Input(s)) = element {
+            let parsed = parse_object_from_class(&s, class)?;
+            let element = ObjectSetElement::Object(parsed);
+            additional_elements.push(element);
         } else {
             additional_elements.push(element);
         }
@@ -454,7 +433,7 @@ pub(crate) fn parse_object_set_from_class(
 // Values prefexing `Type` or `value` are associated with `with_syntax` for the type. In the case
 // of `IDENTIFIED BY` syntax The prefix is an 'empty' string.
 pub(crate) fn parse_object_from_class(
-    value: &String,
+    value: &str,
     class: &Asn1ObjectClass,
 ) -> Result<Asn1ObjectValue, Error> {
     let reader = std::io::BufReader::new(std::io::Cursor::new(value));
@@ -469,33 +448,26 @@ pub(crate) fn parse_object_from_class(
         !class
             .get_with_syntax_words()
             .iter()
-            .any(|f| f.split_whitespace().any(|w| &t.text == w))
+            .any(|f| f.split_whitespace().any(|w| t.text == w))
     });
     let mut fields = HashMap::new();
-    loop {
-        let words = word_tokens.next();
-        if words.is_none() {
-            break;
-        } else {
-            let words = words.unwrap();
-            consumed += words.len();
-            let words = words
-                .iter()
-                .map(|t| t.text.clone())
-                .collect::<Vec<String>>()
-                .join(" ");
-            let field_spec = class_fieldspec_from_words(class, &words);
-            if field_spec.is_some() {
-                let field_spec = field_spec.unwrap();
-                let (field_spec_value, field_spec_value_consumed) =
-                    value_from_field_spec(field_spec, &object_tokens[consumed..])?;
-                fields.insert(field_spec.id(), field_spec_value);
-                consumed += field_spec_value_consumed;
+    for words in word_tokens {
+        consumed += words.len();
+        let words = words
+            .iter()
+            .map(|t| t.text.clone())
+            .collect::<Vec<String>>()
+            .join(" ");
+        let field_spec = class_fieldspec_from_words(class, &words);
+        if let Some(fspec) = field_spec {
+            let (field_spec_value, field_spec_value_consumed) =
+                value_from_field_spec(fspec, &object_tokens[consumed..])?;
+            fields.insert(fspec.id(), field_spec_value);
+            consumed += field_spec_value_consumed;
 
-                // Required to handle &Type IDENTIFIED BY &id
-                if consumed == object_tokens.len() {
-                    break;
-                }
+            // Required to handle &Type IDENTIFIED BY &id
+            if consumed == object_tokens.len() {
+                break;
             }
         }
     }
@@ -539,7 +511,7 @@ pub(crate) fn parse_object_from_class(
 
 fn class_fieldspec_from_words<'c>(
     class: &'c Asn1ObjectClass,
-    words: &'c String,
+    words: &str,
 ) -> Option<&'c ObjectClassFieldSpec> {
     for field in class.fields.values() {
         match field {
