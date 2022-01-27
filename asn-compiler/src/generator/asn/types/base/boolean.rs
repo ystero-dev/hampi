@@ -17,7 +17,7 @@ impl Asn1ResolvedBoolean {
         Ok(quote! {
             #[derive(Debug, AperCodec)]
             #[asn(type = "BOOLEAN")]
-            pub struct #type_name(bool);
+            pub struct #type_name(pub bool);
         })
     }
 

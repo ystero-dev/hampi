@@ -55,7 +55,7 @@ impl Asn1ResolvedInteger {
         let struct_tokens = quote! {
             #[derive(Debug, AperCodec)]
             #[asn(#ty_tokens)]
-            pub struct #struct_name(#inner_type);
+            pub struct #struct_name(pub #inner_type);
         };
 
         Ok(struct_tokens)

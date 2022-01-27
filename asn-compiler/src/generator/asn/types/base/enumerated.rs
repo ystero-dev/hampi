@@ -30,7 +30,7 @@ impl Asn1ResolvedEnumerated {
         let struct_tokens = quote! {
             #[derive(Debug, AperCodec)]
             #[asn(#ty_attributes)]
-            pub struct #struct_name(#inner_type);
+            pub struct #struct_name(pub #inner_type);
 
             impl #struct_name {
                 #named_values

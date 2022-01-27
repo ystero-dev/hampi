@@ -28,7 +28,7 @@ impl Asn1ResolvedCharacterString {
         let struct_tokens = quote! {
             #[derive(Debug, AperCodec)]
             #[asn(#ty_attributes)]
-            pub struct #struct_name(String);
+            pub struct #struct_name(pub String);
         };
 
         Ok(struct_tokens)

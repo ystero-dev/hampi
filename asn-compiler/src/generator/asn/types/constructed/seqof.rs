@@ -43,7 +43,7 @@ impl ResolvedConstructedType {
             Ok(quote! {
                 #[derive(Debug, AperCodec)]
                 #[asn(#ty_attrs)]
-                pub struct #seq_of_type_ident(Vec<#seq_of_type>);
+                pub struct #seq_of_type_ident(pub Vec<#seq_of_type>);
             })
         } else {
             Ok(TokenStream::new())

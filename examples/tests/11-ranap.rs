@@ -10,11 +10,11 @@ use bitvec::vec::BitVec;
     sz_lb = "1",
     sz_ub = "255"
 )]
-pub struct APN(Vec<u8>);
+pub struct APN(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct AccuracyFulfilmentIndicator(u8);
+pub struct AccuracyFulfilmentIndicator(pub u8);
 impl AccuracyFulfilmentIndicator {
     const REQUESTED_ACCURACY_FULFILLED: u8 = 0u8;
     const REQUESTED_ACCURACY_NOT_FULFILLED: u8 = 1u8;
@@ -37,11 +37,11 @@ pub struct Additional_CSPS_coordination_information {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "8")]
-pub struct Additional_PositioningDataSet(Vec<Additional_PositioningMethodAndUsage>);
+pub struct Additional_PositioningDataSet(pub Vec<Additional_PositioningMethodAndUsage>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "1", sz_ub = "1")]
-pub struct Additional_PositioningMethodAndUsage(Vec<u8>);
+pub struct Additional_PositioningMethodAndUsage(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -64,12 +64,12 @@ pub struct Alt_RAB_Parameter_ExtendedGuaranteedBitrateInf {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "2")]
-pub struct Alt_RAB_Parameter_ExtendedGuaranteedBitrateList(Vec<ExtendedGuaranteedBitrate>);
+pub struct Alt_RAB_Parameter_ExtendedGuaranteedBitrateList(pub Vec<ExtendedGuaranteedBitrate>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "16")]
 pub struct Alt_RAB_Parameter_ExtendedGuaranteedBitrates(
-    Vec<Alt_RAB_Parameter_ExtendedGuaranteedBitrateList>,
+    pub Vec<Alt_RAB_Parameter_ExtendedGuaranteedBitrateList>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -82,11 +82,11 @@ pub struct Alt_RAB_Parameter_ExtendedMaxBitrateInf {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "2")]
-pub struct Alt_RAB_Parameter_ExtendedMaxBitrateList(Vec<ExtendedMaxBitrate>);
+pub struct Alt_RAB_Parameter_ExtendedMaxBitrateList(pub Vec<ExtendedMaxBitrate>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "16")]
-pub struct Alt_RAB_Parameter_ExtendedMaxBitrates(Vec<Alt_RAB_Parameter_ExtendedMaxBitrateList>);
+pub struct Alt_RAB_Parameter_ExtendedMaxBitrates(pub Vec<Alt_RAB_Parameter_ExtendedMaxBitrateList>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -98,11 +98,11 @@ pub struct Alt_RAB_Parameter_GuaranteedBitrateInf {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "2")]
-pub struct Alt_RAB_Parameter_GuaranteedBitrateList(Vec<GuaranteedBitrate>);
+pub struct Alt_RAB_Parameter_GuaranteedBitrateList(pub Vec<GuaranteedBitrate>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "2")]
-pub struct Alt_RAB_Parameter_GuaranteedBitrateType(u8);
+pub struct Alt_RAB_Parameter_GuaranteedBitrateType(pub u8);
 impl Alt_RAB_Parameter_GuaranteedBitrateType {
     const UNSPECIFIED: u8 = 0u8;
     const VALUE_RANGE: u8 = 1u8;
@@ -111,7 +111,7 @@ impl Alt_RAB_Parameter_GuaranteedBitrateType {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "16")]
-pub struct Alt_RAB_Parameter_GuaranteedBitrates(Vec<Alt_RAB_Parameter_GuaranteedBitrateList>);
+pub struct Alt_RAB_Parameter_GuaranteedBitrates(pub Vec<Alt_RAB_Parameter_GuaranteedBitrateList>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -123,11 +123,11 @@ pub struct Alt_RAB_Parameter_MaxBitrateInf {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "2")]
-pub struct Alt_RAB_Parameter_MaxBitrateList(Vec<MaxBitrate>);
+pub struct Alt_RAB_Parameter_MaxBitrateList(pub Vec<MaxBitrate>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "2")]
-pub struct Alt_RAB_Parameter_MaxBitrateType(u8);
+pub struct Alt_RAB_Parameter_MaxBitrateType(pub u8);
 impl Alt_RAB_Parameter_MaxBitrateType {
     const UNSPECIFIED: u8 = 0u8;
     const VALUE_RANGE: u8 = 1u8;
@@ -136,7 +136,7 @@ impl Alt_RAB_Parameter_MaxBitrateType {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "16")]
-pub struct Alt_RAB_Parameter_MaxBitrates(Vec<Alt_RAB_Parameter_MaxBitrateList>);
+pub struct Alt_RAB_Parameter_MaxBitrates(pub Vec<Alt_RAB_Parameter_MaxBitrateList>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 2)]
@@ -150,7 +150,9 @@ pub struct Alt_RAB_Parameter_SupportedGuaranteedBitrateInf {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "16")]
-pub struct Alt_RAB_Parameter_SupportedGuaranteedBitrates(Vec<SupportedRAB_ParameterBitrateList>);
+pub struct Alt_RAB_Parameter_SupportedGuaranteedBitrates(
+    pub Vec<SupportedRAB_ParameterBitrateList>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 2)]
@@ -164,7 +166,7 @@ pub struct Alt_RAB_Parameter_SupportedMaxBitrateInf {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "16")]
-pub struct Alt_RAB_Parameter_SupportedMaxBitrates(Vec<SupportedRAB_ParameterBitrateList>);
+pub struct Alt_RAB_Parameter_SupportedMaxBitrates(pub Vec<SupportedRAB_ParameterBitrateList>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 3)]
@@ -179,7 +181,7 @@ pub struct Alt_RAB_Parameters {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
-pub struct AlternativeRABConfigurationRequest(u8);
+pub struct AlternativeRABConfigurationRequest(pub u8);
 impl AlternativeRABConfigurationRequest {
     const ALTERNATIVE_RAB_CONFIGURATION_REQUESTED: u8 = 0u8;
 }
@@ -208,19 +210,19 @@ pub enum AreaScopeForUEApplicationLayerMeasurementConfiguration {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "2")]
-pub struct Ass_RAB_Parameter_ExtendedGuaranteedBitrateList(Vec<ExtendedGuaranteedBitrate>);
+pub struct Ass_RAB_Parameter_ExtendedGuaranteedBitrateList(pub Vec<ExtendedGuaranteedBitrate>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "2")]
-pub struct Ass_RAB_Parameter_ExtendedMaxBitrateList(Vec<ExtendedMaxBitrate>);
+pub struct Ass_RAB_Parameter_ExtendedMaxBitrateList(pub Vec<ExtendedMaxBitrate>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "2")]
-pub struct Ass_RAB_Parameter_GuaranteedBitrateList(Vec<GuaranteedBitrate>);
+pub struct Ass_RAB_Parameter_GuaranteedBitrateList(pub Vec<GuaranteedBitrate>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "2")]
-pub struct Ass_RAB_Parameter_MaxBitrateList(Vec<MaxBitrate>);
+pub struct Ass_RAB_Parameter_MaxBitrateList(pub Vec<MaxBitrate>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 3)]
@@ -235,7 +237,7 @@ pub struct Ass_RAB_Parameters {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "32")]
-pub struct AuthorisedPLMNs(Vec<AuthorisedPLMNs_Entry>);
+pub struct AuthorisedPLMNs(pub Vec<AuthorisedPLMNs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -244,15 +246,15 @@ pub struct AuthorisedPLMNs(Vec<AuthorisedPLMNs_Entry>);
     sz_lb = "1",
     sz_ub = "65536"
 )]
-pub struct AuthorisedSNAs(Vec<SNAC>);
+pub struct AuthorisedSNAs(pub Vec<SNAC>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "30000", ub = "115000")]
-pub struct BarometricPressure(u32);
+pub struct BarometricPressure(pub u32);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "4", sz_ub = "4")]
-pub struct BindingID(Vec<u8>);
+pub struct BindingID(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true)]
@@ -274,7 +276,7 @@ pub struct CGI {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "2", sz_ub = "2")]
-pub struct CI(Vec<u8>);
+pub struct CI(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -286,7 +288,7 @@ pub struct CN_DeactivateTrace {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", lb = "0", ub = "1")]
-pub struct CN_DomainIndicator(u8);
+pub struct CN_DomainIndicator(pub u8);
 impl CN_DomainIndicator {
     const CS_DOMAIN: u8 = 0u8;
     const PS_DOMAIN: u8 = 1u8;
@@ -294,7 +296,7 @@ impl CN_DomainIndicator {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "4095")]
-pub struct CN_ID(u16);
+pub struct CN_ID(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -314,7 +316,7 @@ pub struct CNMBMSLinkingInformation {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct CSFB_Information(u8);
+pub struct CSFB_Information(pub u8);
 impl CSFB_Information {
     const CSFB: u8 = 0u8;
     const CSFB_HIGH_PRIORITY: u8 = 1u8;
@@ -322,7 +324,7 @@ impl CSFB_Information {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "27", sz_ub = "27")]
-pub struct CSG_Id(BitVec<Msb0, u8>);
+pub struct CSG_Id(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -331,11 +333,11 @@ pub struct CSG_Id(BitVec<Msb0, u8>);
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct CSG_Id_List(Vec<CSG_Id>);
+pub struct CSG_Id_List(pub Vec<CSG_Id>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct CSG_Membership_Status(u8);
+pub struct CSG_Membership_Status(pub u8);
 impl CSG_Membership_Status {
     const MEMBER: u8 = 0u8;
     const NON_MEMBER: u8 = 1u8;
@@ -362,46 +364,46 @@ pub enum Cause {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "113", ub = "128")]
-pub struct CauseMisc(u8);
+pub struct CauseMisc(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "81", ub = "96")]
-pub struct CauseNAS(u8);
+pub struct CauseNAS(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "129", ub = "256")]
-pub struct CauseNon_Standard(u16);
+pub struct CauseNon_Standard(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "97", ub = "112")]
-pub struct CauseProtocol(u8);
+pub struct CauseProtocol(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "1", ub = "64")]
-pub struct CauseRadioNetwork(u8);
+pub struct CauseRadioNetwork(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "257", ub = "512")]
-pub struct CauseRadioNetworkExtension(u16);
+pub struct CauseRadioNetworkExtension(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "65", ub = "80")]
-pub struct CauseTransmissionNetwork(u8);
+pub struct CauseTransmissionNetwork(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
-pub struct Cell_Access_Mode(u8);
+pub struct Cell_Access_Mode(pub u8);
 impl Cell_Access_Mode {
     const HYBRID: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "1", ub = "100", extensible = true)]
-pub struct Cell_Capacity_Class_Value(u8);
+pub struct Cell_Capacity_Class_Value(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "268435455")]
-pub struct Cell_Id(u32);
+pub struct Cell_Id(pub u32);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -413,7 +415,7 @@ pub struct CellBased {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "32")]
-pub struct CellIdList(Vec<Cell_Id>);
+pub struct CellIdList(pub Vec<Cell_Id>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 3)]
@@ -442,7 +444,7 @@ pub struct CellLoadInformationGroup {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "3")]
-pub struct CellType(u8);
+pub struct CellType(pub u8);
 impl CellType {
     const MACRO: u8 = 0u8;
     const MICRO: u8 = 1u8;
@@ -456,19 +458,19 @@ pub type ChosenIntegrityProtectionAlgorithm = IntegrityProtectionAlgorithm;
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING")]
-pub struct CivicAddress(Vec<u8>);
+pub struct CivicAddress(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING")]
-pub struct ClassmarkInformation2(Vec<u8>);
+pub struct ClassmarkInformation2(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING")]
-pub struct ClassmarkInformation3(Vec<u8>);
+pub struct ClassmarkInformation3(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "7")]
-pub struct ClientType(u8);
+pub struct ClientType(pub u8);
 impl ClientType {
     const EMERGENCY_SERVICES: u8 = 0u8;
     const VALUE_ADDED_SERVICES: u8 = 1u8;
@@ -490,11 +492,11 @@ pub struct CommonID {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "4", sz_ub = "4")]
-pub struct Correlation_ID(Vec<u8>);
+pub struct Correlation_ID(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", lb = "0", ub = "2")]
-pub struct Criticality(u8);
+pub struct Criticality(pub u8);
 impl Criticality {
     const REJECT: u8 = 0u8;
     const IGNORE: u8 = 1u8;
@@ -523,39 +525,39 @@ pub struct CriticalityDiagnostics {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct CriticalityDiagnostics_IE_List(Vec<CriticalityDiagnostics_IE_List_Entry>);
+pub struct CriticalityDiagnostics_IE_List(pub Vec<CriticalityDiagnostics_IE_List_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "1048575")]
-pub struct D_RNTI(u32);
+pub struct D_RNTI(pub u32);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "255")]
-pub struct DCH_ID(u8);
+pub struct DCH_ID(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "65535")]
-pub struct DCN_ID(u16);
+pub struct DCN_ID(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "65535")]
-pub struct DL_GTP_PDU_SequenceNumber(u16);
+pub struct DL_GTP_PDU_SequenceNumber(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "65535")]
-pub struct DL_N_PDU_SequenceNumber(u16);
+pub struct DL_N_PDU_SequenceNumber(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "6", ub = "9")]
-pub struct DRX_CycleLengthCoefficient(u8);
+pub struct DRX_CycleLengthCoefficient(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "255")]
-pub struct DSCH_ID(u8);
+pub struct DSCH_ID(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct DataPDUType(u8);
+pub struct DataPDUType(pub u8);
 impl DataPDUType {
     const P_D_UTYPE0: u8 = 0u8;
     const P_D_UTYPE1: u8 = 1u8;
@@ -563,11 +565,11 @@ impl DataPDUType {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "2")]
-pub struct DataVolumeList(Vec<DataVolumeList_Entry>);
+pub struct DataVolumeList(pub Vec<DataVolumeList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "255")]
-pub struct DataVolumeReference(u8);
+pub struct DataVolumeReference(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -587,7 +589,7 @@ pub struct DataVolumeReportRequest {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", lb = "0", ub = "1")]
-pub struct DataVolumeReportingIndication(u8);
+pub struct DataVolumeReportingIndication(pub u8);
 impl DataVolumeReportingIndication {
     const DO_REPORT: u8 = 0u8;
     const DO_NOT_REPORT: u8 = 1u8;
@@ -595,7 +597,7 @@ impl DataVolumeReportingIndication {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", lb = "0", ub = "2")]
-pub struct DeliveryOfErroneousSDU(u8);
+pub struct DeliveryOfErroneousSDU(pub u8);
 impl DeliveryOfErroneousSDU {
     const YES: u8 = 0u8;
     const NO: u8 = 1u8;
@@ -604,7 +606,7 @@ impl DeliveryOfErroneousSDU {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", lb = "0", ub = "1")]
-pub struct DeliveryOrder(u8);
+pub struct DeliveryOrder(pub u8);
 impl DeliveryOrder {
     const DELIVERY_ORDER_REQUESTED: u8 = 0u8;
     const DELIVERY_ORDER_NOT_REQUESTED: u8 = 1u8;
@@ -631,7 +633,7 @@ pub struct DirectInformationTransfer {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct DirectReportingIndicator(u8);
+pub struct DirectReportingIndicator(pub u8);
 impl DirectReportingIndicator {
     const DIRECT_SAI: u8 = 0u8;
     const DIRECT_GEO: u8 = 1u8;
@@ -658,23 +660,23 @@ pub struct DirectTransferInformationItem_RANAP_RelocInf {
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "15")]
 pub struct DirectTransferInformationList_RANAP_RelocInf(
-    Vec<DirectTransferInformationList_RANAP_RelocInf_Entry>,
+    pub Vec<DirectTransferInformationList_RANAP_RelocInf_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "7")]
-pub struct E_DCH_MAC_d_Flow_ID(u8);
+pub struct E_DCH_MAC_d_Flow_ID(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
-pub struct E_UTRAN_Service_Handover(u8);
+pub struct E_UTRAN_Service_Handover(pub u8);
 impl E_UTRAN_Service_Handover {
     const HANDOVER_TO_E_UTRAN_SHALL_NOT_BE_PERFORMED: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "65536", ub = "262143", extensible = true)]
-pub struct EARFCN_Extended(u32);
+pub struct EARFCN_Extended(pub u32);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = true)]
@@ -691,11 +693,11 @@ pub enum ENB_ID {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "8")]
-pub struct EUTRANFrequencies(Vec<EUTRANFrequencies_Entry>);
+pub struct EUTRANFrequencies(pub Vec<EUTRANFrequencies_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "15")]
-pub struct EncryptionAlgorithm(u8);
+pub struct EncryptionAlgorithm(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 1)]
@@ -713,11 +715,11 @@ pub struct EncryptionInformation {
     sz_lb = "128",
     sz_ub = "128"
 )]
-pub struct EncryptionKey(BitVec<Msb0, u8>);
+pub struct EncryptionKey(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
-pub struct End_Of_CSFB(u8);
+pub struct End_Of_CSFB(pub u8);
 impl End_Of_CSFB {
     const END_OF_CSFB: u8 = 0u8;
 }
@@ -777,7 +779,7 @@ pub struct ErrorIndication {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "2")]
-pub struct Event(u8);
+pub struct Event(pub u8);
 impl Event {
     const STOP_CHANGE_OF_SERVICE_AREA: u8 = 0u8;
     const DIRECT: u8 = 1u8;
@@ -799,15 +801,15 @@ pub struct Event1I_Parameters {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "16000001", ub = "256000000")]
-pub struct ExtendedGuaranteedBitrate(u32);
+pub struct ExtendedGuaranteedBitrate(pub u32);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "16000001", ub = "256000000")]
-pub struct ExtendedMaxBitrate(u32);
+pub struct ExtendedMaxBitrate(pub u32);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "4096", ub = "65535")]
-pub struct ExtendedRNC_ID(u16);
+pub struct ExtendedRNC_ID(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -819,18 +821,18 @@ pub struct ForwardSRNS_Context {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
-pub struct ForwardingIndication(u8);
+pub struct ForwardingIndication(pub u8);
 impl ForwardingIndication {
     const FORWARDING_ADMITTED: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "15")]
-pub struct FrameSequenceNumber(u8);
+pub struct FrameSequenceNumber(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
-pub struct FrequenceLayerConvergenceFlag(u8);
+pub struct FrequenceLayerConvergenceFlag(pub u8);
 impl FrequenceLayerConvergenceFlag {
     const NO_FLC_FLAG: u8 = 0u8;
 }
@@ -905,7 +907,7 @@ pub struct GA_PointWithUnCertaintyEllipse {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "15")]
-pub struct GA_Polygon(Vec<GA_Polygon_Entry>);
+pub struct GA_Polygon(pub Vec<GA_Polygon_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true)]
@@ -917,15 +919,15 @@ pub struct GA_UncertaintyEllipse {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "9")]
-pub struct GANSS_PositioningDataSet(Vec<GANSS_PositioningMethodAndUsage>);
+pub struct GANSS_PositioningDataSet(pub Vec<GANSS_PositioningMethodAndUsage>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "1", sz_ub = "1")]
-pub struct GANSS_PositioningMethodAndUsage(Vec<u8>);
+pub struct GANSS_PositioningMethodAndUsage(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING")]
-pub struct GERAN_BSC_Container(Vec<u8>);
+pub struct GERAN_BSC_Container(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 1)]
@@ -939,7 +941,7 @@ pub struct GERAN_Cell_ID {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING")]
-pub struct GERAN_Classmark(Vec<u8>);
+pub struct GERAN_Classmark(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 2)]
@@ -960,12 +962,12 @@ pub struct GERAN_Iumode_RAB_Failed_RABAssgntResponse_Item {
     sz_ub = "256"
 )]
 pub struct GERAN_Iumode_RAB_FailedList_RABAssgntResponse(
-    Vec<GERAN_Iumode_RAB_FailedList_RABAssgntResponse_Entry>,
+    pub Vec<GERAN_Iumode_RAB_FailedList_RABAssgntResponse_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "4", sz_ub = "4")]
-pub struct GTP_TEI(Vec<u8>);
+pub struct GTP_TEI(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "CHOICE", lb = "0", ub = "2", extensible = true)]
@@ -1012,15 +1014,15 @@ pub struct GlobalRNC_ID {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "16000000")]
-pub struct GuaranteedBitrate(u32);
+pub struct GuaranteedBitrate(pub u32);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "7")]
-pub struct HS_DSCH_MAC_d_Flow_ID(u8);
+pub struct HS_DSCH_MAC_d_Flow_ID(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct HigherBitratesThan16MbpsFlag(u8);
+pub struct HigherBitratesThan16MbpsFlag(pub u8);
 impl HigherBitratesThan16MbpsFlag {
     const ALLOWED: u8 = 0u8;
     const NOT_ALLOWED: u8 = 1u8;
@@ -1072,7 +1074,7 @@ pub struct HorizontalWithVerticalVelocityAndUncertainty {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "8", sz_ub = "8")]
-pub struct IMEI(Vec<u8>);
+pub struct IMEI(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 1)]
@@ -1085,11 +1087,11 @@ pub struct IMEIGroup {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "64")]
-pub struct IMEIList(Vec<IMEI>);
+pub struct IMEIList(pub Vec<IMEI>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "8", sz_ub = "8")]
-pub struct IMEISV(Vec<u8>);
+pub struct IMEISV(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 1)]
@@ -1102,7 +1104,7 @@ pub struct IMEISVGroup {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "64")]
-pub struct IMEISVList(Vec<IMEISV>);
+pub struct IMEISVList(pub Vec<IMEISV>);
 
 pub type IMSI = TBCD_STRING;
 
@@ -1113,7 +1115,7 @@ pub type IMSI = TBCD_STRING;
     sz_lb = "4",
     sz_ub = "16"
 )]
-pub struct IPMulticastAddress(Vec<u8>);
+pub struct IPMulticastAddress(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 3)]
@@ -1151,18 +1153,18 @@ pub struct ImmediateMDT {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", lb = "0", ub = "0")]
-pub struct IncludeVelocity(u8);
+pub struct IncludeVelocity(pub u8);
 impl IncludeVelocity {
     const REQUESTED: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "1048575")]
-pub struct InformationExchangeID(u32);
+pub struct InformationExchangeID(pub u32);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct InformationExchangeType(u8);
+pub struct InformationExchangeType(pub u8);
 impl InformationExchangeType {
     const TRANSFER: u8 = 0u8;
     const REQUEST: u8 = 1u8;
@@ -1204,7 +1206,7 @@ pub struct InformationTransferFailure {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "1048575")]
-pub struct InformationTransferID(u32);
+pub struct InformationTransferID(pub u32);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -1240,7 +1242,7 @@ pub struct InitiatingMessage {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "15")]
-pub struct IntegrityProtectionAlgorithm(u8);
+pub struct IntegrityProtectionAlgorithm(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 1)]
@@ -1258,7 +1260,7 @@ pub struct IntegrityProtectionInformation {
     sz_lb = "128",
     sz_ub = "128"
 )]
-pub struct IntegrityProtectionKey(BitVec<Msb0, u8>);
+pub struct IntegrityProtectionKey(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 3)]
@@ -1312,7 +1314,7 @@ pub struct Iu_ReleaseRequest {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "24", sz_ub = "24")]
-pub struct IuSignallingConnectionIdentifier(BitVec<Msb0, u8>);
+pub struct IuSignallingConnectionIdentifier(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = true)]
@@ -1330,11 +1332,11 @@ pub enum IuTransportAssociation {
     sz_lb = "1",
     sz_ub = "128"
 )]
-pub struct JoinedMBMSBearerService_IEs(Vec<JoinedMBMSBearerService_IEs_Entry>);
+pub struct JoinedMBMSBearerService_IEs(pub Vec<JoinedMBMSBearerService_IEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct KeyStatus(u8);
+pub struct KeyStatus(pub u8);
 impl KeyStatus {
     const OLD: u8 = 0u8;
     const NEW: u8 = 1u8;
@@ -1342,7 +1344,7 @@ impl KeyStatus {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING")]
-pub struct L3_Information(Vec<u8>);
+pub struct L3_Information(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -1351,7 +1353,7 @@ pub struct L3_Information(Vec<u8>);
     sz_lb = "1",
     sz_ub = "65536"
 )]
-pub struct LA_LIST(Vec<LA_LIST_Entry>);
+pub struct LA_LIST(pub Vec<LA_LIST_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -1363,7 +1365,7 @@ pub struct LABased {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "2", sz_ub = "2")]
-pub struct LAC(Vec<u8>);
+pub struct LAC(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 1)]
@@ -1376,7 +1378,7 @@ pub struct LAI {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "8")]
-pub struct LAI_List(Vec<LAI>);
+pub struct LAI_List(pub Vec<LAI>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -1385,7 +1387,7 @@ pub struct LAI_List(Vec<LAI>);
     sz_lb = "1",
     sz_ub = "65536"
 )]
-pub struct LAListofIdleModeUEs(Vec<LAI>);
+pub struct LAListofIdleModeUEs(pub Vec<LAI>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -1394,7 +1396,7 @@ pub struct LAListofIdleModeUEs(Vec<LAI>);
     sz_lb = "32",
     sz_ub = "256"
 )]
-pub struct LHN_ID(Vec<u8>);
+pub struct LHN_ID(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -1422,11 +1424,11 @@ pub struct LastVisitedUTRANCell_Item {
     sz_lb = "1",
     sz_ub = "128"
 )]
-pub struct LeftMBMSBearerService_IEs(Vec<LeftMBMSBearerService_IEs_Entry>);
+pub struct LeftMBMSBearerService_IEs(pub Vec<LeftMBMSBearerService_IEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "2")]
-pub struct Links_to_log(u8);
+pub struct Links_to_log(pub u8);
 impl Links_to_log {
     const UPLINK: u8 = 0u8;
     const DOWNLINK: u8 = 1u8;
@@ -1440,15 +1442,15 @@ impl Links_to_log {
     sz_lb = "1",
     sz_ub = "65536"
 )]
-pub struct ListOF_SNAs(Vec<SNAC>);
+pub struct ListOF_SNAs(pub Vec<SNAC>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "16")]
-pub struct ListOfInterfacesToTrace(Vec<InterfacesToTraceItem>);
+pub struct ListOfInterfacesToTrace(pub Vec<InterfacesToTraceItem>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "100")]
-pub struct LoadValue(u8);
+pub struct LoadValue(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -1476,7 +1478,7 @@ pub struct LocationRelatedDataRequestType {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "2")]
-pub struct LocationRelatedDataRequestTypeSpecificToGERANIuMode(u8);
+pub struct LocationRelatedDataRequestTypeSpecificToGERANIuMode(pub u8);
 impl LocationRelatedDataRequestTypeSpecificToGERANIuMode {
     const DECIPHERING_KEYS_EOTD: u8 = 0u8;
     const DEDICATED_MOBILE_ASSISTED_EOTD_ASSISTANCE_DATA: u8 = 1u8;
@@ -1547,7 +1549,7 @@ pub struct LoggedMDT {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "5")]
-pub struct LoggingDuration(u8);
+pub struct LoggingDuration(pub u8);
 impl LoggingDuration {
     const MIN10: u8 = 0u8;
     const MIN20: u8 = 1u8;
@@ -1559,7 +1561,7 @@ impl LoggingDuration {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "7")]
-pub struct LoggingInterval(u8);
+pub struct LoggingInterval(pub u8);
 impl LoggingInterval {
     const S1D28: u8 = 0u8;
     const S2D56: u8 = 1u8;
@@ -1601,7 +1603,7 @@ pub struct M4_Collection_Parameters {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "7")]
-pub struct M4_Period(u8);
+pub struct M4_Period(pub u8);
 impl M4_Period {
     const MS100: u8 = 0u8;
     const MS250: u8 = 1u8;
@@ -1615,7 +1617,7 @@ impl M4_Period {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "31")]
-pub struct M4_Threshold(u8);
+pub struct M4_Threshold(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = true)]
@@ -1628,7 +1630,7 @@ pub enum M4Report {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "7")]
-pub struct M5_Period(u8);
+pub struct M5_Period(pub u8);
 impl M5_Period {
     const MS100: u8 = 0u8;
     const MS250: u8 = 1u8;
@@ -1651,7 +1653,7 @@ pub enum M5Report {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "12")]
-pub struct M6_Period(u8);
+pub struct M6_Period(pub u8);
 impl M6_Period {
     const MS1000: u8 = 0u8;
     const MS2000: u8 = 1u8;
@@ -1679,7 +1681,7 @@ pub struct M6Report {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "12")]
-pub struct M7_Period(u8);
+pub struct M7_Period(pub u8);
 impl M7_Period {
     const MS1000: u8 = 0u8;
     const MS2000: u8 = 1u8;
@@ -1707,11 +1709,11 @@ pub struct M7Report {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "8", sz_ub = "8")]
-pub struct MBMS_PTP_RAB_ID(BitVec<Msb0, u8>);
+pub struct MBMS_PTP_RAB_ID(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct MBMSBearerServiceType(u8);
+pub struct MBMSBearerServiceType(pub u8);
 impl MBMSBearerServiceType {
     const MULTICAST: u8 = 0u8;
     const BROADCAST: u8 = 1u8;
@@ -1719,7 +1721,7 @@ impl MBMSBearerServiceType {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct MBMSCNDe_Registration(u8);
+pub struct MBMSCNDe_Registration(pub u8);
 impl MBMSCNDe_Registration {
     const NORMALSESSIONSTOP: u8 = 0u8;
     const DEREGISTER: u8 = 1u8;
@@ -1743,7 +1745,7 @@ pub struct MBMSCNDe_RegistrationResponse {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct MBMSCountingInformation(u8);
+pub struct MBMSCountingInformation(pub u8);
 impl MBMSCountingInformation {
     const COUNTING: u8 = 0u8;
     const NOTCOUNTING: u8 = 1u8;
@@ -1751,7 +1753,7 @@ impl MBMSCountingInformation {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct MBMSHCIndicator(u8);
+pub struct MBMSHCIndicator(pub u8);
 impl MBMSHCIndicator {
     const UNCOMPRESSED_HEADER: u8 = 0u8;
     const COMPRESSED_HEADER: u8 = 1u8;
@@ -1764,7 +1766,7 @@ impl MBMSHCIndicator {
     sz_lb = "1",
     sz_ub = "512"
 )]
-pub struct MBMSIPMulticastAddressandAPNRequest(Vec<TMGI>);
+pub struct MBMSIPMulticastAddressandAPNRequest(pub Vec<TMGI>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -1778,7 +1780,7 @@ pub struct MBMSIPMulticastAddressandAPNlist {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
-pub struct MBMSLinkingInformation(u8);
+pub struct MBMSLinkingInformation(pub u8);
 impl MBMSLinkingInformation {
     const U_E_HAS_JOINED_MULTICAST_SERVICES: u8 = 0u8;
 }
@@ -1833,7 +1835,7 @@ pub struct MBMSRegistrationRequest {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct MBMSRegistrationRequestType(u8);
+pub struct MBMSRegistrationRequestType(pub u8);
 impl MBMSRegistrationRequestType {
     const REGISTER: u8 = 0u8;
     const DEREGISTER: u8 = 1u8;
@@ -1849,19 +1851,19 @@ pub struct MBMSRegistrationResponse {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING")]
-pub struct MBMSServiceArea(Vec<u8>);
+pub struct MBMSServiceArea(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "3", sz_ub = "3")]
-pub struct MBMSSessionDuration(Vec<u8>);
+pub struct MBMSSessionDuration(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "1", sz_ub = "1")]
-pub struct MBMSSessionIdentity(Vec<u8>);
+pub struct MBMSSessionIdentity(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "1", sz_ub = "1")]
-pub struct MBMSSessionRepetitionNumber(Vec<u8>);
+pub struct MBMSSessionRepetitionNumber(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -1955,7 +1957,7 @@ pub struct MBMSUELinkingResponse {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "2")]
-pub struct MDT_Activation(u8);
+pub struct MDT_Activation(pub u8);
 impl MDT_Activation {
     const IMMEDIATE_MD_TONLY: u8 = 0u8;
     const LOGGED_MD_TONLY: u8 = 1u8;
@@ -1974,7 +1976,7 @@ pub struct MDT_Configuration {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "16")]
-pub struct MDT_PLMN_List(Vec<PLMNidentity>);
+pub struct MDT_PLMN_List(pub Vec<PLMNidentity>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true)]
@@ -2007,26 +2009,26 @@ pub enum MDTMode {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "1", sz_ub = "9")]
-pub struct MSISDN(Vec<u8>);
+pub struct MSISDN(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
-pub struct Management_Based_MDT_Allowed(u8);
+pub struct Management_Based_MDT_Allowed(pub u8);
 impl Management_Based_MDT_Allowed {
     const ALLOWED: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "1", ub = "16000000")]
-pub struct MaxBitrate(u32);
+pub struct MaxBitrate(pub u32);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "32768")]
-pub struct MaxSDU_Size(u16);
+pub struct MaxSDU_Size(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", lb = "0", ub = "5")]
-pub struct MeasBand(u8);
+pub struct MeasBand(pub u8);
 impl MeasBand {
     const V6: u8 = 0u8;
     const V15: u8 = 1u8;
@@ -2038,7 +2040,7 @@ impl MeasBand {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "2")]
-pub struct MeasurementQuantity(u8);
+pub struct MeasurementQuantity(pub u8);
 impl MeasurementQuantity {
     const CPICH_EC_NO: u8 = 0u8;
     const CPICH_RSCP: u8 = 1u8;
@@ -2047,7 +2049,7 @@ impl MeasurementQuantity {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "8", sz_ub = "8")]
-pub struct MeasurementsToActivate(BitVec<Msb0, u8>);
+pub struct MeasurementsToActivate(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -2056,27 +2058,27 @@ pub struct MeasurementsToActivate(BitVec<Msb0, u8>);
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct MessageStructure(Vec<MessageStructure_Entry>);
+pub struct MessageStructure(pub Vec<MessageStructure_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING")]
-pub struct NAS_PDU(Vec<u8>);
+pub struct NAS_PDU(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "2", sz_ub = "2")]
-pub struct NAS_SequenceNumber(BitVec<Msb0, u8>);
+pub struct NAS_SequenceNumber(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "4", sz_ub = "4")]
-pub struct NAS_SynchronisationIndicator(BitVec<Msb0, u8>);
+pub struct NAS_SynchronisationIndicator(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "3")]
-pub struct NRTLoadInformationValue(u8);
+pub struct NRTLoadInformationValue(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING")]
-pub struct NewBSS_To_OldBSS_Information(Vec<u8>);
+pub struct NewBSS_To_OldBSS_Information(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -2085,11 +2087,11 @@ pub struct NewBSS_To_OldBSS_Information(Vec<u8>);
     sz_lb = "1",
     sz_ub = "65536"
 )]
-pub struct NewRAListofIdleModeUEs(Vec<RAC>);
+pub struct NewRAListofIdleModeUEs(pub Vec<RAC>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", lb = "0", ub = "1")]
-pub struct NonSearchingIndication(u8);
+pub struct NonSearchingIndication(pub u8);
 impl NonSearchingIndication {
     const NON_SEARCHING: u8 = 0u8;
     const SEARCHING: u8 = 1u8;
@@ -2105,15 +2107,15 @@ pub struct NotEmptyRAListofIdleModeUEs {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "10", sz_ub = "10")]
-pub struct Null_NRI(BitVec<Msb0, u8>);
+pub struct Null_NRI(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "1", ub = "2")]
-pub struct NumberOfIuInstances(u8);
+pub struct NumberOfIuInstances(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "1", ub = "16")]
-pub struct NumberOfSteps(u8);
+pub struct NumberOfSteps(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -2122,7 +2124,7 @@ pub struct NumberOfSteps(u8);
     sz_lb = "3",
     sz_ub = "22"
 )]
-pub struct OMC_ID(Vec<u8>);
+pub struct OMC_ID(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -2140,19 +2142,19 @@ pub struct Offload_RAB_Parameters {
     sz_lb = "1",
     sz_ub = "255"
 )]
-pub struct Offload_RAB_Parameters_APN(Vec<u8>);
+pub struct Offload_RAB_Parameters_APN(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "2", sz_ub = "2")]
-pub struct Offload_RAB_Parameters_ChargingCharacteristics(Vec<u8>);
+pub struct Offload_RAB_Parameters_ChargingCharacteristics(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING")]
-pub struct OldBSS_ToNewBSS_Information(Vec<u8>);
+pub struct OldBSS_ToNewBSS_Information(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
-pub struct Out_Of_UTRAN(u8);
+pub struct Out_Of_UTRAN(pub u8);
 impl Out_Of_UTRAN {
     const CELL_RESELECTION_TO_EUTRAN: u8 = 0u8;
 }
@@ -2176,11 +2178,11 @@ pub struct Overload {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "4", sz_ub = "4")]
-pub struct P_TMSI(Vec<u8>);
+pub struct P_TMSI(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "4")]
-pub struct PDP_Type(u8);
+pub struct PDP_Type(pub u8);
 impl PDP_Type {
     const EMPTY: u8 = 0u8;
     const PPP: u8 = 1u8;
@@ -2191,22 +2193,22 @@ impl PDP_Type {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
-pub struct PDP_Type_extension(u8);
+pub struct PDP_Type_extension(pub u8);
 impl PDP_Type_extension {
     const IPV4_AND_IPV6: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "2")]
-pub struct PDP_TypeInformation(Vec<PDP_Type>);
+pub struct PDP_TypeInformation(pub Vec<PDP_Type>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "2")]
-pub struct PDP_TypeInformation_extension(Vec<PDP_Type_extension>);
+pub struct PDP_TypeInformation_extension(pub Vec<PDP_Type_extension>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "3")]
-pub struct PDUType14FrameSequenceNumber(u8);
+pub struct PDUType14FrameSequenceNumber(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -2218,13 +2220,13 @@ pub struct PLMNBased {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "16")]
-pub struct PLMNList(Vec<PLMNidentity>);
+pub struct PLMNList(pub Vec<PLMNidentity>);
 
 pub type PLMNidentity = TBCD_STRING;
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "32")]
-pub struct PLMNs_in_shared_network(Vec<PLMNs_in_shared_network_Entry>);
+pub struct PLMNs_in_shared_network(pub Vec<PLMNs_in_shared_network_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -2245,7 +2247,7 @@ pub enum PagingAreaID {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "4")]
-pub struct PagingCause(u8);
+pub struct PagingCause(pub u8);
 impl PagingCause {
     const TERMINATING_CONVERSATIONAL_CALL: u8 = 0u8;
     const TERMINATING_STREAMING_CALL: u8 = 1u8;
@@ -2265,7 +2267,7 @@ pub struct PeriodicLocationInfo {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct PeriodicReportingIndicator(u8);
+pub struct PeriodicReportingIndicator(pub u8);
 impl PeriodicReportingIndicator {
     const PERIODIC_SAI: u8 = 0u8;
     const PERIODIC_GEO: u8 = 1u8;
@@ -2280,15 +2282,15 @@ pub enum PermanentNAS_UE_ID {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "16")]
-pub struct PermittedEncryptionAlgorithms(Vec<EncryptionAlgorithm>);
+pub struct PermittedEncryptionAlgorithms(pub Vec<EncryptionAlgorithm>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "16")]
-pub struct PermittedIntegrityProtectionAlgorithms(Vec<IntegrityProtectionAlgorithm>);
+pub struct PermittedIntegrityProtectionAlgorithms(pub Vec<IntegrityProtectionAlgorithm>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "2", sz_ub = "2")]
-pub struct Port_Number(Vec<u8>);
+pub struct Port_Number(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 2)]
@@ -2302,23 +2304,23 @@ pub struct PositionData {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING")]
-pub struct PositionDataSpecificToGERANIuMode(Vec<u8>);
+pub struct PositionDataSpecificToGERANIuMode(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "4", sz_ub = "4")]
-pub struct PositioningDataDiscriminator(BitVec<Msb0, u8>);
+pub struct PositioningDataDiscriminator(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "9")]
-pub struct PositioningDataSet(Vec<PositioningMethodAndUsage>);
+pub struct PositioningDataSet(pub Vec<PositioningMethodAndUsage>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "1", sz_ub = "1")]
-pub struct PositioningMethodAndUsage(Vec<u8>);
+pub struct PositioningMethodAndUsage(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct PositioningPriority(u8);
+pub struct PositioningPriority(pub u8);
 impl PositioningPriority {
     const HIGH_PRIORITY: u8 = 0u8;
     const NORMAL_PRIORITY: u8 = 1u8;
@@ -2326,7 +2328,7 @@ impl PositioningPriority {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct PowerSavingIndicator(u8);
+pub struct PowerSavingIndicator(pub u8);
 impl PowerSavingIndicator {
     const PSM_CONFIGURED: u8 = 0u8;
     const E_DRX_CONFIGURED: u8 = 1u8;
@@ -2334,7 +2336,7 @@ impl PowerSavingIndicator {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", lb = "0", ub = "1")]
-pub struct Pre_emptionCapability(u8);
+pub struct Pre_emptionCapability(pub u8);
 impl Pre_emptionCapability {
     const SHALL_NOT_TRIGGER_PRE_EMPTION: u8 = 0u8;
     const MAY_TRIGGER_PRE_EMPTION: u8 = 1u8;
@@ -2342,7 +2344,7 @@ impl Pre_emptionCapability {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", lb = "0", ub = "1")]
-pub struct Pre_emptionVulnerability(u8);
+pub struct Pre_emptionVulnerability(pub u8);
 impl Pre_emptionVulnerability {
     const NOT_PRE_EMPTABLE: u8 = 0u8;
     const PRE_EMPTABLE: u8 = 1u8;
@@ -2350,7 +2352,7 @@ impl Pre_emptionVulnerability {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", lb = "0", ub = "2")]
-pub struct Presence(u8);
+pub struct Presence(pub u8);
 impl Presence {
     const OPTIONAL: u8 = 0u8;
     const CONDITIONAL: u8 = 1u8;
@@ -2359,11 +2361,11 @@ impl Presence {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "8", sz_ub = "8")]
-pub struct Priority_Class_Indicator(BitVec<Msb0, u8>);
+pub struct Priority_Class_Indicator(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "15")]
-pub struct PriorityLevel(u8);
+pub struct PriorityLevel(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = false)]
@@ -2382,15 +2384,15 @@ pub struct PrivateMessage {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "255")]
-pub struct ProcedureCode(u8);
+pub struct ProcedureCode(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "65535")]
-pub struct ProtocolExtensionID(u16);
+pub struct ProtocolExtensionID(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "65535")]
-pub struct ProtocolIE_ID(u16);
+pub struct ProtocolIE_ID(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "CHOICE", lb = "0", ub = "0", extensible = true)]
@@ -2401,7 +2403,7 @@ pub enum ProvidedData {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", lb = "0", ub = "1")]
-pub struct QueuingAllowed(u8);
+pub struct QueuingAllowed(pub u8);
 impl QueuingAllowed {
     const QUEUEING_NOT_ALLOWED: u8 = 0u8;
     const QUEUEING_ALLOWED: u8 = 1u8;
@@ -2425,7 +2427,7 @@ pub struct RAB_AssignmentResponse {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "3")]
-pub struct RAB_AsymmetryIndicator(u8);
+pub struct RAB_AsymmetryIndicator(pub u8);
 impl RAB_AsymmetryIndicator {
     const SYMMETRIC_BIDIRECTIONAL: u8 = 0u8;
     const ASYMMETRIC_UNIDIRECTIONAL_DOWNLINK: u8 = 1u8;
@@ -2440,7 +2442,7 @@ impl RAB_AsymmetryIndicator {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_ContextFailedtoTransferList(Vec<RAB_ContextFailedtoTransferList_Entry>);
+pub struct RAB_ContextFailedtoTransferList(pub Vec<RAB_ContextFailedtoTransferList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 5)]
@@ -2481,7 +2483,7 @@ pub struct RAB_ContextItem_RANAP_RelocInf {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_ContextList(Vec<RAB_ContextList_Entry>);
+pub struct RAB_ContextList(pub Vec<RAB_ContextList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -2490,7 +2492,7 @@ pub struct RAB_ContextList(Vec<RAB_ContextList_Entry>);
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_ContextList_RANAP_RelocInf(Vec<RAB_ContextList_RANAP_RelocInf_Entry>);
+pub struct RAB_ContextList_RANAP_RelocInf(pub Vec<RAB_ContextList_RANAP_RelocInf_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -2517,7 +2519,7 @@ pub struct RAB_DataForwardingItem_SRNS_CtxReq {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_DataForwardingList(Vec<RAB_DataForwardingList_Entry>);
+pub struct RAB_DataForwardingList(pub Vec<RAB_DataForwardingList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -2526,7 +2528,7 @@ pub struct RAB_DataForwardingList(Vec<RAB_DataForwardingList_Entry>);
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_DataForwardingList_SRNS_CtxReq(Vec<RAB_DataForwardingList_SRNS_CtxReq_Entry>);
+pub struct RAB_DataForwardingList_SRNS_CtxReq(pub Vec<RAB_DataForwardingList_SRNS_CtxReq_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 2)]
@@ -2545,7 +2547,7 @@ pub struct RAB_DataVolumeReportItem {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_DataVolumeReportList(Vec<RAB_DataVolumeReportList_Entry>);
+pub struct RAB_DataVolumeReportList(pub Vec<RAB_DataVolumeReportList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -2562,7 +2564,7 @@ pub struct RAB_DataVolumeReportRequestItem {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_DataVolumeReportRequestList(Vec<RAB_DataVolumeReportRequestList_Entry>);
+pub struct RAB_DataVolumeReportRequestList(pub Vec<RAB_DataVolumeReportRequestList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -2590,7 +2592,7 @@ pub struct RAB_FailedItem_EnhRelocInfoRes {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_FailedList(Vec<RAB_FailedList_Entry>);
+pub struct RAB_FailedList(pub Vec<RAB_FailedList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -2599,7 +2601,7 @@ pub struct RAB_FailedList(Vec<RAB_FailedList_Entry>);
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_FailedList_EnhRelocInfoRes(Vec<RAB_FailedList_EnhRelocInfoRes_Entry>);
+pub struct RAB_FailedList_EnhRelocInfoRes(pub Vec<RAB_FailedList_EnhRelocInfoRes_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -2608,11 +2610,11 @@ pub struct RAB_FailedList_EnhRelocInfoRes(Vec<RAB_FailedList_EnhRelocInfoRes_Ent
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_FailedtoReportList(Vec<RAB_FailedtoReportList_Entry>);
+pub struct RAB_FailedtoReportList(pub Vec<RAB_FailedtoReportList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "8", sz_ub = "8")]
-pub struct RAB_ID(BitVec<Msb0, u8>);
+pub struct RAB_ID(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -2630,7 +2632,7 @@ pub struct RAB_ModifyItem {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_ModifyList(Vec<RAB_ModifyList_Entry>);
+pub struct RAB_ModifyList(pub Vec<RAB_ModifyList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -2642,19 +2644,19 @@ pub struct RAB_ModifyRequest {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "2")]
-pub struct RAB_Parameter_ExtendedGuaranteedBitrateList(Vec<ExtendedGuaranteedBitrate>);
+pub struct RAB_Parameter_ExtendedGuaranteedBitrateList(pub Vec<ExtendedGuaranteedBitrate>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "2")]
-pub struct RAB_Parameter_ExtendedMaxBitrateList(Vec<ExtendedMaxBitrate>);
+pub struct RAB_Parameter_ExtendedMaxBitrateList(pub Vec<ExtendedMaxBitrate>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "2")]
-pub struct RAB_Parameter_GuaranteedBitrateList(Vec<GuaranteedBitrate>);
+pub struct RAB_Parameter_GuaranteedBitrateList(pub Vec<GuaranteedBitrate>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "2")]
-pub struct RAB_Parameter_MaxBitrateList(Vec<MaxBitrate>);
+pub struct RAB_Parameter_MaxBitrateList(pub Vec<MaxBitrate>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 7)]
@@ -2696,7 +2698,7 @@ pub struct RAB_QueuedItem {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_QueuedList(Vec<RAB_QueuedList_Entry>);
+pub struct RAB_QueuedList(pub Vec<RAB_QueuedList_Entry>);
 
 pub type RAB_ReleaseFailedList = RAB_FailedList;
 
@@ -2716,7 +2718,7 @@ pub struct RAB_ReleaseItem {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_ReleaseList(Vec<RAB_ReleaseList_Entry>);
+pub struct RAB_ReleaseList(pub Vec<RAB_ReleaseList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -2759,7 +2761,7 @@ pub struct RAB_ReleasedItem_IuRelComp {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_ReleasedList(Vec<RAB_ReleasedList_Entry>);
+pub struct RAB_ReleasedList(pub Vec<RAB_ReleasedList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -2768,7 +2770,7 @@ pub struct RAB_ReleasedList(Vec<RAB_ReleasedList_Entry>);
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_ReleasedList_IuRelComp(Vec<RAB_ReleasedList_IuRelComp_Entry>);
+pub struct RAB_ReleasedList_IuRelComp(pub Vec<RAB_ReleasedList_IuRelComp_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -2785,7 +2787,7 @@ pub struct RAB_RelocationReleaseItem {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_RelocationReleaseList(Vec<RAB_RelocationReleaseList_Entry>);
+pub struct RAB_RelocationReleaseList(pub Vec<RAB_RelocationReleaseList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 7)]
@@ -2893,7 +2895,7 @@ pub struct RAB_SetupItem_RelocReqAck {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_SetupList_EnhRelocInfoReq(Vec<RAB_SetupList_EnhRelocInfoReq_Entry>);
+pub struct RAB_SetupList_EnhRelocInfoReq(pub Vec<RAB_SetupList_EnhRelocInfoReq_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -2902,7 +2904,7 @@ pub struct RAB_SetupList_EnhRelocInfoReq(Vec<RAB_SetupList_EnhRelocInfoReq_Entry
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_SetupList_EnhRelocInfoRes(Vec<RAB_SetupList_EnhRelocInfoRes_Entry>);
+pub struct RAB_SetupList_EnhRelocInfoRes(pub Vec<RAB_SetupList_EnhRelocInfoRes_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -2912,7 +2914,7 @@ pub struct RAB_SetupList_EnhRelocInfoRes(Vec<RAB_SetupList_EnhRelocInfoRes_Entry
     sz_ub = "256"
 )]
 pub struct RAB_SetupList_EnhancedRelocCompleteReq(
-    Vec<RAB_SetupList_EnhancedRelocCompleteReq_Entry>,
+    pub Vec<RAB_SetupList_EnhancedRelocCompleteReq_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -2923,7 +2925,7 @@ pub struct RAB_SetupList_EnhancedRelocCompleteReq(
     sz_ub = "256"
 )]
 pub struct RAB_SetupList_EnhancedRelocCompleteRes(
-    Vec<RAB_SetupList_EnhancedRelocCompleteRes_Entry>,
+    pub Vec<RAB_SetupList_EnhancedRelocCompleteRes_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -2933,7 +2935,7 @@ pub struct RAB_SetupList_EnhancedRelocCompleteRes(
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_SetupList_RelocReq(Vec<RAB_SetupList_RelocReq_Entry>);
+pub struct RAB_SetupList_RelocReq(pub Vec<RAB_SetupList_RelocReq_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -2942,7 +2944,7 @@ pub struct RAB_SetupList_RelocReq(Vec<RAB_SetupList_RelocReq_Entry>);
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_SetupList_RelocReqAck(Vec<RAB_SetupList_RelocReqAck_Entry>);
+pub struct RAB_SetupList_RelocReqAck(pub Vec<RAB_SetupList_RelocReqAck_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 4)]
@@ -2965,7 +2967,7 @@ pub struct RAB_SetupOrModifiedItem {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_SetupOrModifiedList(Vec<RAB_SetupOrModifiedList_Entry>);
+pub struct RAB_SetupOrModifiedList(pub Vec<RAB_SetupOrModifiedList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 6)]
@@ -3011,11 +3013,11 @@ pub struct RAB_SetupOrModifyItemSecond {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_SetupOrModifyList(Vec<RAB_SetupOrModifyList_Entry>);
+pub struct RAB_SetupOrModifyList(pub Vec<RAB_SetupOrModifyList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "16000000")]
-pub struct RAB_SubflowCombinationBitRate(u32);
+pub struct RAB_SubflowCombinationBitRate(pub u32);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -3034,7 +3036,7 @@ pub struct RAB_ToBeReleasedItem_EnhancedRelocCompleteRes {
     sz_ub = "256"
 )]
 pub struct RAB_ToBeReleasedList_EnhancedRelocCompleteRes(
-    Vec<RAB_ToBeReleasedList_EnhancedRelocCompleteRes_Entry>,
+    pub Vec<RAB_ToBeReleasedList_EnhancedRelocCompleteRes_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -3044,7 +3046,7 @@ pub struct RAB_ToBeReleasedList_EnhancedRelocCompleteRes(
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RAB_TrCH_Mapping(Vec<RAB_TrCH_MappingItem>);
+pub struct RAB_TrCH_Mapping(pub Vec<RAB_TrCH_MappingItem>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -3057,7 +3059,7 @@ pub struct RAB_TrCH_MappingItem {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "2")]
-pub struct RABDataVolumeReport(Vec<RABDataVolumeReport_Entry>);
+pub struct RABDataVolumeReport(pub Vec<RABDataVolumeReport_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -3066,7 +3068,7 @@ pub struct RABDataVolumeReport(Vec<RABDataVolumeReport_Entry>);
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct RABParametersList(Vec<RABParametersList_Entry>);
+pub struct RABParametersList(pub Vec<RABParametersList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -3096,7 +3098,7 @@ pub struct RABs_failed_to_reportItem {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "1", sz_ub = "1")]
-pub struct RAC(Vec<u8>);
+pub struct RAC(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -3109,7 +3111,7 @@ pub struct RAI {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "8")]
-pub struct RAI_List(Vec<RAI>);
+pub struct RAI_List(pub Vec<RAI>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = true)]
@@ -3127,7 +3129,7 @@ pub enum RAListofIdleModeUEs {
     sz_lb = "1",
     sz_ub = "65536"
 )]
-pub struct RAListwithNoIdleModeUEsAnyMore(Vec<RAC>);
+pub struct RAListwithNoIdleModeUEsAnyMore(pub Vec<RAC>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -3168,7 +3170,7 @@ pub struct RANAP_RelocationInformation {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct RAT_Type(u8);
+pub struct RAT_Type(pub u8);
 impl RAT_Type {
     const UTRAN: u8 = 0u8;
     const GERAN: u8 = 1u8;
@@ -3181,7 +3183,7 @@ impl RAT_Type {
     sz_lb = "1",
     sz_ub = "65536"
 )]
-pub struct RAofIdleModeUEs(Vec<RAC>);
+pub struct RAofIdleModeUEs(pub Vec<RAC>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 2)]
@@ -3195,7 +3197,7 @@ pub struct RIM_Transfer {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING")]
-pub struct RIMInformation(Vec<u8>);
+pub struct RIMInformation(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = true)]
@@ -3210,7 +3212,7 @@ pub enum RIMRoutingAddress {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "4095")]
-pub struct RNC_ID(u16);
+pub struct RNC_ID(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 2)]
@@ -3240,11 +3242,11 @@ pub struct RNSAPRelocationParameters {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING")]
-pub struct RRC_Container(Vec<u8>);
+pub struct RRC_Container(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "-30", ub = "46", extensible = true)]
-pub struct RSRQ_Extension(i8);
+pub struct RSRQ_Extension(pub i8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -3255,7 +3257,7 @@ pub struct RSRQ_Type {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
-pub struct RSRVCC_HO_Indication(u8);
+pub struct RSRVCC_HO_Indication(pub u8);
 impl RSRVCC_HO_Indication {
     const PS_ONLY: u8 = 0u8;
 }
@@ -3271,18 +3273,18 @@ pub struct RSRVCC_Information {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
-pub struct RSRVCC_Operation_Possible(u8);
+pub struct RSRVCC_Operation_Possible(pub u8);
 impl RSRVCC_Operation_Possible {
     const RSRVCC_POSSIBLE: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "100")]
-pub struct RTLoadValue(u8);
+pub struct RTLoadValue(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", lb = "0", ub = "1")]
-pub struct RateControlAllowed(u8);
+pub struct RateControlAllowed(pub u8);
 impl RateControlAllowed {
     const NOT_ALLOWED: u8 = 0u8;
     const ALLOWED: u8 = 1u8;
@@ -3294,7 +3296,7 @@ pub struct RedirectAttemptFlag;
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
-pub struct RedirectionCompleted(u8);
+pub struct RedirectionCompleted(pub u8);
 impl RedirectionCompleted {
     const REDIRECTION_COMPLETED: u8 = 0u8;
 }
@@ -3306,11 +3308,11 @@ impl RedirectionCompleted {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RedirectionIndication(Vec<RedirectionIndication_Entry>);
+pub struct RedirectionIndication(pub Vec<RedirectionIndication_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "5")]
-pub struct RejectCauseValue(u8);
+pub struct RejectCauseValue(pub u8);
 impl RejectCauseValue {
     const P_LMN_NOT_ALLOWED: u8 = 0u8;
     const LOCATION_AREA_NOT_ALLOWED: u8 = 1u8;
@@ -3402,7 +3404,7 @@ pub struct RelocationRequired {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct RelocationRequirement(u8);
+pub struct RelocationRequirement(pub u8);
 impl RelocationRequirement {
     const LOSSLESS: u8 = 0u8;
     const NONE: u8 = 1u8;
@@ -3410,7 +3412,7 @@ impl RelocationRequirement {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct RelocationType(u8);
+pub struct RelocationType(pub u8);
 impl RelocationType {
     const UE_NOT_INVOLVED: u8 = 0u8;
     const UE_INVOLVED: u8 = 1u8;
@@ -3418,15 +3420,15 @@ impl RelocationType {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "255")]
-pub struct RepetitionNumber0(u8);
+pub struct RepetitionNumber0(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "1", ub = "256")]
-pub struct RepetitionNumber1(u16);
+pub struct RepetitionNumber1(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "7")]
-pub struct ReportAmount(u8);
+pub struct ReportAmount(pub u8);
 impl ReportAmount {
     const N1: u8 = 0u8;
     const N2: u8 = 1u8;
@@ -3440,7 +3442,7 @@ impl ReportAmount {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct ReportArea(u8);
+pub struct ReportArea(pub u8);
 impl ReportArea {
     const SERVICE_AREA: u8 = 0u8;
     const GEOGRAPHICAL_AREA: u8 = 1u8;
@@ -3448,14 +3450,14 @@ impl ReportArea {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
-pub struct ReportChangeOfSAI(u8);
+pub struct ReportChangeOfSAI(pub u8);
 impl ReportChangeOfSAI {
     const REQUESTED: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "12")]
-pub struct ReportInterval(u8);
+pub struct ReportInterval(pub u8);
 impl ReportInterval {
     const MS250: u8 = 0u8;
     const MS500: u8 = 1u8;
@@ -3483,19 +3485,21 @@ pub struct RequestType {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "2")]
-pub struct Requested_RAB_Parameter_ExtendedGuaranteedBitrateList(Vec<ExtendedGuaranteedBitrate>);
+pub struct Requested_RAB_Parameter_ExtendedGuaranteedBitrateList(
+    pub Vec<ExtendedGuaranteedBitrate>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "2")]
-pub struct Requested_RAB_Parameter_ExtendedMaxBitrateList(Vec<ExtendedMaxBitrate>);
+pub struct Requested_RAB_Parameter_ExtendedMaxBitrateList(pub Vec<ExtendedMaxBitrate>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "2")]
-pub struct Requested_RAB_Parameter_GuaranteedBitrateList(Vec<GuaranteedBitrate>);
+pub struct Requested_RAB_Parameter_GuaranteedBitrateList(pub Vec<GuaranteedBitrate>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "2")]
-pub struct Requested_RAB_Parameter_MaxBitrateList(Vec<MaxBitrate>);
+pub struct Requested_RAB_Parameter_MaxBitrateList(pub Vec<MaxBitrate>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 3)]
@@ -3515,7 +3519,7 @@ pub struct Requested_RAB_Parameter_Values {
     sz_lb = "1",
     sz_ub = "201"
 )]
-pub struct RequestedGANSSAssistanceData(Vec<u8>);
+pub struct RequestedGANSSAssistanceData(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -3524,11 +3528,11 @@ pub struct RequestedGANSSAssistanceData(Vec<u8>);
     sz_lb = "1",
     sz_ub = "38"
 )]
-pub struct RequestedGPSAssistanceData(Vec<u8>);
+pub struct RequestedGPSAssistanceData(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "3")]
-pub struct RequestedLocationRelatedDataType(u8);
+pub struct RequestedLocationRelatedDataType(pub u8);
 impl RequestedLocationRelatedDataType {
     const DECIPHERING_KEYS_UE_BASED_OTDOA: u8 = 0u8;
     const DECIPHERING_KEYS_ASSISTED_GPS: u8 = 1u8;
@@ -3543,7 +3547,7 @@ impl RequestedLocationRelatedDataType {
     sz_lb = "1",
     sz_ub = "512"
 )]
-pub struct RequestedMBMSIPMulticastAddressandAPNRequest(Vec<MBMSIPMulticastAddressandAPNlist>);
+pub struct RequestedMBMSIPMulticastAddressandAPNRequest(pub Vec<MBMSIPMulticastAddressandAPNlist>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -3552,7 +3556,7 @@ pub struct RequestedMBMSIPMulticastAddressandAPNRequest(Vec<MBMSIPMulticastAddre
     sz_lb = "1",
     sz_ub = "128"
 )]
-pub struct RequestedMulticastServiceList(Vec<TMGI>);
+pub struct RequestedMulticastServiceList(pub Vec<TMGI>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -3601,7 +3605,7 @@ pub struct ResetResourceAckItem {
     sz_lb = "1",
     sz_ub = "250"
 )]
-pub struct ResetResourceAckList(Vec<ResetResourceAckList_Entry>);
+pub struct ResetResourceAckList(pub Vec<ResetResourceAckList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -3626,7 +3630,7 @@ pub struct ResetResourceItem {
     sz_lb = "1",
     sz_ub = "250"
 )]
-pub struct ResetResourceList(Vec<ResetResourceList_Entry>);
+pub struct ResetResourceList(pub Vec<ResetResourceList_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 1)]
@@ -3639,7 +3643,7 @@ pub struct ResidualBitErrorRatio {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct ResponseTime(u8);
+pub struct ResponseTime(pub u8);
 impl ResponseTime {
     const LOWDELAY: u8 = 0u8;
     const DELAYTOLERANT: u8 = 1u8;
@@ -3647,7 +3651,7 @@ impl ResponseTime {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "2", sz_ub = "2")]
-pub struct SAC(Vec<u8>);
+pub struct SAC(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 1)]
@@ -3661,7 +3665,7 @@ pub struct SAI {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct SAPI(u8);
+pub struct SAPI(pub u8);
 impl SAPI {
     const SAPI_0: u8 = 0u8;
     const SAPI_3: u8 = 1u8;
@@ -3678,15 +3682,15 @@ pub struct SDU_ErrorRatio {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "64")]
-pub struct SDU_FormatInformationParameters(Vec<SDU_FormatInformationParameters_Entry>);
+pub struct SDU_FormatInformationParameters(pub Vec<SDU_FormatInformationParameters_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "7")]
-pub struct SDU_Parameters(Vec<SDU_Parameters_Entry>);
+pub struct SDU_Parameters(pub Vec<SDU_Parameters_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "2", sz_ub = "2")]
-pub struct SGSN_Group_ID(Vec<u8>);
+pub struct SGSN_Group_ID(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = false)]
@@ -3707,15 +3711,15 @@ pub struct SNA_Access_Information {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "65535")]
-pub struct SNAC(u16);
+pub struct SNAC(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "1", ub = "32")]
-pub struct SRB_ID(u8);
+pub struct SRB_ID(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "8")]
-pub struct SRB_TrCH_Mapping(Vec<SRB_TrCH_MappingItem>);
+pub struct SRB_TrCH_Mapping(pub Vec<SRB_TrCH_MappingItem>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -3768,7 +3772,7 @@ pub struct SRVCC_CSKeysResponse {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct SRVCC_HO_Indication(u8);
+pub struct SRVCC_HO_Indication(pub u8);
 impl SRVCC_HO_Indication {
     const PS_AND_CS: u8 = 0u8;
     const CS_ONLY: u8 = 1u8;
@@ -3784,14 +3788,14 @@ pub struct SRVCC_Information {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
-pub struct SRVCC_Operation_Possible(u8);
+pub struct SRVCC_Operation_Possible(pub u8);
 impl SRVCC_Operation_Possible {
     const SRVCC_POSSIBLE: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
-pub struct SRVCCSource(u8);
+pub struct SRVCCSource(pub u8);
 impl SRVCCSource {
     const V5_G: u8 = 0u8;
 }
@@ -3822,7 +3826,7 @@ pub struct SecurityModeReject {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "2")]
-pub struct Service_Handover(u8);
+pub struct Service_Handover(pub u8);
 impl Service_Handover {
     const HANDOVER_TO_GSM_SHOULD_BE_PERFORMED: u8 = 0u8;
     const HANDOVER_TO_GSM_SHOULD_NOT_BE_PERFORMED: u8 = 1u8;
@@ -3831,7 +3835,7 @@ impl Service_Handover {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct ServiceType(u8);
+pub struct ServiceType(pub u8);
 impl ServiceType {
     const Q_MC_FOR_STREAMING_SERVICE: u8 = 0u8;
     const Q_MC_FOR_MSTI_SERVICE: u8 = 1u8;
@@ -3839,14 +3843,14 @@ impl ServiceType {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
-pub struct Session_Re_establishment_Indicator(u8);
+pub struct Session_Re_establishment_Indicator(pub u8);
 impl Session_Re_establishment_Indicator {
     const TRUE: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "1048575")]
-pub struct SessionUpdateID(u32);
+pub struct SessionUpdateID(pub u32);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -3858,18 +3862,18 @@ pub struct Shared_Network_Information {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
-pub struct SignallingIndication(u8);
+pub struct SignallingIndication(pub u8);
 impl SignallingIndication {
     const SIGNALLING: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING")]
-pub struct Source_ToTarget_TransparentContainer(Vec<u8>);
+pub struct Source_ToTarget_TransparentContainer(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING")]
-pub struct SourceBSS_ToTargetBSS_TransparentContainer(Vec<u8>);
+pub struct SourceBSS_ToTargetBSS_TransparentContainer(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = true)]
@@ -3928,7 +3932,7 @@ pub struct SourceRNC_ToTargetRNC_TransparentContainer {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct SourceStatisticsDescriptor(u8);
+pub struct SourceStatisticsDescriptor(pub u8);
 impl SourceStatisticsDescriptor {
     const SPEECH: u8 = 0u8;
     const UNKNOWN: u8 = 1u8;
@@ -3945,15 +3949,15 @@ pub struct SourceUTRANCellID {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING")]
-pub struct SourceeNodeB_ToTargeteNodeB_TransparentContainer(Vec<u8>);
+pub struct SourceeNodeB_ToTargeteNodeB_TransparentContainer(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "4095")]
-pub struct SubflowSDU_Size(u16);
+pub struct SubflowSDU_Size(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "1", ub = "256")]
-pub struct SubscriberProfileIDforRFP(u16);
+pub struct SubscriberProfileIDforRFP(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -3966,15 +3970,15 @@ pub struct SuccessfulOutcome {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "1", ub = "1000000000", extensible = true)]
-pub struct SupportedBitrate(u32);
+pub struct SupportedBitrate(pub u32);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "2")]
-pub struct SupportedRAB_ParameterBitrateList(Vec<SupportedBitrate>);
+pub struct SupportedRAB_ParameterBitrateList(pub Vec<SupportedBitrate>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "2", sz_ub = "2")]
-pub struct TAC(Vec<u8>);
+pub struct TAC(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 1)]
@@ -3987,7 +3991,7 @@ pub struct TAI {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING")]
-pub struct TBCD_STRING(Vec<u8>);
+pub struct TBCD_STRING(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 1)]
@@ -4000,7 +4004,7 @@ pub struct TMGI {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "4", sz_ub = "4")]
-pub struct TMSI(Vec<u8>);
+pub struct TMSI(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -4022,15 +4026,15 @@ pub struct TNLInformationEnhRelInfoRes {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING")]
-pub struct Target_ToSource_TransparentContainer(Vec<u8>);
+pub struct Target_ToSource_TransparentContainer(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING")]
-pub struct TargetBSS_ToSourceBSS_TransparentContainer(Vec<u8>);
+pub struct TargetBSS_ToSourceBSS_TransparentContainer(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "268435455")]
-pub struct TargetCellId(u32);
+pub struct TargetCellId(pub u32);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -4076,7 +4080,7 @@ pub struct TargetRNC_ToSourceRNC_TransparentContainer {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING")]
-pub struct TargeteNodeB_ToSourceeNodeB_TransparentContainer(Vec<u8>);
+pub struct TargeteNodeB_ToSourceeNodeB_TransparentContainer(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = true)]
@@ -4089,19 +4093,19 @@ pub enum TemporaryUE_ID {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "4095")]
-pub struct Time_UE_StayedInCell(u16);
+pub struct Time_UE_StayedInCell(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "40950")]
-pub struct Time_UE_StayedInCell_EnhancedGranularity(u16);
+pub struct Time_UE_StayedInCell_EnhancedGranularity(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "1", sz_ub = "1")]
-pub struct TimeToMBMSDataTransfer(Vec<u8>);
+pub struct TimeToMBMSDataTransfer(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "1", sz_ub = "1")]
-pub struct TimingDifferenceULDL(Vec<u8>);
+pub struct TimingDifferenceULDL(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 4)]
@@ -4118,11 +4122,11 @@ pub struct TrCH_ID {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "7")]
-pub struct TrCH_ID_List(Vec<TrCH_ID>);
+pub struct TrCH_ID_List(pub Vec<TrCH_ID>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "2")]
-pub struct TraceDepth(u8);
+pub struct TraceDepth(pub u8);
 impl TraceDepth {
     const MINIMUM: u8 = 0u8;
     const MEDIUM: u8 = 1u8;
@@ -4162,19 +4166,19 @@ pub struct TraceRecordingSessionInformation {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "65535")]
-pub struct TraceRecordingSessionReference(u16);
+pub struct TraceRecordingSessionReference(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "2", sz_ub = "3")]
-pub struct TraceReference(Vec<u8>);
+pub struct TraceReference(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "1", sz_ub = "1")]
-pub struct TraceType(Vec<u8>);
+pub struct TraceType(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "3")]
-pub struct TrafficClass(u8);
+pub struct TrafficClass(pub u8);
 impl TrafficClass {
     const CONVERSATIONAL: u8 = 0u8;
     const STREAMING: u8 = 1u8;
@@ -4184,15 +4188,15 @@ impl TrafficClass {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "15")]
-pub struct TrafficHandlingPriority(u8);
+pub struct TrafficHandlingPriority(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "65535")]
-pub struct TransferDelay(u16);
+pub struct TransferDelay(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = true, sz_lb = "1", sz_ub = "160")]
-pub struct TransportLayerAddress(BitVec<Msb0, u8>);
+pub struct TransportLayerAddress(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -4210,11 +4214,11 @@ pub struct TransportLayerInformation {
     sz_lb = "3",
     sz_ub = "22"
 )]
-pub struct TriggerID(Vec<u8>);
+pub struct TriggerID(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", lb = "0", ub = "3")]
-pub struct TriggeringMessage(u8);
+pub struct TriggeringMessage(pub u8);
 impl TriggeringMessage {
     const INITIATING_MESSAGE: u8 = 0u8;
     const SUCCESSFUL_OUTCOME: u8 = 1u8;
@@ -4234,7 +4238,7 @@ pub struct TunnelInformation {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct TypeOfError(u8);
+pub struct TypeOfError(pub u8);
 impl TypeOfError {
     const NOT_UNDERSTOOD: u8 = 0u8;
     const MISSING: u8 = 1u8;
@@ -4251,15 +4255,15 @@ pub struct UE_AggregateMaximumBitRate {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "1", ub = "1000000000")]
-pub struct UE_AggregateMaximumBitRateDownlink(u32);
+pub struct UE_AggregateMaximumBitRateDownlink(pub u32);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "1", ub = "1000000000")]
-pub struct UE_AggregateMaximumBitRateUplink(u32);
+pub struct UE_AggregateMaximumBitRateUplink(pub u32);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "8", sz_ub = "8")]
-pub struct UE_Application_Layer_Measurement_Capability(BitVec<Msb0, u8>);
+pub struct UE_Application_Layer_Measurement_Capability(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true)]
@@ -4285,7 +4289,7 @@ pub struct UE_Application_Layer_Measurement_Configuration_For_Relocation {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING")]
-pub struct UE_History_Information(Vec<u8>);
+pub struct UE_History_Information(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = true)]
@@ -4317,7 +4321,7 @@ pub struct UE_IsServed {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "255")]
-pub struct UE_Usage_Type(u8);
+pub struct UE_Usage_Type(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = false)]
@@ -4341,11 +4345,11 @@ pub struct UESBI_Iu {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "1", sz_ub = "128")]
-pub struct UESBI_IuA(BitVec<Msb0, u8>);
+pub struct UESBI_IuA(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "1", sz_ub = "128")]
-pub struct UESBI_IuB(BitVec<Msb0, u8>);
+pub struct UESBI_IuB(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -4357,15 +4361,15 @@ pub struct UESpecificInformationIndication {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "65535")]
-pub struct UL_GTP_PDU_SequenceNumber(u16);
+pub struct UL_GTP_PDU_SequenceNumber(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "65535")]
-pub struct UL_N_PDU_SequenceNumber(u16);
+pub struct UL_N_PDU_SequenceNumber(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "16", sz_ub = "16")]
-pub struct UP_ModeVersions(BitVec<Msb0, u8>);
+pub struct UP_ModeVersions(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -4382,11 +4386,11 @@ pub struct UPInformation {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING")]
-pub struct UPInitialisationFrame(Vec<u8>);
+pub struct UPInitialisationFrame(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "255")]
-pub struct USCH_ID(u8);
+pub struct USCH_ID(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 1)]
@@ -4399,7 +4403,7 @@ pub struct UTRAN_CellID {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "8", sz_ub = "8")]
-pub struct UeApplicationLayerMeasurementSupportIndication(BitVec<Msb0, u8>);
+pub struct UeApplicationLayerMeasurementSupportIndication(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -4440,7 +4444,7 @@ pub struct UeRegistrationQueryResponse {
     sz_lb = "1",
     sz_ub = "128"
 )]
-pub struct UnsuccessfulLinking_IEs(Vec<UnsuccessfulLinking_IEs_Entry>);
+pub struct UnsuccessfulLinking_IEs(pub Vec<UnsuccessfulLinking_IEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -4453,7 +4457,7 @@ pub struct UnsuccessfulOutcome {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "4294967295")]
-pub struct UnsuccessfullyTransmittedDataVolume(u32);
+pub struct UnsuccessfullyTransmittedDataVolume(pub u32);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -4490,7 +4494,7 @@ pub struct UserPlaneInformation {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct UserPlaneMode(u8);
+pub struct UserPlaneMode(pub u8);
 impl UserPlaneMode {
     const TRANSPARENT_MODE: u8 = 0u8;
     const SUPPORT_MODE_FOR_PREDEFINED_SDU_SIZES: u8 = 1u8;
@@ -4511,11 +4515,11 @@ pub enum VelocityEstimate {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "127")]
-pub struct VerticalAccuracyCode(u8);
+pub struct VerticalAccuracyCode(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", lb = "0", ub = "1")]
-pub struct VerticalSpeedDirection(u8);
+pub struct VerticalSpeedDirection(pub u8);
 impl VerticalSpeedDirection {
     const UPWARD: u8 = 0u8;
     const DOWNWARD: u8 = 1u8;
@@ -4530,7 +4534,7 @@ pub struct VerticalVelocity {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct VoiceSupportMatchIndicator(u8);
+pub struct VoiceSupportMatchIndicator(pub u8);
 impl VoiceSupportMatchIndicator {
     const SUPPORTED: u8 = 0u8;
     const NOT_SUPPORTED: u8 = 1u8;
@@ -4538,7 +4542,7 @@ impl VoiceSupportMatchIndicator {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "10", sz_ub = "10")]
-pub struct BIT_STRING_2(BitVec<Msb0, u8>);
+pub struct BIT_STRING_2(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "NULL")]
@@ -4556,7 +4560,7 @@ pub struct Additional_CSPS_coordination_informationIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct Additional_CSPS_coordination_informationIE_Extensions(
-    Vec<Additional_CSPS_coordination_informationIE_Extensions_Entry>,
+    pub Vec<Additional_CSPS_coordination_informationIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -4571,7 +4575,7 @@ pub struct AllocationOrRetentionPriorityIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct AllocationOrRetentionPriorityIE_Extensions(
-    Vec<AllocationOrRetentionPriorityIE_Extensions_Entry>,
+    pub Vec<AllocationOrRetentionPriorityIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -4586,7 +4590,7 @@ pub struct Alt_RAB_Parameter_SupportedGuaranteedBitrateInfIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct Alt_RAB_Parameter_SupportedGuaranteedBitrateInfIE_Extensions(
-    Vec<Alt_RAB_Parameter_SupportedGuaranteedBitrateInfIE_Extensions_Entry>,
+    pub Vec<Alt_RAB_Parameter_SupportedGuaranteedBitrateInfIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -4601,7 +4605,7 @@ pub struct Alt_RAB_Parameter_SupportedMaxBitrateInfIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct Alt_RAB_Parameter_SupportedMaxBitrateInfIE_Extensions(
-    Vec<Alt_RAB_Parameter_SupportedMaxBitrateInfIE_Extensions_Entry>,
+    pub Vec<Alt_RAB_Parameter_SupportedMaxBitrateInfIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -4639,7 +4643,7 @@ pub struct Alt_RAB_ParametersIE_Extensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct Alt_RAB_ParametersIE_Extensions(Vec<Alt_RAB_ParametersIE_Extensions_Entry>);
+pub struct Alt_RAB_ParametersIE_Extensions(pub Vec<Alt_RAB_ParametersIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -4672,7 +4676,7 @@ pub struct Ass_RAB_ParametersIE_Extensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct Ass_RAB_ParametersIE_Extensions(Vec<Ass_RAB_ParametersIE_Extensions_Entry>);
+pub struct Ass_RAB_ParametersIE_Extensions(pub Vec<Ass_RAB_ParametersIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -4685,7 +4689,7 @@ pub struct AuthorisedPLMNs_EntryIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct AuthorisedPLMNs_EntryIE_Extensions(Vec<AuthorisedPLMNs_EntryIE_Extensions_Entry>);
+pub struct AuthorisedPLMNs_EntryIE_Extensions(pub Vec<AuthorisedPLMNs_EntryIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 2)]
@@ -4699,15 +4703,15 @@ pub struct AuthorisedPLMNs_Entry {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "1", sz_ub = "1")]
-pub struct BIT_STRING_4(BitVec<Msb0, u8>);
+pub struct BIT_STRING_4(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "56", sz_ub = "56")]
-pub struct BIT_STRING_5(BitVec<Msb0, u8>);
+pub struct BIT_STRING_5(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "56", sz_ub = "56")]
-pub struct BIT_STRING_6(BitVec<Msb0, u8>);
+pub struct BIT_STRING_6(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -4732,7 +4736,7 @@ pub struct CGIIE_Extensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct CGIIE_Extensions(Vec<CGIIE_Extensions_Entry>);
+pub struct CGIIE_Extensions(pub Vec<CGIIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -4759,7 +4763,7 @@ pub struct CN_DeactivateTraceProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct CN_DeactivateTraceProtocolIEs(Vec<CN_DeactivateTraceProtocolIEs_Entry>);
+pub struct CN_DeactivateTraceProtocolIEs(pub Vec<CN_DeactivateTraceProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -4772,7 +4776,9 @@ pub struct CN_DeactivateTraceProtocolExtensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct CN_DeactivateTraceProtocolExtensions(Vec<CN_DeactivateTraceProtocolExtensions_Entry>);
+pub struct CN_DeactivateTraceProtocolExtensions(
+    pub Vec<CN_DeactivateTraceProtocolExtensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -4805,7 +4811,7 @@ pub struct CN_InvokeTraceProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct CN_InvokeTraceProtocolIEs(Vec<CN_InvokeTraceProtocolIEs_Entry>);
+pub struct CN_InvokeTraceProtocolIEs(pub Vec<CN_InvokeTraceProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -4838,7 +4844,7 @@ pub struct CN_InvokeTraceProtocolExtensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct CN_InvokeTraceProtocolExtensions(Vec<CN_InvokeTraceProtocolExtensions_Entry>);
+pub struct CN_InvokeTraceProtocolExtensions(pub Vec<CN_InvokeTraceProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -4851,7 +4857,9 @@ pub struct CNMBMSLinkingInformationIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct CNMBMSLinkingInformationIE_Extensions(Vec<CNMBMSLinkingInformationIE_Extensions_Entry>);
+pub struct CNMBMSLinkingInformationIE_Extensions(
+    pub Vec<CNMBMSLinkingInformationIE_Extensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -4864,7 +4872,7 @@ pub struct CellBasedIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct CellBasedIE_Extensions(Vec<CellBasedIE_Extensions_Entry>);
+pub struct CellBasedIE_Extensions(pub Vec<CellBasedIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -4877,7 +4885,7 @@ pub struct CellLoadInformationIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct CellLoadInformationIE_Extensions(Vec<CellLoadInformationIE_Extensions_Entry>);
+pub struct CellLoadInformationIE_Extensions(pub Vec<CellLoadInformationIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -4890,7 +4898,9 @@ pub struct CellLoadInformationGroupIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct CellLoadInformationGroupIE_Extensions(Vec<CellLoadInformationGroupIE_Extensions_Entry>);
+pub struct CellLoadInformationGroupIE_Extensions(
+    pub Vec<CellLoadInformationGroupIE_Extensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -4915,7 +4925,7 @@ pub struct CommonIDProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct CommonIDProtocolIEs(Vec<CommonIDProtocolIEs_Entry>);
+pub struct CommonIDProtocolIEs(pub Vec<CommonIDProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -4960,7 +4970,7 @@ pub struct CommonIDProtocolExtensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct CommonIDProtocolExtensions(Vec<CommonIDProtocolExtensions_Entry>);
+pub struct CommonIDProtocolExtensions(pub Vec<CommonIDProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -4973,7 +4983,7 @@ pub struct CriticalityDiagnosticsIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct CriticalityDiagnosticsIE_Extensions(Vec<CriticalityDiagnosticsIE_Extensions_Entry>);
+pub struct CriticalityDiagnosticsIE_Extensions(pub Vec<CriticalityDiagnosticsIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -5001,7 +5011,7 @@ pub struct CriticalityDiagnostics_IE_List_EntryIE_Extensions_Entry {
     sz_ub = "65535"
 )]
 pub struct CriticalityDiagnostics_IE_List_EntryIE_Extensions(
-    Vec<CriticalityDiagnostics_IE_List_EntryIE_Extensions_Entry>,
+    pub Vec<CriticalityDiagnostics_IE_List_EntryIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -5026,7 +5036,7 @@ pub struct DataVolumeList_EntryIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct DataVolumeList_EntryIE_Extensions(Vec<DataVolumeList_EntryIE_Extensions_Entry>);
+pub struct DataVolumeList_EntryIE_Extensions(pub Vec<DataVolumeList_EntryIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 2)]
@@ -5065,7 +5075,7 @@ pub struct DataVolumeReportProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct DataVolumeReportProtocolIEs(Vec<DataVolumeReportProtocolIEs_Entry>);
+pub struct DataVolumeReportProtocolIEs(pub Vec<DataVolumeReportProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -5078,7 +5088,7 @@ pub struct DataVolumeReportProtocolExtensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct DataVolumeReportProtocolExtensions(Vec<DataVolumeReportProtocolExtensions_Entry>);
+pub struct DataVolumeReportProtocolExtensions(pub Vec<DataVolumeReportProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -5103,7 +5113,7 @@ pub struct DataVolumeReportRequestProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct DataVolumeReportRequestProtocolIEs(Vec<DataVolumeReportRequestProtocolIEs_Entry>);
+pub struct DataVolumeReportRequestProtocolIEs(pub Vec<DataVolumeReportRequestProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -5117,7 +5127,7 @@ pub struct DataVolumeReportRequestProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct DataVolumeReportRequestProtocolExtensions(
-    Vec<DataVolumeReportRequestProtocolExtensions_Entry>,
+    pub Vec<DataVolumeReportRequestProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -5145,7 +5155,9 @@ pub struct DeltaRAListofIdleModeUEsIE_Extensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct DeltaRAListofIdleModeUEsIE_Extensions(Vec<DeltaRAListofIdleModeUEsIE_Extensions_Entry>);
+pub struct DeltaRAListofIdleModeUEsIE_Extensions(
+    pub Vec<DeltaRAListofIdleModeUEsIE_Extensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -5176,7 +5188,9 @@ pub struct DirectInformationTransferProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct DirectInformationTransferProtocolIEs(Vec<DirectInformationTransferProtocolIEs_Entry>);
+pub struct DirectInformationTransferProtocolIEs(
+    pub Vec<DirectInformationTransferProtocolIEs_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -5202,7 +5216,7 @@ pub struct DirectInformationTransferProtocolExtensions_Entry {
     sz_ub = "65535"
 )]
 pub struct DirectInformationTransferProtocolExtensions(
-    Vec<DirectInformationTransferProtocolExtensions_Entry>,
+    pub Vec<DirectInformationTransferProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -5236,7 +5250,7 @@ pub struct DirectTransferProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct DirectTransferProtocolIEs(Vec<DirectTransferProtocolIEs_Entry>);
+pub struct DirectTransferProtocolIEs(pub Vec<DirectTransferProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -5271,7 +5285,7 @@ pub struct DirectTransferProtocolExtensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct DirectTransferProtocolExtensions(Vec<DirectTransferProtocolExtensions_Entry>);
+pub struct DirectTransferProtocolExtensions(pub Vec<DirectTransferProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -5285,7 +5299,7 @@ pub struct DirectTransferInformationItem_RANAP_RelocInfIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct DirectTransferInformationItem_RANAP_RelocInfIE_Extensions(
-    Vec<DirectTransferInformationItem_RANAP_RelocInfIE_Extensions_Entry>,
+    pub Vec<DirectTransferInformationItem_RANAP_RelocInfIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -5312,28 +5326,28 @@ pub struct DirectTransferInformationList_RANAP_RelocInf_Entry_Entry {
     sz_ub = "65535"
 )]
 pub struct DirectTransferInformationList_RANAP_RelocInf_Entry(
-    Vec<DirectTransferInformationList_RANAP_RelocInf_Entry_Entry>,
+    pub Vec<DirectTransferInformationList_RANAP_RelocInf_Entry_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "20", sz_ub = "20")]
-pub struct BIT_STRING_7(BitVec<Msb0, u8>);
+pub struct BIT_STRING_7(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "28", sz_ub = "28")]
-pub struct BIT_STRING_8(BitVec<Msb0, u8>);
+pub struct BIT_STRING_8(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "18", sz_ub = "18")]
-pub struct BIT_STRING_9(BitVec<Msb0, u8>);
+pub struct BIT_STRING_9(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "21", sz_ub = "21")]
-pub struct BIT_STRING_10(BitVec<Msb0, u8>);
+pub struct BIT_STRING_10(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "65535")]
-pub struct INTEGER_11(u16);
+pub struct INTEGER_11(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -5358,7 +5372,9 @@ pub struct EUTRANFrequencies_EntryIE_Extensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct EUTRANFrequencies_EntryIE_Extensions(Vec<EUTRANFrequencies_EntryIE_Extensions_Entry>);
+pub struct EUTRANFrequencies_EntryIE_Extensions(
+    pub Vec<EUTRANFrequencies_EntryIE_Extensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 2)]
@@ -5381,7 +5397,7 @@ pub struct EncryptionInformationIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct EncryptionInformationIE_Extensions(Vec<EncryptionInformationIE_Extensions_Entry>);
+pub struct EncryptionInformationIE_Extensions(pub Vec<EncryptionInformationIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -5407,7 +5423,7 @@ pub struct EnhancedRelocationCompleteConfirmProtocolIEs_Entry {
     sz_ub = "65535"
 )]
 pub struct EnhancedRelocationCompleteConfirmProtocolIEs(
-    Vec<EnhancedRelocationCompleteConfirmProtocolIEs_Entry>,
+    pub Vec<EnhancedRelocationCompleteConfirmProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -5422,7 +5438,7 @@ pub struct EnhancedRelocationCompleteConfirmProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct EnhancedRelocationCompleteConfirmProtocolExtensions(
-    Vec<EnhancedRelocationCompleteConfirmProtocolExtensions_Entry>,
+    pub Vec<EnhancedRelocationCompleteConfirmProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -5451,7 +5467,7 @@ pub struct EnhancedRelocationCompleteFailureProtocolIEs_Entry {
     sz_ub = "65535"
 )]
 pub struct EnhancedRelocationCompleteFailureProtocolIEs(
-    Vec<EnhancedRelocationCompleteFailureProtocolIEs_Entry>,
+    pub Vec<EnhancedRelocationCompleteFailureProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -5466,7 +5482,7 @@ pub struct EnhancedRelocationCompleteFailureProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct EnhancedRelocationCompleteFailureProtocolExtensions(
-    Vec<EnhancedRelocationCompleteFailureProtocolExtensions_Entry>,
+    pub Vec<EnhancedRelocationCompleteFailureProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -5505,7 +5521,7 @@ pub struct EnhancedRelocationCompleteRequestProtocolIEs_Entry {
     sz_ub = "65535"
 )]
 pub struct EnhancedRelocationCompleteRequestProtocolIEs(
-    Vec<EnhancedRelocationCompleteRequestProtocolIEs_Entry>,
+    pub Vec<EnhancedRelocationCompleteRequestProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -5544,7 +5560,7 @@ pub struct EnhancedRelocationCompleteRequestProtocolExtensions_Entry {
     sz_ub = "65535"
 )]
 pub struct EnhancedRelocationCompleteRequestProtocolExtensions(
-    Vec<EnhancedRelocationCompleteRequestProtocolExtensions_Entry>,
+    pub Vec<EnhancedRelocationCompleteRequestProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -5575,7 +5591,7 @@ pub struct EnhancedRelocationCompleteResponseProtocolIEs_Entry {
     sz_ub = "65535"
 )]
 pub struct EnhancedRelocationCompleteResponseProtocolIEs(
-    Vec<EnhancedRelocationCompleteResponseProtocolIEs_Entry>,
+    pub Vec<EnhancedRelocationCompleteResponseProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -5606,7 +5622,7 @@ pub struct EnhancedRelocationCompleteResponseProtocolExtensions_Entry {
     sz_ub = "65535"
 )]
 pub struct EnhancedRelocationCompleteResponseProtocolExtensions(
-    Vec<EnhancedRelocationCompleteResponseProtocolExtensions_Entry>,
+    pub Vec<EnhancedRelocationCompleteResponseProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -5638,7 +5654,7 @@ pub struct ErrorIndicationProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct ErrorIndicationProtocolIEs(Vec<ErrorIndicationProtocolIEs_Entry>);
+pub struct ErrorIndicationProtocolIEs(pub Vec<ErrorIndicationProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -5665,15 +5681,15 @@ pub struct ErrorIndicationProtocolExtensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct ErrorIndicationProtocolExtensions(Vec<ErrorIndicationProtocolExtensions_Entry>);
+pub struct ErrorIndicationProtocolExtensions(pub Vec<ErrorIndicationProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "-120", ub = "165")]
-pub struct INTEGER_12(i8);
+pub struct INTEGER_12(pub i8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "-120", ub = "-25")]
-pub struct INTEGER_13(i8);
+pub struct INTEGER_13(pub i8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -5698,7 +5714,7 @@ pub struct ForwardSRNS_ContextProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct ForwardSRNS_ContextProtocolIEs(Vec<ForwardSRNS_ContextProtocolIEs_Entry>);
+pub struct ForwardSRNS_ContextProtocolIEs(pub Vec<ForwardSRNS_ContextProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -5723,11 +5739,13 @@ pub struct ForwardSRNS_ContextProtocolExtensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct ForwardSRNS_ContextProtocolExtensions(Vec<ForwardSRNS_ContextProtocolExtensions_Entry>);
+pub struct ForwardSRNS_ContextProtocolExtensions(
+    pub Vec<ForwardSRNS_ContextProtocolExtensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", lb = "0", ub = "1")]
-pub struct ENUMERATED_14(u8);
+pub struct ENUMERATED_14(pub u8);
 impl ENUMERATED_14 {
     const HEIGHT: u8 = 0u8;
     const DEPTH: u8 = 1u8;
@@ -5735,27 +5753,27 @@ impl ENUMERATED_14 {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "32767")]
-pub struct INTEGER_15(u16);
+pub struct INTEGER_15(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "65535")]
-pub struct INTEGER_16(u16);
+pub struct INTEGER_16(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "127")]
-pub struct INTEGER_17(u8);
+pub struct INTEGER_17(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "179")]
-pub struct INTEGER_18(u8);
+pub struct INTEGER_18(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "179")]
-pub struct INTEGER_19(u8);
+pub struct INTEGER_19(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "127")]
-pub struct INTEGER_20(u8);
+pub struct INTEGER_20(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -5768,7 +5786,7 @@ pub struct GA_EllipsoidArcIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct GA_EllipsoidArcIE_Extensions(Vec<GA_EllipsoidArcIE_Extensions_Entry>);
+pub struct GA_EllipsoidArcIE_Extensions(pub Vec<GA_EllipsoidArcIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -5781,7 +5799,7 @@ pub struct GA_PointIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct GA_PointIE_Extensions(Vec<GA_PointIE_Extensions_Entry>);
+pub struct GA_PointIE_Extensions(pub Vec<GA_PointIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -5794,15 +5812,15 @@ pub struct GA_PointWithAltitudeIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct GA_PointWithAltitudeIE_Extensions(Vec<GA_PointWithAltitudeIE_Extensions_Entry>);
+pub struct GA_PointWithAltitudeIE_Extensions(pub Vec<GA_PointWithAltitudeIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "127")]
-pub struct INTEGER_21(u8);
+pub struct INTEGER_21(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "127")]
-pub struct INTEGER_22(u8);
+pub struct INTEGER_22(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -5816,7 +5834,7 @@ pub struct GA_PointWithAltitudeAndUncertaintyEllipsoidIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct GA_PointWithAltitudeAndUncertaintyEllipsoidIE_Extensions(
-    Vec<GA_PointWithAltitudeAndUncertaintyEllipsoidIE_Extensions_Entry>,
+    pub Vec<GA_PointWithAltitudeAndUncertaintyEllipsoidIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -5830,15 +5848,17 @@ pub struct GA_PointWithUnCertaintyIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct GA_PointWithUnCertaintyIE_Extensions(Vec<GA_PointWithUnCertaintyIE_Extensions_Entry>);
+pub struct GA_PointWithUnCertaintyIE_Extensions(
+    pub Vec<GA_PointWithUnCertaintyIE_Extensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "127")]
-pub struct INTEGER_23(u8);
+pub struct INTEGER_23(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "127")]
-pub struct INTEGER_24(u8);
+pub struct INTEGER_24(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -5852,7 +5872,7 @@ pub struct GA_PointWithUnCertaintyEllipseIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct GA_PointWithUnCertaintyEllipseIE_Extensions(
-    Vec<GA_PointWithUnCertaintyEllipseIE_Extensions_Entry>,
+    pub Vec<GA_PointWithUnCertaintyEllipseIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -5866,7 +5886,7 @@ pub struct GA_Polygon_EntryIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct GA_Polygon_EntryIE_Extensions(Vec<GA_Polygon_EntryIE_Extensions_Entry>);
+pub struct GA_Polygon_EntryIE_Extensions(pub Vec<GA_Polygon_EntryIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -5878,15 +5898,15 @@ pub struct GA_Polygon_Entry {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "127")]
-pub struct INTEGER_25(u8);
+pub struct INTEGER_25(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "127")]
-pub struct INTEGER_26(u8);
+pub struct INTEGER_26(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "179")]
-pub struct INTEGER_27(u8);
+pub struct INTEGER_27(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -5899,7 +5919,7 @@ pub struct GERAN_Cell_IDIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct GERAN_Cell_IDIE_Extensions(Vec<GERAN_Cell_IDIE_Extensions_Entry>);
+pub struct GERAN_Cell_IDIE_Extensions(pub Vec<GERAN_Cell_IDIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -5913,7 +5933,7 @@ pub struct GERAN_Iumode_RAB_Failed_RABAssgntResponse_ItemIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct GERAN_Iumode_RAB_Failed_RABAssgntResponse_ItemIE_Extensions(
-    Vec<GERAN_Iumode_RAB_Failed_RABAssgntResponse_ItemIE_Extensions_Entry>,
+    pub Vec<GERAN_Iumode_RAB_Failed_RABAssgntResponse_ItemIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -5942,12 +5962,12 @@ pub struct GERAN_Iumode_RAB_FailedList_RABAssgntResponse_Entry_Entry {
     sz_ub = "65535"
 )]
 pub struct GERAN_Iumode_RAB_FailedList_RABAssgntResponse_Entry(
-    Vec<GERAN_Iumode_RAB_FailedList_RABAssgntResponse_Entry_Entry>,
+    pub Vec<GERAN_Iumode_RAB_FailedList_RABAssgntResponse_Entry_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", lb = "0", ub = "1")]
-pub struct ENUMERATED_28(u8);
+pub struct ENUMERATED_28(pub u8);
 impl ENUMERATED_28 {
     const NORTH: u8 = 0u8;
     const SOUTH: u8 = 1u8;
@@ -5955,11 +5975,11 @@ impl ENUMERATED_28 {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "8388607")]
-pub struct INTEGER_29(u32);
+pub struct INTEGER_29(pub u32);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "-8388608", ub = "8388607")]
-pub struct INTEGER_30(i32);
+pub struct INTEGER_30(pub i32);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -5972,15 +5992,17 @@ pub struct GeographicalCoordinatesIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct GeographicalCoordinatesIE_Extensions(Vec<GeographicalCoordinatesIE_Extensions_Entry>);
+pub struct GeographicalCoordinatesIE_Extensions(
+    pub Vec<GeographicalCoordinatesIE_Extensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "359")]
-pub struct INTEGER_31(u16);
+pub struct INTEGER_31(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "2047")]
-pub struct INTEGER_32(u16);
+pub struct INTEGER_32(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -5993,11 +6015,11 @@ pub struct HorizontalVelocityIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct HorizontalVelocityIE_Extensions(Vec<HorizontalVelocityIE_Extensions_Entry>);
+pub struct HorizontalVelocityIE_Extensions(pub Vec<HorizontalVelocityIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "255")]
-pub struct INTEGER_33(u8);
+pub struct INTEGER_33(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -6011,7 +6033,7 @@ pub struct HorizontalVelocityWithUncertaintyIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct HorizontalVelocityWithUncertaintyIE_Extensions(
-    Vec<HorizontalVelocityWithUncertaintyIE_Extensions_Entry>,
+    pub Vec<HorizontalVelocityWithUncertaintyIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -6026,16 +6048,16 @@ pub struct HorizontalWithVerticalVelocityIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct HorizontalWithVerticalVelocityIE_Extensions(
-    Vec<HorizontalWithVerticalVelocityIE_Extensions_Entry>,
+    pub Vec<HorizontalWithVerticalVelocityIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "255")]
-pub struct INTEGER_34(u8);
+pub struct INTEGER_34(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "255")]
-pub struct INTEGER_35(u8);
+pub struct INTEGER_35(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -6049,12 +6071,12 @@ pub struct HorizontalWithVerticalVelocityAndUncertaintyIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct HorizontalWithVerticalVelocityAndUncertaintyIE_Extensions(
-    Vec<HorizontalWithVerticalVelocityAndUncertaintyIE_Extensions_Entry>,
+    pub Vec<HorizontalWithVerticalVelocityAndUncertaintyIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "7", sz_ub = "7")]
-pub struct BIT_STRING_36(BitVec<Msb0, u8>);
+pub struct BIT_STRING_36(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -6067,11 +6089,11 @@ pub struct IMEIGroupIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct IMEIGroupIE_Extensions(Vec<IMEIGroupIE_Extensions_Entry>);
+pub struct IMEIGroupIE_Extensions(pub Vec<IMEIGroupIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "7", sz_ub = "7")]
-pub struct BIT_STRING_37(BitVec<Msb0, u8>);
+pub struct BIT_STRING_37(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -6084,15 +6106,15 @@ pub struct IMEISVGroupIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct IMEISVGroupIE_Extensions(Vec<IMEISVGroupIE_Extensions_Entry>);
+pub struct IMEISVGroupIE_Extensions(pub Vec<IMEISVGroupIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "97")]
-pub struct INTEGER_38(u8);
+pub struct INTEGER_38(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "34")]
-pub struct INTEGER_39(u8);
+pub struct INTEGER_39(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -6120,12 +6142,12 @@ pub struct IRAT_Measurement_ConfigurationIE_Extensions_Entry {
     sz_ub = "65535"
 )]
 pub struct IRAT_Measurement_ConfigurationIE_Extensions(
-    Vec<IRAT_Measurement_ConfigurationIE_Extensions_Entry>,
+    pub Vec<IRAT_Measurement_ConfigurationIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "1", ub = "100")]
-pub struct INTEGER_40(u8);
+pub struct INTEGER_40(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -6139,7 +6161,7 @@ pub struct IRATmeasurementParametersIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct IRATmeasurementParametersIE_Extensions(
-    Vec<IRATmeasurementParametersIE_Extensions_Entry>,
+    pub Vec<IRATmeasurementParametersIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -6171,7 +6193,7 @@ pub struct ImmediateMDTIE_Extensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct ImmediateMDTIE_Extensions(Vec<ImmediateMDTIE_Extensions_Entry>);
+pub struct ImmediateMDTIE_Extensions(pub Vec<ImmediateMDTIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -6203,7 +6225,7 @@ pub struct InformationTransferConfirmationProtocolIEs_Entry {
     sz_ub = "65535"
 )]
 pub struct InformationTransferConfirmationProtocolIEs(
-    Vec<InformationTransferConfirmationProtocolIEs_Entry>,
+    pub Vec<InformationTransferConfirmationProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -6230,7 +6252,7 @@ pub struct InformationTransferConfirmationProtocolExtensions_Entry {
     sz_ub = "65535"
 )]
 pub struct InformationTransferConfirmationProtocolExtensions(
-    Vec<InformationTransferConfirmationProtocolExtensions_Entry>,
+    pub Vec<InformationTransferConfirmationProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -6264,7 +6286,9 @@ pub struct InformationTransferFailureProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct InformationTransferFailureProtocolIEs(Vec<InformationTransferFailureProtocolIEs_Entry>);
+pub struct InformationTransferFailureProtocolIEs(
+    pub Vec<InformationTransferFailureProtocolIEs_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -6290,7 +6314,7 @@ pub struct InformationTransferFailureProtocolExtensions_Entry {
     sz_ub = "65535"
 )]
 pub struct InformationTransferFailureProtocolExtensions(
-    Vec<InformationTransferFailureProtocolExtensions_Entry>,
+    pub Vec<InformationTransferFailureProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -6323,7 +6347,7 @@ pub struct InformationTransferIndicationProtocolIEs_Entry {
     sz_ub = "65535"
 )]
 pub struct InformationTransferIndicationProtocolIEs(
-    Vec<InformationTransferIndicationProtocolIEs_Entry>,
+    pub Vec<InformationTransferIndicationProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -6338,7 +6362,7 @@ pub struct InformationTransferIndicationProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct InformationTransferIndicationProtocolExtensions(
-    Vec<InformationTransferIndicationProtocolExtensions_Entry>,
+    pub Vec<InformationTransferIndicationProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -6376,7 +6400,7 @@ pub struct InitialUE_MessageProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct InitialUE_MessageProtocolIEs(Vec<InitialUE_MessageProtocolIEs_Entry>);
+pub struct InitialUE_MessageProtocolIEs(pub Vec<InitialUE_MessageProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -6433,7 +6457,7 @@ pub struct InitialUE_MessageProtocolExtensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct InitialUE_MessageProtocolExtensions(Vec<InitialUE_MessageProtocolExtensions_Entry>);
+pub struct InitialUE_MessageProtocolExtensions(pub Vec<InitialUE_MessageProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -6550,7 +6574,7 @@ pub struct IntegrityProtectionInformationIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct IntegrityProtectionInformationIE_Extensions(
-    Vec<IntegrityProtectionInformationIE_Extensions_Entry>,
+    pub Vec<IntegrityProtectionInformationIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -6565,12 +6589,12 @@ pub struct InterSystemInformation_TransparentContainerIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct InterSystemInformation_TransparentContainerIE_Extensions(
-    Vec<InterSystemInformation_TransparentContainerIE_Extensions_Entry>,
+    pub Vec<InterSystemInformation_TransparentContainerIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "4")]
-pub struct ENUMERATED_41(u8);
+pub struct ENUMERATED_41(pub u8);
 impl ENUMERATED_41 {
     const IU_CS: u8 = 0u8;
     const IU_PS: u8 = 1u8;
@@ -6590,7 +6614,7 @@ pub struct InterfacesToTraceItemIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct InterfacesToTraceItemIE_Extensions(Vec<InterfacesToTraceItemIE_Extensions_Entry>);
+pub struct InterfacesToTraceItemIE_Extensions(pub Vec<InterfacesToTraceItemIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -6615,7 +6639,7 @@ pub struct Iu_ReleaseCommandProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct Iu_ReleaseCommandProtocolIEs(Vec<Iu_ReleaseCommandProtocolIEs_Entry>);
+pub struct Iu_ReleaseCommandProtocolIEs(pub Vec<Iu_ReleaseCommandProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -6644,7 +6668,7 @@ pub struct Iu_ReleaseCommandProtocolExtensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct Iu_ReleaseCommandProtocolExtensions(Vec<Iu_ReleaseCommandProtocolExtensions_Entry>);
+pub struct Iu_ReleaseCommandProtocolExtensions(pub Vec<Iu_ReleaseCommandProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -6673,7 +6697,7 @@ pub struct Iu_ReleaseCompleteProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct Iu_ReleaseCompleteProtocolIEs(Vec<Iu_ReleaseCompleteProtocolIEs_Entry>);
+pub struct Iu_ReleaseCompleteProtocolIEs(pub Vec<Iu_ReleaseCompleteProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -6686,7 +6710,9 @@ pub struct Iu_ReleaseCompleteProtocolExtensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct Iu_ReleaseCompleteProtocolExtensions(Vec<Iu_ReleaseCompleteProtocolExtensions_Entry>);
+pub struct Iu_ReleaseCompleteProtocolExtensions(
+    pub Vec<Iu_ReleaseCompleteProtocolExtensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -6711,7 +6737,7 @@ pub struct Iu_ReleaseRequestProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct Iu_ReleaseRequestProtocolIEs(Vec<Iu_ReleaseRequestProtocolIEs_Entry>);
+pub struct Iu_ReleaseRequestProtocolIEs(pub Vec<Iu_ReleaseRequestProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -6724,7 +6750,7 @@ pub struct Iu_ReleaseRequestProtocolExtensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct Iu_ReleaseRequestProtocolExtensions(Vec<Iu_ReleaseRequestProtocolExtensions_Entry>);
+pub struct Iu_ReleaseRequestProtocolExtensions(pub Vec<Iu_ReleaseRequestProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -6738,7 +6764,7 @@ pub struct JoinedMBMSBearerService_IEs_EntryIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct JoinedMBMSBearerService_IEs_EntryIE_Extensions(
-    Vec<JoinedMBMSBearerService_IEs_EntryIE_Extensions_Entry>,
+    pub Vec<JoinedMBMSBearerService_IEs_EntryIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -6761,7 +6787,7 @@ pub struct LA_LIST_EntryIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct LA_LIST_EntryIE_Extensions(Vec<LA_LIST_EntryIE_Extensions_Entry>);
+pub struct LA_LIST_EntryIE_Extensions(pub Vec<LA_LIST_EntryIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -6783,7 +6809,7 @@ pub struct LABasedIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct LABasedIE_Extensions(Vec<LABasedIE_Extensions_Entry>);
+pub struct LABasedIE_Extensions(pub Vec<LABasedIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -6796,11 +6822,11 @@ pub struct LAIIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct LAIIE_Extensions(Vec<LAIIE_Extensions_Entry>);
+pub struct LAIIE_Extensions(pub Vec<LAIIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "32767")]
-pub struct INTEGER_42(u16);
+pub struct INTEGER_42(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -6813,7 +6839,7 @@ pub struct LastKnownServiceAreaIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct LastKnownServiceAreaIE_Extensions(Vec<LastKnownServiceAreaIE_Extensions_Entry>);
+pub struct LastKnownServiceAreaIE_Extensions(pub Vec<LastKnownServiceAreaIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -6841,7 +6867,7 @@ pub struct LastVisitedUTRANCell_ItemIE_Extensions_Entry {
     sz_ub = "65535"
 )]
 pub struct LastVisitedUTRANCell_ItemIE_Extensions(
-    Vec<LastVisitedUTRANCell_ItemIE_Extensions_Entry>,
+    pub Vec<LastVisitedUTRANCell_ItemIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -6856,7 +6882,7 @@ pub struct LeftMBMSBearerService_IEs_EntryIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct LeftMBMSBearerService_IEs_EntryIE_Extensions(
-    Vec<LeftMBMSBearerService_IEs_EntryIE_Extensions_Entry>,
+    pub Vec<LeftMBMSBearerService_IEs_EntryIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -6890,7 +6916,9 @@ pub struct LocationRelatedDataFailureProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct LocationRelatedDataFailureProtocolIEs(Vec<LocationRelatedDataFailureProtocolIEs_Entry>);
+pub struct LocationRelatedDataFailureProtocolIEs(
+    pub Vec<LocationRelatedDataFailureProtocolIEs_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -6916,7 +6944,7 @@ pub struct LocationRelatedDataFailureProtocolExtensions_Entry {
     sz_ub = "65535"
 )]
 pub struct LocationRelatedDataFailureProtocolExtensions(
-    Vec<LocationRelatedDataFailureProtocolExtensions_Entry>,
+    pub Vec<LocationRelatedDataFailureProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -6942,7 +6970,9 @@ pub struct LocationRelatedDataRequestProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct LocationRelatedDataRequestProtocolIEs(Vec<LocationRelatedDataRequestProtocolIEs_Entry>);
+pub struct LocationRelatedDataRequestProtocolIEs(
+    pub Vec<LocationRelatedDataRequestProtocolIEs_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -6972,7 +7002,7 @@ pub struct LocationRelatedDataRequestProtocolExtensions_Entry {
     sz_ub = "65535"
 )]
 pub struct LocationRelatedDataRequestProtocolExtensions(
-    Vec<LocationRelatedDataRequestProtocolExtensions_Entry>,
+    pub Vec<LocationRelatedDataRequestProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -6999,7 +7029,7 @@ pub struct LocationRelatedDataResponseProtocolIEs_Entry {
     sz_ub = "65535"
 )]
 pub struct LocationRelatedDataResponseProtocolIEs(
-    Vec<LocationRelatedDataResponseProtocolIEs_Entry>,
+    pub Vec<LocationRelatedDataResponseProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -7028,7 +7058,7 @@ pub struct LocationRelatedDataResponseProtocolExtensions_Entry {
     sz_ub = "65535"
 )]
 pub struct LocationRelatedDataResponseProtocolExtensions(
-    Vec<LocationRelatedDataResponseProtocolExtensions_Entry>,
+    pub Vec<LocationRelatedDataResponseProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -7058,7 +7088,7 @@ pub struct LocationReportProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct LocationReportProtocolIEs(Vec<LocationReportProtocolIEs_Entry>);
+pub struct LocationReportProtocolIEs(pub Vec<LocationReportProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -7095,7 +7125,7 @@ pub struct LocationReportProtocolExtensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct LocationReportProtocolExtensions(Vec<LocationReportProtocolExtensions_Entry>);
+pub struct LocationReportProtocolExtensions(pub Vec<LocationReportProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -7120,7 +7150,7 @@ pub struct LocationReportingControlProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct LocationReportingControlProtocolIEs(Vec<LocationReportingControlProtocolIEs_Entry>);
+pub struct LocationReportingControlProtocolIEs(pub Vec<LocationReportingControlProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -7156,7 +7186,7 @@ pub struct LocationReportingControlProtocolExtensions_Entry {
     sz_ub = "65535"
 )]
 pub struct LocationReportingControlProtocolExtensions(
-    Vec<LocationReportingControlProtocolExtensions_Entry>,
+    pub Vec<LocationReportingControlProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -7171,7 +7201,7 @@ pub struct LocationReportingTransferInformationIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct LocationReportingTransferInformationIE_Extensions(
-    Vec<LocationReportingTransferInformationIE_Extensions_Entry>,
+    pub Vec<LocationReportingTransferInformationIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -7185,7 +7215,7 @@ pub struct LoggedMDTIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct LoggedMDTIE_Extensions(Vec<LoggedMDTIE_Extensions_Entry>);
+pub struct LoggedMDTIE_Extensions(pub Vec<LoggedMDTIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -7198,7 +7228,9 @@ pub struct M4_Collection_ParametersIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct M4_Collection_ParametersIE_Extensions(Vec<M4_Collection_ParametersIE_Extensions_Entry>);
+pub struct M4_Collection_ParametersIE_Extensions(
+    pub Vec<M4_Collection_ParametersIE_Extensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "NULL")]
@@ -7219,7 +7251,7 @@ pub struct M6ReportIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct M6ReportIE_Extensions(Vec<M6ReportIE_Extensions_Entry>);
+pub struct M6ReportIE_Extensions(pub Vec<M6ReportIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -7232,7 +7264,7 @@ pub struct M7ReportIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct M7ReportIE_Extensions(Vec<M7ReportIE_Extensions_Entry>);
+pub struct M7ReportIE_Extensions(pub Vec<M7ReportIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -7260,7 +7292,7 @@ pub struct MBMSCNDe_RegistrationRequestProtocolIEs_Entry {
     sz_ub = "65535"
 )]
 pub struct MBMSCNDe_RegistrationRequestProtocolIEs(
-    Vec<MBMSCNDe_RegistrationRequestProtocolIEs_Entry>,
+    pub Vec<MBMSCNDe_RegistrationRequestProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -7275,7 +7307,7 @@ pub struct MBMSCNDe_RegistrationRequestProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct MBMSCNDe_RegistrationRequestProtocolExtensions(
-    Vec<MBMSCNDe_RegistrationRequestProtocolExtensions_Entry>,
+    pub Vec<MBMSCNDe_RegistrationRequestProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -7308,7 +7340,7 @@ pub struct MBMSCNDe_RegistrationResponseProtocolIEs_Entry {
     sz_ub = "65535"
 )]
 pub struct MBMSCNDe_RegistrationResponseProtocolIEs(
-    Vec<MBMSCNDe_RegistrationResponseProtocolIEs_Entry>,
+    pub Vec<MBMSCNDe_RegistrationResponseProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -7335,7 +7367,7 @@ pub struct MBMSCNDe_RegistrationResponseProtocolExtensions_Entry {
     sz_ub = "65535"
 )]
 pub struct MBMSCNDe_RegistrationResponseProtocolExtensions(
-    Vec<MBMSCNDe_RegistrationResponseProtocolExtensions_Entry>,
+    pub Vec<MBMSCNDe_RegistrationResponseProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -7350,7 +7382,7 @@ pub struct MBMSIPMulticastAddressandAPNlistIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct MBMSIPMulticastAddressandAPNlistIE_Extensions(
-    Vec<MBMSIPMulticastAddressandAPNlistIE_Extensions_Entry>,
+    pub Vec<MBMSIPMulticastAddressandAPNlistIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -7377,7 +7409,7 @@ pub struct MBMSRABEstablishmentIndicationProtocolIEs_Entry {
     sz_ub = "65535"
 )]
 pub struct MBMSRABEstablishmentIndicationProtocolIEs(
-    Vec<MBMSRABEstablishmentIndicationProtocolIEs_Entry>,
+    pub Vec<MBMSRABEstablishmentIndicationProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -7392,7 +7424,7 @@ pub struct MBMSRABEstablishmentIndicationProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct MBMSRABEstablishmentIndicationProtocolExtensions(
-    Vec<MBMSRABEstablishmentIndicationProtocolExtensions_Entry>,
+    pub Vec<MBMSRABEstablishmentIndicationProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -7420,7 +7452,7 @@ pub struct MBMSRABReleaseProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSRABReleaseProtocolIEs(Vec<MBMSRABReleaseProtocolIEs_Entry>);
+pub struct MBMSRABReleaseProtocolIEs(pub Vec<MBMSRABReleaseProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -7433,7 +7465,7 @@ pub struct MBMSRABReleaseProtocolExtensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MBMSRABReleaseProtocolExtensions(Vec<MBMSRABReleaseProtocolExtensions_Entry>);
+pub struct MBMSRABReleaseProtocolExtensions(pub Vec<MBMSRABReleaseProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -7460,7 +7492,7 @@ pub struct MBMSRABReleaseFailureProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSRABReleaseFailureProtocolIEs(Vec<MBMSRABReleaseFailureProtocolIEs_Entry>);
+pub struct MBMSRABReleaseFailureProtocolIEs(pub Vec<MBMSRABReleaseFailureProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -7474,7 +7506,7 @@ pub struct MBMSRABReleaseFailureProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct MBMSRABReleaseFailureProtocolExtensions(
-    Vec<MBMSRABReleaseFailureProtocolExtensions_Entry>,
+    pub Vec<MBMSRABReleaseFailureProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -7500,7 +7532,7 @@ pub struct MBMSRABReleaseRequestProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSRABReleaseRequestProtocolIEs(Vec<MBMSRABReleaseRequestProtocolIEs_Entry>);
+pub struct MBMSRABReleaseRequestProtocolIEs(pub Vec<MBMSRABReleaseRequestProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -7514,7 +7546,7 @@ pub struct MBMSRABReleaseRequestProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct MBMSRABReleaseRequestProtocolExtensions(
-    Vec<MBMSRABReleaseRequestProtocolExtensions_Entry>,
+    pub Vec<MBMSRABReleaseRequestProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -7546,7 +7578,7 @@ pub struct MBMSRegistrationFailureProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSRegistrationFailureProtocolIEs(Vec<MBMSRegistrationFailureProtocolIEs_Entry>);
+pub struct MBMSRegistrationFailureProtocolIEs(pub Vec<MBMSRegistrationFailureProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -7560,7 +7592,7 @@ pub struct MBMSRegistrationFailureProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct MBMSRegistrationFailureProtocolExtensions(
-    Vec<MBMSRegistrationFailureProtocolExtensions_Entry>,
+    pub Vec<MBMSRegistrationFailureProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -7594,7 +7626,7 @@ pub struct MBMSRegistrationRequestProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSRegistrationRequestProtocolIEs(Vec<MBMSRegistrationRequestProtocolIEs_Entry>);
+pub struct MBMSRegistrationRequestProtocolIEs(pub Vec<MBMSRegistrationRequestProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -7620,7 +7652,7 @@ pub struct MBMSRegistrationRequestProtocolExtensions_Entry {
     sz_ub = "65535"
 )]
 pub struct MBMSRegistrationRequestProtocolExtensions(
-    Vec<MBMSRegistrationRequestProtocolExtensions_Entry>,
+    pub Vec<MBMSRegistrationRequestProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -7650,7 +7682,7 @@ pub struct MBMSRegistrationResponseProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSRegistrationResponseProtocolIEs(Vec<MBMSRegistrationResponseProtocolIEs_Entry>);
+pub struct MBMSRegistrationResponseProtocolIEs(pub Vec<MBMSRegistrationResponseProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -7664,7 +7696,7 @@ pub struct MBMSRegistrationResponseProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct MBMSRegistrationResponseProtocolExtensions(
-    Vec<MBMSRegistrationResponseProtocolExtensions_Entry>,
+    pub Vec<MBMSRegistrationResponseProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -7714,7 +7746,7 @@ pub struct MBMSSessionStartProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionStartProtocolIEs(Vec<MBMSSessionStartProtocolIEs_Entry>);
+pub struct MBMSSessionStartProtocolIEs(pub Vec<MBMSSessionStartProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -7745,7 +7777,7 @@ pub struct MBMSSessionStartProtocolExtensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionStartProtocolExtensions(Vec<MBMSSessionStartProtocolExtensions_Entry>);
+pub struct MBMSSessionStartProtocolExtensions(pub Vec<MBMSSessionStartProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -7772,7 +7804,7 @@ pub struct MBMSSessionStartFailureProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionStartFailureProtocolIEs(Vec<MBMSSessionStartFailureProtocolIEs_Entry>);
+pub struct MBMSSessionStartFailureProtocolIEs(pub Vec<MBMSSessionStartFailureProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -7786,7 +7818,7 @@ pub struct MBMSSessionStartFailureProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct MBMSSessionStartFailureProtocolExtensions(
-    Vec<MBMSSessionStartFailureProtocolExtensions_Entry>,
+    pub Vec<MBMSSessionStartFailureProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -7816,7 +7848,7 @@ pub struct MBMSSessionStartResponseProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionStartResponseProtocolIEs(Vec<MBMSSessionStartResponseProtocolIEs_Entry>);
+pub struct MBMSSessionStartResponseProtocolIEs(pub Vec<MBMSSessionStartResponseProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -7830,7 +7862,7 @@ pub struct MBMSSessionStartResponseProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct MBMSSessionStartResponseProtocolExtensions(
-    Vec<MBMSSessionStartResponseProtocolExtensions_Entry>,
+    pub Vec<MBMSSessionStartResponseProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -7856,7 +7888,7 @@ pub struct MBMSSessionStopProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionStopProtocolIEs(Vec<MBMSSessionStopProtocolIEs_Entry>);
+pub struct MBMSSessionStopProtocolIEs(pub Vec<MBMSSessionStopProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -7869,7 +7901,7 @@ pub struct MBMSSessionStopProtocolExtensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionStopProtocolExtensions(Vec<MBMSSessionStopProtocolExtensions_Entry>);
+pub struct MBMSSessionStopProtocolExtensions(pub Vec<MBMSSessionStopProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -7896,7 +7928,7 @@ pub struct MBMSSessionStopResponseProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionStopResponseProtocolIEs(Vec<MBMSSessionStopResponseProtocolIEs_Entry>);
+pub struct MBMSSessionStopResponseProtocolIEs(pub Vec<MBMSSessionStopResponseProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -7910,7 +7942,7 @@ pub struct MBMSSessionStopResponseProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct MBMSSessionStopResponseProtocolExtensions(
-    Vec<MBMSSessionStopResponseProtocolExtensions_Entry>,
+    pub Vec<MBMSSessionStopResponseProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -7938,7 +7970,7 @@ pub struct MBMSSessionUpdateProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionUpdateProtocolIEs(Vec<MBMSSessionUpdateProtocolIEs_Entry>);
+pub struct MBMSSessionUpdateProtocolIEs(pub Vec<MBMSSessionUpdateProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -7951,7 +7983,7 @@ pub struct MBMSSessionUpdateProtocolExtensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionUpdateProtocolExtensions(Vec<MBMSSessionUpdateProtocolExtensions_Entry>);
+pub struct MBMSSessionUpdateProtocolExtensions(pub Vec<MBMSSessionUpdateProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -7980,7 +8012,7 @@ pub struct MBMSSessionUpdateFailureProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionUpdateFailureProtocolIEs(Vec<MBMSSessionUpdateFailureProtocolIEs_Entry>);
+pub struct MBMSSessionUpdateFailureProtocolIEs(pub Vec<MBMSSessionUpdateFailureProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -7994,7 +8026,7 @@ pub struct MBMSSessionUpdateFailureProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct MBMSSessionUpdateFailureProtocolExtensions(
-    Vec<MBMSSessionUpdateFailureProtocolExtensions_Entry>,
+    pub Vec<MBMSSessionUpdateFailureProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -8026,7 +8058,9 @@ pub struct MBMSSessionUpdateResponseProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSSessionUpdateResponseProtocolIEs(Vec<MBMSSessionUpdateResponseProtocolIEs_Entry>);
+pub struct MBMSSessionUpdateResponseProtocolIEs(
+    pub Vec<MBMSSessionUpdateResponseProtocolIEs_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -8040,7 +8074,7 @@ pub struct MBMSSessionUpdateResponseProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct MBMSSessionUpdateResponseProtocolExtensions(
-    Vec<MBMSSessionUpdateResponseProtocolExtensions_Entry>,
+    pub Vec<MBMSSessionUpdateResponseProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -8067,7 +8101,7 @@ pub struct MBMSSynchronisationInformationIE_Extensions_Entry {
     sz_ub = "65535"
 )]
 pub struct MBMSSynchronisationInformationIE_Extensions(
-    Vec<MBMSSynchronisationInformationIE_Extensions_Entry>,
+    pub Vec<MBMSSynchronisationInformationIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -8095,7 +8129,7 @@ pub struct MBMSUELinkingRequestProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSUELinkingRequestProtocolIEs(Vec<MBMSUELinkingRequestProtocolIEs_Entry>);
+pub struct MBMSUELinkingRequestProtocolIEs(pub Vec<MBMSUELinkingRequestProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -8109,7 +8143,7 @@ pub struct MBMSUELinkingRequestProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct MBMSUELinkingRequestProtocolExtensions(
-    Vec<MBMSUELinkingRequestProtocolExtensions_Entry>,
+    pub Vec<MBMSUELinkingRequestProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -8137,7 +8171,7 @@ pub struct MBMSUELinkingResponseProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct MBMSUELinkingResponseProtocolIEs(Vec<MBMSUELinkingResponseProtocolIEs_Entry>);
+pub struct MBMSUELinkingResponseProtocolIEs(pub Vec<MBMSUELinkingResponseProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -8151,7 +8185,7 @@ pub struct MBMSUELinkingResponseProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct MBMSUELinkingResponseProtocolExtensions(
-    Vec<MBMSUELinkingResponseProtocolExtensions_Entry>,
+    pub Vec<MBMSUELinkingResponseProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -8177,7 +8211,7 @@ pub struct MDT_ConfigurationIE_Extensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MDT_ConfigurationIE_Extensions(Vec<MDT_ConfigurationIE_Extensions_Entry>);
+pub struct MDT_ConfigurationIE_Extensions(pub Vec<MDT_ConfigurationIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "NULL")]
@@ -8194,7 +8228,7 @@ pub struct MessageStructure_EntryIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct MessageStructure_EntryIE_Extensions(Vec<MessageStructure_EntryIE_Extensions_Entry>);
+pub struct MessageStructure_EntryIE_Extensions(pub Vec<MessageStructure_EntryIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 2)]
@@ -8230,7 +8264,7 @@ pub struct NotEmptyRAListofIdleModeUEsIE_Extensions_Entry {
     sz_ub = "65535"
 )]
 pub struct NotEmptyRAListofIdleModeUEsIE_Extensions(
-    Vec<NotEmptyRAListofIdleModeUEsIE_Extensions_Entry>,
+    pub Vec<NotEmptyRAListofIdleModeUEsIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -8244,7 +8278,7 @@ pub struct Offload_RAB_ParametersIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct Offload_RAB_ParametersIE_Extensions(Vec<Offload_RAB_ParametersIE_Extensions_Entry>);
+pub struct Offload_RAB_ParametersIE_Extensions(pub Vec<Offload_RAB_ParametersIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -8286,7 +8320,7 @@ pub struct OverloadProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct OverloadProtocolIEs(Vec<OverloadProtocolIEs_Entry>);
+pub struct OverloadProtocolIEs(pub Vec<OverloadProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -8317,7 +8351,7 @@ pub struct OverloadProtocolExtensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct OverloadProtocolExtensions(Vec<OverloadProtocolExtensions_Entry>);
+pub struct OverloadProtocolExtensions(pub Vec<OverloadProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -8330,7 +8364,7 @@ pub struct PLMNBasedIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct PLMNBasedIE_Extensions(Vec<PLMNBasedIE_Extensions_Entry>);
+pub struct PLMNBasedIE_Extensions(pub Vec<PLMNBasedIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -8344,7 +8378,7 @@ pub struct PLMNs_in_shared_network_EntryIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct PLMNs_in_shared_network_EntryIE_Extensions(
-    Vec<PLMNs_in_shared_network_EntryIE_Extensions_Entry>,
+    pub Vec<PLMNs_in_shared_network_EntryIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -8391,7 +8425,7 @@ pub struct PagingProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct PagingProtocolIEs(Vec<PagingProtocolIEs_Entry>);
+pub struct PagingProtocolIEs(pub Vec<PagingProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -8418,15 +8452,15 @@ pub struct PagingProtocolExtensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct PagingProtocolExtensions(Vec<PagingProtocolExtensions_Entry>);
+pub struct PagingProtocolExtensions(pub Vec<PagingProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "1", ub = "8639999", extensible = true)]
-pub struct INTEGER_46(u32);
+pub struct INTEGER_46(pub u32);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "1", ub = "8639999", extensible = true)]
-pub struct INTEGER_47(u32);
+pub struct INTEGER_47(pub u32);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -8439,7 +8473,7 @@ pub struct PeriodicLocationInfoIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct PeriodicLocationInfoIE_Extensions(Vec<PeriodicLocationInfoIE_Extensions_Entry>);
+pub struct PeriodicLocationInfoIE_Extensions(pub Vec<PeriodicLocationInfoIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -8466,11 +8500,11 @@ pub struct PositionDataIE_Extensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct PositionDataIE_Extensions(Vec<PositionDataIE_Extensions_Entry>);
+pub struct PositionDataIE_Extensions(pub Vec<PositionDataIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "65535")]
-pub struct INTEGER_48(u16);
+pub struct INTEGER_48(pub u16);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OBJECT-IDENTIFIER")]
@@ -8487,7 +8521,7 @@ pub struct PrivateMessagePrivateIEs_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct PrivateMessagePrivateIEs(Vec<PrivateMessagePrivateIEs_Entry>);
+pub struct PrivateMessagePrivateIEs(pub Vec<PrivateMessagePrivateIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -8514,7 +8548,7 @@ pub struct RAB_AssignmentRequestProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_AssignmentRequestProtocolIEs(Vec<RAB_AssignmentRequestProtocolIEs_Entry>);
+pub struct RAB_AssignmentRequestProtocolIEs(pub Vec<RAB_AssignmentRequestProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -8542,7 +8576,7 @@ pub struct RAB_AssignmentRequestProtocolExtensions_Entry {
     sz_ub = "65535"
 )]
 pub struct RAB_AssignmentRequestProtocolExtensions(
-    Vec<RAB_AssignmentRequestProtocolExtensions_Entry>,
+    pub Vec<RAB_AssignmentRequestProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -8578,7 +8612,7 @@ pub struct RAB_AssignmentResponseProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_AssignmentResponseProtocolIEs(Vec<RAB_AssignmentResponseProtocolIEs_Entry>);
+pub struct RAB_AssignmentResponseProtocolIEs(pub Vec<RAB_AssignmentResponseProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -8604,7 +8638,7 @@ pub struct RAB_AssignmentResponseProtocolExtensions_Entry {
     sz_ub = "65535"
 )]
 pub struct RAB_AssignmentResponseProtocolExtensions(
-    Vec<RAB_AssignmentResponseProtocolExtensions_Entry>,
+    pub Vec<RAB_AssignmentResponseProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -8630,7 +8664,9 @@ pub struct RAB_ContextFailedtoTransferList_Entry_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_ContextFailedtoTransferList_Entry(Vec<RAB_ContextFailedtoTransferList_Entry_Entry>);
+pub struct RAB_ContextFailedtoTransferList_Entry(
+    pub Vec<RAB_ContextFailedtoTransferList_Entry_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -8643,7 +8679,7 @@ pub struct RAB_ContextItemIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_ContextItemIE_Extensions(Vec<RAB_ContextItemIE_Extensions_Entry>);
+pub struct RAB_ContextItemIE_Extensions(pub Vec<RAB_ContextItemIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -8657,7 +8693,7 @@ pub struct RAB_ContextItem_RANAP_RelocInfIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct RAB_ContextItem_RANAP_RelocInfIE_Extensions(
-    Vec<RAB_ContextItem_RANAP_RelocInfIE_Extensions_Entry>,
+    pub Vec<RAB_ContextItem_RANAP_RelocInfIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -8683,7 +8719,7 @@ pub struct RAB_ContextList_Entry_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_ContextList_Entry(Vec<RAB_ContextList_Entry_Entry>);
+pub struct RAB_ContextList_Entry(pub Vec<RAB_ContextList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -8708,7 +8744,9 @@ pub struct RAB_ContextList_RANAP_RelocInf_Entry_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_ContextList_RANAP_RelocInf_Entry(Vec<RAB_ContextList_RANAP_RelocInf_Entry_Entry>);
+pub struct RAB_ContextList_RANAP_RelocInf_Entry(
+    pub Vec<RAB_ContextList_RANAP_RelocInf_Entry_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -8735,7 +8773,7 @@ pub struct RAB_DataForwardingItemIE_Extensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_DataForwardingItemIE_Extensions(Vec<RAB_DataForwardingItemIE_Extensions_Entry>);
+pub struct RAB_DataForwardingItemIE_Extensions(pub Vec<RAB_DataForwardingItemIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -8749,7 +8787,7 @@ pub struct RAB_DataForwardingItem_SRNS_CtxReqIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct RAB_DataForwardingItem_SRNS_CtxReqIE_Extensions(
-    Vec<RAB_DataForwardingItem_SRNS_CtxReqIE_Extensions_Entry>,
+    pub Vec<RAB_DataForwardingItem_SRNS_CtxReqIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -8775,7 +8813,7 @@ pub struct RAB_DataForwardingList_Entry_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_DataForwardingList_Entry(Vec<RAB_DataForwardingList_Entry_Entry>);
+pub struct RAB_DataForwardingList_Entry(pub Vec<RAB_DataForwardingList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -8801,7 +8839,7 @@ pub struct RAB_DataForwardingList_SRNS_CtxReq_Entry_Entry {
     sz_ub = "65535"
 )]
 pub struct RAB_DataForwardingList_SRNS_CtxReq_Entry(
-    Vec<RAB_DataForwardingList_SRNS_CtxReq_Entry_Entry>,
+    pub Vec<RAB_DataForwardingList_SRNS_CtxReq_Entry_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -8815,7 +8853,9 @@ pub struct RAB_DataVolumeReportItemIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_DataVolumeReportItemIE_Extensions(Vec<RAB_DataVolumeReportItemIE_Extensions_Entry>);
+pub struct RAB_DataVolumeReportItemIE_Extensions(
+    pub Vec<RAB_DataVolumeReportItemIE_Extensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -8840,7 +8880,7 @@ pub struct RAB_DataVolumeReportList_Entry_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_DataVolumeReportList_Entry(Vec<RAB_DataVolumeReportList_Entry_Entry>);
+pub struct RAB_DataVolumeReportList_Entry(pub Vec<RAB_DataVolumeReportList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -8854,7 +8894,7 @@ pub struct RAB_DataVolumeReportRequestItemIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct RAB_DataVolumeReportRequestItemIE_Extensions(
-    Vec<RAB_DataVolumeReportRequestItemIE_Extensions_Entry>,
+    pub Vec<RAB_DataVolumeReportRequestItemIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -8880,7 +8920,9 @@ pub struct RAB_DataVolumeReportRequestList_Entry_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_DataVolumeReportRequestList_Entry(Vec<RAB_DataVolumeReportRequestList_Entry_Entry>);
+pub struct RAB_DataVolumeReportRequestList_Entry(
+    pub Vec<RAB_DataVolumeReportRequestList_Entry_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -8893,7 +8935,7 @@ pub struct RAB_FailedItemIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_FailedItemIE_Extensions(Vec<RAB_FailedItemIE_Extensions_Entry>);
+pub struct RAB_FailedItemIE_Extensions(pub Vec<RAB_FailedItemIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -8907,7 +8949,7 @@ pub struct RAB_FailedItem_EnhRelocInfoResIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct RAB_FailedItem_EnhRelocInfoResIE_Extensions(
-    Vec<RAB_FailedItem_EnhRelocInfoResIE_Extensions_Entry>,
+    pub Vec<RAB_FailedItem_EnhRelocInfoResIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -8933,7 +8975,7 @@ pub struct RAB_FailedList_Entry_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_FailedList_Entry(Vec<RAB_FailedList_Entry_Entry>);
+pub struct RAB_FailedList_Entry(pub Vec<RAB_FailedList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -8958,7 +9000,9 @@ pub struct RAB_FailedList_EnhRelocInfoRes_Entry_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_FailedList_EnhRelocInfoRes_Entry(Vec<RAB_FailedList_EnhRelocInfoRes_Entry_Entry>);
+pub struct RAB_FailedList_EnhRelocInfoRes_Entry(
+    pub Vec<RAB_FailedList_EnhRelocInfoRes_Entry_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -8983,7 +9027,7 @@ pub struct RAB_FailedtoReportList_Entry_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_FailedtoReportList_Entry(Vec<RAB_FailedtoReportList_Entry_Entry>);
+pub struct RAB_FailedtoReportList_Entry(pub Vec<RAB_FailedtoReportList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -8996,7 +9040,7 @@ pub struct RAB_ModifyItemIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_ModifyItemIE_Extensions(Vec<RAB_ModifyItemIE_Extensions_Entry>);
+pub struct RAB_ModifyItemIE_Extensions(pub Vec<RAB_ModifyItemIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -9021,7 +9065,7 @@ pub struct RAB_ModifyList_Entry_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_ModifyList_Entry(Vec<RAB_ModifyList_Entry_Entry>);
+pub struct RAB_ModifyList_Entry(pub Vec<RAB_ModifyList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -9046,7 +9090,7 @@ pub struct RAB_ModifyRequestProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_ModifyRequestProtocolIEs(Vec<RAB_ModifyRequestProtocolIEs_Entry>);
+pub struct RAB_ModifyRequestProtocolIEs(pub Vec<RAB_ModifyRequestProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -9059,7 +9103,7 @@ pub struct RAB_ModifyRequestProtocolExtensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_ModifyRequestProtocolExtensions(Vec<RAB_ModifyRequestProtocolExtensions_Entry>);
+pub struct RAB_ModifyRequestProtocolExtensions(pub Vec<RAB_ModifyRequestProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -9092,7 +9136,7 @@ pub struct RAB_ParametersIE_Extensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_ParametersIE_Extensions(Vec<RAB_ParametersIE_Extensions_Entry>);
+pub struct RAB_ParametersIE_Extensions(pub Vec<RAB_ParametersIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -9105,7 +9149,7 @@ pub struct RAB_QueuedItemIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_QueuedItemIE_Extensions(Vec<RAB_QueuedItemIE_Extensions_Entry>);
+pub struct RAB_QueuedItemIE_Extensions(pub Vec<RAB_QueuedItemIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -9130,7 +9174,7 @@ pub struct RAB_QueuedList_Entry_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_QueuedList_Entry(Vec<RAB_QueuedList_Entry_Entry>);
+pub struct RAB_QueuedList_Entry(pub Vec<RAB_QueuedList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -9143,7 +9187,7 @@ pub struct RAB_ReleaseItemIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_ReleaseItemIE_Extensions(Vec<RAB_ReleaseItemIE_Extensions_Entry>);
+pub struct RAB_ReleaseItemIE_Extensions(pub Vec<RAB_ReleaseItemIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -9168,7 +9212,7 @@ pub struct RAB_ReleaseList_Entry_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_ReleaseList_Entry(Vec<RAB_ReleaseList_Entry_Entry>);
+pub struct RAB_ReleaseList_Entry(pub Vec<RAB_ReleaseList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -9193,7 +9237,7 @@ pub struct RAB_ReleaseRequestProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_ReleaseRequestProtocolIEs(Vec<RAB_ReleaseRequestProtocolIEs_Entry>);
+pub struct RAB_ReleaseRequestProtocolIEs(pub Vec<RAB_ReleaseRequestProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -9206,7 +9250,9 @@ pub struct RAB_ReleaseRequestProtocolExtensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_ReleaseRequestProtocolExtensions(Vec<RAB_ReleaseRequestProtocolExtensions_Entry>);
+pub struct RAB_ReleaseRequestProtocolExtensions(
+    pub Vec<RAB_ReleaseRequestProtocolExtensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -9219,7 +9265,7 @@ pub struct RAB_ReleasedItemIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_ReleasedItemIE_Extensions(Vec<RAB_ReleasedItemIE_Extensions_Entry>);
+pub struct RAB_ReleasedItemIE_Extensions(pub Vec<RAB_ReleasedItemIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -9233,7 +9279,7 @@ pub struct RAB_ReleasedItem_IuRelCompIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct RAB_ReleasedItem_IuRelCompIE_Extensions(
-    Vec<RAB_ReleasedItem_IuRelCompIE_Extensions_Entry>,
+    pub Vec<RAB_ReleasedItem_IuRelCompIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -9259,7 +9305,7 @@ pub struct RAB_ReleasedList_Entry_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_ReleasedList_Entry(Vec<RAB_ReleasedList_Entry_Entry>);
+pub struct RAB_ReleasedList_Entry(pub Vec<RAB_ReleasedList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -9284,7 +9330,7 @@ pub struct RAB_ReleasedList_IuRelComp_Entry_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_ReleasedList_IuRelComp_Entry(Vec<RAB_ReleasedList_IuRelComp_Entry_Entry>);
+pub struct RAB_ReleasedList_IuRelComp_Entry(pub Vec<RAB_ReleasedList_IuRelComp_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -9298,7 +9344,7 @@ pub struct RAB_RelocationReleaseItemIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct RAB_RelocationReleaseItemIE_Extensions(
-    Vec<RAB_RelocationReleaseItemIE_Extensions_Entry>,
+    pub Vec<RAB_RelocationReleaseItemIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -9324,7 +9370,7 @@ pub struct RAB_RelocationReleaseList_Entry_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_RelocationReleaseList_Entry(Vec<RAB_RelocationReleaseList_Entry_Entry>);
+pub struct RAB_RelocationReleaseList_Entry(pub Vec<RAB_RelocationReleaseList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -9352,7 +9398,7 @@ pub struct RAB_SetupItem_EnhRelocInfoReqIE_Extensions_Entry {
     sz_ub = "65535"
 )]
 pub struct RAB_SetupItem_EnhRelocInfoReqIE_Extensions(
-    Vec<RAB_SetupItem_EnhRelocInfoReqIE_Extensions_Entry>,
+    pub Vec<RAB_SetupItem_EnhRelocInfoReqIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -9367,7 +9413,7 @@ pub struct RAB_SetupItem_EnhRelocInfoResIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct RAB_SetupItem_EnhRelocInfoResIE_Extensions(
-    Vec<RAB_SetupItem_EnhRelocInfoResIE_Extensions_Entry>,
+    pub Vec<RAB_SetupItem_EnhRelocInfoResIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -9382,7 +9428,7 @@ pub struct RAB_SetupItem_EnhancedRelocCompleteReqIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct RAB_SetupItem_EnhancedRelocCompleteReqIE_Extensions(
-    Vec<RAB_SetupItem_EnhancedRelocCompleteReqIE_Extensions_Entry>,
+    pub Vec<RAB_SetupItem_EnhancedRelocCompleteReqIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -9409,7 +9455,7 @@ pub struct RAB_SetupItem_EnhancedRelocCompleteResIE_Extensions_Entry {
     sz_ub = "65535"
 )]
 pub struct RAB_SetupItem_EnhancedRelocCompleteResIE_Extensions(
-    Vec<RAB_SetupItem_EnhancedRelocCompleteResIE_Extensions_Entry>,
+    pub Vec<RAB_SetupItem_EnhancedRelocCompleteResIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -9443,7 +9489,7 @@ pub struct RAB_SetupItem_RelocReqIE_Extensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_SetupItem_RelocReqIE_Extensions(Vec<RAB_SetupItem_RelocReqIE_Extensions_Entry>);
+pub struct RAB_SetupItem_RelocReqIE_Extensions(pub Vec<RAB_SetupItem_RelocReqIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -9473,7 +9519,7 @@ pub struct RAB_SetupItem_RelocReqAckIE_Extensions_Entry {
     sz_ub = "65535"
 )]
 pub struct RAB_SetupItem_RelocReqAckIE_Extensions(
-    Vec<RAB_SetupItem_RelocReqAckIE_Extensions_Entry>,
+    pub Vec<RAB_SetupItem_RelocReqAckIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -9499,7 +9545,7 @@ pub struct RAB_SetupList_EnhRelocInfoReq_Entry_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_SetupList_EnhRelocInfoReq_Entry(Vec<RAB_SetupList_EnhRelocInfoReq_Entry_Entry>);
+pub struct RAB_SetupList_EnhRelocInfoReq_Entry(pub Vec<RAB_SetupList_EnhRelocInfoReq_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -9524,7 +9570,7 @@ pub struct RAB_SetupList_EnhRelocInfoRes_Entry_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_SetupList_EnhRelocInfoRes_Entry(Vec<RAB_SetupList_EnhRelocInfoRes_Entry_Entry>);
+pub struct RAB_SetupList_EnhRelocInfoRes_Entry(pub Vec<RAB_SetupList_EnhRelocInfoRes_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -9550,7 +9596,7 @@ pub struct RAB_SetupList_EnhancedRelocCompleteReq_Entry_Entry {
     sz_ub = "65535"
 )]
 pub struct RAB_SetupList_EnhancedRelocCompleteReq_Entry(
-    Vec<RAB_SetupList_EnhancedRelocCompleteReq_Entry_Entry>,
+    pub Vec<RAB_SetupList_EnhancedRelocCompleteReq_Entry_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -9577,7 +9623,7 @@ pub struct RAB_SetupList_EnhancedRelocCompleteRes_Entry_Entry {
     sz_ub = "65535"
 )]
 pub struct RAB_SetupList_EnhancedRelocCompleteRes_Entry(
-    Vec<RAB_SetupList_EnhancedRelocCompleteRes_Entry_Entry>,
+    pub Vec<RAB_SetupList_EnhancedRelocCompleteRes_Entry_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -9603,7 +9649,7 @@ pub struct RAB_SetupList_RelocReq_Entry_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_SetupList_RelocReq_Entry(Vec<RAB_SetupList_RelocReq_Entry_Entry>);
+pub struct RAB_SetupList_RelocReq_Entry(pub Vec<RAB_SetupList_RelocReq_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -9628,7 +9674,7 @@ pub struct RAB_SetupList_RelocReqAck_Entry_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_SetupList_RelocReqAck_Entry(Vec<RAB_SetupList_RelocReqAck_Entry_Entry>);
+pub struct RAB_SetupList_RelocReqAck_Entry(pub Vec<RAB_SetupList_RelocReqAck_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -9653,7 +9699,9 @@ pub struct RAB_SetupOrModifiedItemIE_Extensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_SetupOrModifiedItemIE_Extensions(Vec<RAB_SetupOrModifiedItemIE_Extensions_Entry>);
+pub struct RAB_SetupOrModifiedItemIE_Extensions(
+    pub Vec<RAB_SetupOrModifiedItemIE_Extensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -9678,7 +9726,7 @@ pub struct RAB_SetupOrModifiedList_Entry_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_SetupOrModifiedList_Entry(Vec<RAB_SetupOrModifiedList_Entry_Entry>);
+pub struct RAB_SetupOrModifiedList_Entry(pub Vec<RAB_SetupOrModifiedList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -9708,7 +9756,7 @@ pub struct RAB_SetupOrModifyItemFirstIE_Extensions_Entry {
     sz_ub = "65535"
 )]
 pub struct RAB_SetupOrModifyItemFirstIE_Extensions(
-    Vec<RAB_SetupOrModifyItemFirstIE_Extensions_Entry>,
+    pub Vec<RAB_SetupOrModifyItemFirstIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -9741,7 +9789,7 @@ pub struct RAB_SetupOrModifyItemSecondIE_Extensions_Entry {
     sz_ub = "65535"
 )]
 pub struct RAB_SetupOrModifyItemSecondIE_Extensions(
-    Vec<RAB_SetupOrModifyItemSecondIE_Extensions_Entry>,
+    pub Vec<RAB_SetupOrModifyItemSecondIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -9776,7 +9824,7 @@ pub struct RAB_SetupOrModifyList_Entry_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RAB_SetupOrModifyList_Entry(Vec<RAB_SetupOrModifyList_Entry_Entry>);
+pub struct RAB_SetupOrModifyList_Entry(pub Vec<RAB_SetupOrModifyList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -9790,7 +9838,7 @@ pub struct RAB_ToBeReleasedItem_EnhancedRelocCompleteResIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct RAB_ToBeReleasedItem_EnhancedRelocCompleteResIE_Extensions(
-    Vec<RAB_ToBeReleasedItem_EnhancedRelocCompleteResIE_Extensions_Entry>,
+    pub Vec<RAB_ToBeReleasedItem_EnhancedRelocCompleteResIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -9817,7 +9865,7 @@ pub struct RAB_ToBeReleasedList_EnhancedRelocCompleteRes_Entry_Entry {
     sz_ub = "65535"
 )]
 pub struct RAB_ToBeReleasedList_EnhancedRelocCompleteRes_Entry(
-    Vec<RAB_ToBeReleasedList_EnhancedRelocCompleteRes_Entry_Entry>,
+    pub Vec<RAB_ToBeReleasedList_EnhancedRelocCompleteRes_Entry_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -9843,7 +9891,7 @@ pub struct RAB_TrCH_MappingItemIE_Extensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAB_TrCH_MappingItemIE_Extensions(Vec<RAB_TrCH_MappingItemIE_Extensions_Entry>);
+pub struct RAB_TrCH_MappingItemIE_Extensions(pub Vec<RAB_TrCH_MappingItemIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -9857,7 +9905,7 @@ pub struct RABDataVolumeReport_EntryIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct RABDataVolumeReport_EntryIE_Extensions(
-    Vec<RABDataVolumeReport_EntryIE_Extensions_Entry>,
+    pub Vec<RABDataVolumeReport_EntryIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -9881,7 +9929,9 @@ pub struct RABParametersList_EntryIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RABParametersList_EntryIE_Extensions(Vec<RABParametersList_EntryIE_Extensions_Entry>);
+pub struct RABParametersList_EntryIE_Extensions(
+    pub Vec<RABParametersList_EntryIE_Extensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 3)]
@@ -9907,7 +9957,7 @@ pub struct RABasedIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RABasedIE_Extensions(Vec<RABasedIE_Extensions_Entry>);
+pub struct RABasedIE_Extensions(pub Vec<RABasedIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -9921,7 +9971,7 @@ pub struct RABs_ContextFailedtoTransferItemIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct RABs_ContextFailedtoTransferItemIE_Extensions(
-    Vec<RABs_ContextFailedtoTransferItemIE_Extensions_Entry>,
+    pub Vec<RABs_ContextFailedtoTransferItemIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -9936,7 +9986,7 @@ pub struct RABs_failed_to_reportItemIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct RABs_failed_to_reportItemIE_Extensions(
-    Vec<RABs_failed_to_reportItemIE_Extensions_Entry>,
+    pub Vec<RABs_failed_to_reportItemIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -9950,11 +10000,11 @@ pub struct RAIIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RAIIE_Extensions(Vec<RAIIE_Extensions_Entry>);
+pub struct RAIIE_Extensions(pub Vec<RAIIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
-pub struct ENUMERATED_50(u8);
+pub struct ENUMERATED_50(pub u8);
 impl ENUMERATED_50 {
     const EMPTYLIST: u8 = 0u8;
     const FULLLIST: u8 = 1u8;
@@ -10002,7 +10052,7 @@ pub struct RANAP_EnhancedRelocationInformationRequestProtocolIEs_Entry {
     sz_ub = "65535"
 )]
 pub struct RANAP_EnhancedRelocationInformationRequestProtocolIEs(
-    Vec<RANAP_EnhancedRelocationInformationRequestProtocolIEs_Entry>,
+    pub Vec<RANAP_EnhancedRelocationInformationRequestProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -10042,7 +10092,7 @@ pub struct RANAP_EnhancedRelocationInformationRequestProtocolExtensions_Entry {
     sz_ub = "65535"
 )]
 pub struct RANAP_EnhancedRelocationInformationRequestProtocolExtensions(
-    Vec<RANAP_EnhancedRelocationInformationRequestProtocolExtensions_Entry>,
+    pub Vec<RANAP_EnhancedRelocationInformationRequestProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -10075,7 +10125,7 @@ pub struct RANAP_EnhancedRelocationInformationResponseProtocolIEs_Entry {
     sz_ub = "65535"
 )]
 pub struct RANAP_EnhancedRelocationInformationResponseProtocolIEs(
-    Vec<RANAP_EnhancedRelocationInformationResponseProtocolIEs_Entry>,
+    pub Vec<RANAP_EnhancedRelocationInformationResponseProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -10090,7 +10140,7 @@ pub struct RANAP_EnhancedRelocationInformationResponseProtocolExtensions_Entry {
     sz_ub = "65535"
 )]
 pub struct RANAP_EnhancedRelocationInformationResponseProtocolExtensions(
-    Vec<RANAP_EnhancedRelocationInformationResponseProtocolExtensions_Entry>,
+    pub Vec<RANAP_EnhancedRelocationInformationResponseProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -10119,7 +10169,7 @@ pub struct RANAP_RelocationInformationProtocolIEs_Entry {
     sz_ub = "65535"
 )]
 pub struct RANAP_RelocationInformationProtocolIEs(
-    Vec<RANAP_RelocationInformationProtocolIEs_Entry>,
+    pub Vec<RANAP_RelocationInformationProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -10148,7 +10198,7 @@ pub struct RANAP_RelocationInformationProtocolExtensions_Entry {
     sz_ub = "65535"
 )]
 pub struct RANAP_RelocationInformationProtocolExtensions(
-    Vec<RANAP_RelocationInformationProtocolExtensions_Entry>,
+    pub Vec<RANAP_RelocationInformationProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -10162,11 +10212,11 @@ pub struct RIM_TransferIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RIM_TransferIE_Extensions(Vec<RIM_TransferIE_Extensions_Entry>);
+pub struct RIM_TransferIE_Extensions(pub Vec<RIM_TransferIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", lb = "0", ub = "1")]
-pub struct ENUMERATED_51(u8);
+pub struct ENUMERATED_51(pub u8);
 impl ENUMERATED_51 {
     const ACTIVATED: u8 = 0u8;
     const DEACTIVATED: u8 = 1u8;
@@ -10201,7 +10251,7 @@ pub struct RNCTraceInformationIE_Extensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RNCTraceInformationIE_Extensions(Vec<RNCTraceInformationIE_Extensions_Entry>);
+pub struct RNCTraceInformationIE_Extensions(pub Vec<RNCTraceInformationIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -10215,16 +10265,16 @@ pub struct RNSAPRelocationParametersIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct RNSAPRelocationParametersIE_Extensions(
-    Vec<RNSAPRelocationParametersIE_Extensions_Entry>,
+    pub Vec<RNSAPRelocationParametersIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BOOLEAN")]
-pub struct BOOLEAN_52(bool);
+pub struct BOOLEAN_52(pub bool);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BOOLEAN")]
-pub struct BOOLEAN_53(bool);
+pub struct BOOLEAN_53(pub bool);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -10233,7 +10283,7 @@ pub struct BOOLEAN_53(bool);
     sz_lb = "128",
     sz_ub = "128"
 )]
-pub struct BIT_STRING_54(BitVec<Msb0, u8>);
+pub struct BIT_STRING_54(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -10242,7 +10292,7 @@ pub struct BIT_STRING_54(BitVec<Msb0, u8>);
     sz_lb = "1",
     sz_ub = "32"
 )]
-pub struct OCTET_STRING_55(Vec<u8>);
+pub struct OCTET_STRING_55(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -10255,7 +10305,7 @@ pub struct RSRVCC_InformationIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RSRVCC_InformationIE_Extensions(Vec<RSRVCC_InformationIE_Extensions_Entry>);
+pub struct RSRVCC_InformationIE_Extensions(pub Vec<RSRVCC_InformationIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -10304,7 +10354,7 @@ pub struct RelocationCancelProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RelocationCancelProtocolIEs(Vec<RelocationCancelProtocolIEs_Entry>);
+pub struct RelocationCancelProtocolIEs(pub Vec<RelocationCancelProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -10317,7 +10367,7 @@ pub struct RelocationCancelProtocolExtensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RelocationCancelProtocolExtensions(Vec<RelocationCancelProtocolExtensions_Entry>);
+pub struct RelocationCancelProtocolExtensions(pub Vec<RelocationCancelProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -10343,7 +10393,7 @@ pub struct RelocationCancelAcknowledgeProtocolIEs_Entry {
     sz_ub = "65535"
 )]
 pub struct RelocationCancelAcknowledgeProtocolIEs(
-    Vec<RelocationCancelAcknowledgeProtocolIEs_Entry>,
+    pub Vec<RelocationCancelAcknowledgeProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -10358,7 +10408,7 @@ pub struct RelocationCancelAcknowledgeProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct RelocationCancelAcknowledgeProtocolExtensions(
-    Vec<RelocationCancelAcknowledgeProtocolExtensions_Entry>,
+    pub Vec<RelocationCancelAcknowledgeProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -10392,7 +10442,7 @@ pub struct RelocationCommandProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RelocationCommandProtocolIEs(Vec<RelocationCommandProtocolIEs_Entry>);
+pub struct RelocationCommandProtocolIEs(pub Vec<RelocationCommandProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -10423,7 +10473,7 @@ pub struct RelocationCommandProtocolExtensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RelocationCommandProtocolExtensions(Vec<RelocationCommandProtocolExtensions_Entry>);
+pub struct RelocationCommandProtocolExtensions(pub Vec<RelocationCommandProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -10436,7 +10486,7 @@ pub struct RelocationCompleteProtocolIEs_Entry {}
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RelocationCompleteProtocolIEs(Vec<RelocationCompleteProtocolIEs_Entry>);
+pub struct RelocationCompleteProtocolIEs(pub Vec<RelocationCompleteProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -10465,7 +10515,9 @@ pub struct RelocationCompleteProtocolExtensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RelocationCompleteProtocolExtensions(Vec<RelocationCompleteProtocolExtensions_Entry>);
+pub struct RelocationCompleteProtocolExtensions(
+    pub Vec<RelocationCompleteProtocolExtensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -10478,7 +10530,7 @@ pub struct RelocationDetectProtocolIEs_Entry {}
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RelocationDetectProtocolIEs(Vec<RelocationDetectProtocolIEs_Entry>);
+pub struct RelocationDetectProtocolIEs(pub Vec<RelocationDetectProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -10491,7 +10543,7 @@ pub struct RelocationDetectProtocolExtensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RelocationDetectProtocolExtensions(Vec<RelocationDetectProtocolExtensions_Entry>);
+pub struct RelocationDetectProtocolExtensions(pub Vec<RelocationDetectProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -10518,7 +10570,7 @@ pub struct RelocationFailureProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RelocationFailureProtocolIEs(Vec<RelocationFailureProtocolIEs_Entry>);
+pub struct RelocationFailureProtocolIEs(pub Vec<RelocationFailureProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -10545,7 +10597,7 @@ pub struct RelocationFailureProtocolExtensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RelocationFailureProtocolExtensions(Vec<RelocationFailureProtocolExtensions_Entry>);
+pub struct RelocationFailureProtocolExtensions(pub Vec<RelocationFailureProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -10573,7 +10625,7 @@ pub struct RelocationPreparationFailureProtocolIEs_Entry {
     sz_ub = "65535"
 )]
 pub struct RelocationPreparationFailureProtocolIEs(
-    Vec<RelocationPreparationFailureProtocolIEs_Entry>,
+    pub Vec<RelocationPreparationFailureProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -10600,7 +10652,7 @@ pub struct RelocationPreparationFailureProtocolExtensions_Entry {
     sz_ub = "65535"
 )]
 pub struct RelocationPreparationFailureProtocolExtensions(
-    Vec<RelocationPreparationFailureProtocolExtensions_Entry>,
+    pub Vec<RelocationPreparationFailureProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -10640,7 +10692,7 @@ pub struct RelocationRequestProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RelocationRequestProtocolIEs(Vec<RelocationRequestProtocolIEs_Entry>);
+pub struct RelocationRequestProtocolIEs(pub Vec<RelocationRequestProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -10689,7 +10741,7 @@ pub struct RelocationRequestProtocolExtensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RelocationRequestProtocolExtensions(Vec<RelocationRequestProtocolExtensions_Entry>);
+pub struct RelocationRequestProtocolExtensions(pub Vec<RelocationRequestProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -10725,7 +10777,7 @@ pub struct RelocationRequestAcknowledgeProtocolIEs_Entry {
     sz_ub = "65535"
 )]
 pub struct RelocationRequestAcknowledgeProtocolIEs(
-    Vec<RelocationRequestAcknowledgeProtocolIEs_Entry>,
+    pub Vec<RelocationRequestAcknowledgeProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -10754,7 +10806,7 @@ pub struct RelocationRequestAcknowledgeProtocolExtensions_Entry {
     sz_ub = "65535"
 )]
 pub struct RelocationRequestAcknowledgeProtocolExtensions(
-    Vec<RelocationRequestAcknowledgeProtocolExtensions_Entry>,
+    pub Vec<RelocationRequestAcknowledgeProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -10794,7 +10846,7 @@ pub struct RelocationRequiredProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RelocationRequiredProtocolIEs(Vec<RelocationRequiredProtocolIEs_Entry>);
+pub struct RelocationRequiredProtocolIEs(pub Vec<RelocationRequiredProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -10833,11 +10885,13 @@ pub struct RelocationRequiredProtocolExtensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RelocationRequiredProtocolExtensions(Vec<RelocationRequiredProtocolExtensions_Entry>);
+pub struct RelocationRequiredProtocolExtensions(
+    pub Vec<RelocationRequiredProtocolExtensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "127")]
-pub struct INTEGER_56(u8);
+pub struct INTEGER_56(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -10875,7 +10929,7 @@ pub struct Requested_RAB_Parameter_ValuesIE_Extensions_Entry {
     sz_ub = "65535"
 )]
 pub struct Requested_RAB_Parameter_ValuesIE_Extensions(
-    Vec<Requested_RAB_Parameter_ValuesIE_Extensions_Entry>,
+    pub Vec<Requested_RAB_Parameter_ValuesIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -10905,7 +10959,7 @@ pub struct RerouteNASRequestProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct RerouteNASRequestProtocolIEs(Vec<RerouteNASRequestProtocolIEs_Entry>);
+pub struct RerouteNASRequestProtocolIEs(pub Vec<RerouteNASRequestProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -10918,7 +10972,7 @@ pub struct RerouteNASRequestProtocolExtensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct RerouteNASRequestProtocolExtensions(Vec<RerouteNASRequestProtocolExtensions_Entry>);
+pub struct RerouteNASRequestProtocolExtensions(pub Vec<RerouteNASRequestProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -10947,7 +11001,7 @@ pub struct ResetProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct ResetProtocolIEs(Vec<ResetProtocolIEs_Entry>);
+pub struct ResetProtocolIEs(pub Vec<ResetProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -10974,7 +11028,7 @@ pub struct ResetProtocolExtensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct ResetProtocolExtensions(Vec<ResetProtocolExtensions_Entry>);
+pub struct ResetProtocolExtensions(pub Vec<ResetProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -11003,7 +11057,7 @@ pub struct ResetAcknowledgeProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct ResetAcknowledgeProtocolIEs(Vec<ResetAcknowledgeProtocolIEs_Entry>);
+pub struct ResetAcknowledgeProtocolIEs(pub Vec<ResetAcknowledgeProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -11030,7 +11084,7 @@ pub struct ResetAcknowledgeProtocolExtensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct ResetAcknowledgeProtocolExtensions(Vec<ResetAcknowledgeProtocolExtensions_Entry>);
+pub struct ResetAcknowledgeProtocolExtensions(pub Vec<ResetAcknowledgeProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -11061,7 +11115,7 @@ pub struct ResetResourceProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct ResetResourceProtocolIEs(Vec<ResetResourceProtocolIEs_Entry>);
+pub struct ResetResourceProtocolIEs(pub Vec<ResetResourceProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -11088,7 +11142,7 @@ pub struct ResetResourceProtocolExtensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct ResetResourceProtocolExtensions(Vec<ResetResourceProtocolExtensions_Entry>);
+pub struct ResetResourceProtocolExtensions(pub Vec<ResetResourceProtocolExtensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -11113,7 +11167,7 @@ pub struct ResetResourceAckItemIE_Extensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct ResetResourceAckItemIE_Extensions(Vec<ResetResourceAckItemIE_Extensions_Entry>);
+pub struct ResetResourceAckItemIE_Extensions(pub Vec<ResetResourceAckItemIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -11138,7 +11192,7 @@ pub struct ResetResourceAckList_Entry_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct ResetResourceAckList_Entry(Vec<ResetResourceAckList_Entry_Entry>);
+pub struct ResetResourceAckList_Entry(pub Vec<ResetResourceAckList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -11169,7 +11223,7 @@ pub struct ResetResourceAcknowledgeProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct ResetResourceAcknowledgeProtocolIEs(Vec<ResetResourceAcknowledgeProtocolIEs_Entry>);
+pub struct ResetResourceAcknowledgeProtocolIEs(pub Vec<ResetResourceAcknowledgeProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -11197,7 +11251,7 @@ pub struct ResetResourceAcknowledgeProtocolExtensions_Entry {
     sz_ub = "65535"
 )]
 pub struct ResetResourceAcknowledgeProtocolExtensions(
-    Vec<ResetResourceAcknowledgeProtocolExtensions_Entry>,
+    pub Vec<ResetResourceAcknowledgeProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -11223,7 +11277,7 @@ pub struct ResetResourceItemIE_Extensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct ResetResourceItemIE_Extensions(Vec<ResetResourceItemIE_Extensions_Entry>);
+pub struct ResetResourceItemIE_Extensions(pub Vec<ResetResourceItemIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -11248,15 +11302,15 @@ pub struct ResetResourceList_Entry_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct ResetResourceList_Entry(Vec<ResetResourceList_Entry_Entry>);
+pub struct ResetResourceList_Entry(pub Vec<ResetResourceList_Entry_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "1", ub = "9")]
-pub struct INTEGER_57(u8);
+pub struct INTEGER_57(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "1", ub = "8")]
-pub struct INTEGER_58(u8);
+pub struct INTEGER_58(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -11269,7 +11323,7 @@ pub struct ResidualBitErrorRatioIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct ResidualBitErrorRatioIE_Extensions(Vec<ResidualBitErrorRatioIE_Extensions_Entry>);
+pub struct ResidualBitErrorRatioIE_Extensions(pub Vec<ResidualBitErrorRatioIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -11282,15 +11336,15 @@ pub struct SAIIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SAIIE_Extensions(Vec<SAIIE_Extensions_Entry>);
+pub struct SAIIE_Extensions(pub Vec<SAIIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "1", ub = "9")]
-pub struct INTEGER_59(u8);
+pub struct INTEGER_59(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "1", ub = "6")]
-pub struct INTEGER_60(u8);
+pub struct INTEGER_60(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -11303,7 +11357,7 @@ pub struct SDU_ErrorRatioIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SDU_ErrorRatioIE_Extensions(Vec<SDU_ErrorRatioIE_Extensions_Entry>);
+pub struct SDU_ErrorRatioIE_Extensions(pub Vec<SDU_ErrorRatioIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -11317,7 +11371,7 @@ pub struct SDU_FormatInformationParameters_EntryIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct SDU_FormatInformationParameters_EntryIE_Extensions(
-    Vec<SDU_FormatInformationParameters_EntryIE_Extensions_Entry>,
+    pub Vec<SDU_FormatInformationParameters_EntryIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -11342,7 +11396,7 @@ pub struct SDU_Parameters_EntryIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SDU_Parameters_EntryIE_Extensions(Vec<SDU_Parameters_EntryIE_Extensions_Entry>);
+pub struct SDU_Parameters_EntryIE_Extensions(pub Vec<SDU_Parameters_EntryIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 3)]
@@ -11368,7 +11422,7 @@ pub struct SNA_Access_InformationIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SNA_Access_InformationIE_Extensions(Vec<SNA_Access_InformationIE_Extensions_Entry>);
+pub struct SNA_Access_InformationIE_Extensions(pub Vec<SNA_Access_InformationIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -11381,7 +11435,7 @@ pub struct SRB_TrCH_MappingItemIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SRB_TrCH_MappingItemIE_Extensions(Vec<SRB_TrCH_MappingItemIE_Extensions_Entry>);
+pub struct SRB_TrCH_MappingItemIE_Extensions(pub Vec<SRB_TrCH_MappingItemIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -11406,7 +11460,7 @@ pub struct SRNS_ContextRequestProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct SRNS_ContextRequestProtocolIEs(Vec<SRNS_ContextRequestProtocolIEs_Entry>);
+pub struct SRNS_ContextRequestProtocolIEs(pub Vec<SRNS_ContextRequestProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -11431,7 +11485,9 @@ pub struct SRNS_ContextRequestProtocolExtensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SRNS_ContextRequestProtocolExtensions(Vec<SRNS_ContextRequestProtocolExtensions_Entry>);
+pub struct SRNS_ContextRequestProtocolExtensions(
+    pub Vec<SRNS_ContextRequestProtocolExtensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -11460,7 +11516,7 @@ pub struct SRNS_ContextResponseProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct SRNS_ContextResponseProtocolIEs(Vec<SRNS_ContextResponseProtocolIEs_Entry>);
+pub struct SRNS_ContextResponseProtocolIEs(pub Vec<SRNS_ContextResponseProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -11474,7 +11530,7 @@ pub struct SRNS_ContextResponseProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct SRNS_ContextResponseProtocolExtensions(
-    Vec<SRNS_ContextResponseProtocolExtensions_Entry>,
+    pub Vec<SRNS_ContextResponseProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -11500,7 +11556,7 @@ pub struct SRNS_DataForwardCommandProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct SRNS_DataForwardCommandProtocolIEs(Vec<SRNS_DataForwardCommandProtocolIEs_Entry>);
+pub struct SRNS_DataForwardCommandProtocolIEs(pub Vec<SRNS_DataForwardCommandProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -11514,7 +11570,7 @@ pub struct SRNS_DataForwardCommandProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct SRNS_DataForwardCommandProtocolExtensions(
-    Vec<SRNS_DataForwardCommandProtocolExtensions_Entry>,
+    pub Vec<SRNS_DataForwardCommandProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -11528,7 +11584,7 @@ pub struct SRVCC_CSKeysRequestProtocolIEs_Entry {}
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct SRVCC_CSKeysRequestProtocolIEs(Vec<SRVCC_CSKeysRequestProtocolIEs_Entry>);
+pub struct SRVCC_CSKeysRequestProtocolIEs(pub Vec<SRVCC_CSKeysRequestProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -11541,7 +11597,9 @@ pub struct SRVCC_CSKeysRequestProtocolExtensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SRVCC_CSKeysRequestProtocolExtensions(Vec<SRVCC_CSKeysRequestProtocolExtensions_Entry>);
+pub struct SRVCC_CSKeysRequestProtocolExtensions(
+    pub Vec<SRVCC_CSKeysRequestProtocolExtensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -11572,7 +11630,7 @@ pub struct SRVCC_CSKeysResponseProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct SRVCC_CSKeysResponseProtocolIEs(Vec<SRVCC_CSKeysResponseProtocolIEs_Entry>);
+pub struct SRVCC_CSKeysResponseProtocolIEs(pub Vec<SRVCC_CSKeysResponseProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -11586,7 +11644,7 @@ pub struct SRVCC_CSKeysResponseProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct SRVCC_CSKeysResponseProtocolExtensions(
-    Vec<SRVCC_CSKeysResponseProtocolExtensions_Entry>,
+    pub Vec<SRVCC_CSKeysResponseProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -11596,7 +11654,7 @@ pub struct SRVCC_CSKeysResponseProtocolExtensions(
     sz_lb = "128",
     sz_ub = "128"
 )]
-pub struct BIT_STRING_61(BitVec<Msb0, u8>);
+pub struct BIT_STRING_61(pub BitVec<Msb0, u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -11609,7 +11667,7 @@ pub struct SRVCC_InformationIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SRVCC_InformationIE_Extensions(Vec<SRVCC_InformationIE_Extensions_Entry>);
+pub struct SRVCC_InformationIE_Extensions(pub Vec<SRVCC_InformationIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -11638,7 +11696,7 @@ pub struct SecurityModeCommandProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct SecurityModeCommandProtocolIEs(Vec<SecurityModeCommandProtocolIEs_Entry>);
+pub struct SecurityModeCommandProtocolIEs(pub Vec<SecurityModeCommandProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -11651,7 +11709,9 @@ pub struct SecurityModeCommandProtocolExtensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SecurityModeCommandProtocolExtensions(Vec<SecurityModeCommandProtocolExtensions_Entry>);
+pub struct SecurityModeCommandProtocolExtensions(
+    pub Vec<SecurityModeCommandProtocolExtensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -11680,7 +11740,7 @@ pub struct SecurityModeCompleteProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct SecurityModeCompleteProtocolIEs(Vec<SecurityModeCompleteProtocolIEs_Entry>);
+pub struct SecurityModeCompleteProtocolIEs(pub Vec<SecurityModeCompleteProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -11694,7 +11754,7 @@ pub struct SecurityModeCompleteProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct SecurityModeCompleteProtocolExtensions(
-    Vec<SecurityModeCompleteProtocolExtensions_Entry>,
+    pub Vec<SecurityModeCompleteProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -11722,7 +11782,7 @@ pub struct SecurityModeRejectProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct SecurityModeRejectProtocolIEs(Vec<SecurityModeRejectProtocolIEs_Entry>);
+pub struct SecurityModeRejectProtocolIEs(pub Vec<SecurityModeRejectProtocolIEs_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -11735,7 +11795,9 @@ pub struct SecurityModeRejectProtocolExtensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SecurityModeRejectProtocolExtensions(Vec<SecurityModeRejectProtocolExtensions_Entry>);
+pub struct SecurityModeRejectProtocolExtensions(
+    pub Vec<SecurityModeRejectProtocolExtensions_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -11749,7 +11811,7 @@ pub struct Shared_Network_InformationIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct Shared_Network_InformationIE_Extensions(
-    Vec<Shared_Network_InformationIE_Extensions_Entry>,
+    pub Vec<Shared_Network_InformationIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -11775,7 +11837,7 @@ pub struct SourceRNC_IDIE_Extensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SourceRNC_IDIE_Extensions(Vec<SourceRNC_IDIE_Extensions_Entry>);
+pub struct SourceRNC_IDIE_Extensions(pub Vec<SourceRNC_IDIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -11830,7 +11892,7 @@ pub struct SourceRNC_ToTargetRNC_TransparentContainerIE_Extensions_Entry {
     sz_ub = "65535"
 )]
 pub struct SourceRNC_ToTargetRNC_TransparentContainerIE_Extensions(
-    Vec<SourceRNC_ToTargetRNC_TransparentContainerIE_Extensions_Entry>,
+    pub Vec<SourceRNC_ToTargetRNC_TransparentContainerIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -11844,7 +11906,7 @@ pub struct SourceUTRANCellIDIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct SourceUTRANCellIDIE_Extensions(Vec<SourceUTRANCellIDIE_Extensions_Entry>);
+pub struct SourceUTRANCellIDIE_Extensions(pub Vec<SourceUTRANCellIDIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -11902,11 +11964,11 @@ pub struct TAIIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct TAIIE_Extensions(Vec<TAIIE_Extensions_Entry>);
+pub struct TAIIE_Extensions(pub Vec<TAIIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "3", sz_ub = "3")]
-pub struct OCTET_STRING_62(Vec<u8>);
+pub struct OCTET_STRING_62(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -11919,7 +11981,7 @@ pub struct TMGIIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct TMGIIE_Extensions(Vec<TMGIIE_Extensions_Entry>);
+pub struct TMGIIE_Extensions(pub Vec<TMGIIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -11933,7 +11995,7 @@ pub struct TNLInformationEnhRelInfoReqIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct TNLInformationEnhRelInfoReqIE_Extensions(
-    Vec<TNLInformationEnhRelInfoReqIE_Extensions_Entry>,
+    pub Vec<TNLInformationEnhRelInfoReqIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -11948,7 +12010,7 @@ pub struct TNLInformationEnhRelInfoResIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct TNLInformationEnhRelInfoResIE_Extensions(
-    Vec<TNLInformationEnhRelInfoResIE_Extensions_Entry>,
+    pub Vec<TNLInformationEnhRelInfoResIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -11962,7 +12024,7 @@ pub struct TargetENB_IDIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct TargetENB_IDIE_Extensions(Vec<TargetENB_IDIE_Extensions_Entry>);
+pub struct TargetENB_IDIE_Extensions(pub Vec<TargetENB_IDIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -11987,7 +12049,7 @@ pub struct TargetRNC_IDIE_Extensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct TargetRNC_IDIE_Extensions(Vec<TargetRNC_IDIE_Extensions_Entry>);
+pub struct TargetRNC_IDIE_Extensions(pub Vec<TargetRNC_IDIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -12016,7 +12078,7 @@ pub struct TargetRNC_ToSourceRNC_TransparentContainerIE_Extensions_Entry {
     sz_ub = "65535"
 )]
 pub struct TargetRNC_ToSourceRNC_TransparentContainerIE_Extensions(
-    Vec<TargetRNC_ToSourceRNC_TransparentContainerIE_Extensions_Entry>,
+    pub Vec<TargetRNC_ToSourceRNC_TransparentContainerIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -12044,7 +12106,7 @@ pub struct TrCH_IDIE_Extensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct TrCH_IDIE_Extensions(Vec<TrCH_IDIE_Extensions_Entry>);
+pub struct TrCH_IDIE_Extensions(pub Vec<TrCH_IDIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -12057,7 +12119,7 @@ pub struct TraceInformationIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct TraceInformationIE_Extensions(Vec<TraceInformationIE_Extensions_Entry>);
+pub struct TraceInformationIE_Extensions(pub Vec<TraceInformationIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -12071,7 +12133,7 @@ pub struct TracePropagationParametersIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct TracePropagationParametersIE_Extensions(
-    Vec<TracePropagationParametersIE_Extensions_Entry>,
+    pub Vec<TracePropagationParametersIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -12086,7 +12148,7 @@ pub struct TraceRecordingSessionInformationIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct TraceRecordingSessionInformationIE_Extensions(
-    Vec<TraceRecordingSessionInformationIE_Extensions_Entry>,
+    pub Vec<TraceRecordingSessionInformationIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -12101,7 +12163,7 @@ pub struct TransportLayerInformationIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct TransportLayerInformationIE_Extensions(
-    Vec<TransportLayerInformationIE_Extensions_Entry>,
+    pub Vec<TransportLayerInformationIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -12115,7 +12177,7 @@ pub struct TunnelInformationIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct TunnelInformationIE_Extensions(Vec<TunnelInformationIE_Extensions_Entry>);
+pub struct TunnelInformationIE_Extensions(pub Vec<TunnelInformationIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(
@@ -12124,7 +12186,7 @@ pub struct TunnelInformationIE_Extensions(Vec<TunnelInformationIE_Extensions_Ent
     sz_lb = "1",
     sz_ub = "1000"
 )]
-pub struct OCTET_STRING_63(Vec<u8>);
+pub struct OCTET_STRING_63(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -12137,7 +12199,7 @@ pub struct UE_IsNotServedIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct UE_IsNotServedIE_Extensions(Vec<UE_IsNotServedIE_Extensions_Entry>);
+pub struct UE_IsNotServedIE_Extensions(pub Vec<UE_IsNotServedIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -12150,7 +12212,7 @@ pub struct UE_IsServedIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct UE_IsServedIE_Extensions(Vec<UE_IsServedIE_Extensions_Entry>);
+pub struct UE_IsServedIE_Extensions(pub Vec<UE_IsServedIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -12163,7 +12225,7 @@ pub struct UESBI_IuIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct UESBI_IuIE_Extensions(Vec<UESBI_IuIE_Extensions_Entry>);
+pub struct UESBI_IuIE_Extensions(pub Vec<UESBI_IuIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OPEN")]
@@ -12189,7 +12251,7 @@ pub struct UESpecificInformationIndicationProtocolIEs_Entry {
     sz_ub = "65535"
 )]
 pub struct UESpecificInformationIndicationProtocolIEs(
-    Vec<UESpecificInformationIndicationProtocolIEs_Entry>,
+    pub Vec<UESpecificInformationIndicationProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -12204,7 +12266,7 @@ pub struct UESpecificInformationIndicationProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct UESpecificInformationIndicationProtocolExtensions(
-    Vec<UESpecificInformationIndicationProtocolExtensions_Entry>,
+    pub Vec<UESpecificInformationIndicationProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -12230,7 +12292,7 @@ pub struct UPInformationIE_Extensions_Entry {
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct UPInformationIE_Extensions(Vec<UPInformationIE_Extensions_Entry>);
+pub struct UPInformationIE_Extensions(pub Vec<UPInformationIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -12243,7 +12305,7 @@ pub struct UTRAN_CellIDIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct UTRAN_CellIDIE_Extensions(Vec<UTRAN_CellIDIE_Extensions_Entry>);
+pub struct UTRAN_CellIDIE_Extensions(pub Vec<UTRAN_CellIDIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -12257,7 +12319,7 @@ pub struct UeRadioCapabilityMatchRequestProtocolIEs_Entry {}
     sz_ub = "65535"
 )]
 pub struct UeRadioCapabilityMatchRequestProtocolIEs(
-    Vec<UeRadioCapabilityMatchRequestProtocolIEs_Entry>,
+    pub Vec<UeRadioCapabilityMatchRequestProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -12272,7 +12334,7 @@ pub struct UeRadioCapabilityMatchRequestProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct UeRadioCapabilityMatchRequestProtocolExtensions(
-    Vec<UeRadioCapabilityMatchRequestProtocolExtensions_Entry>,
+    pub Vec<UeRadioCapabilityMatchRequestProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -12299,7 +12361,7 @@ pub struct UeRadioCapabilityMatchResponseProtocolIEs_Entry {
     sz_ub = "65535"
 )]
 pub struct UeRadioCapabilityMatchResponseProtocolIEs(
-    Vec<UeRadioCapabilityMatchResponseProtocolIEs_Entry>,
+    pub Vec<UeRadioCapabilityMatchResponseProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -12314,7 +12376,7 @@ pub struct UeRadioCapabilityMatchResponseProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct UeRadioCapabilityMatchResponseProtocolExtensions(
-    Vec<UeRadioCapabilityMatchResponseProtocolExtensions_Entry>,
+    pub Vec<UeRadioCapabilityMatchResponseProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -12342,7 +12404,9 @@ pub struct UeRegistrationQueryRequestProtocolIEs_Entry {
     sz_lb = "0",
     sz_ub = "65535"
 )]
-pub struct UeRegistrationQueryRequestProtocolIEs(Vec<UeRegistrationQueryRequestProtocolIEs_Entry>);
+pub struct UeRegistrationQueryRequestProtocolIEs(
+    pub Vec<UeRegistrationQueryRequestProtocolIEs_Entry>,
+);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -12356,7 +12420,7 @@ pub struct UeRegistrationQueryRequestProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct UeRegistrationQueryRequestProtocolExtensions(
-    Vec<UeRegistrationQueryRequestProtocolExtensions_Entry>,
+    pub Vec<UeRegistrationQueryRequestProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -12383,7 +12447,7 @@ pub struct UeRegistrationQueryResponseProtocolIEs_Entry {
     sz_ub = "65535"
 )]
 pub struct UeRegistrationQueryResponseProtocolIEs(
-    Vec<UeRegistrationQueryResponseProtocolIEs_Entry>,
+    pub Vec<UeRegistrationQueryResponseProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -12398,7 +12462,7 @@ pub struct UeRegistrationQueryResponseProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct UeRegistrationQueryResponseProtocolExtensions(
-    Vec<UeRegistrationQueryResponseProtocolExtensions_Entry>,
+    pub Vec<UeRegistrationQueryResponseProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -12413,7 +12477,7 @@ pub struct UnsuccessfulLinking_IEs_EntryIE_Extensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct UnsuccessfulLinking_IEs_EntryIE_Extensions(
-    Vec<UnsuccessfulLinking_IEs_EntryIE_Extensions_Entry>,
+    pub Vec<UnsuccessfulLinking_IEs_EntryIE_Extensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -12484,7 +12548,7 @@ pub struct UplinkInformationExchangeFailureProtocolIEs_Entry {
     sz_ub = "65535"
 )]
 pub struct UplinkInformationExchangeFailureProtocolIEs(
-    Vec<UplinkInformationExchangeFailureProtocolIEs_Entry>,
+    pub Vec<UplinkInformationExchangeFailureProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -12499,7 +12563,7 @@ pub struct UplinkInformationExchangeFailureProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct UplinkInformationExchangeFailureProtocolExtensions(
-    Vec<UplinkInformationExchangeFailureProtocolExtensions_Entry>,
+    pub Vec<UplinkInformationExchangeFailureProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -12536,7 +12600,7 @@ pub struct UplinkInformationExchangeRequestProtocolIEs_Entry {
     sz_ub = "65535"
 )]
 pub struct UplinkInformationExchangeRequestProtocolIEs(
-    Vec<UplinkInformationExchangeRequestProtocolIEs_Entry>,
+    pub Vec<UplinkInformationExchangeRequestProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -12563,7 +12627,7 @@ pub struct UplinkInformationExchangeRequestProtocolExtensions_Entry {
     sz_ub = "65535"
 )]
 pub struct UplinkInformationExchangeRequestProtocolExtensions(
-    Vec<UplinkInformationExchangeRequestProtocolExtensions_Entry>,
+    pub Vec<UplinkInformationExchangeRequestProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -12598,7 +12662,7 @@ pub struct UplinkInformationExchangeResponseProtocolIEs_Entry {
     sz_ub = "65535"
 )]
 pub struct UplinkInformationExchangeResponseProtocolIEs(
-    Vec<UplinkInformationExchangeResponseProtocolIEs_Entry>,
+    pub Vec<UplinkInformationExchangeResponseProtocolIEs_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -12613,7 +12677,7 @@ pub struct UplinkInformationExchangeResponseProtocolExtensions_Entry {}
     sz_ub = "65535"
 )]
 pub struct UplinkInformationExchangeResponseProtocolExtensions(
-    Vec<UplinkInformationExchangeResponseProtocolExtensions_Entry>,
+    pub Vec<UplinkInformationExchangeResponseProtocolExtensions_Entry>,
 );
 
 #[derive(Debug, AperCodec)]
@@ -12627,11 +12691,11 @@ pub struct UserPlaneInformationIE_Extensions_Entry {}
     sz_lb = "1",
     sz_ub = "65535"
 )]
-pub struct UserPlaneInformationIE_Extensions(Vec<UserPlaneInformationIE_Extensions_Entry>);
+pub struct UserPlaneInformationIE_Extensions(pub Vec<UserPlaneInformationIE_Extensions_Entry>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "255")]
-pub struct INTEGER_64(u8);
+pub struct INTEGER_64(pub u8);
 
 fn main() {
     use asn1_codecs::aper::*;

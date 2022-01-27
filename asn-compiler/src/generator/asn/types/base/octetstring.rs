@@ -26,7 +26,7 @@ impl Asn1ResolvedOctetString {
         let struct_tokens = quote! {
             #[derive(Debug, AperCodec)]
             #[asn(#ty_attributes)]
-            pub struct #struct_name(Vec<u8>);
+            pub struct #struct_name(pub Vec<u8>);
         };
 
         Ok(struct_tokens)
