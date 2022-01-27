@@ -108,7 +108,7 @@ impl Resolver {
             .collect::<Vec<(&String, &Asn1ResolvedType)>>()
     }
 
-    fn resolve_classes_in_current_module(&mut self, module: &Asn1Module) -> () {
+    fn resolve_classes_in_current_module(&mut self, module: &Asn1Module) {
         for (k, def) in module.get_definitions() {
             if def.is_class_assignment() {
                 self.classes.insert(k.clone(), def.clone());

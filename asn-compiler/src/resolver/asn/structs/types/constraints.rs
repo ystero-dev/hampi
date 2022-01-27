@@ -16,7 +16,7 @@ impl ConstraintValues {
         }
     }
 
-    pub(crate) fn append(&mut self, other: &Self) -> () {
+    pub(crate) fn append(&mut self, other: &Self) {
         self.ranges.extend(other.ranges.clone());
         self.values.extend(other.values.clone());
     }

@@ -9,7 +9,7 @@ use crate::error::Error;
 use types::TokenType;
 
 // Keywords
-const KEYWORDS: &'static [&'static str] = &[
+const KEYWORDS: &[&str] = &[
     "ABSENT",
     "ABSTRACT-SYNTAX",
     "ALL",
@@ -93,7 +93,7 @@ const KEYWORDS: &'static [&'static str] = &[
 ];
 
 // FIXME: Add other types
-const BASE_TYPES: &'static [&'static str] = &[
+const BASE_TYPES: &[&str] = &[
     "INTEGER",
     "BOOLEAN",
     "ENUMERATED",
@@ -109,9 +109,9 @@ const BASE_TYPES: &'static [&'static str] = &[
     "CHARACTER",
 ];
 
-const CONSTRUCTED_TYPES: &'static [&'static str] = &["SEQUENCE", "SET", "CHOICE"];
+const CONSTRUCTED_TYPES: &[&str] = &["SEQUENCE", "SET", "CHOICE"];
 
-const WITH_SYNTAX_RESERVED_WORDS: &'static [&'static str] = &[
+const WITH_SYNTAX_RESERVED_WORDS: &[&str] = &[
     "BIT",
     "BOOLEAN",
     "CHARACTER",
@@ -312,7 +312,7 @@ impl Token {
     }
 
     /// Returns the 'String' obtained by Concatenating tokens.
-    pub(crate) fn concat(tokens: &[Token], joinstr: &'static str) -> String {
+    pub(crate) fn concat(tokens: &[Token], joinstr: &str) -> String {
         tokens
             .iter()
             .map(|x| x.text.clone())
@@ -360,10 +360,8 @@ fn get_string_token(
         // i = 1
         // i = 3
         if i >= chars.len() - 1 {
-            if i == chars.len() - 1 {
-                if chars[i] == '"' {
-                    last = Some(i);
-                }
+            if i == chars.len() - 1 && chars[i] == '"' {
+                last = Some(i);
             }
             break;
         }
@@ -454,7 +452,7 @@ fn get_bit_or_hex_string_token(
     };
     text = text.replace(char::is_whitespace, "");
 
-    if token_type == TokenType::BitString && text.replace(&['0', '1', '\''][..], "").len() != 0 {
+    if token_type == TokenType::BitString && !text.replace(&['0', '1', '\''][..], "").is_empty() {
         return Err(Error::TokenizeError(10, line, begin));
     }
 
@@ -495,10 +493,10 @@ fn get_at_component_id_list(
     let last = chars[1..]
         .iter()
         .position(|&x| !(x.is_ascii_alphanumeric() || x == '-' || x == '.'));
-    if last.is_none() {
-        consumed += chars[1..].len();
+    if let Some(lst) = last {
+        consumed += lst;
     } else {
-        consumed += last.unwrap();
+        consumed += chars[1..].len();
     }
 
     // Identifier should not end with a '-'
@@ -527,10 +525,10 @@ fn get_number_token(chars: &[char], line: usize, begin: usize) -> Result<(Token,
 
     let mut consumed = neg;
     let last = chars[neg..].iter().position(|&x| !x.is_numeric());
-    if last.is_none() {
-        consumed += chars[neg..].len();
+    if let Some(lst) = last {
+        consumed += lst;
     } else {
-        consumed += last.unwrap();
+        consumed += chars[neg..].len();
     }
 
     Ok((
@@ -566,10 +564,11 @@ fn get_identifier_or_keyword_token(
     let last = chars[and..]
         .iter()
         .position(|&x| !(x.is_ascii_alphanumeric() || x == '-'));
-    if last.is_none() {
-        consumed += chars[and..].len();
+
+    if let Some(lst) = last {
+        consumed += lst;
     } else {
-        consumed += last.unwrap();
+        consumed += chars[and..].len();
     }
 
     // Identifier should not end with a '-'
@@ -583,18 +582,16 @@ fn get_identifier_or_keyword_token(
     }
 
     let text = chars[..consumed].iter().collect::<String>();
-    if text.find("--").is_some() {
+    if text.contains("--") {
         return Err(Error::TokenizeError(18, line, begin));
     }
 
     let token_type = if and > 0 {
         TokenType::AndIdentifier
+    } else if KEYWORDS.iter().any(|&kw| text == kw) {
+        TokenType::Keyword
     } else {
-        if KEYWORDS.iter().any(|&kw| text == kw) {
-            TokenType::Keyword
-        } else {
-            TokenType::Identifier
-        }
+        TokenType::Identifier
     };
 
     Ok((
@@ -624,16 +621,14 @@ fn get_range_or_extension_token(
         } else {
             (TokenType::Dot, 1)
         }
-    } else {
-        if chars[1] == '.' {
-            if chars[2] == '.' {
-                (TokenType::Extension, 3)
-            } else {
-                (TokenType::RangeSeparator, 2)
-            }
+    } else if chars[1] == '.' {
+        if chars[2] == '.' {
+            (TokenType::Extension, 3)
         } else {
-            (TokenType::Dot, 1)
+            (TokenType::RangeSeparator, 2)
         }
+    } else {
+        (TokenType::Dot, 1)
     };
 
     Ok((
@@ -663,16 +658,14 @@ fn get_assignment_or_colon_token(
         } else {
             (TokenType::Colon, 1)
         }
-    } else {
-        if chars[1] == ':' {
-            if chars[2] == '=' {
-                (TokenType::Assignment, 3)
-            } else {
-                return Err(Error::TokenizeError(20, line, begin));
-            }
+    } else if chars[1] == ':' {
+        if chars[2] == '=' {
+            (TokenType::Assignment, 3)
         } else {
-            (TokenType::Colon, 1)
+            return Err(Error::TokenizeError(20, line, begin));
         }
+    } else {
+        (TokenType::Colon, 1)
     };
 
     Ok((
@@ -702,12 +695,10 @@ fn get_seq_extension_or_square_brackets_token(
         } else {
             (TokenType::SquareBegin, 1)
         }
+    } else if chars[1] == ']' {
+        (TokenType::AdditionGroupsEnd, 2)
     } else {
-        if chars[1] == ']' {
-            (TokenType::AdditionGroupsEnd, 2)
-        } else {
-            (TokenType::SquareEnd, 1)
-        }
+        (TokenType::SquareEnd, 1)
     };
     Ok((
         Token {
@@ -787,13 +778,10 @@ fn get_maybe_comment_token(
         consumed = chars.len();
     }
 
-    let text = chars[..consumed]
-        .iter()
-        .collect::<String>()
-        //.trim_start_matches("--")
-        //.trim_end_matches("--")
-        //.trim()
-        .to_string();
+    let text = chars[..consumed].iter().collect::<String>();
+    //.trim_start_matches("--")
+    //.trim_end_matches("--")
+    //.trim()
 
     Ok((
         Some(Token {
@@ -823,7 +811,7 @@ where
     let _ = input.read_to_end(&mut buffer).unwrap();
     let buffer = String::from_utf8(buffer).unwrap();
     let chars: Vec<char> = buffer.chars().collect();
-    let mut column = 0 as usize;
+    let mut column = 0_usize;
     let mut processed = 0;
     let total_read = chars.len();
     loop {
@@ -840,15 +828,19 @@ where
             }
             '-' => {
                 let (token, consumed) = get_maybe_comment_token(&chars[processed..], line, column)?;
-                if token.is_some() {
-                    tokens.push(token.unwrap());
-                    column += consumed;
-                    processed += consumed;
-                } else {
-                    let (token, consumed) = get_number_token(&chars[processed..], line, column)?;
-                    tokens.push(token);
-                    column += consumed;
-                    processed += consumed;
+                match token {
+                    Some(tok) => {
+                        tokens.push(tok);
+                        column += consumed;
+                        processed += consumed;
+                    }
+                    None => {
+                        let (token, consumed) =
+                            get_number_token(&chars[processed..], line, column)?;
+                        tokens.push(token);
+                        column += consumed;
+                        processed += consumed;
+                    }
                 }
             }
             '{' | '}' | '(' | ')' | '!' | ';' | ',' | '|' | '^' | '<' => {

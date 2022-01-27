@@ -40,13 +40,11 @@ impl Asn1ResolvedInteger {
             let bits_needed_max = 128 - max.abs().leading_zeros();
             let bits_needed_min = 128 - min.abs().leading_zeros();
             std::cmp::max(bits_needed_min, bits_needed_max)
+        } else if value_set.root_values.min().is_none() {
+            8_u32
         } else {
-            if value_set.root_values.min().is_none() {
-                8_u32
-            } else {
-                let max = value_set.root_values.max().unwrap();
-                128 - max.leading_zeros()
-            }
+            let max = value_set.root_values.max().unwrap();
+            128 - max.leading_zeros()
         };
 
         base.bits = if bit_width <= 8 {
