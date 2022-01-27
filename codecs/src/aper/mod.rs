@@ -49,7 +49,7 @@ impl AperCodecData {
             return Ok(());
         }
 
-        let remaining = 8 - (self.offset & 0x7 as usize);
+        let remaining = 8 - (self.offset & 0x7_usize);
         log::trace!("Aligning Codec Buffer with {} bits", remaining);
 
         if !self.bits[self.offset..self.offset + remaining]
@@ -69,8 +69,8 @@ impl AperCodecData {
         }
     }
 
-    fn align(&mut self) -> () {
-        let remaining = 8 - (self.offset & 0x7 as usize);
+    fn align(&mut self) {
+        let remaining = 8 - (self.offset & 0x7_usize);
         let mut bv = bitvec![Msb0, u8; 0; remaining];
         self.bits.append(&mut bv);
         self.offset += remaining;
@@ -79,10 +79,7 @@ impl AperCodecData {
     fn decode_bool(&mut self) -> Result<bool, AperCodecError> {
         if self.bits.len() == self.offset {
             return Err(AperCodecError::new(
-                format!(
-                    "AperCodec:DecodeError:End of Bitstream reached while trying to decode bool."
-                )
-                .as_str(),
+                "AperCodec:DecodeError:End of Bitstream reached while trying to decode bool.",
             ));
         }
         let bit = *self.bits.get(self.offset).as_deref().unwrap();
@@ -108,7 +105,7 @@ impl AperCodecData {
                 bits
             );
             let value = if bits == 0 {
-                0 as i128
+                0_i128
             } else {
                 self.bits[self.offset..self.offset + bits].load_be::<u128>() as i128
             };
@@ -204,13 +201,13 @@ impl AperCodecData {
     /// `key_value` field. ie. a field with attribute `key_value` set in a struct (derived from a
     /// SEQUENCE ASN.1 type.) This value is passed to the 'decoder' logic further through `set_key`
     /// function, which updates the internal state of the decoder data.
-    pub fn set_key(&mut self, key: i128) -> () {
+    pub fn set_key(&mut self, key: i128) {
         let _ = self.key.replace(key);
     }
 
     /// Dump current 'offset'.
     #[inline]
-    pub fn dump(&self) -> () {
+    pub fn dump(&self) {
         log::trace!("AperCodecData: offset: {}", self.offset);
     }
 }

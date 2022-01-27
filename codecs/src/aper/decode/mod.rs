@@ -94,8 +94,7 @@ pub fn decode_integer(
     );
     data.dump();
     let extended_value = if is_extensible {
-        let v = data.decode_bool()?;
-        v
+        data.decode_bool()?
     } else {
         false
     };
@@ -105,19 +104,25 @@ pub fn decode_integer(
         decode_unconstrained_whole_number(data)?
     } else {
         // 12.2
-        if lb.is_none() {
+        match lb {
+            None =>
             // 12.2.4
-            decode_unconstrained_whole_number(data)?
-        } else {
-            let lb = lb.unwrap();
-            if ub.is_none() {
-                // 12.2.3
-                decode_semi_constrained_whole_number(data, lb)?
-            } else {
-                let ub = ub.unwrap();
-                // 12.2.1 and 12.2.2
-                log::trace!("decode_constrained_whole_number: {}, {}", lb, ub);
-                decode_constrained_whole_number(data, lb, ub)?
+            {
+                decode_unconstrained_whole_number(data)?
+            }
+            Some(lb) => {
+                match ub {
+                    None =>
+                    // 12.2.3
+                    {
+                        decode_semi_constrained_whole_number(data, lb)?
+                    }
+                    Some(ub) => {
+                        // 12.2.1 and 12.2.2
+                        log::trace!("decode_constrained_whole_number: {}, {}", lb, ub);
+                        decode_constrained_whole_number(data, lb, ub)?
+                    }
+                }
             }
         }
     };
@@ -150,8 +155,7 @@ pub fn decode_enumerated(
     data.dump();
 
     let is_extended = if is_extensible {
-        let is_extended = data.decode_bool()?;
-        is_extended
+        data.decode_bool()?
     } else {
         false
     };

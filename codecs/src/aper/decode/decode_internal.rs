@@ -52,27 +52,27 @@ pub fn decode_length_determinent(
         return decode_normally_small_length_determinent(data);
     }
 
-    let lb = if lb.is_none() {
-        0usize
+    let lb = if let Some(l) = lb {
+        l.try_into().unwrap()
     } else {
-        lb.unwrap().try_into().unwrap()
+        0usize
     };
 
-    if ub.is_some() {
-        let ub: usize = ub.unwrap().try_into().unwrap();
+    if let Some(ub) = ub {
+        let ub: usize = ub.try_into().unwrap();
         if ub < 65_536 {
             if lb == ub {
                 return Ok(ub);
             }
 
             // 10.9.3.3
-            return decode_constrained_length_determinent(data, lb, ub);
+            decode_constrained_length_determinent(data, lb, ub)
         } else {
-            return decode_indefinite_length_determinent(data);
+            decode_indefinite_length_determinent(data)
         }
     } else {
         // ub is None, it's an unconstrained one
-        return decode_indefinite_length_determinent(data);
+        decode_indefinite_length_determinent(data)
     }
 }
 
@@ -112,7 +112,7 @@ fn decode_indefinite_length_determinent(data: &mut AperCodecData) -> Result<usiz
             data.decode_bits_as_integer(14)?
         } else {
             let length = data.decode_bits_as_integer(6)?;
-            if length > 4 || length < 1 {
+            if !(1..=4).contains(&length) {
                 return Err(AperCodecError::new("The value should be 1 to 4"));
             } else {
                 length * 16384
