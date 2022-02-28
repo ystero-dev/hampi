@@ -142,7 +142,7 @@ pub fn decode_bool(data: &mut AperCodecData) -> Result<bool, AperCodecError> {
 /// Decode an Enumerated Value
 ///
 /// Decodes an Enumerated value as an index into either `root_values` of the ENUMERATED or
-/// `ext_values` of the ENUMERATED and also decodes a flag indicating where the value velongs. If
+/// `ext_values` of the ENUMERATED and also decodes a flag indicating where the value belongs. If
 /// `false` the value is from the `root_values`, else the value is from the `ext_values` of the
 /// ENUMERATED.
 pub fn decode_enumerated(

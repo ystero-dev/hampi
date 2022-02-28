@@ -9,11 +9,15 @@ pub mod decode;
 
 /// Trait representing an 'APER Codec'.
 ///
-/// This 'crate' is to be derived by any `struct` or `enum` representing an ASN.1 Type.
+/// This 'trait' is to be derived by any `struct` or `enum` representing an ASN.1 Type.
 pub trait AperCodec {
     type Output;
 
     fn decode(data: &mut AperCodecData) -> Result<Self::Output, AperCodecError>;
+
+    fn encode(&self, _data: &mut AperCodecData) -> Result<(), AperCodecError> {
+        todo!();
+    }
 }
 
 use bitvec::prelude::*;

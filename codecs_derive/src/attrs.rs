@@ -258,7 +258,7 @@ pub(crate) fn parse_fld_meta_as_codec_params(
                                 )),
                             }
                         }
-                        // parses #[asn(extended = true)]
+                        // parses #[asn(optional_idx = 1)]
                         syn::NestedMeta::Meta(syn::Meta::NameValue(ref m)) if m.path == OPTIONAL_IDX => {
                             match m.lit {
                                 syn::Lit::Int(ref opt_idx) => {
