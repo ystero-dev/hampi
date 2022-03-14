@@ -7,6 +7,8 @@ pub use error::Error as AperCodecError;
 
 pub mod decode;
 
+pub mod encode;
+
 /// Trait representing an 'APER Codec'.
 ///
 /// This 'trait' is to be derived by any `struct` or `enum` representing an ASN.1 Type.
@@ -188,6 +190,13 @@ impl AperCodecData {
         let _ = self.advance_maybe_err(length, true)?;
 
         Ok(bytes)
+    }
+
+    // Encoding functions.
+    fn encode_bool(&mut self, value: bool) -> Result<(), AperCodecError> {
+        self.bits.push(value);
+        self.offset += 1;
+        Ok(())
     }
 
     /// Get's the current `key` value.

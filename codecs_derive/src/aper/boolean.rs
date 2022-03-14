@@ -5,7 +5,7 @@ use quote::quote;
 
 use crate::attrs::TyCodecParams;
 
-pub(super) fn generate_aper_decode_for_asn_boolean(
+pub(super) fn generate_aper_codec_for_asn_boolean(
     ast: &syn::DeriveInput,
     _params: &TyCodecParams,
 ) -> proc_macro::TokenStream {
@@ -20,6 +20,10 @@ pub(super) fn generate_aper_decode_for_asn_boolean(
 
                 let value = asn1_codecs::aper::decode::decode_bool(data)?;
                 Ok(Self(value))
+            }
+
+            fn encode(&self, data: &mut asn1_codecs::aper::AperCodecData) -> Result<(), asn1_codecs::aper::AperCodecError> {
+                asn1_codecs::aper::encode::encode_bool(data, self.0)
             }
         }
     };

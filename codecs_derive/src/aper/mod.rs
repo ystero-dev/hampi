@@ -21,8 +21,8 @@ pub(crate) fn generate_decode(
 ) -> proc_macro::TokenStream {
     let ty = params.ty.as_ref().unwrap();
     match ty.value().as_str() {
-        "BOOLEAN" => boolean::generate_aper_decode_for_asn_boolean(ast, params),
-        "CHOICE" => choice::generate_aper_decode_for_asn_choice(ast, params),
+        "BOOLEAN" => boolean::generate_aper_codec_for_asn_boolean(ast, params),
+        "CHOICE" => choice::generate_aper_codec_for_asn_choice(ast, params),
         "INTEGER" => integer::generate_aper_decode_for_asn_integer(ast, params),
         "ENUMERATED" => enumerated::generate_aper_decode_for_asn_enumerated(ast, params),
         "BITSTRING" => bitstring::generate_aper_decode_for_asn_bitstring(ast, params),

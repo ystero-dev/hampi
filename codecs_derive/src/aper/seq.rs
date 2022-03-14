@@ -17,7 +17,7 @@ pub(super) fn generate_aper_decode_for_asn_sequence(
         syn::LitInt::new("0", proc_macro2::Span::call_site())
     };
 
-    let fld_tokens = generate_seq_field_tokens_using_attrs(ast);
+    let fld_tokens = generate_seq_field_decode_tokens_using_attrs(ast);
     if fld_tokens.is_err() {
         return fld_tokens.err().unwrap().to_compile_error().into();
     }
@@ -30,7 +30,6 @@ pub(super) fn generate_aper_decode_for_asn_sequence(
             fn decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
                 let (bitmap, _extensions_present) = asn1_codecs::aper::decode::decode_sequence_header(data, #ext, #opt_count)?;
                 Ok(Self{#(#fld_tokens)*})
-
             }
         }
     };
@@ -38,7 +37,7 @@ pub(super) fn generate_aper_decode_for_asn_sequence(
     tokens.into()
 }
 
-fn generate_seq_field_tokens_using_attrs(
+fn generate_seq_field_decode_tokens_using_attrs(
     ast: &syn::DeriveInput,
 ) -> Result<Vec<proc_macro2::TokenStream>, syn::Error> {
     let mut tokens = vec![];
