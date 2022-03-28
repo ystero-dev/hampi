@@ -94,7 +94,7 @@ pub fn decode_printable_string(
         out += &decoded;
     }
 
-    Ok(String::new())
+    Ok(out)
 }
 
 // UTF-8 String is always - indefinite length case as it's not a fixed character width string. It's
