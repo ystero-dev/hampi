@@ -31,7 +31,7 @@ use bitvec::prelude::*;
 #[derive(Default)]
 pub struct AperCodecData {
     bits: BitVec<Msb0, u8>,
-    offset: usize,
+    decode_offset: usize,
     key: Option<i128>,
 }
 
@@ -45,57 +45,54 @@ impl AperCodecData {
     pub fn from_slice(bytes: &[u8]) -> Self {
         Self {
             bits: BitSlice::<_, _>::from_slice(bytes).unwrap().to_bitvec(),
-            offset: 0,
+            decode_offset: 0,
             key: None,
         }
     }
 
+    pub fn into_bytes(self) -> Vec<u8> {
+        self.bits.into()
+    }
+
     fn decode_align(&mut self) -> Result<(), AperCodecError> {
-        if self.offset % 8 == 0 {
+        if self.decode_offset % 8 == 0 {
             return Ok(());
         }
 
-        let remaining = 8 - (self.offset & 0x7_usize);
+        let remaining = 8 - (self.decode_offset & 0x7_usize);
         log::trace!("Aligning Codec Buffer with {} bits", remaining);
 
-        if !self.bits[self.offset..self.offset + remaining]
+        if !self.bits[self.decode_offset..self.decode_offset + remaining]
             .iter()
             .all(|b| b == false)
         {
             Err(AperCodecError::new(
                 format!(
                     "{} Padding bits at Offset {} not all '0'.",
-                    remaining, self.offset,
+                    remaining, self.decode_offset,
                 )
                 .as_str(),
             ))
         } else {
-            self.offset += remaining;
+            self.decode_offset += remaining;
             Ok(())
         }
     }
 
-    fn align(&mut self) {
-        let remaining = 8 - (self.offset & 0x7_usize);
-        let mut bv = bitvec![Msb0, u8; 0; remaining];
-        self.bits.append(&mut bv);
-        self.offset += remaining;
-    }
-
     fn decode_bool(&mut self) -> Result<bool, AperCodecError> {
-        if self.bits.len() == self.offset {
+        if self.bits.len() == self.decode_offset {
             return Err(AperCodecError::new(
                 "AperCodec:DecodeError:End of Bitstream reached while trying to decode bool.",
             ));
         }
-        let bit = *self.bits.get(self.offset).as_deref().unwrap();
+        let bit = *self.bits.get(self.decode_offset).as_deref().unwrap();
         let _ = self.advance_maybe_err(1, true)?;
 
         Ok(bit)
     }
 
     fn decode_bits_as_integer(&mut self, bits: usize) -> Result<i128, AperCodecError> {
-        let remaining = self.bits.len() - self.offset;
+        let remaining = self.bits.len() - self.decode_offset;
         if remaining < bits {
             Err(AperCodecError::new(
                 format!(
@@ -107,13 +104,13 @@ impl AperCodecData {
         } else {
             log::trace!(
                 "Decoding Bits as Integer. offset: {}, bits: {}",
-                self.offset,
+                self.decode_offset,
                 bits
             );
             let value = if bits == 0 {
                 0_i128
             } else {
-                self.bits[self.offset..self.offset + bits].load_be::<u128>() as i128
+                self.bits[self.decode_offset..self.decode_offset + bits].load_be::<u128>() as i128
             };
             log::trace!("Decoded Value: {:#?}", value);
             self.advance_maybe_err(bits, false)?;
@@ -122,12 +119,12 @@ impl AperCodecData {
     }
 
     fn advance_maybe_err(&mut self, bits: usize, ignore: bool) -> Result<(), AperCodecError> {
-        let offset = self.offset + bits;
+        let offset = self.decode_offset + bits;
         if offset > self.bits.len() {
             if ignore {
-                self.offset = self.bits.len()
+                self.decode_offset = self.bits.len()
             } else {
-                let remaining = self.bits.len() - self.offset;
+                let remaining = self.bits.len() - self.decode_offset;
                 return Err(AperCodecError::new(
                     format!(
                         "AperCodec:DecodeError:Requested Bits to advance {}, Remaining bits {}",
@@ -137,38 +134,38 @@ impl AperCodecData {
                 ));
             }
         } else {
-            self.offset = offset
+            self.decode_offset = offset
         }
         Ok(())
     }
 
     fn get_bit(&self) -> Result<bool, AperCodecError> {
-        if self.offset >= self.bits.len() {
+        if self.decode_offset >= self.bits.len() {
             return Err(AperCodecError::new(
                 format!(
                     "AperCodec:GetBitError:Requested Bit {}, Remaining bits {}",
-                    self.offset,
-                    self.bits.len() - self.offset
+                    self.decode_offset,
+                    self.bits.len() - self.decode_offset
                 )
                 .as_str(),
             ));
         }
-        let bit = *self.bits.get(self.offset).as_deref().unwrap();
+        let bit = *self.bits.get(self.decode_offset).as_deref().unwrap();
         Ok(bit)
     }
 
     fn get_bitvec(&mut self, length: usize) -> Result<BitVec<Msb0, u8>, AperCodecError> {
-        if length + self.offset >= self.bits.len() {
+        if length + self.decode_offset >= self.bits.len() {
             return Err(AperCodecError::new(
                 format!(
                     "AperCodec:GetBitError:Requested Bit {}, Remaining bits {}",
                     length,
-                    self.bits.len() - self.offset
+                    self.bits.len() - self.decode_offset
                 )
                 .as_str(),
             ));
         }
-        let bv = BitVec::from_bitslice(&self.bits[self.offset..self.offset + length]);
+        let bv = BitVec::from_bitslice(&self.bits[self.decode_offset..self.decode_offset + length]);
         let _ = self.advance_maybe_err(length, true)?;
 
         Ok(bv)
@@ -176,27 +173,20 @@ impl AperCodecData {
 
     fn get_bytes(&mut self, length: usize) -> Result<Vec<u8>, AperCodecError> {
         let length = length * 8;
-        if length + self.offset >= self.bits.len() {
+        if length + self.decode_offset >= self.bits.len() {
             return Err(AperCodecError::new(
                 format!(
                     "AperCodec:GetBitError:Requested Bits {}, Remaining bits {}",
                     length,
-                    self.bits.len() - self.offset
+                    self.bits.len() - self.decode_offset
                 )
                 .as_str(),
             ));
         }
-        let bytes = BitVec::into_vec(self.bits[self.offset..self.offset + length].to_bitvec());
-        let _ = self.advance_maybe_err(length, true)?;
-
-        Ok(bytes)
-    }
-
-    // Encoding functions.
-    fn encode_bool(&mut self, value: bool) -> Result<(), AperCodecError> {
-        self.bits.push(value);
-        self.offset += 1;
-        Ok(())
+        let mut bv = self.bits[self.decode_offset..self.decode_offset + length].to_bitvec();
+        bv.force_align();
+        self.advance_maybe_err(length, true)?;
+        Ok(BitVec::into_vec(bv))
     }
 
     /// Get's the current `key` value.
@@ -221,6 +211,56 @@ impl AperCodecData {
     /// Dump current 'offset'.
     #[inline]
     pub fn dump(&self) {
-        log::trace!("AperCodecData: offset: {}", self.offset);
+        log::trace!("AperCodecData: offset: {}", self.decode_offset);
+    }
+
+    // Encoding functions.
+
+    /// Encode a bool.
+    fn encode_bool(&mut self, value: bool) -> Result<(), AperCodecError> {
+        self.bits.push(value);
+        Ok(())
+    }
+
+    /// Add bits to the encoding buffer.
+    fn append_bits(&mut self, bits: &BitSlice<Msb0, u8>) -> Result<(), AperCodecError> {
+        self.bits.extend_from_bitslice(bits);
+        Ok(())
+    }
+
+    /// Byte align the encoding buffer by padding with zero bits.
+    fn align(&mut self) {
+        let remaining = 8 - (self.bits.len() & 0x7_usize);
+        if remaining < 8 {
+            self.bits.resize(self.bits.len() + remaining, false);
+        }
+    }
+
+    /// Get the length of the data in bytes
+    /// This is useful when encoding an open type.
+    pub fn length_in_bytes(&self) -> usize {
+        ((self.bits.len() - 1) / 8) + 1
+    }
+
+    /// Append one encoding to another preserving byte alignment.
+    /// This is useful when encoding an open type.
+    pub fn append_aligned(&mut self, other: &mut Self) -> Result<(), AperCodecError> {
+        self.align();
+        other.align();
+        self.append_bits(&other.bits)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // A test that would fail if it were not for the `force_align()` in AperCodecData::get_bytes().
+    #[test]
+    fn get_bytes_unaligned() {
+        let mut d = AperCodecData::from_slice(&vec![0x0f, 0xf0]);
+        let _ = d.get_bitvec(4);
+        let bytes = d.get_bytes(1).unwrap();
+        assert_eq!(bytes, vec![0xff]);
     }
 }

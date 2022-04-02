@@ -84,7 +84,7 @@ fn generate_choice_variant_decode_tokens_using_attrs(
                             };
                             let variant_encode_token = quote! {
                                 Self::#variant_ident(ref v) => {
-                                    asn1_codecs::aper::encode::encode_choice_idx(data, #lb, #ub, #ext, #key)?;
+                                    asn1_codecs::aper::encode::encode_choice_idx(data, #lb, #ub, #ext, #key, false)?;
                                     v.encode(data)
                                 }
                             };
