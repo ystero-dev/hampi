@@ -28,7 +28,7 @@ pub fn encode_choice_idx(
     }
 
     if is_extensible {
-        data.encode_bool(extended)?;
+        data.encode_bool(extended);
     }
     encode_integer(data, Some(lb), Some(ub), false, idx, false)
 }
@@ -49,10 +49,11 @@ pub fn encode_sequence_header(
     }
 
     if is_extensible {
-        data.encode_bool(extended)?;
+        data.encode_bool(extended);
     }
 
-    data.append_bits(optionals)
+    data.append_bits(optionals);
+    Ok(())
 }
 
 /// Encode an Integer
@@ -72,7 +73,7 @@ pub fn encode_integer(
     }
 
     if is_extensible {
-        data.encode_bool(extended)?;
+        data.encode_bool(extended);
     }
 
     match (lb, ub) {
@@ -87,7 +88,8 @@ pub fn encode_integer(
 /// Encodes a boolean value into the passed `AperCodecData` structure.
 pub fn encode_bool(data: &mut AperCodecData, value: bool) -> Result<(), AperCodecError> {
     log::trace!("encode_bool");
-    data.encode_bool(value)
+    data.encode_bool(value);
+    Ok(())
 }
 
 /// Encode an Enumerated Value
@@ -107,7 +109,7 @@ pub fn encode_enumerated(
     }
 
     if is_extensible {
-        data.encode_bool(extended)?;
+        data.encode_bool(extended);
     }
 
     encode_integer(data, lb, ub, false, value, false)
@@ -131,7 +133,7 @@ pub fn encode_bitstring(
     }
 
     if is_extensible {
-        data.encode_bool(extended)?;
+        data.encode_bool(extended);
     }
 
     let length = bit_string.len();
@@ -146,7 +148,7 @@ pub fn encode_bitstring(
         if length > 16 {
             data.align();
         }
-        data.append_bits(bit_string)?;
+        data.append_bits(bit_string);
     }
     Ok(())
 }
@@ -169,7 +171,7 @@ pub fn encode_octetstring(
     }
 
     if is_extensible {
-        data.encode_bool(extended)?;
+        data.encode_bool(extended);
     }
 
     let length = octet_string.len();
@@ -185,7 +187,7 @@ pub fn encode_octetstring(
         if length > 2 {
             data.align();
         }
-        data.append_bits(octet_string.view_bits())?;
+        data.append_bits(octet_string.view_bits());
     }
     Ok(())
 }
@@ -227,13 +229,14 @@ fn encode_string(
     }
 
     if is_extensible {
-        data.encode_bool(extended)?;
+        data.encode_bool(extended);
     }
     encode_length_determinent(data, lb, ub, false, value.len())?;
     if value.len() > 2 {
         data.align();
     }
-    data.append_bits(value.as_bits())
+    data.append_bits(value.as_bits());
+    Ok(())
 }
 
 /// Encode a VisibleString CharacterString Type.

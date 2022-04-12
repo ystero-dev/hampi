@@ -11,7 +11,8 @@ pub(super) fn encode_unconstrained_whole_number(
     let first_non_zero = bytes.iter().position(|x| *x != 0).unwrap_or(16);
     data.align();
     encode_length_determinent(data, None, None, false, 16 - first_non_zero)?;
-    data.append_bits(bytes[first_non_zero..16].view_bits())
+    data.append_bits(bytes[first_non_zero..16].view_bits());
+    Ok(())
 }
 
 pub(super) fn encode_semi_constrained_whole_number(
@@ -51,11 +52,11 @@ pub(super) fn encode_constrained_whole_number(
             128..=255 => 8,
         };
 
-        data.append_bits(&byte.view_bits::<Msb0>()[(8 - bits)..8])?;
+        data.append_bits(&byte.view_bits::<Msb0>()[(8 - bits)..8]);
     } else if range <= 65536 {
         data.align();
         let bytes = (value as u16).to_be_bytes();
-        data.append_bits(bytes.view_bits::<Msb0>())?;
+        data.append_bits(bytes.view_bits::<Msb0>());
     } else {
         encode_unconstrained_whole_number(data, value)?;
     }
@@ -69,15 +70,16 @@ pub(super) fn encode_indefinite_length_determinent(
     data.align();
     if value < 128 {
         let byte = value as u8;
-        data.append_bits(&byte.view_bits::<Msb0>())
+        data.append_bits(&byte.view_bits::<Msb0>());
     } else if value < 16384 {
         let bytes = (value as u16 | 0x8000).to_be_bytes();
-        data.append_bits(&bytes.view_bits::<Msb0>())
+        data.append_bits(&bytes.view_bits::<Msb0>());
     } else {
-        Err(AperCodecError::new(
+        return Err(AperCodecError::new(
             "Length determinent >= 16384 not implemented",
-        ))
+        ));
     }
+    Ok(())
 }
 
 pub(super) fn encode_normally_small_length_determinent(
@@ -86,12 +88,13 @@ pub(super) fn encode_normally_small_length_determinent(
 ) -> Result<(), AperCodecError> {
     if value <= 32 {
         let byte = (value - 1) as u8;
-        data.encode_bool(false)?;
-        data.append_bits(&byte.view_bits::<Msb0>()[2..8])
+        data.encode_bool(false);
+        data.append_bits(&byte.view_bits::<Msb0>()[2..8]);
     } else {
-        data.encode_bool(true)?;
-        encode_indefinite_length_determinent(data, value)
+        data.encode_bool(true);
+        encode_indefinite_length_determinent(data, value)?;
     }
+    Ok(())
 }
 
 #[cfg(test)]

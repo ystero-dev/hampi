@@ -217,15 +217,13 @@ impl AperCodecData {
     // Encoding functions.
 
     /// Encode a bool.
-    fn encode_bool(&mut self, value: bool) -> Result<(), AperCodecError> {
+    fn encode_bool(&mut self, value: bool) {
         self.bits.push(value);
-        Ok(())
     }
 
     /// Add bits to the encoding buffer.
-    fn append_bits(&mut self, bits: &BitSlice<Msb0, u8>) -> Result<(), AperCodecError> {
+    fn append_bits(&mut self, bits: &BitSlice<Msb0, u8>) {
         self.bits.extend_from_bitslice(bits);
-        Ok(())
     }
 
     /// Byte align the encoding buffer by padding with zero bits.
@@ -244,7 +242,7 @@ impl AperCodecData {
 
     /// Append one encoding to another preserving byte alignment.
     /// This is useful when encoding an open type.
-    pub fn append_aligned(&mut self, other: &mut Self) -> Result<(), AperCodecError> {
+    pub fn append_aligned(&mut self, other: &mut Self) {
         self.align();
         other.align();
         self.append_bits(&other.bits)
