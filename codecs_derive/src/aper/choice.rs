@@ -74,7 +74,7 @@ fn generate_choice_variant_decode_tokens_using_attrs(
                     ));
                         continue;
                     }
-                    let _extended = cp.extended.as_ref();
+                    let extended = cp.extended.as_ref();
                     let variant_ident = &variant.ident;
                     if let syn::Fields::Unnamed(ref fields) = variant.fields {
                         if fields.unnamed.len() == 1 {
@@ -84,7 +84,7 @@ fn generate_choice_variant_decode_tokens_using_attrs(
                             };
                             let variant_encode_token = quote! {
                                 Self::#variant_ident(ref v) => {
-                                    asn1_codecs::aper::encode::encode_choice_idx(data, #lb, #ub, #ext, #key)?;
+                                    asn1_codecs::aper::encode::encode_choice_idx(data, #lb, #ub, #ext, #key, #extended)?;
                                     v.encode(data)
                                 }
                             };
