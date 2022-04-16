@@ -156,7 +156,7 @@ pub struct AdditionalDLUPTNLInformationForHOList(pub Vec<AdditionalDLUPTNLInform
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct AdditionalQosFlowInformation(pub u8);
 impl AdditionalQosFlowInformation {
-    const MORE_LIKELY: u8 = 0u8;
+    pub const MORE_LIKELY: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -384,7 +384,7 @@ pub struct AssociatedQosFlowList(pub Vec<AssociatedQosFlowItem>);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct AuthenticatedIndication(pub u8);
 impl AuthenticatedIndication {
-    const TRUE: u8 = 0u8;
+    pub const TRUE: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -399,7 +399,7 @@ pub struct BitRate(pub u64);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct BluetoothMeasConfig(pub u8);
 impl BluetoothMeasConfig {
-    const SETUP: u8 = 0u8;
+    pub const SETUP: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -498,15 +498,15 @@ pub struct CAG_ID(pub BitVec<Msb0, u8>);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct CEmodeBSupport_Indicator(pub u8);
 impl CEmodeBSupport_Indicator {
-    const SUPPORTED: u8 = 0u8;
+    pub const SUPPORTED: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct CEmodeBrestricted(pub u8);
 impl CEmodeBrestricted {
-    const RESTRICTED: u8 = 0u8;
-    const NOT_RESTRICTED: u8 = 1u8;
+    pub const RESTRICTED: u8 = 0u8;
+    pub const NOT_RESTRICTED: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -535,7 +535,7 @@ pub struct CNTypeRestrictionsForEquivalentItem {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct CNTypeRestrictionsForServing(pub u8);
 impl CNTypeRestrictionsForServing {
-    const EPC_FORBIDDEN: u8 = 0u8;
+    pub const EPC_FORBIDDEN: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -569,7 +569,7 @@ pub enum CPTransportLayerInformation {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct CancelAllWarningMessages(pub u8);
 impl CancelAllWarningMessages {
-    const TRUE: u8 = 0u8;
+    pub const TRUE: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -705,94 +705,94 @@ pub enum Cause {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "5")]
 pub struct CauseMisc(pub u8);
 impl CauseMisc {
-    const CONTROL_PROCESSING_OVERLOAD: u8 = 0u8;
-    const NOT_ENOUGH_USER_PLANE_PROCESSING_RESOURCES: u8 = 1u8;
-    const HARDWARE_FAILURE: u8 = 2u8;
-    const OM_INTERVENTION: u8 = 3u8;
-    const UNKNOWN_PLMN_OR_SNPN: u8 = 4u8;
-    const UNSPECIFIED: u8 = 5u8;
+    pub const CONTROL_PROCESSING_OVERLOAD: u8 = 0u8;
+    pub const NOT_ENOUGH_USER_PLANE_PROCESSING_RESOURCES: u8 = 1u8;
+    pub const HARDWARE_FAILURE: u8 = 2u8;
+    pub const OM_INTERVENTION: u8 = 3u8;
+    pub const UNKNOWN_PLMN_OR_SNPN: u8 = 4u8;
+    pub const UNSPECIFIED: u8 = 5u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "3")]
 pub struct CauseNas(pub u8);
 impl CauseNas {
-    const NORMAL_RELEASE: u8 = 0u8;
-    const AUTHENTICATION_FAILURE: u8 = 1u8;
-    const DEREGISTER: u8 = 2u8;
-    const UNSPECIFIED: u8 = 3u8;
+    pub const NORMAL_RELEASE: u8 = 0u8;
+    pub const AUTHENTICATION_FAILURE: u8 = 1u8;
+    pub const DEREGISTER: u8 = 2u8;
+    pub const UNSPECIFIED: u8 = 3u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "6")]
 pub struct CauseProtocol(pub u8);
 impl CauseProtocol {
-    const TRANSFER_SYNTAX_ERROR: u8 = 0u8;
-    const ABSTRACT_SYNTAX_ERROR_REJECT: u8 = 1u8;
-    const ABSTRACT_SYNTAX_ERROR_IGNORE_AND_NOTIFY: u8 = 2u8;
-    const MESSAGE_NOT_COMPATIBLE_WITH_RECEIVER_STATE: u8 = 3u8;
-    const SEMANTIC_ERROR: u8 = 4u8;
-    const ABSTRACT_SYNTAX_ERROR_FALSELY_CONSTRUCTED_MESSAGE: u8 = 5u8;
-    const UNSPECIFIED: u8 = 6u8;
+    pub const TRANSFER_SYNTAX_ERROR: u8 = 0u8;
+    pub const ABSTRACT_SYNTAX_ERROR_REJECT: u8 = 1u8;
+    pub const ABSTRACT_SYNTAX_ERROR_IGNORE_AND_NOTIFY: u8 = 2u8;
+    pub const MESSAGE_NOT_COMPATIBLE_WITH_RECEIVER_STATE: u8 = 3u8;
+    pub const SEMANTIC_ERROR: u8 = 4u8;
+    pub const ABSTRACT_SYNTAX_ERROR_FALSELY_CONSTRUCTED_MESSAGE: u8 = 5u8;
+    pub const UNSPECIFIED: u8 = 6u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "44")]
 pub struct CauseRadioNetwork(pub u8);
 impl CauseRadioNetwork {
-    const UNSPECIFIED: u8 = 0u8;
-    const TXNRELOCOVERALL_EXPIRY: u8 = 1u8;
-    const SUCCESSFUL_HANDOVER: u8 = 2u8;
-    const RELEASE_DUE_TO_NGRAN_GENERATED_REASON: u8 = 3u8;
-    const RELEASE_DUE_TO_5GC_GENERATED_REASON: u8 = 4u8;
-    const HANDOVER_CANCELLED: u8 = 5u8;
-    const PARTIAL_HANDOVER: u8 = 6u8;
-    const HO_FAILURE_IN_TARGET_5GC_NGRAN_NODE_OR_TARGET_SYSTEM: u8 = 7u8;
-    const HO_TARGET_NOT_ALLOWED: u8 = 8u8;
-    const TNGRELOCOVERALL_EXPIRY: u8 = 9u8;
-    const TNGRELOCPREP_EXPIRY: u8 = 10u8;
-    const CELL_NOT_AVAILABLE: u8 = 11u8;
-    const UNKNOWN_TARGET_ID: u8 = 12u8;
-    const NO_RADIO_RESOURCES_AVAILABLE_IN_TARGET_CELL: u8 = 13u8;
-    const UNKNOWN_LOCAL_UE_NGAP_ID: u8 = 14u8;
-    const INCONSISTENT_REMOTE_UE_NGAP_ID: u8 = 15u8;
-    const HANDOVER_DESIRABLE_FOR_RADIO_REASON: u8 = 16u8;
-    const TIME_CRITICAL_HANDOVER: u8 = 17u8;
-    const RESOURCE_OPTIMISATION_HANDOVER: u8 = 18u8;
-    const REDUCE_LOAD_IN_SERVING_CELL: u8 = 19u8;
-    const USER_INACTIVITY: u8 = 20u8;
-    const RADIO_CONNECTION_WITH_UE_LOST: u8 = 21u8;
-    const RADIO_RESOURCES_NOT_AVAILABLE: u8 = 22u8;
-    const INVALID_QOS_COMBINATION: u8 = 23u8;
-    const FAILURE_IN_RADIO_INTERFACE_PROCEDURE: u8 = 24u8;
-    const INTERACTION_WITH_OTHER_PROCEDURE: u8 = 25u8;
-    const UNKNOWN_PDU_SESSION_ID: u8 = 26u8;
-    const UNKOWN_QOS_FLOW_ID: u8 = 27u8;
-    const MULTIPLE_PDU_SESSION_ID_INSTANCES: u8 = 28u8;
-    const MULTIPLE_QOS_FLOW_ID_INSTANCES: u8 = 29u8;
-    const ENCRYPTION_AND_OR_INTEGRITY_PROTECTION_ALGORITHMS_NOT_SUPPORTED: u8 = 30u8;
-    const NG_INTRA_SYSTEM_HANDOVER_TRIGGERED: u8 = 31u8;
-    const NG_INTER_SYSTEM_HANDOVER_TRIGGERED: u8 = 32u8;
-    const XN_HANDOVER_TRIGGERED: u8 = 33u8;
-    const NOT_SUPPORTED_5QI_VALUE: u8 = 34u8;
-    const UE_CONTEXT_TRANSFER: u8 = 35u8;
-    const IMS_VOICE_EPS_FALLBACK_OR_RAT_FALLBACK_TRIGGERED: u8 = 36u8;
-    const UP_INTEGRITY_PROTECTION_NOT_POSSIBLE: u8 = 37u8;
-    const UP_CONFIDENTIALITY_PROTECTION_NOT_POSSIBLE: u8 = 38u8;
-    const SLICE_NOT_SUPPORTED: u8 = 39u8;
-    const UE_IN_RRC_INACTIVE_STATE_NOT_REACHABLE: u8 = 40u8;
-    const REDIRECTION: u8 = 41u8;
-    const RESOURCES_NOT_AVAILABLE_FOR_THE_SLICE: u8 = 42u8;
-    const UE_MAX_INTEGRITY_PROTECTED_DATA_RATE_REASON: u8 = 43u8;
-    const RELEASE_DUE_TO_CN_DETECTED_MOBILITY: u8 = 44u8;
+    pub const UNSPECIFIED: u8 = 0u8;
+    pub const TXNRELOCOVERALL_EXPIRY: u8 = 1u8;
+    pub const SUCCESSFUL_HANDOVER: u8 = 2u8;
+    pub const RELEASE_DUE_TO_NGRAN_GENERATED_REASON: u8 = 3u8;
+    pub const RELEASE_DUE_TO_5GC_GENERATED_REASON: u8 = 4u8;
+    pub const HANDOVER_CANCELLED: u8 = 5u8;
+    pub const PARTIAL_HANDOVER: u8 = 6u8;
+    pub const HO_FAILURE_IN_TARGET_5GC_NGRAN_NODE_OR_TARGET_SYSTEM: u8 = 7u8;
+    pub const HO_TARGET_NOT_ALLOWED: u8 = 8u8;
+    pub const TNGRELOCOVERALL_EXPIRY: u8 = 9u8;
+    pub const TNGRELOCPREP_EXPIRY: u8 = 10u8;
+    pub const CELL_NOT_AVAILABLE: u8 = 11u8;
+    pub const UNKNOWN_TARGET_ID: u8 = 12u8;
+    pub const NO_RADIO_RESOURCES_AVAILABLE_IN_TARGET_CELL: u8 = 13u8;
+    pub const UNKNOWN_LOCAL_UE_NGAP_ID: u8 = 14u8;
+    pub const INCONSISTENT_REMOTE_UE_NGAP_ID: u8 = 15u8;
+    pub const HANDOVER_DESIRABLE_FOR_RADIO_REASON: u8 = 16u8;
+    pub const TIME_CRITICAL_HANDOVER: u8 = 17u8;
+    pub const RESOURCE_OPTIMISATION_HANDOVER: u8 = 18u8;
+    pub const REDUCE_LOAD_IN_SERVING_CELL: u8 = 19u8;
+    pub const USER_INACTIVITY: u8 = 20u8;
+    pub const RADIO_CONNECTION_WITH_UE_LOST: u8 = 21u8;
+    pub const RADIO_RESOURCES_NOT_AVAILABLE: u8 = 22u8;
+    pub const INVALID_QOS_COMBINATION: u8 = 23u8;
+    pub const FAILURE_IN_RADIO_INTERFACE_PROCEDURE: u8 = 24u8;
+    pub const INTERACTION_WITH_OTHER_PROCEDURE: u8 = 25u8;
+    pub const UNKNOWN_PDU_SESSION_ID: u8 = 26u8;
+    pub const UNKOWN_QOS_FLOW_ID: u8 = 27u8;
+    pub const MULTIPLE_PDU_SESSION_ID_INSTANCES: u8 = 28u8;
+    pub const MULTIPLE_QOS_FLOW_ID_INSTANCES: u8 = 29u8;
+    pub const ENCRYPTION_AND_OR_INTEGRITY_PROTECTION_ALGORITHMS_NOT_SUPPORTED: u8 = 30u8;
+    pub const NG_INTRA_SYSTEM_HANDOVER_TRIGGERED: u8 = 31u8;
+    pub const NG_INTER_SYSTEM_HANDOVER_TRIGGERED: u8 = 32u8;
+    pub const XN_HANDOVER_TRIGGERED: u8 = 33u8;
+    pub const NOT_SUPPORTED_5QI_VALUE: u8 = 34u8;
+    pub const UE_CONTEXT_TRANSFER: u8 = 35u8;
+    pub const IMS_VOICE_EPS_FALLBACK_OR_RAT_FALLBACK_TRIGGERED: u8 = 36u8;
+    pub const UP_INTEGRITY_PROTECTION_NOT_POSSIBLE: u8 = 37u8;
+    pub const UP_CONFIDENTIALITY_PROTECTION_NOT_POSSIBLE: u8 = 38u8;
+    pub const SLICE_NOT_SUPPORTED: u8 = 39u8;
+    pub const UE_IN_RRC_INACTIVE_STATE_NOT_REACHABLE: u8 = 40u8;
+    pub const REDIRECTION: u8 = 41u8;
+    pub const RESOURCES_NOT_AVAILABLE_FOR_THE_SLICE: u8 = 42u8;
+    pub const UE_MAX_INTEGRITY_PROTECTED_DATA_RATE_REASON: u8 = 43u8;
+    pub const RELEASE_DUE_TO_CN_DETECTED_MOBILITY: u8 = 44u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct CauseTransport(pub u8);
 impl CauseTransport {
-    const TRANSPORT_RESOURCE_UNAVAILABLE: u8 = 0u8;
-    const UNSPECIFIED: u8 = 1u8;
+    pub const TRANSPORT_RESOURCE_UNAVAILABLE: u8 = 0u8;
+    pub const UNSPECIFIED: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -917,10 +917,10 @@ pub struct CellIdListforMDT_NR(pub Vec<NR_CGI>);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "3")]
 pub struct CellSize(pub u8);
 impl CellSize {
-    const VERYSMALL: u8 = 0u8;
-    const SMALL: u8 = 1u8;
-    const MEDIUM: u8 = 2u8;
-    const LARGE: u8 = 3u8;
+    pub const VERYSMALL: u8 = 0u8;
+    pub const SMALL: u8 = 1u8;
+    pub const MEDIUM: u8 = 2u8;
+    pub const LARGE: u8 = 3u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -1013,24 +1013,24 @@ pub struct CompletedCellsInTAI_NR_Item {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct ConcurrentWarningMessageInd(pub u8);
 impl ConcurrentWarningMessageInd {
-    const TRUE: u8 = 0u8;
+    pub const TRUE: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "2")]
 pub struct ConfidentialityProtectionIndication(pub u8);
 impl ConfidentialityProtectionIndication {
-    const REQUIRED: u8 = 0u8;
-    const PREFERRED: u8 = 1u8;
-    const NOT_NEEDED: u8 = 2u8;
+    pub const REQUIRED: u8 = 0u8;
+    pub const PREFERRED: u8 = 1u8;
+    pub const NOT_NEEDED: u8 = 2u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct ConfidentialityProtectionResult(pub u8);
 impl ConfidentialityProtectionResult {
-    const PERFORMED: u8 = 0u8;
-    const NOT_PERFORMED: u8 = 1u8;
+    pub const PERFORMED: u8 = 0u8;
+    pub const NOT_PERFORMED: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -1046,7 +1046,7 @@ pub struct ConfiguredNSSAI(pub Vec<u8>);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct ConfiguredTACIndication(pub u8);
 impl ConfiguredTACIndication {
-    const TRUE: u8 = 0u8;
+    pub const TRUE: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -1079,9 +1079,9 @@ pub struct CoverageEnhancementLevel(pub Vec<u8>);
 #[asn(type = "ENUMERATED", lb = "0", ub = "2")]
 pub struct Criticality(pub u8);
 impl Criticality {
-    const REJECT: u8 = 0u8;
-    const IGNORE: u8 = 1u8;
-    const NOTIFY: u8 = 2u8;
+    pub const REJECT: u8 = 0u8;
+    pub const IGNORE: u8 = 1u8;
+    pub const NOTIFY: u8 = 2u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -1163,14 +1163,14 @@ pub struct DL_NAS_MAC(pub BitVec<Msb0, u8>);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct DL_NGU_TNLInformationReused(pub u8);
 impl DL_NGU_TNLInformationReused {
-    const TRUE: u8 = 0u8;
+    pub const TRUE: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct DLForwarding(pub u8);
 impl DLForwarding {
-    const DL_FORWARDING_PROPOSED: u8 = 0u8;
+    pub const DL_FORWARDING_PROPOSED: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -1283,14 +1283,14 @@ pub struct DataCodingScheme(pub BitVec<Msb0, u8>);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct DataForwardingAccepted(pub u8);
 impl DataForwardingAccepted {
-    const DATA_FORWARDING_ACCEPTED: u8 = 0u8;
+    pub const DATA_FORWARDING_ACCEPTED: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct DataForwardingNotPossible(pub u8);
 impl DataForwardingNotPossible {
-    const DATA_FORWARDING_NOT_POSSIBLE: u8 = 0u8;
+    pub const DATA_FORWARDING_NOT_POSSIBLE: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -1337,15 +1337,15 @@ pub struct DeactivateTrace {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct DelayCritical(pub u8);
 impl DelayCritical {
-    const DELAY_CRITICAL: u8 = 0u8;
-    const NON_DELAY_CRITICAL: u8 = 1u8;
+    pub const DELAY_CRITICAL: u8 = 0u8;
+    pub const NON_DELAY_CRITICAL: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct DirectForwardingPathAvailability(pub u8);
 impl DirectForwardingPathAvailability {
-    const DIRECT_PATH_AVAILABLE: u8 = 0u8;
+    pub const DIRECT_PATH_AVAILABLE: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -1435,7 +1435,7 @@ pub struct E_RABInformationList(pub Vec<E_RABInformationItem>);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct EDT_Session(pub u8);
 impl EDT_Session {
-    const TRUE: u8 = 0u8;
+    pub const TRUE: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -1625,23 +1625,23 @@ pub struct EmergencyFallbackIndicator {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct EmergencyFallbackRequestIndicator(pub u8);
 impl EmergencyFallbackRequestIndicator {
-    const EMERGENCY_FALLBACK_REQUESTED: u8 = 0u8;
+    pub const EMERGENCY_FALLBACK_REQUESTED: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct EmergencyServiceTargetCN(pub u8);
 impl EmergencyServiceTargetCN {
-    const FIVE_GC: u8 = 0u8;
-    const EPC: u8 = 1u8;
+    pub const FIVE_GC: u8 = 0u8;
+    pub const EPC: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct EndIndication(pub u8);
 impl EndIndication {
-    const NO_FURTHER_DATA: u8 = 0u8;
-    const FURTHER_DATA_EXISTS: u8 = 1u8;
+    pub const NO_FURTHER_DATA: u8 = 0u8;
+    pub const FURTHER_DATA_EXISTS: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -1657,7 +1657,7 @@ pub struct EndpointIPAddressAndPort {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct Enhanced_CoverageRestriction(pub u8);
 impl Enhanced_CoverageRestriction {
-    const RESTRICTED: u8 = 0u8;
+    pub const RESTRICTED: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -1695,12 +1695,12 @@ pub enum EventTrigger {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "5")]
 pub struct EventType(pub u8);
 impl EventType {
-    const DIRECT: u8 = 0u8;
-    const CHANGE_OF_SERVE_CELL: u8 = 1u8;
-    const UE_PRESENCE_IN_AREA_OF_INTEREST: u8 = 2u8;
-    const STOP_CHANGE_OF_SERVE_CELL: u8 = 3u8;
-    const STOP_UE_PRESENCE_IN_AREA_OF_INTEREST: u8 = 4u8;
-    const CANCEL_LOCATION_REPORTING_FOR_THE_UE: u8 = 5u8;
+    pub const DIRECT: u8 = 0u8;
+    pub const CHANGE_OF_SERVE_CELL: u8 = 1u8;
+    pub const UE_PRESENCE_IN_AREA_OF_INTEREST: u8 = 2u8;
+    pub const STOP_CHANGE_OF_SERVE_CELL: u8 = 3u8;
+    pub const STOP_UE_PRESENCE_IN_AREA_OF_INTEREST: u8 = 4u8;
+    pub const CANCEL_LOCATION_REPORTING_FOR_THE_UE: u8 = 5u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -1711,13 +1711,13 @@ pub struct ExpectedActivityPeriod(pub u8);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "6")]
 pub struct ExpectedHOInterval(pub u8);
 impl ExpectedHOInterval {
-    const SEC15: u8 = 0u8;
-    const SEC30: u8 = 1u8;
-    const SEC60: u8 = 2u8;
-    const SEC90: u8 = 3u8;
-    const SEC120: u8 = 4u8;
-    const SEC180: u8 = 5u8;
-    const LONG_TIME: u8 = 6u8;
+    pub const SEC15: u8 = 0u8;
+    pub const SEC30: u8 = 1u8;
+    pub const SEC60: u8 = 2u8;
+    pub const SEC90: u8 = 3u8;
+    pub const SEC120: u8 = 4u8;
+    pub const SEC180: u8 = 5u8;
+    pub const LONG_TIME: u8 = 6u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -1756,8 +1756,8 @@ pub struct ExpectedUEBehaviour {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct ExpectedUEMobility(pub u8);
 impl ExpectedUEMobility {
-    const STATIONARY: u8 = 0u8;
-    const MOBILE: u8 = 1u8;
+    pub const STATIONARY: u8 = 0u8;
+    pub const MOBILE: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -1962,8 +1962,8 @@ pub struct GUAMI {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct GUAMIType(pub u8);
 impl GUAMIType {
-    const NATIVE: u8 = 0u8;
-    const MAPPED: u8 = 1u8;
+    pub const NATIVE: u8 = 0u8;
+    pub const MAPPED: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -2126,7 +2126,7 @@ pub struct HandoverFailure {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct HandoverFlag(pub u8);
 impl HandoverFlag {
-    const HANDOVER_PREPARATION: u8 = 0u8;
+    pub const HANDOVER_PREPARATION: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -2213,9 +2213,9 @@ pub struct HandoverSuccess {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "2")]
 pub struct HandoverType(pub u8);
 impl HandoverType {
-    const INTRA5GS: u8 = 0u8;
-    const FIVEGS_TO_EPS: u8 = 1u8;
-    const EPS_TO_5GS: u8 = 2u8;
+    pub const INTRA5GS: u8 = 0u8;
+    pub const FIVEGS_TO_EPS: u8 = 1u8;
+    pub const EPS_TO_5GS: u8 = 2u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -2226,30 +2226,30 @@ pub struct Hysteresis(pub u8);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct IAB_Authorized(pub u8);
 impl IAB_Authorized {
-    const AUTHORIZED: u8 = 0u8;
-    const NOT_AUTHORIZED: u8 = 1u8;
+    pub const AUTHORIZED: u8 = 0u8;
+    pub const NOT_AUTHORIZED: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct IAB_Supported(pub u8);
 impl IAB_Supported {
-    const TRUE: u8 = 0u8;
+    pub const TRUE: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct IABNodeIndication(pub u8);
 impl IABNodeIndication {
-    const TRUE: u8 = 0u8;
+    pub const TRUE: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct IMSVoiceSupportIndicator(pub u8);
 impl IMSVoiceSupportIndicator {
-    const SUPPORTED: u8 = 0u8;
-    const NOT_SUPPORTED: u8 = 1u8;
+    pub const SUPPORTED: u8 = 0u8;
+    pub const NOT_SUPPORTED: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -2328,17 +2328,17 @@ pub struct InitiatingMessage {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "2")]
 pub struct IntegrityProtectionIndication(pub u8);
 impl IntegrityProtectionIndication {
-    const REQUIRED: u8 = 0u8;
-    const PREFERRED: u8 = 1u8;
-    const NOT_NEEDED: u8 = 2u8;
+    pub const REQUIRED: u8 = 0u8;
+    pub const PREFERRED: u8 = 1u8;
+    pub const NOT_NEEDED: u8 = 2u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct IntegrityProtectionResult(pub u8);
 impl IntegrityProtectionResult {
-    const PERFORMED: u8 = 0u8;
-    const NOT_PERFORMED: u8 = 1u8;
+    pub const PERFORMED: u8 = 0u8;
+    pub const NOT_PERFORMED: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -2463,7 +2463,7 @@ pub struct LAI {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct LTEM_Indication(pub u8);
 impl LTEM_Indication {
-    const LTE_M: u8 = 0u8;
+    pub const LTE_M: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -2542,17 +2542,17 @@ pub struct LastVisitedUTRANCellInformation(pub Vec<u8>);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct LineType(pub u8);
 impl LineType {
-    const DSL: u8 = 0u8;
-    const PON: u8 = 1u8;
+    pub const DSL: u8 = 0u8;
+    pub const PON: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "2")]
 pub struct Links_to_log(pub u8);
 impl Links_to_log {
-    const UPLINK: u8 = 0u8;
-    const DOWNLINK: u8 = 1u8;
-    const BOTH_UPLINK_AND_DOWNLINK: u8 = 2u8;
+    pub const UPLINK: u8 = 0u8;
+    pub const DOWNLINK: u8 = 1u8;
+    pub const BOTH_UPLINK_AND_DOWNLINK: u8 = 2u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -2565,7 +2565,7 @@ pub struct LocationReport {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct LocationReportingAdditionalInfo(pub u8);
 impl LocationReportingAdditionalInfo {
-    const INCLUDE_PS_CELL: u8 = 0u8;
+    pub const INCLUDE_PS_CELL: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -2630,29 +2630,29 @@ pub enum LoggedMDTTrigger {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "5")]
 pub struct LoggingDuration(pub u8);
 impl LoggingDuration {
-    const M10: u8 = 0u8;
-    const M20: u8 = 1u8;
-    const M40: u8 = 2u8;
-    const M60: u8 = 3u8;
-    const M90: u8 = 4u8;
-    const M120: u8 = 5u8;
+    pub const M10: u8 = 0u8;
+    pub const M20: u8 = 1u8;
+    pub const M40: u8 = 2u8;
+    pub const M60: u8 = 3u8;
+    pub const M90: u8 = 4u8;
+    pub const M120: u8 = 5u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "10")]
 pub struct LoggingInterval(pub u8);
 impl LoggingInterval {
-    const MS320: u8 = 0u8;
-    const MS640: u8 = 1u8;
-    const MS1280: u8 = 2u8;
-    const MS2560: u8 = 3u8;
-    const MS5120: u8 = 4u8;
-    const MS10240: u8 = 5u8;
-    const MS20480: u8 = 6u8;
-    const MS30720: u8 = 7u8;
-    const MS40960: u8 = 8u8;
-    const MS61440: u8 = 9u8;
-    const INFINITY: u8 = 10u8;
+    pub const MS320: u8 = 0u8;
+    pub const MS640: u8 = 1u8;
+    pub const MS1280: u8 = 2u8;
+    pub const MS2560: u8 = 3u8;
+    pub const MS5120: u8 = 4u8;
+    pub const MS10240: u8 = 5u8;
+    pub const MS20480: u8 = 6u8;
+    pub const MS30720: u8 = 7u8;
+    pub const MS40960: u8 = 8u8;
+    pub const MS61440: u8 = 9u8;
+    pub const INFINITY: u8 = 10u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -2680,9 +2680,9 @@ pub struct M1PeriodicReporting {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "2")]
 pub struct M1ReportingTrigger(pub u8);
 impl M1ReportingTrigger {
-    const PERIODIC: u8 = 0u8;
-    const A2EVENTTRIGGERED: u8 = 1u8;
-    const A2EVENTTRIGGERED_PERIODIC: u8 = 2u8;
+    pub const PERIODIC: u8 = 0u8;
+    pub const A2EVENTTRIGGERED: u8 = 1u8;
+    pub const A2EVENTTRIGGERED_PERIODIC: u8 = 2u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -2719,11 +2719,11 @@ pub struct M4Configuration {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "4")]
 pub struct M4period(pub u8);
 impl M4period {
-    const MS1024: u8 = 0u8;
-    const MS2048: u8 = 1u8;
-    const MS5120: u8 = 2u8;
-    const MS10240: u8 = 3u8;
-    const MIN1: u8 = 4u8;
+    pub const MS1024: u8 = 0u8;
+    pub const MS2048: u8 = 1u8;
+    pub const MS5120: u8 = 2u8;
+    pub const MS10240: u8 = 3u8;
+    pub const MIN1: u8 = 4u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -2739,11 +2739,11 @@ pub struct M5Configuration {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "4")]
 pub struct M5period(pub u8);
 impl M5period {
-    const MS1024: u8 = 0u8;
-    const MS2048: u8 = 1u8;
-    const MS5120: u8 = 2u8;
-    const MS10240: u8 = 3u8;
-    const MIN1: u8 = 4u8;
+    pub const MS1024: u8 = 0u8;
+    pub const MS2048: u8 = 1u8;
+    pub const MS5120: u8 = 2u8;
+    pub const MS10240: u8 = 3u8;
+    pub const MIN1: u8 = 4u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -2759,20 +2759,20 @@ pub struct M6Configuration {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "13")]
 pub struct M6report_Interval(pub u8);
 impl M6report_Interval {
-    const MS120: u8 = 0u8;
-    const MS240: u8 = 1u8;
-    const MS480: u8 = 2u8;
-    const MS640: u8 = 3u8;
-    const MS1024: u8 = 4u8;
-    const MS2048: u8 = 5u8;
-    const MS5120: u8 = 6u8;
-    const MS10240: u8 = 7u8;
-    const MS20480: u8 = 8u8;
-    const MS40960: u8 = 9u8;
-    const MIN1: u8 = 10u8;
-    const MIN6: u8 = 11u8;
-    const MIN12: u8 = 12u8;
-    const MIN30: u8 = 13u8;
+    pub const MS120: u8 = 0u8;
+    pub const MS240: u8 = 1u8;
+    pub const MS480: u8 = 2u8;
+    pub const MS640: u8 = 3u8;
+    pub const MS1024: u8 = 4u8;
+    pub const MS2048: u8 = 5u8;
+    pub const MS5120: u8 = 6u8;
+    pub const MS10240: u8 = 7u8;
+    pub const MS20480: u8 = 8u8;
+    pub const MS40960: u8 = 9u8;
+    pub const MIN1: u8 = 10u8;
+    pub const MIN6: u8 = 11u8;
+    pub const MIN12: u8 = 12u8;
+    pub const MIN30: u8 = 13u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -2792,9 +2792,9 @@ pub struct M7period(pub u8);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "2")]
 pub struct MDT_Activation(pub u8);
 impl MDT_Activation {
-    const IMMEDIATE_MDT_ONLY: u8 = 0u8;
-    const LOGGED_MDT_ONLY: u8 = 1u8;
-    const IMMEDIATE_MDT_AND_TRACE: u8 = 2u8;
+    pub const IMMEDIATE_MDT_ONLY: u8 = 0u8;
+    pub const LOGGED_MDT_ONLY: u8 = 1u8;
+    pub const IMMEDIATE_MDT_AND_TRACE: u8 = 2u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -2867,7 +2867,7 @@ pub struct MDTPLMNList(pub Vec<PLMNIdentity>);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct MICOModeIndication(pub u8);
 impl MICOModeIndication {
-    const TRUE: u8 = 0u8;
+    pub const TRUE: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -2882,8 +2882,8 @@ pub struct MaximumDataBurstVolume(pub u16);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct MaximumIntegrityProtectedDataRate(pub u8);
 impl MaximumIntegrityProtectedDataRate {
-    const BITRATE64KBS: u8 = 0u8;
-    const MAXIMUM_UE_RATE: u8 = 1u8;
+    pub const BITRATE64KBS: u8 = 0u8;
+    pub const MAXIMUM_UE_RATE: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -2952,52 +2952,52 @@ pub struct NASSecurityParametersFromNGRAN(pub Vec<u8>);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "3")]
 pub struct NB_IoT_DefaultPagingDRX(pub u8);
 impl NB_IoT_DefaultPagingDRX {
-    const RF128: u8 = 0u8;
-    const RF256: u8 = 1u8;
-    const RF512: u8 = 2u8;
-    const RF1024: u8 = 3u8;
+    pub const RF128: u8 = 0u8;
+    pub const RF256: u8 = 1u8;
+    pub const RF512: u8 = 2u8;
+    pub const RF1024: u8 = 3u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "15")]
 pub struct NB_IoT_Paging_TimeWindow(pub u8);
 impl NB_IoT_Paging_TimeWindow {
-    const S1: u8 = 0u8;
-    const S2: u8 = 1u8;
-    const S3: u8 = 2u8;
-    const S4: u8 = 3u8;
-    const S5: u8 = 4u8;
-    const S6: u8 = 5u8;
-    const S7: u8 = 6u8;
-    const S8: u8 = 7u8;
-    const S9: u8 = 8u8;
-    const S10: u8 = 9u8;
-    const S11: u8 = 10u8;
-    const S12: u8 = 11u8;
-    const S13: u8 = 12u8;
-    const S14: u8 = 13u8;
-    const S15: u8 = 14u8;
-    const S16: u8 = 15u8;
+    pub const S1: u8 = 0u8;
+    pub const S2: u8 = 1u8;
+    pub const S3: u8 = 2u8;
+    pub const S4: u8 = 3u8;
+    pub const S5: u8 = 4u8;
+    pub const S6: u8 = 5u8;
+    pub const S7: u8 = 6u8;
+    pub const S8: u8 = 7u8;
+    pub const S9: u8 = 8u8;
+    pub const S10: u8 = 9u8;
+    pub const S11: u8 = 10u8;
+    pub const S12: u8 = 11u8;
+    pub const S13: u8 = 12u8;
+    pub const S14: u8 = 13u8;
+    pub const S15: u8 = 14u8;
+    pub const S16: u8 = 15u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "13")]
 pub struct NB_IoT_Paging_eDRXCycle(pub u8);
 impl NB_IoT_Paging_eDRXCycle {
-    const HF2: u8 = 0u8;
-    const HF4: u8 = 1u8;
-    const HF6: u8 = 2u8;
-    const HF8: u8 = 3u8;
-    const HF10: u8 = 4u8;
-    const HF12: u8 = 5u8;
-    const HF14: u8 = 6u8;
-    const HF16: u8 = 7u8;
-    const HF32: u8 = 8u8;
-    const HF64: u8 = 9u8;
-    const HF128: u8 = 10u8;
-    const HF256: u8 = 11u8;
-    const HF512: u8 = 12u8;
-    const HF1024: u8 = 13u8;
+    pub const HF2: u8 = 0u8;
+    pub const HF4: u8 = 1u8;
+    pub const HF6: u8 = 2u8;
+    pub const HF8: u8 = 3u8;
+    pub const HF10: u8 = 4u8;
+    pub const HF12: u8 = 5u8;
+    pub const HF14: u8 = 6u8;
+    pub const HF16: u8 = 7u8;
+    pub const HF32: u8 = 8u8;
+    pub const HF64: u8 = 9u8;
+    pub const HF128: u8 = 10u8;
+    pub const HF256: u8 = 11u8;
+    pub const HF512: u8 = 12u8;
+    pub const HF1024: u8 = 13u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -3014,12 +3014,12 @@ pub struct NB_IoT_Paging_eDRXInfo {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "5")]
 pub struct NB_IoT_PagingDRX(pub u8);
 impl NB_IoT_PagingDRX {
-    const RF32: u8 = 0u8;
-    const RF64: u8 = 1u8;
-    const RF128: u8 = 2u8;
-    const RF256: u8 = 3u8;
-    const RF512: u8 = 4u8;
-    const RF1024: u8 = 5u8;
+    pub const RF32: u8 = 0u8;
+    pub const RF64: u8 = 1u8;
+    pub const RF128: u8 = 2u8;
+    pub const RF256: u8 = 3u8;
+    pub const RF512: u8 = 4u8;
+    pub const RF1024: u8 = 5u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -3249,7 +3249,7 @@ pub struct NetworkInstance(pub u16);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct NewSecurityContextInd(pub u8);
 impl NewSecurityContextInd {
-    const TRUE: u8 = 0u8;
+    pub const TRUE: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -3260,8 +3260,8 @@ pub struct NextHopChainingCount(pub u8);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct NextPagingAreaScope(pub u8);
 impl NextPagingAreaScope {
-    const SAME: u8 = 0u8;
-    const CHANGED: u8 = 1u8;
+    pub const SAME: u8 = 0u8;
+    pub const CHANGED: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -3299,22 +3299,22 @@ pub struct NotAllowedTACs(pub Vec<TAC>);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct NotificationCause(pub u8);
 impl NotificationCause {
-    const FULFILLED: u8 = 0u8;
-    const NOT_FULFILLED: u8 = 1u8;
+    pub const FULFILLED: u8 = 0u8;
+    pub const NOT_FULFILLED: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct NotificationControl(pub u8);
 impl NotificationControl {
-    const NOTIFICATION_REQUESTED: u8 = 0u8;
+    pub const NOTIFICATION_REQUESTED: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct NotifySourceNGRANNode(pub u8);
 impl NotifySourceNGRANNode {
-    const NOTIFY_SOURCE: u8 = 0u8;
+    pub const NOTIFY_SOURCE: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -3329,10 +3329,10 @@ pub struct NumberOfBroadcastsRequested(pub u16);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "3")]
 pub struct OverloadAction(pub u8);
 impl OverloadAction {
-    const REJECT_NON_EMERGENCY_MO_DT: u8 = 0u8;
-    const REJECT_RRC_CR_SIGNALLING: u8 = 1u8;
-    const PERMIT_EMERGENCY_SESSIONS_AND_MOBILE_TERMINATED_SERVICES_ONLY: u8 = 2u8;
-    const PERMIT_HIGH_PRIORITY_SESSIONS_AND_MOBILE_TERMINATED_SERVICES_ONLY: u8 = 3u8;
+    pub const REJECT_NON_EMERGENCY_MO_DT: u8 = 0u8;
+    pub const REJECT_RRC_CR_SIGNALLING: u8 = 1u8;
+    pub const PERMIT_EMERGENCY_SESSIONS_AND_MOBILE_TERMINATED_SERVICES_ONLY: u8 = 2u8;
+    pub const PERMIT_HIGH_PRIORITY_SESSIONS_AND_MOBILE_TERMINATED_SERVICES_ONLY: u8 = 3u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -4315,11 +4315,11 @@ pub struct PDUSessionResourceToReleaseListRelCmd(pub Vec<PDUSessionResourceToRel
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "4")]
 pub struct PDUSessionType(pub u8);
 impl PDUSessionType {
-    const IPV4: u8 = 0u8;
-    const IPV6: u8 = 1u8;
-    const IPV4V6: u8 = 2u8;
-    const ETHERNET: u8 = 3u8;
-    const UNSTRUCTURED: u8 = 4u8;
+    pub const IPV4: u8 = 0u8;
+    pub const IPV6: u8 = 1u8;
+    pub const IPV4V6: u8 = 2u8;
+    pub const ETHERNET: u8 = 3u8;
+    pub const UNSTRUCTURED: u8 = 4u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -4418,42 +4418,42 @@ pub struct Paging {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "15")]
 pub struct Paging_Time_Window(pub u8);
 impl Paging_Time_Window {
-    const S1: u8 = 0u8;
-    const S2: u8 = 1u8;
-    const S3: u8 = 2u8;
-    const S4: u8 = 3u8;
-    const S5: u8 = 4u8;
-    const S6: u8 = 5u8;
-    const S7: u8 = 6u8;
-    const S8: u8 = 7u8;
-    const S9: u8 = 8u8;
-    const S10: u8 = 9u8;
-    const S11: u8 = 10u8;
-    const S12: u8 = 11u8;
-    const S13: u8 = 12u8;
-    const S14: u8 = 13u8;
-    const S15: u8 = 14u8;
-    const S16: u8 = 15u8;
+    pub const S1: u8 = 0u8;
+    pub const S2: u8 = 1u8;
+    pub const S3: u8 = 2u8;
+    pub const S4: u8 = 3u8;
+    pub const S5: u8 = 4u8;
+    pub const S6: u8 = 5u8;
+    pub const S7: u8 = 6u8;
+    pub const S8: u8 = 7u8;
+    pub const S9: u8 = 8u8;
+    pub const S10: u8 = 9u8;
+    pub const S11: u8 = 10u8;
+    pub const S12: u8 = 11u8;
+    pub const S13: u8 = 12u8;
+    pub const S14: u8 = 13u8;
+    pub const S15: u8 = 14u8;
+    pub const S16: u8 = 15u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "13")]
 pub struct Paging_eDRX_Cycle(pub u8);
 impl Paging_eDRX_Cycle {
-    const HFHALF: u8 = 0u8;
-    const HF1: u8 = 1u8;
-    const HF2: u8 = 2u8;
-    const HF4: u8 = 3u8;
-    const HF6: u8 = 4u8;
-    const HF8: u8 = 5u8;
-    const HF10: u8 = 6u8;
-    const HF12: u8 = 7u8;
-    const HF14: u8 = 8u8;
-    const HF16: u8 = 9u8;
-    const HF32: u8 = 10u8;
-    const HF64: u8 = 11u8;
-    const HF128: u8 = 12u8;
-    const HF256: u8 = 13u8;
+    pub const HFHALF: u8 = 0u8;
+    pub const HF1: u8 = 1u8;
+    pub const HF2: u8 = 2u8;
+    pub const HF4: u8 = 3u8;
+    pub const HF6: u8 = 4u8;
+    pub const HF8: u8 = 5u8;
+    pub const HF10: u8 = 6u8;
+    pub const HF12: u8 = 7u8;
+    pub const HF14: u8 = 8u8;
+    pub const HF16: u8 = 9u8;
+    pub const HF32: u8 = 10u8;
+    pub const HF64: u8 = 11u8;
+    pub const HF128: u8 = 12u8;
+    pub const HF256: u8 = 13u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -4484,58 +4484,58 @@ pub struct PagingAttemptInformation {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "3")]
 pub struct PagingDRX(pub u8);
 impl PagingDRX {
-    const V32: u8 = 0u8;
-    const V64: u8 = 1u8;
-    const V128: u8 = 2u8;
-    const V256: u8 = 3u8;
+    pub const V32: u8 = 0u8;
+    pub const V64: u8 = 1u8;
+    pub const V128: u8 = 2u8;
+    pub const V256: u8 = 3u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct PagingOrigin(pub u8);
 impl PagingOrigin {
-    const NON_3GPP: u8 = 0u8;
+    pub const NON_3GPP: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "7")]
 pub struct PagingPriority(pub u8);
 impl PagingPriority {
-    const PRIOLEVEL1: u8 = 0u8;
-    const PRIOLEVEL2: u8 = 1u8;
-    const PRIOLEVEL3: u8 = 2u8;
-    const PRIOLEVEL4: u8 = 3u8;
-    const PRIOLEVEL5: u8 = 4u8;
-    const PRIOLEVEL6: u8 = 5u8;
-    const PRIOLEVEL7: u8 = 6u8;
-    const PRIOLEVEL8: u8 = 7u8;
+    pub const PRIOLEVEL1: u8 = 0u8;
+    pub const PRIOLEVEL2: u8 = 1u8;
+    pub const PRIOLEVEL3: u8 = 2u8;
+    pub const PRIOLEVEL4: u8 = 3u8;
+    pub const PRIOLEVEL5: u8 = 4u8;
+    pub const PRIOLEVEL6: u8 = 5u8;
+    pub const PRIOLEVEL7: u8 = 6u8;
+    pub const PRIOLEVEL8: u8 = 7u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "20")]
 pub struct PagingProbabilityInformation(pub u8);
 impl PagingProbabilityInformation {
-    const P00: u8 = 0u8;
-    const P05: u8 = 1u8;
-    const P10: u8 = 2u8;
-    const P15: u8 = 3u8;
-    const P20: u8 = 4u8;
-    const P25: u8 = 5u8;
-    const P30: u8 = 6u8;
-    const P35: u8 = 7u8;
-    const P40: u8 = 8u8;
-    const P45: u8 = 9u8;
-    const P50: u8 = 10u8;
-    const P55: u8 = 11u8;
-    const P60: u8 = 12u8;
-    const P65: u8 = 13u8;
-    const P70: u8 = 14u8;
-    const P75: u8 = 15u8;
-    const P80: u8 = 16u8;
-    const P85: u8 = 17u8;
-    const P90: u8 = 18u8;
-    const P95: u8 = 19u8;
-    const P100: u8 = 20u8;
+    pub const P00: u8 = 0u8;
+    pub const P05: u8 = 1u8;
+    pub const P10: u8 = 2u8;
+    pub const P15: u8 = 3u8;
+    pub const P20: u8 = 4u8;
+    pub const P25: u8 = 5u8;
+    pub const P30: u8 = 6u8;
+    pub const P35: u8 = 7u8;
+    pub const P40: u8 = 8u8;
+    pub const P45: u8 = 9u8;
+    pub const P50: u8 = 10u8;
+    pub const P55: u8 = 11u8;
+    pub const P60: u8 = 12u8;
+    pub const P65: u8 = 13u8;
+    pub const P70: u8 = 14u8;
+    pub const P75: u8 = 15u8;
+    pub const P80: u8 = 16u8;
+    pub const P85: u8 = 17u8;
+    pub const P90: u8 = 18u8;
+    pub const P95: u8 = 19u8;
+    pub const P100: u8 = 20u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -4610,8 +4610,8 @@ pub struct PathSwitchRequestUnsuccessfulTransfer {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct PedestrianUE(pub u8);
 impl PedestrianUE {
-    const AUTHORIZED: u8 = 0u8;
-    const NOT_AUTHORIZED: u8 = 1u8;
+    pub const AUTHORIZED: u8 = 0u8;
+    pub const NOT_AUTHORIZED: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -4630,25 +4630,25 @@ pub struct PortNumber(pub Vec<u8>);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct Pre_emptionCapability(pub u8);
 impl Pre_emptionCapability {
-    const SHALL_NOT_TRIGGER_PRE_EMPTION: u8 = 0u8;
-    const MAY_TRIGGER_PRE_EMPTION: u8 = 1u8;
+    pub const SHALL_NOT_TRIGGER_PRE_EMPTION: u8 = 0u8;
+    pub const MAY_TRIGGER_PRE_EMPTION: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct Pre_emptionVulnerability(pub u8);
 impl Pre_emptionVulnerability {
-    const NOT_PRE_EMPTABLE: u8 = 0u8;
-    const PRE_EMPTABLE: u8 = 1u8;
+    pub const NOT_PRE_EMPTABLE: u8 = 0u8;
+    pub const PRE_EMPTABLE: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", lb = "0", ub = "2")]
 pub struct Presence(pub u8);
 impl Presence {
-    const OPTIONAL: u8 = 0u8;
-    const CONDITIONAL: u8 = 1u8;
-    const MANDATORY: u8 = 2u8;
+    pub const OPTIONAL: u8 = 0u8;
+    pub const CONDITIONAL: u8 = 1u8;
+    pub const MANDATORY: u8 = 2u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -4663,8 +4663,8 @@ pub struct PriorityLevelQos(pub u8);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct PrivacyIndicator(pub u8);
 impl PrivacyIndicator {
-    const IMMEDIATE_MDT: u8 = 0u8;
-    const LOGGED_MDT: u8 = 1u8;
+    pub const IMMEDIATE_MDT: u8 = 0u8;
+    pub const LOGGED_MDT: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -4941,9 +4941,9 @@ pub struct QosMonitoringReportingFrequency(pub u16);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "2")]
 pub struct QosMonitoringRequest(pub u8);
 impl QosMonitoringRequest {
-    const UL: u8 = 0u8;
-    const DL: u8 = 1u8;
-    const BOTH: u8 = 2u8;
+    pub const UL: u8 = 0u8;
+    pub const DL: u8 = 1u8;
+    pub const BOTH: u8 = 2u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -5012,8 +5012,8 @@ pub struct RANStatusTransfer_TransparentContainer {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct RAT_Information(pub u8);
 impl RAT_Information {
-    const UNLICENSED: u8 = 0u8;
-    const NB_IO_T: u8 = 1u8;
+    pub const UNLICENSED: u8 = 0u8;
+    pub const NB_IO_T: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -5068,16 +5068,16 @@ pub struct RRCContainer(pub Vec<u8>);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "9")]
 pub struct RRCEstablishmentCause(pub u8);
 impl RRCEstablishmentCause {
-    const EMERGENCY: u8 = 0u8;
-    const HIGH_PRIORITY_ACCESS: u8 = 1u8;
-    const MT_ACCESS: u8 = 2u8;
-    const MO_SIGNALLING: u8 = 3u8;
-    const MO_DATA: u8 = 4u8;
-    const MO_VOICE_CALL: u8 = 5u8;
-    const MO_VIDEO_CALL: u8 = 6u8;
-    const MO_SMS: u8 = 7u8;
-    const MPS_PRIORITY_ACCESS: u8 = 8u8;
-    const MCS_PRIORITY_ACCESS: u8 = 9u8;
+    pub const EMERGENCY: u8 = 0u8;
+    pub const HIGH_PRIORITY_ACCESS: u8 = 1u8;
+    pub const MT_ACCESS: u8 = 2u8;
+    pub const MO_SIGNALLING: u8 = 3u8;
+    pub const MO_DATA: u8 = 4u8;
+    pub const MO_VOICE_CALL: u8 = 5u8;
+    pub const MO_VIDEO_CALL: u8 = 6u8;
+    pub const MO_SMS: u8 = 7u8;
+    pub const MPS_PRIORITY_ACCESS: u8 = 8u8;
+    pub const MCS_PRIORITY_ACCESS: u8 = 9u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -5090,40 +5090,40 @@ pub struct RRCInactiveTransitionReport {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "2")]
 pub struct RRCInactiveTransitionReportRequest(pub u8);
 impl RRCInactiveTransitionReportRequest {
-    const SUBSEQUENT_STATE_TRANSITION_REPORT: u8 = 0u8;
-    const SINGLE_RRC_CONNECTED_STATE_REPORT: u8 = 1u8;
-    const CANCEL_REPORT: u8 = 2u8;
+    pub const SUBSEQUENT_STATE_TRANSITION_REPORT: u8 = 0u8;
+    pub const SINGLE_RRC_CONNECTED_STATE_REPORT: u8 = 1u8;
+    pub const CANCEL_REPORT: u8 = 2u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct RRCState(pub u8);
 impl RRCState {
-    const INACTIVE: u8 = 0u8;
-    const CONNECTED: u8 = 1u8;
+    pub const INACTIVE: u8 = 0u8;
+    pub const CONNECTED: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct RSN(pub u8);
 impl RSN {
-    const V1: u8 = 0u8;
-    const V2: u8 = 1u8;
+    pub const V1: u8 = 0u8;
+    pub const V2: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "8")]
 pub struct Range(pub u8);
 impl Range {
-    const M50: u8 = 0u8;
-    const M80: u8 = 1u8;
-    const M180: u8 = 2u8;
-    const M200: u8 = 3u8;
-    const M350: u8 = 4u8;
-    const M400: u8 = 5u8;
-    const M500: u8 = 6u8;
-    const M700: u8 = 7u8;
-    const M1000: u8 = 8u8;
+    pub const M50: u8 = 0u8;
+    pub const M80: u8 = 1u8;
+    pub const M180: u8 = 2u8;
+    pub const M200: u8 = 3u8;
+    pub const M350: u8 = 4u8;
+    pub const M400: u8 = 5u8;
+    pub const M500: u8 = 6u8;
+    pub const M700: u8 = 7u8;
+    pub const M1000: u8 = 8u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -5172,8 +5172,8 @@ pub struct RecommendedRANNodesForPaging {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct RedirectionVoiceFallback(pub u8);
 impl RedirectionVoiceFallback {
-    const POSSIBLE: u8 = 0u8;
-    const NOT_POSSIBLE: u8 = 1u8;
+    pub const POSSIBLE: u8 = 0u8;
+    pub const NOT_POSSIBLE: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -5188,15 +5188,15 @@ pub struct RedundantPDUSessionInformation {
 #[asn(type = "ENUMERATED", lb = "0", ub = "1")]
 pub struct RedundantQosFlowIndicator(pub u8);
 impl RedundantQosFlowIndicator {
-    const TRUE: u8 = 0u8;
-    const FALSE: u8 = 1u8;
+    pub const TRUE: u8 = 0u8;
+    pub const FALSE: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct ReflectiveQosAttribute(pub u8);
 impl ReflectiveQosAttribute {
-    const SUBJECT_TO: u8 = 0u8;
+    pub const SUBJECT_TO: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -5229,40 +5229,40 @@ pub struct RepetitionPeriod(pub u32);
 #[asn(type = "ENUMERATED", lb = "0", ub = "7")]
 pub struct ReportAmountMDT(pub u8);
 impl ReportAmountMDT {
-    const R1: u8 = 0u8;
-    const R2: u8 = 1u8;
-    const R4: u8 = 2u8;
-    const R8: u8 = 3u8;
-    const R16: u8 = 4u8;
-    const R32: u8 = 5u8;
-    const R64: u8 = 6u8;
-    const RINFINITY: u8 = 7u8;
+    pub const R1: u8 = 0u8;
+    pub const R2: u8 = 1u8;
+    pub const R4: u8 = 2u8;
+    pub const R8: u8 = 3u8;
+    pub const R16: u8 = 4u8;
+    pub const R32: u8 = 5u8;
+    pub const R64: u8 = 6u8;
+    pub const RINFINITY: u8 = 7u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct ReportArea(pub u8);
 impl ReportArea {
-    const CELL: u8 = 0u8;
+    pub const CELL: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", lb = "0", ub = "12")]
 pub struct ReportIntervalMDT(pub u8);
 impl ReportIntervalMDT {
-    const MS120: u8 = 0u8;
-    const MS240: u8 = 1u8;
-    const MS480: u8 = 2u8;
-    const MS640: u8 = 3u8;
-    const MS1024: u8 = 4u8;
-    const MS2048: u8 = 5u8;
-    const MS5120: u8 = 6u8;
-    const MS10240: u8 = 7u8;
-    const MIN1: u8 = 8u8;
-    const MIN6: u8 = 9u8;
-    const MIN12: u8 = 10u8;
-    const MIN30: u8 = 11u8;
-    const MIN60: u8 = 12u8;
+    pub const MS120: u8 = 0u8;
+    pub const MS240: u8 = 1u8;
+    pub const MS480: u8 = 2u8;
+    pub const MS640: u8 = 3u8;
+    pub const MS1024: u8 = 4u8;
+    pub const MS2048: u8 = 5u8;
+    pub const MS5120: u8 = 6u8;
+    pub const MS10240: u8 = 7u8;
+    pub const MIN1: u8 = 8u8;
+    pub const MIN6: u8 = 9u8;
+    pub const MIN12: u8 = 10u8;
+    pub const MIN30: u8 = 11u8;
+    pub const MIN60: u8 = 12u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -5275,7 +5275,7 @@ pub struct RerouteNASRequest {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct ResetAll(pub u8);
 impl ResetAll {
-    const RESET_ALL: u8 = 0u8;
+    pub const RESET_ALL: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -5372,15 +5372,15 @@ pub enum SONInformationReport {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct SONInformationRequest(pub u8);
 impl SONInformationRequest {
-    const XN_TNL_CONFIGURATION_INFO: u8 = 0u8;
+    pub const XN_TNL_CONFIGURATION_INFO: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct SRVCCOperationPossible(pub u8);
 impl SRVCCOperationPossible {
-    const POSSIBLE: u8 = 0u8;
-    const NOT_POSSIBLE: u8 = 1u8;
+    pub const POSSIBLE: u8 = 0u8;
+    pub const NOT_POSSIBLE: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -5468,7 +5468,7 @@ pub struct SecurityResult {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct SensorMeasConfig(pub u8);
 impl SensorMeasConfig {
-    const SETUP: u8 = 0u8;
+    pub const SETUP: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -5603,8 +5603,8 @@ pub struct SourceNGRANNode_ToTargetNGRANNode_TransparentContainer {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct SourceOfUEActivityBehaviourInformation(pub u8);
 impl SourceOfUEActivityBehaviourInformation {
-    const SUBSCRIPTION_INFORMATION: u8 = 0u8;
-    const STATISTICS: u8 = 1u8;
+    pub const SUBSCRIPTION_INFORMATION: u8 = 0u8;
+    pub const STATISTICS: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -5664,21 +5664,21 @@ pub struct SupportedTAList(pub Vec<SupportedTAItem>);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct Suspend_Request_Indication(pub u8);
 impl Suspend_Request_Indication {
-    const SUSPEND_REQUESTED: u8 = 0u8;
+    pub const SUSPEND_REQUESTED: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct Suspend_Response_Indication(pub u8);
 impl Suspend_Response_Indication {
-    const SUSPEND_INDICATED: u8 = 0u8;
+    pub const SUSPEND_INDICATED: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct SuspendIndicator(pub u8);
 impl SuspendIndicator {
-    const TRUE: u8 = 0u8;
+    pub const TRUE: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -5866,9 +5866,9 @@ pub struct TNLAssociationList(pub Vec<TNLAssociationItem>);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "2")]
 pub struct TNLAssociationUsage(pub u8);
 impl TNLAssociationUsage {
-    const UE: u8 = 0u8;
-    const NON_UE: u8 = 1u8;
-    const BOTH: u8 = 2u8;
+    pub const UE: u8 = 0u8;
+    pub const NON_UE: u8 = 1u8;
+    pub const BOTH: u8 = 2u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -5990,34 +5990,34 @@ pub struct TimeStamp(pub Vec<u8>);
 #[asn(type = "ENUMERATED", lb = "0", ub = "15")]
 pub struct TimeToTrigger(pub u8);
 impl TimeToTrigger {
-    const MS0: u8 = 0u8;
-    const MS40: u8 = 1u8;
-    const MS64: u8 = 2u8;
-    const MS80: u8 = 3u8;
-    const MS100: u8 = 4u8;
-    const MS128: u8 = 5u8;
-    const MS160: u8 = 6u8;
-    const MS256: u8 = 7u8;
-    const MS320: u8 = 8u8;
-    const MS480: u8 = 9u8;
-    const MS512: u8 = 10u8;
-    const MS640: u8 = 11u8;
-    const MS1024: u8 = 12u8;
-    const MS1280: u8 = 13u8;
-    const MS2560: u8 = 14u8;
-    const MS5120: u8 = 15u8;
+    pub const MS0: u8 = 0u8;
+    pub const MS40: u8 = 1u8;
+    pub const MS64: u8 = 2u8;
+    pub const MS80: u8 = 3u8;
+    pub const MS100: u8 = 4u8;
+    pub const MS128: u8 = 5u8;
+    pub const MS160: u8 = 6u8;
+    pub const MS256: u8 = 7u8;
+    pub const MS320: u8 = 8u8;
+    pub const MS480: u8 = 9u8;
+    pub const MS512: u8 = 10u8;
+    pub const MS640: u8 = 11u8;
+    pub const MS1024: u8 = 12u8;
+    pub const MS1280: u8 = 13u8;
+    pub const MS2560: u8 = 14u8;
+    pub const MS5120: u8 = 15u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "5")]
 pub struct TimeToWait(pub u8);
 impl TimeToWait {
-    const V1S: u8 = 0u8;
-    const V2S: u8 = 1u8;
-    const V5S: u8 = 2u8;
-    const V10S: u8 = 3u8;
-    const V20S: u8 = 4u8;
-    const V60S: u8 = 5u8;
+    pub const V1S: u8 = 0u8;
+    pub const V2S: u8 = 1u8;
+    pub const V5S: u8 = 2u8;
+    pub const V10S: u8 = 3u8;
+    pub const V20S: u8 = 4u8;
+    pub const V60S: u8 = 5u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -6032,7 +6032,7 @@ pub struct TimeUEStayedInCellEnhancedGranularity(pub u16);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct TimerApproachForGUAMIRemoval(pub u8);
 impl TimerApproachForGUAMIRemoval {
-    const APPLY_TIMER: u8 = 0u8;
+    pub const APPLY_TIMER: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -6061,12 +6061,12 @@ pub struct TraceActivation {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "5")]
 pub struct TraceDepth(pub u8);
 impl TraceDepth {
-    const MINIMUM: u8 = 0u8;
-    const MEDIUM: u8 = 1u8;
-    const MAXIMUM: u8 = 2u8;
-    const MINIMUM_WITHOUT_VENDOR_SPECIFIC_EXTENSION: u8 = 3u8;
-    const MEDIUM_WITHOUT_VENDOR_SPECIFIC_EXTENSION: u8 = 4u8;
-    const MAXIMUM_WITHOUT_VENDOR_SPECIFIC_EXTENSION: u8 = 5u8;
+    pub const MINIMUM: u8 = 0u8;
+    pub const MEDIUM: u8 = 1u8;
+    pub const MAXIMUM: u8 = 2u8;
+    pub const MINIMUM_WITHOUT_VENDOR_SPECIFIC_EXTENSION: u8 = 3u8;
+    pub const MEDIUM_WITHOUT_VENDOR_SPECIFIC_EXTENSION: u8 = 4u8;
+    pub const MAXIMUM_WITHOUT_VENDOR_SPECIFIC_EXTENSION: u8 = 5u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -6093,17 +6093,17 @@ pub struct TransportLayerAddress(pub BitVec<Msb0, u8>);
 #[asn(type = "ENUMERATED", lb = "0", ub = "2")]
 pub struct TriggeringMessage(pub u8);
 impl TriggeringMessage {
-    const INITIATING_MESSAGE: u8 = 0u8;
-    const SUCCESSFUL_OUTCOME: u8 = 1u8;
-    const UNSUCCESSFULL_OUTCOME: u8 = 2u8;
+    pub const INITIATING_MESSAGE: u8 = 0u8;
+    pub const SUCCESSFUL_OUTCOME: u8 = 1u8;
+    pub const UNSUCCESSFULL_OUTCOME: u8 = 2u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct TypeOfError(pub u8);
 impl TypeOfError {
-    const NOT_UNDERSTOOD: u8 = 0u8;
-    const MISSING: u8 = 1u8;
+    pub const NOT_UNDERSTOOD: u8 = 0u8;
+    pub const MISSING: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -6149,7 +6149,7 @@ pub enum UE_NGAP_IDs {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct UE_UP_CIoT_Support(pub u8);
 impl UE_UP_CIoT_Support {
-    const SUPPORTED: u8 = 0u8;
+    pub const SUPPORTED: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -6185,7 +6185,7 @@ pub struct UEAggregateMaximumBitRate {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct UECapabilityInfoRequest(pub u8);
 impl UECapabilityInfoRequest {
-    const REQUESTED: u8 = 0u8;
+    pub const REQUESTED: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -6228,7 +6228,7 @@ pub struct UEContextReleaseRequest {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct UEContextRequest(pub u8);
 impl UEContextRequest {
-    const REQUESTED: u8 = 0u8;
+    pub const REQUESTED: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -6335,9 +6335,9 @@ pub enum UEPagingIdentity {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "2")]
 pub struct UEPresence(pub u8);
 impl UEPresence {
-    const IN: u8 = 0u8;
-    const OUT: u8 = 1u8;
-    const UNKNOWN: u8 = 2u8;
+    pub const IN: u8 = 0u8;
+    pub const OUT: u8 = 1u8;
+    pub const UNKNOWN: u8 = 2u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -6429,7 +6429,7 @@ pub struct UERadioCapabilityInfoIndication {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct UERetentionInformation(pub u8);
 impl UERetentionInformation {
-    const UES_RETAINED: u8 = 0u8;
+    pub const UES_RETAINED: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -6483,7 +6483,7 @@ pub struct UL_NGU_UP_TNLModifyList(pub Vec<UL_NGU_UP_TNLModifyItem>);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct ULForwarding(pub u8);
 impl ULForwarding {
-    const UL_FORWARDING_PROPOSED: u8 = 0u8;
+    pub const UL_FORWARDING_PROPOSED: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -6690,8 +6690,8 @@ pub struct UserPlaneSecurityInformation {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct VehicleUE(pub u8);
 impl VehicleUE {
-    const AUTHORIZED: u8 = 0u8;
-    const NOT_AUTHORIZED: u8 = 1u8;
+    pub const AUTHORIZED: u8 = 0u8;
+    pub const NOT_AUTHORIZED: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -6722,7 +6722,7 @@ pub enum W_AGF_ID {
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct WLANMeasConfig(pub u8);
 impl WLANMeasConfig {
-    const SETUP: u8 = 0u8;
+    pub const SETUP: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -7140,8 +7140,8 @@ pub struct AllocationAndRetentionPriorityIE_Extensions(
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct ENUMERATED_2(pub u8);
 impl ENUMERATED_2 {
-    const RESTRICTED: u8 = 0u8;
-    const NOT_RESTRICTED: u8 = 1u8;
+    pub const RESTRICTED: u8 = 0u8;
+    pub const NOT_RESTRICTED: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -7331,8 +7331,8 @@ pub struct AssistanceDataForRecommendedCellsIE_Extensions(
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct ENUMERATED_5(pub u8);
 impl ENUMERATED_5 {
-    const UL: u8 = 0u8;
-    const DL: u8 = 1u8;
+    pub const UL: u8 = 0u8;
+    pub const DL: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -7379,7 +7379,7 @@ pub struct BluetoothMeasConfigNameItemIE_Extensions(
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct ENUMERATED_6(pub u8);
 impl ENUMERATED_6 {
-    const TRUE: u8 = 0u8;
+    pub const TRUE: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -7449,8 +7449,8 @@ pub struct CNAssistedRANTuningIE_Extensions(pub Vec<CNAssistedRANTuningIE_Extens
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct ENUMERATED_7(pub u8);
 impl ENUMERATED_7 {
-    const EPC_FORBIDDEN: u8 = 0u8;
-    const FIVE_GC_FORBIDDEN: u8 = 1u8;
+    pub const EPC_FORBIDDEN: u8 = 0u8;
+    pub const FIVE_GC_FORBIDDEN: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -7963,7 +7963,7 @@ pub struct CriticalityDiagnostics_IE_ItemIE_Extensions(
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct ENUMERATED_14(pub u8);
 impl ENUMERATED_14 {
-    const DAPS_HO_REQUIRED: u8 = 0u8;
+    pub const DAPS_HO_REQUIRED: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -7983,8 +7983,8 @@ pub struct DAPSRequestInfoIE_Extensions(pub Vec<DAPSRequestInfoIE_Extensions_Ent
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct ENUMERATED_15(pub u8);
 impl ENUMERATED_15 {
-    const DAPS_HO_ACCEPTED: u8 = 0u8;
-    const DAPS_HO_NOT_ACCEPTED: u8 = 1u8;
+    pub const DAPS_HO_ACCEPTED: u8 = 0u8;
+    pub const DAPS_HO_NOT_ACCEPTED: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -8713,7 +8713,7 @@ pub struct EventL1LoggedMDTConfigIE_Extensions(pub Vec<EventL1LoggedMDTConfigIE_
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct ENUMERATED_22(pub u8);
 impl ENUMERATED_22 {
-    const TRUE: u8 = 0u8;
+    pub const TRUE: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -9083,9 +9083,9 @@ pub struct GlobalW_AGF_IDIE_Extensions(pub Vec<GlobalW_AGF_IDIE_Extensions_Entry
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "2")]
 pub struct ENUMERATED_27(pub u8);
 impl ENUMERATED_27 {
-    const HO_TOO_EARLY: u8 = 0u8;
-    const HO_TO_WRONG_CELL: u8 = 1u8;
-    const INTERSYSTEM_PING_PONG: u8 = 2u8;
+    pub const HO_TOO_EARLY: u8 = 0u8;
+    pub const HO_TO_WRONG_CELL: u8 = 1u8;
+    pub const INTERSYSTEM_PING_PONG: u8 = 2u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -10092,8 +10092,8 @@ pub struct IntersystemSONeNBIDIE_Extensions(pub Vec<IntersystemSONeNBIDIE_Extens
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct ENUMERATED_29(pub u8);
 impl ENUMERATED_29 {
-    const TRUE: u8 = 0u8;
-    const FALSE: u8 = 1u8;
+    pub const TRUE: u8 = 0u8;
+    pub const FALSE: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -12387,8 +12387,8 @@ pub struct PDUSessionResourceToReleaseItemRelCmdIE_Extensions(
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct ENUMERATED_67(pub u8);
 impl ENUMERATED_67 {
-    const NR: u8 = 0u8;
-    const EUTRA: u8 = 1u8;
+    pub const NR: u8 = 0u8;
+    pub const EUTRA: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -12955,8 +12955,8 @@ pub struct ProcedureStageChoicechoice_Extensions {}
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct ENUMERATED_72(pub u8);
 impl ENUMERATED_72 {
-    const NR: u8 = 0u8;
-    const EUTRA: u8 = 1u8;
+    pub const NR: u8 = 0u8;
+    pub const EUTRA: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -13483,8 +13483,8 @@ pub struct RATRestrictions_ItemIE_Extensions(pub Vec<RATRestrictions_ItemIE_Exte
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct ENUMERATED_73(pub u8);
 impl ENUMERATED_73 {
-    const RS_DETECTED: u8 = 0u8;
-    const RS_DISAPPEARED: u8 = 1u8;
+    pub const RS_DETECTED: u8 = 0u8;
+    pub const RS_DISAPPEARED: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -13936,21 +13936,21 @@ pub struct SensorMeasurementConfigurationIE_Extensions(
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct ENUMERATED_78(pub u8);
 impl ENUMERATED_78 {
-    const TRUE: u8 = 0u8;
+    pub const TRUE: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct ENUMERATED_79(pub u8);
 impl ENUMERATED_79 {
-    const TRUE: u8 = 0u8;
+    pub const TRUE: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct ENUMERATED_80(pub u8);
 impl ENUMERATED_80 {
-    const TRUE: u8 = 0u8;
+    pub const TRUE: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -14533,8 +14533,8 @@ pub struct TraceStartProtocolIEs(pub Vec<TraceStartProtocolIEs_Entry>);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct ENUMERATED_83(pub u8);
 impl ENUMERATED_83 {
-    const PERIODICALLY: u8 = 0u8;
-    const ONDEMAND: u8 = 1u8;
+    pub const PERIODICALLY: u8 = 0u8;
+    pub const ONDEMAND: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -14545,26 +14545,26 @@ pub struct INTEGER_84(pub u16);
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
 pub struct ENUMERATED_85(pub u8);
 impl ENUMERATED_85 {
-    const STATIONARY: u8 = 0u8;
-    const MOBILE: u8 = 1u8;
+    pub const STATIONARY: u8 = 0u8;
+    pub const MOBILE: u8 = 1u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "2")]
 pub struct ENUMERATED_86(pub u8);
 impl ENUMERATED_86 {
-    const SINGLE_PACKET: u8 = 0u8;
-    const DUAL_PACKETS: u8 = 1u8;
-    const MULTIPLE_PACKETS: u8 = 2u8;
+    pub const SINGLE_PACKET: u8 = 0u8;
+    pub const DUAL_PACKETS: u8 = 1u8;
+    pub const MULTIPLE_PACKETS: u8 = 2u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "2")]
 pub struct ENUMERATED_87(pub u8);
 impl ENUMERATED_87 {
-    const BATTERY_POWERED: u8 = 0u8;
-    const BATTERY_POWERED_NOT_RECHARGEABLE_OR_REPLACEABLE: u8 = 1u8;
-    const NOT_BATTERY_POWERED: u8 = 2u8;
+    pub const BATTERY_POWERED: u8 = 0u8;
+    pub const BATTERY_POWERED_NOT_RECHARGEABLE_OR_REPLACEABLE: u8 = 1u8;
+    pub const NOT_BATTERY_POWERED: u8 = 2u8;
 }
 
 #[derive(Debug, AperCodec)]
@@ -15939,14 +15939,14 @@ pub struct WLANMeasConfigNameItemIE_Extensions(pub Vec<WLANMeasConfigNameItemIE_
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct ENUMERATED_94(pub u8);
 impl ENUMERATED_94 {
-    const TRUE: u8 = 0u8;
+    pub const TRUE: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
 pub struct ENUMERATED_95(pub u8);
 impl ENUMERATED_95 {
-    const TRUE: u8 = 0u8;
+    pub const TRUE: u8 = 0u8;
 }
 
 #[derive(Debug, AperCodec)]

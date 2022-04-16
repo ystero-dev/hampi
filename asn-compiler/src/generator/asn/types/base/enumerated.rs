@@ -47,7 +47,7 @@ impl Asn1ResolvedEnumerated {
             let value_literal = generator.to_suffixed_literal(self.bits, self.signed, *value);
             let ty = generator.to_inner_type(self.bits, self.signed);
             let const_tokens = quote! {
-                const #const_name: #ty =  #value_literal ;
+                pub const #const_name: #ty =  #value_literal ;
             };
             tokens.extend(const_tokens);
         }
