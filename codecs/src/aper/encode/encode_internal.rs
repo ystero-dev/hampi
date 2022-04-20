@@ -29,8 +29,8 @@ pub(super) fn encode_constrained_whole_number(
     ub: i128,
     value: i128,
 ) -> Result<(), AperCodecError> {
-    let range = ub - lb;
-    if range < 0 {
+    let range = ub - lb + 1;
+    if range <= 0 {
         return Err(AperCodecError::new(
             "Range for the Integer Constraint is negative.",
         ));
@@ -38,20 +38,24 @@ pub(super) fn encode_constrained_whole_number(
 
     let value = value - lb;
 
-    if range < 256 {
+    if range <= 256 {
         let byte = value as u8;
-        let bits = match range as u8 {
-            0 => 0,
-            1 => 1,
-            2..=3 => 2,
-            4..=7 => 3,
-            8..=15 => 4,
-            16..=31 => 5,
-            32..=63 => 6,
-            64..=127 => 7,
-            128..=255 => 8,
+        let bits = match range {
+            1 => 0,
+            2 => 1,
+            3..=4 => 2,
+            5..=8 => 3,
+            9..=16 => 4,
+            17..=32 => 5,
+            33..=64 => 6,
+            65..=128 => 7,
+            129..=255 => 8,
+            256 => {
+                data.align();
+                8
+            }
+            _ => unreachable!(),
         };
-
         data.append_bits(&byte.view_bits::<Msb0>()[(8 - bits)..8]);
     } else if range <= 65536 {
         data.align();
@@ -149,5 +153,13 @@ mod tests {
         let mut data = AperCodecData::new();
         encode_normally_small_length_determinent(&mut data, 32).unwrap();
         assert_eq!(data.into_bytes(), [0x3e]);
+    }
+
+    #[test]
+    fn encode_int_range_256() {
+        let mut data = AperCodecData::new();
+        data.encode_bool(true);
+        encode_constrained_whole_number(&mut data, 0, 255, 1).unwrap();
+        assert_eq!(data.into_bytes(), [0x80, 0x01]);
     }
 }
