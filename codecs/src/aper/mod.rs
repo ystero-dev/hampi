@@ -214,6 +214,26 @@ impl AperCodecData {
         log::trace!("AperCodecData: offset: {}", self.decode_offset);
     }
 
+    /// Reserve certain bits at the current `offset`.
+    #[inline]
+    pub fn reserve(&mut self, count: usize) {
+        self.bits.reserve(count);
+        self.decode_offset = count;
+    }
+
+    /// `seek` pointer to the offset in the internal buffer
+    #[inline]
+    pub fn seek(&mut self, offset: usize) {
+        self.decode_offset = offset;
+    }
+
+    pub fn swap_bits(&mut self, other: &mut BitSlice<Msb0, u8>, offset: usize) {
+        self.bits[offset..other.len() + offset].swap_with_bitslice(other);
+    }
+
+    pub fn set_bit(&mut self, index: usize, value: bool) {
+        self.bits.set(index, value);
+    }
     // Encoding functions.
 
     /// Encode a bool.

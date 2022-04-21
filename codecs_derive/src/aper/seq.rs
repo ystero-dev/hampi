@@ -21,7 +21,7 @@ pub(super) fn generate_aper_decode_for_asn_sequence(
     if fld_tokens.is_err() {
         return fld_tokens.err().unwrap().to_compile_error().into();
     }
-    let fld_tokens = fld_tokens.unwrap();
+    let (fld_decode_tokens, hdr_encode_tokens, fld_encode_tokens) = fld_tokens.unwrap();
 
     let tokens = quote! {
         impl asn1_codecs::aper::AperCodec for #name {
@@ -29,7 +29,20 @@ pub(super) fn generate_aper_decode_for_asn_sequence(
 
             fn decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
                 let (bitmap, _extensions_present) = asn1_codecs::aper::decode::decode_sequence_header(data, #ext, #opt_count)?;
-                Ok(Self{#(#fld_tokens)*})
+                Ok(Self{#(#fld_decode_tokens)*})
+            }
+
+            fn encode(&self, data: &mut asn1_codecs::aper::AperCodecData) -> Result<(), asn1_codecs::aper::AperCodecError> {
+
+                let mut bitmap = bitvec::bitvec![bitvec::prelude::Msb0, u8; 0; #opt_count];
+
+                #(#hdr_encode_tokens)*
+
+                asn1_codecs::aper::encode::encode_sequence_header(data, #ext, &bitmap, false)?;
+
+                #(#fld_encode_tokens)*
+
+                Ok(())
             }
         }
     };
@@ -39,8 +52,17 @@ pub(super) fn generate_aper_decode_for_asn_sequence(
 
 fn generate_seq_field_decode_tokens_using_attrs(
     ast: &syn::DeriveInput,
-) -> Result<Vec<proc_macro2::TokenStream>, syn::Error> {
-    let mut tokens = vec![];
+) -> Result<
+    (
+        Vec<proc_macro2::TokenStream>,
+        Vec<proc_macro2::TokenStream>,
+        Vec<proc_macro2::TokenStream>,
+    ),
+    syn::Error,
+> {
+    let mut decode_tokens = vec![];
+    let mut encode_tokens = vec![];
+    let mut hdr_encode_tokens = vec![];
 
     let mut errors: Vec<syn::Error> = vec![];
     if let syn::Data::Struct(ref data) = ast.data {
@@ -60,7 +82,7 @@ fn generate_seq_field_decode_tokens_using_attrs(
                         } else {
                             let ty_ident = field_type.ty.unwrap();
                             let optional = field_type.is_optional;
-                            let decode_tokens = if optional {
+                            let fld_decode_tokens = if optional {
                                 let optional_idx = cp.optional_idx.as_ref();
 
                                 match optional_idx {
@@ -111,8 +133,34 @@ fn generate_seq_field_decode_tokens_using_attrs(
                             };
 
                             let id = field.ident.as_ref().unwrap();
-                            let field_token = quote! { #id: #decode_tokens, };
-                            tokens.push(field_token);
+                            let field_encode_token = if optional {
+                                quote! {
+                                    if self.#id.is_some() {
+                                        let #id = self.#id.as_ref().unwrap();
+                                        #id.encode(data)?;
+                                    } else {
+                                    }
+                                }
+                            } else {
+                                quote! {
+                                    self.#id.encode(data)?;
+                                }
+                            };
+                            let header_encode_token = if optional {
+                                let optional_idx = cp.optional_idx.as_ref();
+                                quote! {
+                                    if self.#id.is_some() {
+                                        bitmap.set(#optional_idx, true);
+                                    } else {
+                                    }
+                                }
+                            } else {
+                                quote! {}
+                            };
+                            let field_decode_token = quote! { #id: #fld_decode_tokens, };
+                            decode_tokens.push(field_decode_token);
+                            encode_tokens.push(field_encode_token);
+                            hdr_encode_tokens.push(header_encode_token);
                         }
                     }
                 }
@@ -126,7 +174,7 @@ fn generate_seq_field_decode_tokens_using_attrs(
         }
         Err(first.clone())
     } else {
-        Ok(tokens)
+        Ok((decode_tokens, hdr_encode_tokens, encode_tokens))
     }
 }
 

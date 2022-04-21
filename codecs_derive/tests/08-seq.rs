@@ -16,11 +16,12 @@ impl Criticality {
 }
 
 #[derive(Debug, AperCodec)]
-#[asn(type = "SEQUENCE", extensible = false)]
+#[asn(type = "SEQUENCE", extensible = false, optional_fields = 1)]
 pub struct Bearers_SubjectToEarlyStatusTransferListItem {
     pub id: ProtocolIE_ID,
-    #[asn(optional_idx = 1)]
-    pub criticality: Option<Criticality>,
+
+    #[asn(optional_idx = 0)]
+    pub critcality: Option<Criticality>,
 }
 
 fn main() {
