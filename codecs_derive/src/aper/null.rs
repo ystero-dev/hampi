@@ -4,7 +4,7 @@ use quote::quote;
 
 use crate::attrs::TyCodecParams;
 
-pub(super) fn generate_aper_decode_for_asn_null(
+pub(super) fn generate_aper_codec_for_asn_null(
     ast: &syn::DeriveInput,
     _params: &TyCodecParams,
 ) -> proc_macro::TokenStream {
@@ -18,6 +18,10 @@ pub(super) fn generate_aper_decode_for_asn_null(
 
             fn decode(_data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
                 Ok(Self{})
+            }
+
+            fn encode(&self, _data: &mut asn1_codecs::aper::AperCodecData) -> Result<(), asn1_codecs::aper::AperCodecError> {
+                Ok(())
             }
         }
     };

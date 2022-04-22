@@ -23,15 +23,15 @@ pub(crate) fn generate_decode(
     match ty.value().as_str() {
         "BOOLEAN" => boolean::generate_aper_codec_for_asn_boolean(ast, params),
         "CHOICE" => choice::generate_aper_codec_for_asn_choice(ast, params),
-        "INTEGER" => integer::generate_aper_decode_for_asn_integer(ast, params),
-        "ENUMERATED" => enumerated::generate_aper_decode_for_asn_enumerated(ast, params),
+        "INTEGER" => integer::generate_aper_codec_for_asn_integer(ast, params),
+        "ENUMERATED" => enumerated::generate_aper_codec_for_asn_enumerated(ast, params),
         "BITSTRING" => bitstring::generate_aper_decode_for_asn_bitstring(ast, params),
         "OCTET-STRING" => octetstring::generate_aper_decode_for_asn_octetstring(ast, params),
         "UTF8String" | "PrintableString" | "VisibleString" => {
             charstring::generate_aper_decode_for_asn_charstring(ast, params)
         }
-        "NULL" => null::generate_aper_decode_for_asn_null(ast, params),
-        "SEQUENCE" => seq::generate_aper_decode_for_asn_sequence(ast, params),
+        "NULL" => null::generate_aper_codec_for_asn_null(ast, params),
+        "SEQUENCE" => seq::generate_aper_codec_for_asn_sequence(ast, params),
         "OPEN" => open::generate_aper_decode_for_asn_open_type(ast, params),
         "SEQUENCE-OF" => seqof::generate_aper_decode_for_asn_sequence_of(ast, params),
         "OBJECT-IDENTIFIER" => oid::generate_aper_decode_for_asn_object_identifier(ast, params),

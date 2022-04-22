@@ -4,7 +4,7 @@ use quote::quote;
 
 use crate::attrs::{parse_fld_meta_as_codec_params, TyCodecParams};
 
-pub(super) fn generate_aper_decode_for_asn_sequence(
+pub(super) fn generate_aper_codec_for_asn_sequence(
     ast: &syn::DeriveInput,
     params: &TyCodecParams,
 ) -> proc_macro::TokenStream {
@@ -17,7 +17,7 @@ pub(super) fn generate_aper_decode_for_asn_sequence(
         syn::LitInt::new("0", proc_macro2::Span::call_site())
     };
 
-    let fld_tokens = generate_seq_field_decode_tokens_using_attrs(ast);
+    let fld_tokens = generate_seq_field_codec_tokens_using_attrs(ast);
     if fld_tokens.is_err() {
         return fld_tokens.err().unwrap().to_compile_error().into();
     }
@@ -50,7 +50,7 @@ pub(super) fn generate_aper_decode_for_asn_sequence(
     tokens.into()
 }
 
-fn generate_seq_field_decode_tokens_using_attrs(
+fn generate_seq_field_codec_tokens_using_attrs(
     ast: &syn::DeriveInput,
 ) -> Result<
     (
