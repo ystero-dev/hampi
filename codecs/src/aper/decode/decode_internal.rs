@@ -184,24 +184,14 @@ pub(super) fn decode_constrained_whole_number(
             let _ = data.decode_align()?;
             data.decode_bits_as_integer(16)?
         } else {
-            let bytes_needed = bytes_needed_for_range(range);
+            let bytes_needed = crate::aper::bytes_needed_for_range(range);
             log::trace!("bytes_needed : {}", bytes_needed);
             let length = decode_constrained_length_determinent(data, 1, bytes_needed as usize)?;
-            let bits = (length + 1) * 8;
             let _ = data.decode_align()?;
-            data.decode_bits_as_integer(bits)?
+            data.decode_bits_as_integer(length * 8)?
         };
         Ok(value + lb)
     }
-}
-
-fn bytes_needed_for_range(range: i128) -> u8 {
-    let bits_needed: u8 = 128 - range.leading_zeros() as u8;
-    let mut bytes_needed = bits_needed / 8;
-    if bits_needed % 8 != 0 {
-        bytes_needed += 1
-    }
-    bytes_needed
 }
 
 #[cfg(test)]
@@ -254,13 +244,35 @@ mod tests {
     }
 
     #[test]
+    fn test_decode_int_range_68719476735() {
+        let mut data = AperCodecData::from_slice(&[0x00, 0x7B]);
+        let value = decode_constrained_whole_number(&mut data, 0, 68719476735).unwrap();
+        assert_eq!(value, 123);
+    }
+
+    #[test]
     fn test_decode_constrained_whole_number_gt_64k() {
         let data = &[0x00u8, 0x78u8, 0x01, 1, 0x01, 0x02];
         let mut codec_data = AperCodecData::from_slice(data);
         codec_data.advance_maybe_err(12, false).unwrap();
+
+        // We are now looking at the 12th bit.
+        // 0000 0000 0111 >> 1000 0000 0001 0000 0001 0000 0001 0000 0002
+
         let value = decode_constrained_whole_number(&mut codec_data, 0, 20_000_000);
         assert!(value.is_ok(), "{:#?}", value.err());
         let value = value.unwrap();
-        assert_eq!(value, 16843010_i128);
+
+        // Bytes needed for range 0-20000000 = 4.
+        // So the length of the value is in range 1-4, so get next 2 bits '10', so length = 3 bytes.
+        // 0000 0000 0111 10 >> 00 0000 0001 0000 0001 0000 0001 0000 0002
+        // Byte align.
+        // 0000 0000 0111 1000 >> 0000 0001 0000 0001 0000 0001 0000 0002
+        // Read the next 3 bytes to produce value 0x010101 = 65793.
+        // 0000 0000 0111 1000 0000 0001 0000 0001 0000 0001 >> 0000 0002
+        assert_eq!(value, 65793);
+
+        // Prove we still have the last 8 bits to spare.
+        codec_data.advance_maybe_err(8, false).unwrap();
     }
 }
