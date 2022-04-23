@@ -9,7 +9,6 @@ pub(super) fn encode_unconstrained_whole_number(
 ) -> Result<(), AperCodecError> {
     let bytes = value.to_be_bytes();
     let first_non_zero = bytes.iter().position(|x| *x != 0).unwrap_or(16);
-    data.align();
     encode_length_determinent(data, None, None, false, 16 - first_non_zero)?;
     data.append_bits(bytes[first_non_zero..16].view_bits());
     Ok(())
@@ -62,7 +61,17 @@ pub(super) fn encode_constrained_whole_number(
         let bytes = (value as u16).to_be_bytes();
         data.append_bits(bytes.view_bits::<Msb0>());
     } else {
-        encode_unconstrained_whole_number(data, value)?;
+        let bytes_needed_for_range = crate::aper::bytes_needed_for_range(range) as i128;
+        let bytes = value.to_be_bytes();
+        let first_non_zero = bytes.iter().position(|x| *x != 0).unwrap_or(16);
+        encode_constrained_whole_number(
+            data,
+            1,
+            bytes_needed_for_range,
+            16 - first_non_zero as i128,
+        )?;
+        data.align();
+        data.append_bits(bytes[first_non_zero..16].view_bits());
     }
     Ok(())
 }
@@ -131,7 +140,7 @@ mod tests {
     fn encode_large_constrained_integer() {
         let mut data = AperCodecData::new();
         encode_constrained_whole_number(&mut data, 0, 100_000, 1).unwrap();
-        assert_eq!(data.into_bytes(), [0x01, 0x01]);
+        assert_eq!(data.into_bytes(), [0x00, 0x01]);
     }
 
     #[test]
@@ -161,5 +170,12 @@ mod tests {
         data.encode_bool(true);
         encode_constrained_whole_number(&mut data, 0, 255, 1).unwrap();
         assert_eq!(data.into_bytes(), [0x80, 0x01]);
+    }
+
+    #[test]
+    fn encode_int_range_68719476735() {
+        let mut data = AperCodecData::new();
+        encode_constrained_whole_number(&mut data, 0, 68719476735, 123).unwrap();
+        assert_eq!(data.into_bytes(), [0x00, 0x7B]);
     }
 }
