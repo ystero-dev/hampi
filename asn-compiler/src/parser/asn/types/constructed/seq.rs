@@ -143,7 +143,7 @@ fn parse_seq_component(tokens: &[Token]) -> Result<(Option<SeqComponent>, usize)
             false
         };
 
-        let default = if expect_keyword(&tokens[consumed..], "DEFAULT")? {
+        let _default = if expect_keyword(&tokens[consumed..], "DEFAULT")? {
             consumed += 1;
             let (value, value_consumed) = parse_value(&tokens[consumed..])?;
             consumed += value_consumed;
@@ -152,7 +152,7 @@ fn parse_seq_component(tokens: &[Token]) -> Result<(Option<SeqComponent>, usize)
             None
         };
 
-        if default.is_some() && optional {
+        if _default.is_some() && optional {
             return Err(parse_error!(
                 "Both OPTIONAL and DEFAULT not allowed for a value!"
             ));
@@ -162,7 +162,7 @@ fn parse_seq_component(tokens: &[Token]) -> Result<(Option<SeqComponent>, usize)
             Some(SeqComponent {
                 component,
                 optional,
-                default,
+                _default,
             }),
             consumed,
         ))
@@ -179,7 +179,7 @@ fn parse_seq_addition_group(tokens: &[Token]) -> Result<(SeqAdditionGroup, usize
     }
     consumed += 1;
 
-    let version = match expect_token(&tokens[consumed..], Token::is_numeric) {
+    let _version = match expect_token(&tokens[consumed..], Token::is_numeric) {
         Ok(success) => {
             if success {
                 let version = tokens[consumed].text.clone();
@@ -216,7 +216,7 @@ fn parse_seq_addition_group(tokens: &[Token]) -> Result<(SeqAdditionGroup, usize
         consumed += 1;
         Ok((
             SeqAdditionGroup {
-                version,
+                _version,
                 components,
             },
             consumed,

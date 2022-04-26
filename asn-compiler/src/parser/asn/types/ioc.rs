@@ -138,7 +138,7 @@ fn parse_fixed_type_value_field_spec(
             optional,
             default,
             with_syntax,
-            resolved: false,
+            _resolved: false,
         },
         consumed,
     ))
@@ -194,7 +194,7 @@ fn parse_type_field_spec(tokens: &[Token]) -> Result<(ObjectClassFieldSpec, usiz
             optional,
             default,
             with_syntax,
-            resolved: false,
+            _resolved: false,
         },
         consumed,
     ))

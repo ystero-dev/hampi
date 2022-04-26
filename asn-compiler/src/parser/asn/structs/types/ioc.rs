@@ -5,32 +5,13 @@ use std::collections::HashMap;
 use super::Asn1Type;
 
 #[derive(Debug, Clone)]
-pub(crate) struct FixedTypeValueFieldSpec {
-    pub(crate) id: String,
-
-    pub(crate) field_type: Asn1Type,
-    pub(crate) unique: bool,
-    pub(crate) default: Option<String>,
-    pub(crate) optional: bool,
-    pub(crate) with_syntax: Option<String>,
-}
-
-#[derive(Debug, Clone)]
-pub(crate) struct TypeFieldSpec {
-    pub(crate) id: String,
-    pub(crate) optional: bool,
-    pub(crate) default: Option<Asn1Type>,
-    pub(crate) with_syntax: Option<String>,
-}
-
-#[derive(Debug, Clone)]
 pub(crate) enum ObjectClassFieldSpec {
     Type {
         id: String,
         default: Option<Asn1Type>,
         optional: bool,
         with_syntax: Option<String>,
-        resolved: bool,
+        _resolved: bool,
     },
     FixedTypeValue {
         id: String,
@@ -40,7 +21,7 @@ pub(crate) enum ObjectClassFieldSpec {
         default: Option<String>,
         optional: bool,
         with_syntax: Option<String>,
-        resolved: bool,
+        _resolved: bool,
     },
     // TODO: Following Field Specs are not implemented right now
     // VariableTypeValue(VariableTypeValueFieldSpec),

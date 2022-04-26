@@ -16,7 +16,7 @@ pub(crate) struct Generator {
     pub(crate) items: Vec<TokenStream>,
 
     // Rust module name.
-    pub(crate) name: String,
+    pub(crate) _name: String,
 
     // A counter to uniquify certain names
     pub(crate) counter: usize,
@@ -29,7 +29,7 @@ impl Generator {
     pub(crate) fn new(name: &str) -> Self {
         Generator {
             items: vec![],
-            name: name.to_string(),
+            _name: name.to_string(),
             counter: 1,
             aux_items: vec![],
         }

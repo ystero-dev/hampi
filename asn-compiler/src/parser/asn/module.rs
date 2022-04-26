@@ -231,7 +231,7 @@ mod tests {
 
         assert!(module.definitions.is_empty());
         assert!(module.imports.is_empty());
-        assert_eq!(module.tags, Asn1ModuleTag::Explicit);
+        assert_eq!(module._tags, Asn1ModuleTag::Explicit);
     }
     // TODO: Test Cases for imports (count), Tags (type), Definitions (count))
     // TODO: Test Cases for missing BEGIN, END, DEFINITIONS, ::=
