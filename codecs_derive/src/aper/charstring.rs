@@ -5,17 +5,33 @@ use quote::quote;
 
 use crate::attrs::TyCodecParams;
 
-pub(super) fn generate_aper_decode_for_asn_charstring(
+pub(super) fn generate_aper_codec_for_asn_charstring(
     ast: &syn::DeriveInput,
     params: &TyCodecParams,
 ) -> proc_macro::TokenStream {
     let ty_attr = params.ty.as_ref().unwrap();
 
-    let decode_fn_name: syn::Ident = match ty_attr.value().as_str() {
-        "UTF8String" => syn::Ident::new("decode_utf8_string", Span::call_site()),
-        "PrintableString" => syn::Ident::new("decode_printable_string", Span::call_site()),
-        "VisibleString" => syn::Ident::new("decode_visible_string", Span::call_site()),
-        _ => syn::Ident::new("unsupported", Span::call_site()),
+    let (decode_fn_name, encode_fn_name): (syn::Ident, syn::Ident) = match ty_attr.value().as_str()
+    {
+        "UTF8String" => (
+            syn::Ident::new("decode_utf8_string", Span::call_site()),
+            syn::Ident::new("encode_utf8_string", Span::call_site()),
+        ),
+
+        "PrintableString" => (
+            syn::Ident::new("decode_printable_string", Span::call_site()),
+            syn::Ident::new("encode_printable_string", Span::call_site()),
+        ),
+
+        "VisibleString" => (
+            syn::Ident::new("decode_visible_string", Span::call_site()),
+            syn::Ident::new("encode_visible_string", Span::call_site()),
+        ),
+
+        _ => (
+            syn::Ident::new("unsupported", Span::call_site()),
+            syn::Ident::new("unsupported", Span::call_site()),
+        ),
     };
 
     if decode_fn_name == "unspported" {
@@ -99,6 +115,10 @@ pub(super) fn generate_aper_decode_for_asn_charstring(
             fn decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
                 let decoded = asn1_codecs::aper::decode::#decode_fn_name(data, #sz_lb, #sz_ub, #sz_ext)?;
                 Ok(Self(decoded))
+            }
+
+            fn encode(&self, data: &mut asn1_codecs::aper::AperCodecData) -> Result<(), asn1_codecs::aper::AperCodecError> {
+                asn1_codecs::aper::encode::#encode_fn_name(data, #sz_lb, #sz_ub, #sz_ext, &self.0, false)
             }
         }
     };
