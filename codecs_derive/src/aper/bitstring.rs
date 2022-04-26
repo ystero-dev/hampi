@@ -4,7 +4,7 @@ use quote::quote;
 
 use crate::{attrs::TyCodecParams, utils};
 
-pub(super) fn generate_aper_decode_for_asn_bitstring(
+pub(super) fn generate_aper_codec_for_asn_bitstring(
     ast: &syn::DeriveInput,
     params: &TyCodecParams,
 ) -> proc_macro::TokenStream {
@@ -42,6 +42,10 @@ pub(super) fn generate_aper_decode_for_asn_bitstring(
             fn decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
                 let decoded = asn1_codecs::aper::decode::decode_bitstring(data, #sz_lb, #sz_ub, #sz_ext)?;
                 Ok(Self(decoded))
+            }
+
+            fn encode(&self, data: &mut asn1_codecs::aper::AperCodecData) -> Result<(), asn1_codecs::aper::AperCodecError> {
+                asn1_codecs::aper::encode::encode_bitstring(data, #sz_lb, #sz_ub, #sz_ext, &self.0, false)
             }
         }
     };
