@@ -4,7 +4,7 @@ use quote::quote;
 
 use crate::{attrs::TyCodecParams, utils};
 
-pub(super) fn generate_aper_decode_for_asn_integer(
+pub(super) fn generate_aper_codec_for_asn_integer(
     ast: &syn::DeriveInput,
     params: &TyCodecParams,
 ) -> proc_macro::TokenStream {
@@ -42,6 +42,9 @@ pub(super) fn generate_aper_decode_for_asn_integer(
             fn decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
                 let decoded = asn1_codecs::aper::decode::decode_integer(data, #lb, #ub, #ext)?;
                 Ok(Self(decoded.0 as #ty))
+            }
+            fn encode(&self, data: &mut asn1_codecs::aper::AperCodecData) -> Result<(), asn1_codecs::aper::AperCodecError> {
+                asn1_codecs::aper::encode::encode_integer(data, #lb, #ub, #ext, self.0 as i128, false)
             }
         }
     };
