@@ -54,11 +54,11 @@ impl Asn1ModuleName {
 #[derive(Debug, Default)]
 pub struct Asn1Module {
     pub(in crate::parser) imports: HashMap<String, Asn1ModuleName>,
-    pub(in crate::parser) exports: Option<Vec<Asn1Definition>>,
+    pub(in crate::parser) _exports: Option<Vec<Asn1Definition>>,
     pub(in crate::parser) name: Asn1ModuleName,
-    pub(in crate::parser) tags: Asn1ModuleTag,
+    pub(in crate::parser) _tags: Asn1ModuleTag,
     pub(in crate::parser) definitions: HashMap<String, Asn1Definition>,
-    pub(in crate::parser) exports_all: bool,
+    pub(in crate::parser) _exports_all: bool,
 }
 
 impl Asn1Module {
@@ -66,8 +66,8 @@ impl Asn1Module {
         Self { name, ..self }
     }
 
-    pub fn tags(self, tags: Asn1ModuleTag) -> Self {
-        Self { tags, ..self }
+    pub fn tags(self, _tags: Asn1ModuleTag) -> Self {
+        Self { _tags, ..self }
     }
 
     pub fn imports(self, imports: HashMap<String, Asn1ModuleName>) -> Self {

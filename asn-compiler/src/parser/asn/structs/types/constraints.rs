@@ -61,7 +61,7 @@ pub(crate) enum Asn1Constraint {
     Subtype(ElementSet),
     Table(TableConstraint),
     Contents {
-        containing: String,                   // Reference to referenced type
-        encoded_by: Option<ObjectIdentifier>, // Encoding Object Identifier (Right now always None)
+        _containing: String,                   // Reference to referenced type
+        _encoded_by: Option<ObjectIdentifier>, // Encoding Object Identifier (Right now always None)
     },
 }

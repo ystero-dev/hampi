@@ -89,7 +89,7 @@ pub(crate) fn parse_choice_type(tokens: &[Token]) -> Result<(Asn1TypeChoice, usi
     let additions = if extension_markers > 0 {
         if !no_ver_additions_components.is_empty() {
             let new_addition = ChoiceAdditionGroup {
-                version: None,
+                _version: None,
                 components: no_ver_additions_components,
             };
             additions.push(new_addition);
@@ -116,7 +116,7 @@ fn parse_choice_addition_group(tokens: &[Token]) -> Result<(ChoiceAdditionGroup,
     }
     consumed += 1;
 
-    let version = if expect_token(&tokens[consumed..], Token::is_numeric)? {
+    let _version = if expect_token(&tokens[consumed..], Token::is_numeric)? {
         let version = tokens[consumed].text.clone();
         consumed += 1;
         if !expect_token(&tokens[consumed..], Token::is_colon)? {
@@ -154,7 +154,7 @@ fn parse_choice_addition_group(tokens: &[Token]) -> Result<(ChoiceAdditionGroup,
     } else {
         Ok((
             ChoiceAdditionGroup {
-                version,
+                _version,
                 components,
             },
             consumed,

@@ -19,7 +19,7 @@ impl Component {
 pub(crate) struct SeqComponent {
     pub(crate) component: Component,
     pub(crate) optional: bool,
-    pub(crate) default: Option<String>, // FIXME: Should be Asn1Value later on
+    pub(crate) _default: Option<String>, // FIXME: Should be Asn1Value later on
 }
 
 impl SeqComponent {
@@ -30,7 +30,7 @@ impl SeqComponent {
 
 #[derive(Debug, Clone)]
 pub(crate) struct SeqAdditionGroup {
-    pub(crate) version: Option<String>,
+    pub(crate) _version: Option<String>,
     pub(crate) components: Vec<SeqComponent>,
 }
 
@@ -46,7 +46,7 @@ impl SeqAdditionGroup {
 
 #[derive(Debug, Clone)]
 pub(crate) struct ChoiceAdditionGroup {
-    pub(crate) version: Option<String>,
+    pub(crate) _version: Option<String>,
     pub(crate) components: Vec<Component>,
 }
 

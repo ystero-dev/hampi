@@ -369,7 +369,7 @@ fn parse_params(tokens: &[Token]) -> Result<(DefinitionParams, usize), Error> {
     let mut params = vec![];
     loop {
         // Try to parse the Governer: DummyReference if fails, whatever remains is a Type or Class
-        let (governer, dummyref) = if expect_tokens(
+        let (_governer, dummyref) = if expect_tokens(
             &tokens[consumed..],
             &[
                 &[
@@ -382,7 +382,7 @@ fn parse_params(tokens: &[Token]) -> Result<(DefinitionParams, usize), Error> {
             ],
         )? {
             let (g, r) = (&tokens[consumed], &tokens[consumed + 2]);
-            let governer = if g.is_object_class_reference() {
+            let _governer = if g.is_object_class_reference() {
                 ParamGoverner {
                     name: g.text.clone(),
                     kind: GovernerKind::Class,
@@ -394,30 +394,30 @@ fn parse_params(tokens: &[Token]) -> Result<(DefinitionParams, usize), Error> {
                 }
             };
             let dummyref = if r.is_value_reference() {
-                if governer.kind == GovernerKind::Class {
+                if _governer.kind == GovernerKind::Class {
                     ParamDummyReference {
                         name: r.text.clone(),
-                        kind: DummyReferenceKind::Object,
+                        _kind: DummyReferenceKind::Object,
                     }
                 } else {
                     ParamDummyReference {
                         name: r.text.clone(),
-                        kind: DummyReferenceKind::Value,
+                        _kind: DummyReferenceKind::Value,
                     }
                 }
-            } else if governer.kind == GovernerKind::Class {
+            } else if _governer.kind == GovernerKind::Class {
                 ParamDummyReference {
                     name: r.text.clone(),
-                    kind: DummyReferenceKind::ObjectSet,
+                    _kind: DummyReferenceKind::ObjectSet,
                 }
             } else {
                 ParamDummyReference {
                     name: r.text.clone(),
-                    kind: DummyReferenceKind::ValueSet,
+                    _kind: DummyReferenceKind::ValueSet,
                 }
             };
             consumed += 3;
-            (Some(governer), dummyref)
+            (Some(_governer), dummyref)
         } else if expect_one_of_tokens(
             &tokens[consumed..],
             &[Token::is_type_reference, Token::is_object_class_reference],
@@ -429,7 +429,7 @@ fn parse_params(tokens: &[Token]) -> Result<(DefinitionParams, usize), Error> {
                     None,
                     ParamDummyReference {
                         name: r.text.clone(),
-                        kind: DummyReferenceKind::Class,
+                        _kind: DummyReferenceKind::Class,
                     },
                 )
             } else {
@@ -437,7 +437,7 @@ fn parse_params(tokens: &[Token]) -> Result<(DefinitionParams, usize), Error> {
                     None,
                     ParamDummyReference {
                         name: r.text.clone(),
-                        kind: DummyReferenceKind::Type,
+                        _kind: DummyReferenceKind::Type,
                     },
                 )
             }
@@ -447,7 +447,10 @@ fn parse_params(tokens: &[Token]) -> Result<(DefinitionParams, usize), Error> {
                 tokens[consumed]
             ));
         };
-        let param = DefinitionParam { governer, dummyref };
+        let param = DefinitionParam {
+            _governer,
+            dummyref,
+        };
         params.push(param);
 
         if expect_token(&tokens[consumed..], Token::is_comma)? {

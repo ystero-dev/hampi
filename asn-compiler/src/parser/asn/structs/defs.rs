@@ -217,7 +217,7 @@ pub(crate) enum DummyReferenceKind {
 #[derive(Debug, Clone)]
 pub(crate) struct ParamDummyReference {
     pub(crate) name: String,
-    pub(crate) kind: DummyReferenceKind,
+    pub(crate) _kind: DummyReferenceKind,
 }
 
 #[derive(Debug, Clone)]
@@ -228,6 +228,6 @@ pub(crate) struct DefinitionParams {
 
 #[derive(Debug, Clone)]
 pub(crate) struct DefinitionParam {
-    pub(crate) governer: Option<ParamGoverner>,
+    pub(crate) _governer: Option<ParamGoverner>,
     pub(crate) dummyref: ParamDummyReference,
 }
