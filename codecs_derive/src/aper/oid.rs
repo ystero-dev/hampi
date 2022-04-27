@@ -4,7 +4,7 @@ use quote::quote;
 
 use crate::attrs::TyCodecParams;
 
-pub(super) fn generate_aper_decode_for_asn_object_identifier(
+pub(super) fn generate_aper_codec_for_asn_object_identifier(
     ast: &syn::DeriveInput,
     _params: &TyCodecParams,
 ) -> proc_macro::TokenStream {
@@ -18,6 +18,9 @@ pub(super) fn generate_aper_decode_for_asn_object_identifier(
 
             fn decode(_data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
                 Err(asn1_codecs::aper::AperCodecError::new("Object Identifier Decode Not Supported!"))
+            }
+            fn encode(&self, _data: &mut asn1_codecs::aper::AperCodecData) -> Result<(), asn1_codecs::aper::AperCodecError> {
+                Err(asn1_codecs::aper::AperCodecError::new("Object Identifier Encode Not Supported!"))
             }
         }
     };
