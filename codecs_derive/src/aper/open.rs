@@ -4,7 +4,7 @@ use quote::quote;
 
 use crate::attrs::{parse_fld_meta_as_codec_params, TyCodecParams};
 
-pub(super) fn generate_aper_decode_for_asn_open_type(
+pub(super) fn generate_aper_codec_for_asn_open_type(
     ast: &syn::DeriveInput,
     _params: &TyCodecParams,
 ) -> proc_macro::TokenStream {
