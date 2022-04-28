@@ -4,7 +4,7 @@ use quote::quote;
 
 use crate::attrs::{parse_fld_meta_as_codec_params, TyCodecParams};
 
-pub(super) fn generate_aper_decode_for_asn_open_type(
+pub(super) fn generate_aper_codec_for_asn_open_type(
     ast: &syn::DeriveInput,
     _params: &TyCodecParams,
 ) -> proc_macro::TokenStream {
@@ -14,7 +14,19 @@ pub(super) fn generate_aper_decode_for_asn_open_type(
     if variant_tokens.is_err() {
         return variant_tokens.err().unwrap().to_compile_error().into();
     }
-    let variant_tokens = variant_tokens.unwrap();
+    let (variant_decode_tokens, variant_encode_tokens) = variant_tokens.unwrap();
+
+    let encode_tokens = if variant_encode_tokens.len() > 0 {
+        quote! {
+                match self {
+                    #(#variant_encode_tokens)*
+                }
+        }
+    } else {
+        quote! {
+            Ok(())
+        }
+    };
 
     let tokens = quote! {
         impl asn1_codecs::aper::AperCodec for #name {
@@ -32,10 +44,13 @@ pub(super) fn generate_aper_decode_for_asn_open_type(
                 let key = data.get_key().unwrap();
 
                 match key {
-                    #(#variant_tokens)*
+                    #(#variant_decode_tokens)*
                     _ => Err(asn1_codecs::aper::AperCodecError::new(format!("Key {} Not Found", key).as_str()))
                 }
+            }
 
+            fn encode(&self, data: &mut asn1_codecs::aper::AperCodecData) -> Result<(), asn1_codecs::aper::AperCodecError> {
+                #encode_tokens
             }
         }
     };
@@ -45,8 +60,9 @@ pub(super) fn generate_aper_decode_for_asn_open_type(
 
 fn generate_open_type_variant_tokens_using_attrs(
     ast: &syn::DeriveInput,
-) -> Result<Vec<proc_macro2::TokenStream>, syn::Error> {
-    let mut tokens = vec![];
+) -> Result<(Vec<proc_macro2::TokenStream>, Vec<proc_macro2::TokenStream>), syn::Error> {
+    let mut decode_tokens = vec![];
+    let mut encode_tokens = vec![];
 
     let mut errors = vec![];
     if let syn::Data::Enum(ref data) = ast.data {
@@ -66,11 +82,17 @@ fn generate_open_type_variant_tokens_using_attrs(
                     let variant_ident = &variant.ident;
                     if let syn::Fields::Unnamed(ref fields) = variant.fields {
                         if fields.unnamed.len() == 1 {
-                            let ty = &fields.unnamed.first().as_ref().unwrap().ty;
-                            let variant_token = quote! {
+                            let unnamed = &fields.unnamed.first();
+                            let unnamed = unnamed.as_ref().unwrap();
+                            let ty = &unnamed.ty;
+                            let variant_decode_token = quote! {
                                 #key => Ok(Self::#variant_ident(#ty::decode(data)?)),
                             };
-                            tokens.push(variant_token);
+                            let variant_encode_token = quote! {
+                                Self::#variant_ident(ref v) => v.encode(data),
+                            };
+                            decode_tokens.push(variant_decode_token);
+                            encode_tokens.push(variant_encode_token);
                         } else {
                             errors.push(syn::Error::new_spanned(
                                 variant,
@@ -89,6 +111,6 @@ fn generate_open_type_variant_tokens_using_attrs(
         }
         Err(first.clone())
     } else {
-        Ok(tokens)
+        Ok((decode_tokens, encode_tokens))
     }
 }

@@ -37,5 +37,5 @@ pub fn derive(input: TokenStream) -> TokenStream {
         .into();
     }
 
-    aper::generate_decode(&ast, &codec_params)
+    aper::generate_codec(&ast, &codec_params)
 }
