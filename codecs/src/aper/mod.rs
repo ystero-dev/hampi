@@ -189,6 +189,10 @@ impl AperCodecData {
         Ok(BitVec::into_vec(bv))
     }
 
+    pub fn get_inner(&self) -> Result<Vec<u8>, AperCodecError> {
+        Ok(BitVec::into_vec(self.bits.to_bitvec()))
+    }
+
     /// Get's the current `key` value.
     ///
     /// This value will be used by a decoder to determine which 'decode' function is to be called
@@ -212,6 +216,11 @@ impl AperCodecData {
     #[inline]
     pub fn dump(&self) {
         log::trace!("AperCodecData: offset: {}", self.decode_offset);
+    }
+
+    #[inline]
+    pub fn dump_encode(&self) {
+        log::trace!("AperCodecData: current_len : {}", self.bits.len());
     }
 
     /// Reserve certain bits at the current `offset`.
