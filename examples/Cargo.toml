@@ -14,6 +14,7 @@ hex = "*"
 bitvec = { version = "0.22" }
 log = { version = "0.4.3" }
 criterion = { version = "0.3" }
+env_logger = "*"
 
 [[bench]]
 name = "ngap_bench"

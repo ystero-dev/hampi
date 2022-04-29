@@ -18,9 +18,14 @@ pub(super) fn generate_aper_codec_for_asn_open_type(
 
     let encode_tokens = if variant_encode_tokens.len() > 0 {
         quote! {
-                match self {
+                let mut inner = asn1_codecs::aper::AperCodecData::new();
+                let _ = match self {
                     #(#variant_encode_tokens)*
-                }
+                };
+                let length = inner.length_in_bytes();
+                let _ = asn1_codecs::aper::encode::encode_length_determinent(data, None, None, false, length)?;
+                data.append_aligned(&mut inner);
+                Ok(())
         }
     } else {
         quote! {
@@ -89,7 +94,7 @@ fn generate_open_type_variant_tokens_using_attrs(
                                 #key => Ok(Self::#variant_ident(#ty::decode(data)?)),
                             };
                             let variant_encode_token = quote! {
-                                Self::#variant_ident(ref v) => v.encode(data),
+                                Self::#variant_ident(ref v) => v.encode(&mut inner)?,
                             };
                             decode_tokens.push(variant_decode_token);
                             encode_tokens.push(variant_encode_token);
