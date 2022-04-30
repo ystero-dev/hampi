@@ -13,6 +13,13 @@ pub fn decode_visible_string(
     ub: Option<i128>,
     is_extensible: bool,
 ) -> Result<String, AperCodecError> {
+    log::debug!(
+        "decode_visible_string: lb: {:?}, ub: {:?}, is_extensible: {}",
+        lb,
+        ub,
+        is_extensible
+    );
+
     // Following values  are never used instead Canonical decode
     let (_val_lower, _val_higher) = (32u8, 127u8);
 
@@ -46,6 +53,8 @@ pub fn decode_visible_string(
         out += &decoded;
     }
 
+    data.dump();
+
     Ok(out)
 }
 
@@ -56,6 +65,13 @@ pub fn decode_printable_string(
     ub: Option<i128>,
     is_extensible: bool,
 ) -> Result<String, AperCodecError> {
+    log::debug!(
+        "decode_printable_string: lb: {:?}, ub: {:?}, is_extensible: {}",
+        lb,
+        ub,
+        is_extensible
+    );
+
     let (_val_lower, _val_higher) = (32u8, 122u8);
 
     let num_bits = 8; // N = 74, B = 7, B2 = 8
@@ -94,6 +110,8 @@ pub fn decode_printable_string(
         out += &decoded;
     }
 
+    data.dump();
+
     Ok(out)
 }
 
@@ -103,10 +121,17 @@ pub fn decode_printable_string(
 /// Decode a UTF8String CharacterString Type.
 pub fn decode_utf8_string(
     data: &mut AperCodecData,
-    _lb: Option<i128>,
-    _ub: Option<i128>,
-    _is_extensible: bool,
+    lb: Option<i128>,
+    ub: Option<i128>,
+    is_extensible: bool,
 ) -> Result<String, AperCodecError> {
+    log::debug!(
+        "decode_utf8_string: lb: {:?}, ub: {:?}, is_extensible: {}",
+        lb,
+        ub,
+        is_extensible
+    );
+
     let (_val_lower, _val_higher) = (0u8, 255u8);
 
     let num_bits = 8; // N = 74, B = 7, B2 = 8
@@ -129,5 +154,8 @@ pub fn decode_utf8_string(
 
         out += &decoded;
     }
+
+    data.dump();
+
     Ok(out)
 }
