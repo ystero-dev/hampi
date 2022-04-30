@@ -46,8 +46,8 @@ pub fn decode_length_determinent(
 ) -> Result<usize, AperCodecError> {
     // Normally small is told to us by caller and we don't care about `lb` and `ub` values in that
     // case. We simply follow the procedure as explained in 10.9.3.4
-    log::trace!("decode_length_determinent");
-    data.dump();
+    log::debug!("decode_length_determinent:");
+
     if normally_small {
         return decode_normally_small_length_determinent(data);
     }
@@ -87,12 +87,16 @@ fn decode_constrained_length_determinent(
         lb,
         ub
     );
+
     let range = ub - lb + 1;
 
     if range <= 65536 {
         // Almost always for our use cases, so let's just use it.
         let length = decode_constrained_whole_number(data, lb as i128, ub as i128)?;
         log::trace!("decoded length : {}", length);
+
+        data.dump();
+
         Ok(length as usize)
     } else {
         unimplemented!("Lengths larger than 65536 are not supported yet.")
@@ -119,6 +123,9 @@ fn decode_indefinite_length_determinent(data: &mut AperCodecData) -> Result<usiz
             }
         }
     };
+
+    data.dump();
+
     Ok(length.try_into().unwrap())
 }
 
@@ -126,8 +133,9 @@ fn decode_indefinite_length_determinent(data: &mut AperCodecData) -> Result<usiz
 pub(super) fn decode_unconstrained_whole_number(
     data: &mut AperCodecData,
 ) -> Result<i128, AperCodecError> {
+    log::trace!("decode_unconstrained_length:");
+
     let length = decode_length_determinent(data, None, None, false)?;
-    log::trace!("unconstrained length: {}", length);
     let bits = length * 8;
     data.decode_bits_as_integer(bits, true)
 }
@@ -137,10 +145,13 @@ pub(super) fn decode_semi_constrained_whole_number(
     data: &mut AperCodecData,
     lb: i128,
 ) -> Result<i128, AperCodecError> {
+    log::trace!("decode_semi_constrained_whole_number:");
+
     let length = decode_length_determinent(data, None, None, false)?;
-    log::trace!("unconstrained length: {}", length);
+
     let bits = length * 8;
     let val = data.decode_bits_as_integer(bits, false)?;
+
     Ok(val + lb)
 }
 
@@ -152,13 +163,9 @@ pub(super) fn decode_constrained_whole_number(
     lb: i128,
     ub: i128,
 ) -> Result<i128, AperCodecError> {
+    log::trace!("decode_constrained_whole_number: lb: {}, ub: {}", lb, ub,);
+
     let range = ub - lb + 1;
-    log::trace!(
-        "decode_constrained_whole_number: Lower:{}, Upper:{}, Range: {}.",
-        lb,
-        ub,
-        range
-    );
     if range <= 0 {
         Err(AperCodecError::new(
             "Range for the Integer Constraint is negative.",
@@ -190,6 +197,7 @@ pub(super) fn decode_constrained_whole_number(
             let _ = data.decode_align()?;
             data.decode_bits_as_integer(length * 8, false)?
         };
+
         Ok(value + lb)
     }
 }

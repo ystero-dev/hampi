@@ -19,7 +19,14 @@ pub fn encode_choice_idx(
     idx: i128,
     extended: bool,
 ) -> Result<(), AperCodecError> {
-    log::trace!("encode_choice_idx");
+    log::debug!(
+        "encode_choice_idx: lb: {}, ub: {}, is_extensible: {}, idx: {}, extended: {}",
+        lb,
+        ub,
+        is_extensible,
+        idx,
+        extended
+    );
 
     if extended {
         return Err(AperCodecError::new(
@@ -30,6 +37,7 @@ pub fn encode_choice_idx(
     if is_extensible {
         data.encode_bool(extended);
     }
+
     encode_integer(data, Some(lb), Some(ub), false, idx, false)
 }
 
@@ -40,7 +48,12 @@ pub fn encode_sequence_header(
     optionals: &BitSlice<Msb0, u8>,
     extended: bool,
 ) -> Result<(), AperCodecError> {
-    log::trace!("encode_sequence_header");
+    log::debug!(
+        "encode_sequence_header: is_extensible: {}, optional_fields: {:?}, extended: {}",
+        is_extensible,
+        optionals,
+        extended
+    );
 
     if extended {
         return Err(AperCodecError::new(
@@ -53,10 +66,15 @@ pub fn encode_sequence_header(
     }
 
     data.append_bits(optionals);
+
+    data.dump_encode();
+
     Ok(())
 }
 
-/// Encode an Integer
+/// Encode an INTEGER
+///
+/// This API is also used by other `encode` functions to encode an integer value.
 pub fn encode_integer(
     data: &mut AperCodecData,
     lb: Option<i128>,
@@ -65,7 +83,15 @@ pub fn encode_integer(
     value: i128,
     extended: bool,
 ) -> Result<(), AperCodecError> {
-    log::trace!("encode_integer");
+    log::debug!(
+        "encode_integer: lb: {:?}, ub: {:?}, is_extensible: {}, value: {}, extended: {}",
+        lb,
+        ub,
+        is_extensible,
+        value,
+        extended
+    );
+
     if extended {
         return Err(AperCodecError::new(
             "Encode of extended integer not yet implemented",
@@ -76,23 +102,29 @@ pub fn encode_integer(
         data.encode_bool(extended);
     }
 
-    match (lb, ub) {
-        (None, _) => encode_unconstrained_whole_number(data, value),
-        (Some(lb), None) => encode_semi_constrained_whole_number(data, lb, value),
-        (Some(lb), Some(ub)) => encode_constrained_whole_number(data, lb, ub, value),
-    }
+    let _ = match (lb, ub) {
+        (None, _) => encode_unconstrained_whole_number(data, value)?,
+        (Some(lb), None) => encode_semi_constrained_whole_number(data, lb, value)?,
+        (Some(lb), Some(ub)) => encode_constrained_whole_number(data, lb, ub, value)?,
+    };
+
+    data.dump_encode();
+
+    Ok(())
 }
 
 /// Encode a BOOLEAN Value
 ///
 /// Encodes a boolean value into the passed `AperCodecData` structure.
 pub fn encode_bool(data: &mut AperCodecData, value: bool) -> Result<(), AperCodecError> {
-    log::trace!("encode_bool");
+    log::debug!("encode_bool: {}", value);
     data.encode_bool(value);
+
+    data.dump_encode();
     Ok(())
 }
 
-/// Encode an Enumerated Value
+/// Encode an ENUMERATED Value
 pub fn encode_enumerated(
     data: &mut AperCodecData,
     lb: Option<i128>,
@@ -101,7 +133,15 @@ pub fn encode_enumerated(
     value: i128,
     extended: bool,
 ) -> Result<(), AperCodecError> {
-    log::trace!("encode_enumerated");
+    log::debug!(
+        "encode_enumerated: lb: {:?}, ub: {:?}, is_extensible: {}, value: {}, extended: {}",
+        lb,
+        ub,
+        is_extensible,
+        value,
+        extended
+    );
+
     if extended {
         return Err(AperCodecError::new(
             "Encode of extended enumerated not yet implemented",
@@ -112,7 +152,11 @@ pub fn encode_enumerated(
         data.encode_bool(extended);
     }
 
-    encode_integer(data, lb, ub, false, value, false)
+    let _ = encode_integer(data, lb, ub, false, value, false)?;
+
+    data.dump();
+
+    Ok(())
 }
 
 /// Encode a Bit String
@@ -124,7 +168,14 @@ pub fn encode_bitstring(
     bit_string: &BitSlice<Msb0, u8>,
     extended: bool,
 ) -> Result<(), AperCodecError> {
-    log::trace!("encode_bitstring");
+    log::debug!(
+        "encode_bitstring: lb: {:?}, ub: {:?}, is_extensible: {}, bits: {:?}, extended: {}",
+        lb,
+        ub,
+        is_extensible,
+        bit_string,
+        extended
+    );
 
     if extended {
         return Err(AperCodecError::new(
@@ -150,6 +201,9 @@ pub fn encode_bitstring(
         }
         data.append_bits(bit_string);
     }
+
+    data.dump_encode();
+
     Ok(())
 }
 
@@ -162,7 +216,14 @@ pub fn encode_octetstring(
     octet_string: &Vec<u8>,
     extended: bool,
 ) -> Result<(), AperCodecError> {
-    log::trace!("encode_octetstring");
+    log::debug!(
+        "encode_octetstring: lb: {:?}, ub: {:?}, is_extensible: {}, bytes: {:?}, extended: {}",
+        lb,
+        ub,
+        is_extensible,
+        octet_string,
+        extended
+    );
 
     if extended {
         return Err(AperCodecError::new(
@@ -189,6 +250,8 @@ pub fn encode_octetstring(
         }
         data.append_bits(octet_string.view_bits());
     }
+
+    data.dump_encode();
     Ok(())
 }
 
@@ -200,15 +263,24 @@ pub fn encode_length_determinent(
     normally_small: bool,
     value: usize,
 ) -> Result<(), AperCodecError> {
-    log::trace!("encode_length_determinent");
+    log::debug!(
+        "encode_length_determinent: lb: {:?}, ub: {:?}, normally_small: {}, value: {}",
+        lb,
+        ub,
+        normally_small,
+        value
+    );
 
     if normally_small {
-        return encode_normally_small_length_determinent(data, value);
+        let _ = encode_normally_small_length_determinent(data, value)?;
+        data.dump_encode();
+
+        return Ok(());
     }
 
-    match ub {
+    let _ = match ub {
         Some(ub) if ub < 65_536 => {
-            encode_constrained_whole_number(data, lb.unwrap_or(0), ub, value as i128)
+            encode_constrained_whole_number(data, lb.unwrap_or(0), ub, value as i128)?
         }
         _ => {
             if let Some(u) = ub {
@@ -232,6 +304,10 @@ pub fn encode_length_determinent(
             encode_indefinite_length_determinent(data, value)
         }
     }
+
+    data.dump_encode();
+
+    Ok(())
 }
 
 fn encode_string(
@@ -256,6 +332,8 @@ fn encode_string(
         data.align();
     }
     data.append_bits(value.as_bits());
+
+    data.dump_encode();
     Ok(())
 }
 
@@ -268,7 +346,15 @@ pub fn encode_visible_string(
     value: &String,
     extended: bool,
 ) -> Result<(), AperCodecError> {
-    log::trace!("encode_visible_string");
+    log::debug!(
+        "encode_visible_string: lb: {:?}, ub: {:?}, is_extensible: {}, value: {}, extended: {}",
+        lb,
+        ub,
+        is_extensible,
+        value,
+        extended
+    );
+
     encode_string(data, lb, ub, is_extensible, value, extended)
 }
 
@@ -281,7 +367,15 @@ pub fn encode_printable_string(
     value: &String,
     extended: bool,
 ) -> Result<(), AperCodecError> {
-    log::trace!("encode_printable_string");
+    log::debug!(
+        "encode_printable_string: lb: {:?}, ub: {:?}, is_extensible: {}, value: {}, extended: {}",
+        lb,
+        ub,
+        is_extensible,
+        value,
+        extended
+    );
+
     encode_string(data, lb, ub, is_extensible, value, extended)
 }
 
@@ -294,7 +388,15 @@ pub fn encode_utf8_string(
     value: &String,
     extended: bool,
 ) -> Result<(), AperCodecError> {
-    log::trace!("encode_utf8_string");
+    log::debug!(
+        "encode_utf8_string: lb: {:?}, ub: {:?}, is_extensible: {}, value: {}, extended: {}",
+        lb,
+        ub,
+        is_extensible,
+        value,
+        extended
+    );
+
     encode_string(data, lb, ub, is_extensible, value, extended)
 }
 #[cfg(test)]
