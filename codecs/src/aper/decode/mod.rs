@@ -21,8 +21,12 @@ pub fn decode_choice_idx(
     ub: i128,
     is_extensible: bool,
 ) -> Result<(i128, bool), AperCodecError> {
-    log::trace!("decode_choice_idx");
-    data.dump();
+    log::debug!(
+        "decode_choice_idx: lb: {}, ub: {}, extensible: {}",
+        lb,
+        ub,
+        is_extensible
+    );
 
     let (idx, extended) = if is_extensible {
         let extended = data.decode_bool()?;
@@ -53,8 +57,8 @@ pub fn decode_sequence_header(
     is_extensible: bool,
     optional_count: usize,
 ) -> Result<(BitVec<Msb0, u8>, bool), AperCodecError> {
-    log::trace!("decode_sequence_header");
-    data.dump();
+    log::debug!("decode_sequence_header: extensible: {}", is_extensible);
+
     let extended = if is_extensible {
         data.decode_bool()?
     } else {
@@ -86,13 +90,13 @@ pub fn decode_integer(
     ub: Option<i128>,
     is_extensible: bool,
 ) -> Result<(i128, bool), AperCodecError> {
-    log::trace!(
-        "decode_integer: Lower: {:#?} Upper:{:#?} Extensible: {}",
+    log::debug!(
+        "decode_integer: Lower: {:?} Upper:{:?} Extensible: {}",
         lb,
         ub,
         is_extensible
     );
-    data.dump();
+
     let extended_value = if is_extensible {
         data.decode_bool()?
     } else {
@@ -119,7 +123,6 @@ pub fn decode_integer(
                     }
                     Some(ub) => {
                         // 12.2.1 and 12.2.2
-                        log::trace!("decode_constrained_whole_number: {}, {}", lb, ub);
                         decode_constrained_whole_number(data, lb, ub)?
                     }
                 }
@@ -136,7 +139,13 @@ pub fn decode_integer(
 ///
 /// Decode a Boolean value. Returns the decoded value as a `bool`.
 pub fn decode_bool(data: &mut AperCodecData) -> Result<bool, AperCodecError> {
-    data.decode_bool()
+    log::debug!("decode_bool:");
+
+    let result = data.decode_bool()?;
+
+    data.dump();
+
+    Ok(result)
 }
 
 /// Decode an Enumerated Value
@@ -151,8 +160,12 @@ pub fn decode_enumerated(
     ub: Option<i128>,
     is_extensible: bool,
 ) -> Result<(i128, bool), AperCodecError> {
-    log::trace!("decode_enumerated");
-    data.dump();
+    log::debug!(
+        "decode_enumerated: lb: {:?}, ub: {:?}, is_extensible: {}",
+        lb,
+        ub,
+        is_extensible
+    );
 
     let is_extended = if is_extensible {
         data.decode_bool()?
@@ -181,6 +194,13 @@ pub fn decode_bitstring(
     ub: Option<i128>,
     is_extensible: bool,
 ) -> Result<BitVec<Msb0, u8>, AperCodecError> {
+    log::debug!(
+        "decode_bitstring: lb: {:?}, ub: {:?}, is_extensible: {}",
+        lb,
+        ub,
+        is_extensible
+    );
+
     let is_extended = if is_extensible {
         data.decode_bool()?
     } else {
@@ -210,6 +230,8 @@ pub fn decode_bitstring(
         }
     }
 
+    data.dump();
+
     Ok(bv)
 }
 
@@ -222,6 +244,13 @@ pub fn decode_octetstring(
     ub: Option<i128>,
     is_extensible: bool,
 ) -> Result<Vec<u8>, AperCodecError> {
+    log::debug!(
+        "decode_bitstring: lb: {:?}, ub: {:?}, is_extensible: {}",
+        lb,
+        ub,
+        is_extensible
+    );
+
     let is_extended = if is_extensible {
         data.decode_bool()?
     } else {
@@ -250,6 +279,8 @@ pub fn decode_octetstring(
             break;
         }
     }
+
+    data.dump();
 
     Ok(octets)
 }

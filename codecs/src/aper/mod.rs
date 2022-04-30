@@ -50,17 +50,19 @@ impl AperCodecData {
         }
     }
 
+    /// Get's the inner buffer as a `Vec<u8>` consuming the struct.
     pub fn into_bytes(self) -> Vec<u8> {
         self.bits.into()
     }
 
+    /// Align to 8 bit boundry during decode.
     pub fn decode_align(&mut self) -> Result<(), AperCodecError> {
         if self.decode_offset % 8 == 0 {
             return Ok(());
         }
 
         let remaining = 8 - (self.decode_offset & 0x7_usize);
-        log::trace!("Aligning Codec Buffer with {} bits", remaining);
+        log::debug!("Aligning Codec Buffer with {} bits", remaining);
 
         if !self.bits[self.decode_offset..self.decode_offset + remaining]
             .iter()
@@ -203,7 +205,7 @@ impl AperCodecData {
                     }
                 }
             };
-            log::trace!("Decoded Value: {:#?}", value);
+            log::trace!("Decoded Value: {:?}", value);
             self.advance_maybe_err(bits, false)?;
             Ok(value)
         }
@@ -306,12 +308,12 @@ impl AperCodecData {
     /// Dump current 'offset'.
     #[inline]
     pub fn dump(&self) {
-        log::trace!("AperCodecData: offset: {}", self.decode_offset);
+        log::debug!("AperCodecData: offset: {}", self.decode_offset);
     }
 
     #[inline]
     pub fn dump_encode(&self) {
-        log::trace!("AperCodecData: current_len : {}", self.bits.len());
+        log::debug!("AperCodecData: current_len : {}", self.bits.len());
     }
 
     /// Reserve certain bits at the current `offset`.
