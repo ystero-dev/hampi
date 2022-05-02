@@ -41,6 +41,8 @@ pub(super) fn generate_aper_codec_for_asn_sequence_of(
             type Output = Self;
 
             fn decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
+                log::debug!(concat!("decode: ", stringify!(#name)));
+
                 let length = asn1_codecs::aper::decode::decode_length_determinent(data, #sz_lb, #sz_ub, #sz_ext)?;
 
                 let mut items = vec![];
@@ -57,6 +59,8 @@ pub(super) fn generate_aper_codec_for_asn_sequence_of(
             }
 
             fn encode(&self, data:&mut asn1_codecs::aper::AperCodecData) -> Result<(), asn1_codecs::aper::AperCodecError> {
+                log::debug!(concat!("encode: ", stringify!(#name)));
+
                 let _ = asn1_codecs::aper::encode::encode_length_determinent(data, #sz_lb, #sz_ub, #sz_ext, self.0.len());
 
                 for elem in &self.0 {

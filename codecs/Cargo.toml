@@ -17,4 +17,4 @@ maintenance = { status = "actively-developed" }
 bitvec = { version = "0.22" }
 syn = { version = "1.0" }
 proc-macro2 = { version = "1.0" }
-log = { version = "0.4.3" }
+log = { version = "0.4.3", features = ["release_max_level_info"] }
