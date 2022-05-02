@@ -28,11 +28,14 @@ pub(super) fn generate_aper_codec_for_asn_sequence(
             type Output = Self;
 
             fn decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
+                log::debug!(concat!("decode: ", stringify!(#name)));
+
                 let (bitmap, _extensions_present) = asn1_codecs::aper::decode::decode_sequence_header(data, #ext, #opt_count)?;
                 Ok(Self{#(#fld_decode_tokens)*})
             }
 
             fn encode(&self, data: &mut asn1_codecs::aper::AperCodecData) -> Result<(), asn1_codecs::aper::AperCodecError> {
+                log::debug!(concat!("encode: ", stringify!(#name)));
 
                 let mut bitmap = bitvec::bitvec![bitvec::prelude::Msb0, u8; 0; #opt_count];
 
