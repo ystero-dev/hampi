@@ -17,12 +17,15 @@ pub(super) fn generate_aper_codec_for_asn_boolean(
             type Output = Self;
 
             fn decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
+                log::debug!(concat!("decode: ", stringify!(#name)));
 
                 let value = asn1_codecs::aper::decode::decode_bool(data)?;
                 Ok(Self(value))
             }
 
             fn encode(&self, data: &mut asn1_codecs::aper::AperCodecData) -> Result<(), asn1_codecs::aper::AperCodecError> {
+                log::debug!(concat!("encode: ", stringify!(#name)));
+
                 asn1_codecs::aper::encode::encode_bool(data, self.0)
             }
         }

@@ -301,9 +301,9 @@ pub fn encode_length_determinent(
                 }
             }
 
-            encode_indefinite_length_determinent(data, value)
+            encode_indefinite_length_determinent(data, value)?
         }
-    }
+    };
 
     data.dump_encode();
 

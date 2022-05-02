@@ -40,6 +40,7 @@ pub(super) fn generate_aper_codec_for_asn_enumerated(
             type Output = Self;
 
             fn decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
+                log::debug!(concat!("decode: ", stringify!(#name)));
 
                 let decoded = asn1_codecs::aper::decode::decode_enumerated(data, #lb, #ub, #ext)?;
 
@@ -47,6 +48,8 @@ pub(super) fn generate_aper_codec_for_asn_enumerated(
             }
 
             fn encode(&self, data: &mut asn1_codecs::aper::AperCodecData) -> Result<(), asn1_codecs::aper::AperCodecError> {
+                log::debug!(concat!("encode: ", stringify!(#name)));
+
                 asn1_codecs::aper::encode::encode_enumerated(data, #lb, #ub, #ext, self.0 as i128, false)
             }
         }
