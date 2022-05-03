@@ -28,7 +28,7 @@ use bitvec::prelude::*;
 ///
 /// While En(De)coding ASN.1 Types using the APER encoding scheme, the encoded data is stored in a
 /// `BitVec`.
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct AperCodecData {
     bits: BitVec<Msb0, u8>,
     decode_offset: usize,
@@ -91,7 +91,11 @@ impl AperCodecData {
         Ok(bit)
     }
 
-    fn decode_bits_as_integer(&mut self, bits: usize) -> Result<i128, AperCodecError> {
+    fn decode_bits_as_integer(
+        &mut self,
+        bits: usize,
+        signed: bool,
+    ) -> Result<i128, AperCodecError> {
         let remaining = self.bits.len() - self.decode_offset;
         if remaining < bits {
             Err(AperCodecError::new(
@@ -107,10 +111,97 @@ impl AperCodecData {
                 self.decode_offset,
                 bits
             );
-            let value = if bits == 0 {
-                0_i128
+            let value = if !signed {
+                if bits == 0 {
+                    0_i128
+                } else {
+                    self.bits[self.decode_offset..self.decode_offset + bits].load_be::<u128>()
+                        as i128
+                }
             } else {
-                self.bits[self.decode_offset..self.decode_offset + bits].load_be::<u128>() as i128
+                match bits {
+                    8 => {
+                        let inner = self.bits[self.decode_offset..self.decode_offset + bits]
+                            .load_be::<u128>() as i8;
+                        inner as i128
+                    }
+                    16 => {
+                        let inner = self.bits[self.decode_offset..self.decode_offset + bits]
+                            .load_be::<u128>() as i16;
+                        inner as i128
+                    }
+                    24 => {
+                        let inner = self.bits[self.decode_offset..self.decode_offset + bits]
+                            .load_be::<u32>() as u32;
+                        let inner = if self.bits[self.decode_offset] {
+                            // Bit is 1 negative no.
+                            inner | 0xFF000000
+                        } else {
+                            inner & 0x00FFFFFF
+                        };
+                        let inner = inner as i32;
+                        inner as i128
+                    }
+                    32 => {
+                        let inner = self.bits[self.decode_offset..self.decode_offset + bits]
+                            .load_be::<u128>() as i32;
+                        inner as i128
+                    }
+                    40 => {
+                        let inner = self.bits[self.decode_offset..self.decode_offset + bits]
+                            .load_be::<u64>() as u64;
+                        let inner = if self.bits[self.decode_offset] {
+                            // Bit is 1 negative no.
+                            inner | 0xFFFFFF0000000000
+                        } else {
+                            inner & 0x000000FFFFFFFFFF
+                        };
+                        let inner = inner as i64;
+                        inner as i128
+                    }
+                    48 => {
+                        let inner = self.bits[self.decode_offset..self.decode_offset + bits]
+                            .load_be::<u64>() as u64;
+                        let inner = if self.bits[self.decode_offset] {
+                            // Bit is 1 negative no.
+                            inner | 0xFFFF000000000000
+                        } else {
+                            inner & 0x0000FFFFFFFFFFFF
+                        };
+                        let inner = inner as i64;
+                        inner as i128
+                    }
+                    56 => {
+                        eprintln!("{}", self.decode_offset);
+                        let inner = self.bits[self.decode_offset..self.decode_offset + bits]
+                            .load_be::<u64>() as u64;
+                        let inner = if self.bits[self.decode_offset] {
+                            // Bit is 1 negative no.
+                            inner | 0xFF00000000000000
+                        } else {
+                            inner & 0x00FFFFFFFFFFFFFF
+                        };
+                        let inner = inner as i64;
+                        inner as i128
+                    }
+                    64 => {
+                        let inner = self.bits[self.decode_offset..self.decode_offset + bits]
+                            .load_be::<u128>() as i64;
+                        inner as i128
+                    }
+                    128 => {
+                        let inner = self.bits[self.decode_offset..self.decode_offset + bits]
+                            .load_be::<u128>() as i128;
+                        inner as i128
+                    }
+                    _ => {
+                        return Err(
+                            AperCodecError::new(
+                                format!(
+                                    "For a signed number in 2's compliment form, requested bits {} not supported!",
+                                    bits)));
+                    }
+                }
             };
             log::trace!("Decoded Value: {:#?}", value);
             self.advance_maybe_err(bits, false)?;
@@ -298,5 +389,49 @@ mod tests {
         let _ = d.get_bitvec(4);
         let bytes = d.get_bytes(1).unwrap();
         assert_eq!(bytes, vec![0xff]);
+    }
+
+    #[test]
+    fn test_encode_decode_unconstrained_whole_number() {
+        let numbers: Vec<i128> = vec![
+            140737488355328,
+            140737488355327,
+            549755813888,
+            549755813887,
+            2147483648,
+            2147483647,
+            8388608,
+            8388607,
+            32768,
+            32767,
+            128,
+            127,
+            1,
+            0,
+            -1,
+            -128,
+            -129,
+            -32768,
+            -32769,
+            -8388608,
+            -8388609,
+            -2147483648,
+            -2147483649,
+            -549755813888,
+            -549755813889,
+            -140737488355328,
+            -140737488355329,
+        ];
+        //let numbers: Vec<i128> = vec![-256, -1, -65537, 0, 11, 127, 128, 65536, 1234567, 123456789];
+        for num in numbers {
+            let mut d = AperCodecData::new();
+            eprintln!("number: {}", num);
+            let result = encode::encode_integer(&mut d, None, None, false, num, false);
+            eprintln!("{:?}", d);
+            assert!(result.is_ok(), "{:#?}", d);
+            let value = decode::decode_integer(&mut d, None, None, false);
+            assert!(value.is_ok(), "{:#?}", value.err());
+            assert!(value.unwrap().0 == num);
+        }
     }
 }

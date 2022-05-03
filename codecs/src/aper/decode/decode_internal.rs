@@ -13,7 +13,7 @@ pub(super) fn decode_normally_small_non_negative_whole_number(
 ) -> Result<i128, AperCodecError> {
     let is_small = data.decode_bool()?;
     if !is_small {
-        data.decode_bits_as_integer(6)
+        data.decode_bits_as_integer(6, false)
     } else {
         decode_semi_constrained_whole_number(data, 0_i128)
     }
@@ -29,7 +29,7 @@ fn decode_normally_small_length_determinent(
 ) -> Result<usize, AperCodecError> {
     let is_small = data.decode_bool()?;
     if !is_small {
-        Ok(data.decode_bits_as_integer(6)? as usize + 1_usize)
+        Ok(data.decode_bits_as_integer(6, false)? as usize + 1_usize)
     } else {
         decode_indefinite_length_determinent(data)
     }
@@ -105,13 +105,13 @@ fn decode_indefinite_length_determinent(data: &mut AperCodecData) -> Result<usiz
     let _ = data.decode_align()?;
     let first = data.decode_bool()?;
     let length = if !first {
-        data.decode_bits_as_integer(7)?
+        data.decode_bits_as_integer(7, false)?
     } else {
         let second = data.decode_bool()?;
         if !second {
-            data.decode_bits_as_integer(14)?
+            data.decode_bits_as_integer(14, false)?
         } else {
-            let length = data.decode_bits_as_integer(6)?;
+            let length = data.decode_bits_as_integer(6, false)?;
             if !(1..=4).contains(&length) {
                 return Err(AperCodecError::new("The value should be 1 to 4"));
             } else {
@@ -129,7 +129,7 @@ pub(super) fn decode_unconstrained_whole_number(
     let length = decode_length_determinent(data, None, None, false)?;
     log::trace!("unconstrained length: {}", length);
     let bits = length * 8;
-    data.decode_bits_as_integer(bits)
+    data.decode_bits_as_integer(bits, true)
 }
 
 // Section 10.7 X.691
@@ -140,7 +140,7 @@ pub(super) fn decode_semi_constrained_whole_number(
     let length = decode_length_determinent(data, None, None, false)?;
     log::trace!("unconstrained length: {}", length);
     let bits = length * 8;
-    let val = data.decode_bits_as_integer(bits)?;
+    let val = data.decode_bits_as_integer(bits, false)?;
     Ok(val + lb)
 }
 
@@ -176,19 +176,19 @@ pub(super) fn decode_constrained_whole_number(
                 65..=128 => 7,
                 129..=255 => 8,
             };
-            data.decode_bits_as_integer(bits)?
+            data.decode_bits_as_integer(bits, false)?
         } else if range == 256 {
             let _ = data.decode_align()?;
-            data.decode_bits_as_integer(8)?
+            data.decode_bits_as_integer(8, false)?
         } else if range <= 65536 {
             let _ = data.decode_align()?;
-            data.decode_bits_as_integer(16)?
+            data.decode_bits_as_integer(16, false)?
         } else {
             let bytes_needed = crate::aper::bytes_needed_for_range(range);
             log::trace!("bytes_needed : {}", bytes_needed);
             let length = decode_constrained_length_determinent(data, 1, bytes_needed as usize)?;
             let _ = data.decode_align()?;
-            data.decode_bits_as_integer(length * 8)?
+            data.decode_bits_as_integer(length * 8, false)?
         };
         Ok(value + lb)
     }
