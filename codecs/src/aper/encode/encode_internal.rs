@@ -7,10 +7,25 @@ pub(super) fn encode_unconstrained_whole_number(
     data: &mut AperCodecData,
     value: i128,
 ) -> Result<(), AperCodecError> {
+    let bytes_needed = if value < 0 {
+        let leading_ones = value.leading_ones();
+
+        if leading_ones % 8 == 0 {
+            16 - leading_ones / 8 + 1
+        } else {
+            16 - leading_ones / 8
+        }
+    } else {
+        let leading_zeroes = value.leading_zeros();
+        if leading_zeroes % 8 == 0 {
+            16 - leading_zeroes / 8 + 1
+        } else {
+            16 - leading_zeroes / 8
+        }
+    };
+    encode_length_determinent(data, None, None, false, bytes_needed as usize)?;
     let bytes = value.to_be_bytes();
-    let first_non_zero = bytes.iter().position(|x| *x != 0).unwrap_or(16);
-    encode_length_determinent(data, None, None, false, 16 - first_non_zero)?;
-    data.append_bits(bytes[first_non_zero..16].view_bits());
+    data.append_bits(bytes[16 - bytes_needed as usize..16].view_bits());
     Ok(())
 }
 
