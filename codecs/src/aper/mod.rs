@@ -246,7 +246,7 @@ impl AperCodecData {
     }
 
     fn get_bitvec(&mut self, length: usize) -> Result<BitVec<Msb0, u8>, AperCodecError> {
-        if length + self.decode_offset >= self.bits.len() {
+        if length + self.decode_offset > self.bits.len() {
             return Err(AperCodecError::new(
                 format!(
                     "AperCodec:GetBitError:Requested Bit {}, Remaining bits {}",
@@ -264,7 +264,7 @@ impl AperCodecData {
 
     fn get_bytes(&mut self, length: usize) -> Result<Vec<u8>, AperCodecError> {
         let length = length * 8;
-        if length + self.decode_offset >= self.bits.len() {
+        if length + self.decode_offset > self.bits.len() {
             return Err(AperCodecError::new(
                 format!(
                     "AperCodec:GetBitError:Requested Bits {}, Remaining bits {}",
