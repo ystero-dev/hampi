@@ -202,24 +202,6 @@ pub fn encode_length_determinent(
 ) -> Result<(), AperCodecError> {
     log::trace!("encode_length_determinent");
 
-    if let Some(l) = lb {
-        if value < l as usize {
-            return Err(AperCodecError::new(format!(
-                "Cannot encode length determinent {} - less than lower bound {}",
-                value, l,
-            )));
-        }
-    }
-
-    if let Some(u) = ub {
-        if value > u as usize {
-            return Err(AperCodecError::new(format!(
-                "Cannot encode length determinent {} - greater than upper bound {}",
-                value, u,
-            )));
-        }
-    }
-
     if normally_small {
         return encode_normally_small_length_determinent(data, value);
     }
@@ -228,7 +210,18 @@ pub fn encode_length_determinent(
         Some(ub) if ub < 65_536 => {
             encode_constrained_whole_number(data, lb.unwrap_or(0), ub, value as i128)
         }
-        _ => encode_indefinite_length_determinent(data, value),
+        _ => {
+            if let Some(l) = lb {
+                if value < l as usize {
+                    return Err(AperCodecError::new(format!(
+                        "Cannot encode length determinent {} - less than lower bound {}",
+                        value, l,
+                    )));
+                }
+            }
+
+            encode_indefinite_length_determinent(data, value)
+        }
     }
 }
 
