@@ -211,6 +211,15 @@ pub fn encode_length_determinent(
             encode_constrained_whole_number(data, lb.unwrap_or(0), ub, value as i128)
         }
         _ => {
+            if let Some(u) = ub {
+                if value > u as usize {
+                    return Err(AperCodecError::new(format!(
+                        "Cannot encode length determinent {} - greater than upper bound {}",
+                        value, u,
+                    )));
+                }
+            }
+
             if let Some(l) = lb {
                 if value < l as usize {
                     return Err(AperCodecError::new(format!(
@@ -383,6 +392,18 @@ mod tests {
         assert!(
             encode_length_determinent(&mut AperCodecData::new(), None, Some(1), false, 2,).is_err()
         );
+    }
+
+    #[test]
+    fn big_length_too_big() {
+        assert!(encode_length_determinent(
+            &mut AperCodecData::new(),
+            None,
+            Some(65536),
+            false,
+            65537,
+        )
+        .is_err());
     }
 
     #[test]
