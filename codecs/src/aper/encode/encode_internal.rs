@@ -34,6 +34,13 @@ pub(super) fn encode_semi_constrained_whole_number(
     lb: i128,
     value: i128,
 ) -> Result<(), AperCodecError> {
+    if value < lb {
+        return Err(AperCodecError::new(format!(
+            "Cannot encode integer {} - less than lower bound {}",
+            value, lb,
+        )));
+    }
+
     encode_unconstrained_whole_number(data, value - lb)
 }
 
@@ -43,13 +50,21 @@ pub(super) fn encode_constrained_whole_number(
     ub: i128,
     value: i128,
 ) -> Result<(), AperCodecError> {
-    let range = ub - lb + 1;
-    if range <= 0 {
-        return Err(AperCodecError::new(
-            "Range for the Integer Constraint is negative.",
-        ));
-    };
+    if value < lb {
+        return Err(AperCodecError::new(format!(
+            "Cannot encode integer {} - less than lower bound {}",
+            value, lb,
+        )));
+    }
 
+    if value > ub {
+        return Err(AperCodecError::new(format!(
+            "Cannot encode integer {} - greater than upper bound {}",
+            value, ub,
+        )));
+    }
+
+    let range = ub - lb + 1;
     let value = value - lb;
 
     if range <= 256 {
