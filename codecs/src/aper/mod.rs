@@ -434,4 +434,21 @@ mod tests {
             assert!(value.unwrap().0 == num);
         }
     }
+
+    // Proves get_bitvec() can cope if it is asked for all the remaining bits in the buffer.
+    #[test]
+    fn get_all_remaining_bits() {
+        let mut d = AperCodecData::new();
+        d.append_bits(bits![Msb0, u8; 1,0,1,0]);
+        assert_eq!(d.get_bitvec(4).unwrap(), bitvec![Msb0,u8;1,0,1,0]);
+    }
+
+    // Likewise for get_bytes().
+    #[test]
+    fn get_all_remaining_bytes() {
+        let mut d = AperCodecData::new();
+        let b: u8 = 0b10101111;
+        d.append_bits(b.view_bits());
+        assert_eq!(d.get_bytes(1).unwrap()[0], b);
+    }
 }
