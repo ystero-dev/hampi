@@ -246,7 +246,7 @@ impl AperCodecData {
     }
 
     fn get_bitvec(&mut self, length: usize) -> Result<BitVec<Msb0, u8>, AperCodecError> {
-        if length + self.decode_offset >= self.bits.len() {
+        if length + self.decode_offset > self.bits.len() {
             return Err(AperCodecError::new(
                 format!(
                     "AperCodec:GetBitError:Requested Bit {}, Remaining bits {}",
@@ -264,7 +264,7 @@ impl AperCodecData {
 
     fn get_bytes(&mut self, length: usize) -> Result<Vec<u8>, AperCodecError> {
         let length = length * 8;
-        if length + self.decode_offset >= self.bits.len() {
+        if length + self.decode_offset > self.bits.len() {
             return Err(AperCodecError::new(
                 format!(
                     "AperCodec:GetBitError:Requested Bits {}, Remaining bits {}",
@@ -433,5 +433,22 @@ mod tests {
             assert!(value.is_ok(), "{:#?}", value.err());
             assert!(value.unwrap().0 == num);
         }
+    }
+
+    // Proves get_bitvec() can cope if it is asked for all the remaining bits in the buffer.
+    #[test]
+    fn get_all_remaining_bits() {
+        let mut d = AperCodecData::new();
+        d.append_bits(bits![Msb0, u8; 1,0,1,0]);
+        assert_eq!(d.get_bitvec(4).unwrap(), bitvec![Msb0,u8;1,0,1,0]);
+    }
+
+    // Likewise for get_bytes().
+    #[test]
+    fn get_all_remaining_bytes() {
+        let mut d = AperCodecData::new();
+        let b: u8 = 0b10101111;
+        d.append_bits(b.view_bits());
+        assert_eq!(d.get_bytes(1).unwrap()[0], b);
     }
 }
