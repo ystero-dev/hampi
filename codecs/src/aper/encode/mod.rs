@@ -75,6 +75,9 @@ pub fn encode_sequence_header(
 /// Encode an INTEGER
 ///
 /// This API is also used by other `encode` functions to encode an integer value.
+///
+/// Note: The maximum (and minimum) value to be decoded is limited to an `i128` value. For the
+/// protocols that are currently supported this limit is acceptable.
 pub fn encode_integer(
     data: &mut AperCodecData,
     lb: Option<i128>,
