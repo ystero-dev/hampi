@@ -79,6 +79,9 @@ pub fn decode_sequence_header(
 /// Given an Integer Specification with PER Visible Constraints, decode an Integer Value to obtain
 /// the integer value which will always be returned as an i128 value.
 ///
+/// Note: The maximum (and minimum) value to be decoded is limited to an `i128` value. For the
+/// protocols that are currently supported this limit is acceptable.
+///
 /// `lb` and `ub` are upper and lower bounds as determined by the PER Constraints (and hence can be
 /// `None` if no Constraints are not speicifed. `is_extensible` specifies whether the defined type
 /// is extensible (as per PER Constraints). Returned value is the value of the Integer (i128) and
