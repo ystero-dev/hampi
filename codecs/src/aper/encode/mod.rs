@@ -45,7 +45,7 @@ pub fn encode_choice_idx(
 pub fn encode_sequence_header(
     data: &mut AperCodecData,
     is_extensible: bool,
-    optionals: &BitSlice<Msb0, u8>,
+    optionals: &BitSlice<u8, Msb0>,
     extended: bool,
 ) -> Result<(), AperCodecError> {
     log::debug!(
@@ -168,7 +168,7 @@ pub fn encode_bitstring(
     lb: Option<i128>,
     ub: Option<i128>,
     is_extensible: bool,
-    bit_string: &BitSlice<Msb0, u8>,
+    bit_string: &BitSlice<u8, Msb0>,
     extended: bool,
 ) -> Result<(), AperCodecError> {
     log::debug!(
@@ -518,7 +518,7 @@ mod tests {
             Some(2),
             None,
             false,
-            bits![Msb0,u8; 0],
+            bits![u8, Msb0; 0],
             false
         )
         .is_err());
@@ -531,7 +531,7 @@ mod tests {
             None,
             Some(1),
             false,
-            bits![Msb0,u8; 0, 0],
+            bits![u8, Msb0; 0, 0],
             false
         )
         .is_err());

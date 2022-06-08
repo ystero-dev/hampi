@@ -14,7 +14,7 @@ include = ["src/**/*.rs", "Cargo.toml", "LICENSE", "LICENSE-MIT", "LICENSE-Apach
 maintenance = { status = "actively-developed" }
 
 [dependencies]
-bitvec = { version = "0.22" }
+bitvec = { version = "1.0" }
 syn = { version = "1.0" }
 proc-macro2 = { version = "1.0" }
-log = { version = "0.4.3", features = ["release_max_level_info"] }
+log = { version = "0.4", features = ["release_max_level_info"] }

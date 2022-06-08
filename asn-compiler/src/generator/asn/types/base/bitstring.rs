@@ -26,7 +26,7 @@ impl Asn1ResolvedBitString {
         let struct_tokens = quote! {
             #[derive(Debug, AperCodec)]
             #[asn(#ty_attributes)]
-            pub struct #struct_name(pub BitVec<Msb0, u8>);
+            pub struct #struct_name(pub BitVec<u8, Msb0>);
         };
 
         Ok(struct_tokens)

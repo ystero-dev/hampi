@@ -56,7 +56,7 @@ pub fn decode_sequence_header(
     data: &mut AperCodecData,
     is_extensible: bool,
     optional_count: usize,
-) -> Result<(BitVec<Msb0, u8>, bool), AperCodecError> {
+) -> Result<(BitVec<u8, Msb0>, bool), AperCodecError> {
     log::debug!("decode_sequence_header: extensible: {}", is_extensible);
 
     let extended = if is_extensible {
@@ -196,7 +196,7 @@ pub fn decode_bitstring(
     lb: Option<i128>,
     ub: Option<i128>,
     is_extensible: bool,
-) -> Result<BitVec<Msb0, u8>, AperCodecError> {
+) -> Result<BitVec<u8, Msb0>, AperCodecError> {
     log::debug!(
         "decode_bitstring: lb: {:?}, ub: {:?}, is_extensible: {}",
         lb,

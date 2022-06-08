@@ -48,8 +48,9 @@ pub fn decode_visible_string(
         let bits = data.get_bitvec(length)?;
         let decoded = bits
             .chunks_exact(num_bits)
-            .map(|c| c.as_raw_slice()[0] as char)
-            .collect::<String>();
+            .map(|c| c[0] as u8)
+            .collect::<Vec<u8>>();
+        let decoded = std::str::from_utf8(&decoded).unwrap();
         out += &decoded;
     }
 
@@ -105,8 +106,9 @@ pub fn decode_printable_string(
         let bits = data.get_bitvec(length)?;
         let decoded = bits
             .chunks_exact(num_bits)
-            .map(|c| c.as_raw_slice()[0] as char)
-            .collect::<String>();
+            .map(|c| c[0] as u8)
+            .collect::<Vec<u8>>();
+        let decoded = std::str::from_utf8(&decoded).unwrap();
         out += &decoded;
     }
 
@@ -148,7 +150,7 @@ pub fn decode_utf8_string(
         let bits = data.get_bitvec(length)?;
         let decoded = bits
             .chunks_exact(num_bits)
-            .map(|c| c.as_raw_slice()[0])
+            .map(|c| c[0] as u8)
             .collect::<Vec<u8>>();
         let decoded = String::from_utf8(decoded).unwrap();
 
