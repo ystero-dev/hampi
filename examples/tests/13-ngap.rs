@@ -121,15 +121,15 @@ pub enum AMFPagingTarget {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "6", sz_ub = "6")]
-pub struct AMFPointer(pub BitVec<Msb0, u8>);
+pub struct AMFPointer(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "8", sz_ub = "8")]
-pub struct AMFRegionID(pub BitVec<Msb0, u8>);
+pub struct AMFRegionID(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "10", sz_ub = "10")]
-pub struct AMFSetID(pub BitVec<Msb0, u8>);
+pub struct AMFSetID(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true)]
@@ -492,7 +492,7 @@ pub struct BurstArrivalTime(pub Vec<u8>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "32", sz_ub = "32")]
-pub struct CAG_ID(pub BitVec<Msb0, u8>);
+pub struct CAG_ID(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
@@ -1157,7 +1157,7 @@ pub struct DL_CP_SecurityInformation {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "16", sz_ub = "16")]
-pub struct DL_NAS_MAC(pub BitVec<Msb0, u8>);
+pub struct DL_NAS_MAC(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
@@ -1277,7 +1277,7 @@ pub struct DRBsToQosFlowsMappingList(pub Vec<DRBsToQosFlowsMappingItem>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "8", sz_ub = "8")]
-pub struct DataCodingScheme(pub BitVec<Msb0, u8>);
+pub struct DataCodingScheme(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "0")]
@@ -1499,15 +1499,15 @@ pub struct EUTRA_CGIListForWarning(pub Vec<EUTRA_CGI>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "28", sz_ub = "28")]
-pub struct EUTRACellIdentity(pub BitVec<Msb0, u8>);
+pub struct EUTRACellIdentity(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = true, sz_lb = "16", sz_ub = "16")]
-pub struct EUTRAencryptionAlgorithms(pub BitVec<Msb0, u8>);
+pub struct EUTRAencryptionAlgorithms(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = true, sz_lb = "16", sz_ub = "16")]
-pub struct EUTRAintegrityProtectionAlgorithms(pub BitVec<Msb0, u8>);
+pub struct EUTRAintegrityProtectionAlgorithms(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -1828,7 +1828,7 @@ pub struct ExtendedSliceSupportList(pub Vec<SliceSupportItem>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "16", sz_ub = "16")]
-pub struct ExtendedUEIdentityIndexValue(pub BitVec<Msb0, u8>);
+pub struct ExtendedUEIdentityIndexValue(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -1932,7 +1932,7 @@ pub enum GNB_ID {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "22", sz_ub = "22")]
-pub struct GNBSetID(pub BitVec<Msb0, u8>);
+pub struct GNBSetID(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING", sz_extensible = false, sz_lb = "4", sz_ub = "4")]
@@ -2375,7 +2375,7 @@ pub enum InterSystemHandoverReportType {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "8", sz_ub = "8")]
-pub struct InterfacesToTrace(pub BitVec<Msb0, u8>);
+pub struct InterfacesToTrace(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -2842,7 +2842,7 @@ pub struct MDT_Location_Info {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "8", sz_ub = "8")]
-pub struct MDT_Location_Information(pub BitVec<Msb0, u8>);
+pub struct MDT_Location_Information(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "OCTET-STRING")]
@@ -2872,7 +2872,7 @@ impl MICOModeIndication {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "64", sz_ub = "64")]
-pub struct MaskedIMEISV(pub BitVec<Msb0, u8>);
+pub struct MaskedIMEISV(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "4095", extensible = true)]
@@ -2899,15 +2899,15 @@ pub enum MeasurementThresholdL1LoggedMDT {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "8", sz_ub = "8")]
-pub struct MeasurementsToActivate(pub BitVec<Msb0, u8>);
+pub struct MeasurementsToActivate(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "16", sz_ub = "16")]
-pub struct MessageIdentifier(pub BitVec<Msb0, u8>);
+pub struct MessageIdentifier(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "16", sz_ub = "16")]
-pub struct MobilityInformation(pub BitVec<Msb0, u8>);
+pub struct MobilityInformation(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 5)]
@@ -3098,7 +3098,7 @@ pub struct NGSetupResponse {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "44", sz_ub = "44")]
-pub struct NID(pub BitVec<Msb0, u8>);
+pub struct NID(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "CHOICE", lb = "0", ub = "1", extensible = false)]
@@ -3175,7 +3175,7 @@ pub struct NRARFCN(pub u32);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "36", sz_ub = "36")]
-pub struct NRCellIdentity(pub BitVec<Msb0, u8>);
+pub struct NRCellIdentity(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "1", ub = "1024", extensible = true)]
@@ -3235,11 +3235,11 @@ pub struct NRV2XServicesAuthorized {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = true, sz_lb = "16", sz_ub = "16")]
-pub struct NRencryptionAlgorithms(pub BitVec<Msb0, u8>);
+pub struct NRencryptionAlgorithms(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = true, sz_lb = "16", sz_ub = "16")]
-pub struct NRintegrityProtectionAlgorithms(pub BitVec<Msb0, u8>);
+pub struct NRintegrityProtectionAlgorithms(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "1", ub = "256", extensible = true)]
@@ -4616,7 +4616,7 @@ impl PedestrianUE {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "8", sz_ub = "8")]
-pub struct PeriodicRegistrationUpdateTimer(pub BitVec<Msb0, u8>);
+pub struct PeriodicRegistrationUpdateTimer(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "640000", extensible = true)]
@@ -5018,7 +5018,7 @@ impl RAT_Information {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = true, sz_lb = "8", sz_ub = "8")]
-pub struct RATRestrictionInformation(pub BitVec<Msb0, u8>);
+pub struct RATRestrictionInformation(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE-OF", sz_extensible = false, sz_lb = "1", sz_ub = "16")]
@@ -5453,7 +5453,7 @@ pub struct SecurityIndication {
     sz_lb = "256",
     sz_ub = "256"
 )]
-pub struct SecurityKey(pub BitVec<Msb0, u8>);
+pub struct SecurityKey(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -5508,7 +5508,7 @@ pub enum SensorNameConfig {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "16", sz_ub = "16")]
-pub struct SerialNumber(pub BitVec<Msb0, u8>);
+pub struct SerialNumber(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 2)]
@@ -6087,7 +6087,7 @@ pub struct TrafficLoadReductionIndication(pub u8);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = true, sz_lb = "1", sz_ub = "160")]
-pub struct TransportLayerAddress(pub BitVec<Msb0, u8>);
+pub struct TransportLayerAddress(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "ENUMERATED", lb = "0", ub = "2")]
@@ -6460,11 +6460,11 @@ pub struct UL_CP_SecurityInformation {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "5", sz_ub = "5")]
-pub struct UL_NAS_Count(pub BitVec<Msb0, u8>);
+pub struct UL_NAS_Count(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "16", sz_ub = "16")]
-pub struct UL_NAS_MAC(pub BitVec<Msb0, u8>);
+pub struct UL_NAS_MAC(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
@@ -6556,7 +6556,7 @@ pub struct UnsuccessfulOutcome {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = true, sz_lb = "8", sz_ub = "8")]
-pub struct UpdateFeedback(pub BitVec<Msb0, u8>);
+pub struct UpdateFeedback(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = true)]
@@ -8064,7 +8064,7 @@ pub struct DRBStatusULchoice_Extensions {}
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "1", sz_ub = "2048")]
-pub struct BIT_STRING_16(pub BitVec<Msb0, u8>);
+pub struct BIT_STRING_16(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -8086,7 +8086,7 @@ pub struct DRBStatusUL12IE_Extension(pub Vec<DRBStatusUL12IE_Extension_Entry>);
     sz_lb = "1",
     sz_ub = "131072"
 )]
-pub struct BIT_STRING_17(pub BitVec<Msb0, u8>);
+pub struct BIT_STRING_17(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -8514,19 +8514,19 @@ pub struct E_RABInformationItemIE_Extensions(pub Vec<E_RABInformationItemIE_Exte
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "20", sz_ub = "20")]
-pub struct BIT_STRING_18(pub BitVec<Msb0, u8>);
+pub struct BIT_STRING_18(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "28", sz_ub = "28")]
-pub struct BIT_STRING_19(pub BitVec<Msb0, u8>);
+pub struct BIT_STRING_19(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "18", sz_ub = "18")]
-pub struct BIT_STRING_20(pub BitVec<Msb0, u8>);
+pub struct BIT_STRING_20(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "21", sz_ub = "21")]
-pub struct BIT_STRING_21(pub BitVec<Msb0, u8>);
+pub struct BIT_STRING_21(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -8795,11 +8795,11 @@ pub struct Extended_RANNodeNameIE_Extensions(pub Vec<Extended_RANNodeNameIE_Exte
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = true, sz_lb = "8", sz_ub = "8")]
-pub struct BIT_STRING_24(pub BitVec<Msb0, u8>);
+pub struct BIT_STRING_24(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = true, sz_lb = "8", sz_ub = "8")]
-pub struct BIT_STRING_25(pub BitVec<Msb0, u8>);
+pub struct BIT_STRING_25(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -8923,7 +8923,7 @@ pub struct GBR_QosInformationIE_Extensions(pub Vec<GBR_QosInformationIE_Extensio
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "22", sz_ub = "32")]
-pub struct BIT_STRING_26(pub BitVec<Msb0, u8>);
+pub struct BIT_STRING_26(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -9090,7 +9090,7 @@ impl ENUMERATED_27 {
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "16", sz_ub = "16")]
-pub struct BIT_STRING_28(pub BitVec<Msb0, u8>);
+pub struct BIT_STRING_28(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -10519,7 +10519,7 @@ pub struct MobilityRestrictionListIE_Extensions(
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "16", sz_ub = "16")]
-pub struct BIT_STRING_31(pub BitVec<Msb0, u8>);
+pub struct BIT_STRING_31(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -10834,15 +10834,15 @@ pub struct NRV2XServicesAuthorizedIE_Extensions(
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "20", sz_ub = "20")]
-pub struct BIT_STRING_32(pub BitVec<Msb0, u8>);
+pub struct BIT_STRING_32(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "18", sz_ub = "18")]
-pub struct BIT_STRING_33(pub BitVec<Msb0, u8>);
+pub struct BIT_STRING_33(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "21", sz_ub = "21")]
-pub struct BIT_STRING_34(pub BitVec<Msb0, u8>);
+pub struct BIT_STRING_34(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -13761,7 +13761,7 @@ pub struct SONInformationReportchoice_Extensions {}
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "7", sz_ub = "7")]
-pub struct BIT_STRING_75(pub BitVec<Msb0, u8>);
+pub struct BIT_STRING_75(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "86399", extensible = true)]
@@ -14274,7 +14274,7 @@ pub struct TAIListForPagingItemIE_Extensions(pub Vec<TAIListForPagingItemIE_Exte
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = true, sz_lb = "32", sz_ub = "32")]
-pub struct BIT_STRING_81(pub BitVec<Msb0, u8>);
+pub struct BIT_STRING_81(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -14325,7 +14325,7 @@ pub struct TSCTrafficCharacteristicsIE_Extensions(
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = true, sz_lb = "32", sz_ub = "32")]
-pub struct BIT_STRING_82(pub BitVec<Msb0, u8>);
+pub struct BIT_STRING_82(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -15114,7 +15114,7 @@ pub struct UEHistoryInformationFromTheUEchoice_Extensions {}
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = false, sz_lb = "10", sz_ub = "10")]
-pub struct BIT_STRING_88(pub BitVec<Msb0, u8>);
+pub struct BIT_STRING_88(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]
@@ -15916,7 +15916,7 @@ pub struct VolumeTimedReport_ItemIE_Extensions(pub Vec<VolumeTimedReport_ItemIE_
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "BITSTRING", sz_extensible = true, sz_lb = "16", sz_ub = "16")]
-pub struct BIT_STRING_93(pub BitVec<Msb0, u8>);
+pub struct BIT_STRING_93(pub BitVec<u8, Msb0>);
 
 #[derive(Debug, AperCodec)]
 #[asn(type = "SEQUENCE", extensible = false)]

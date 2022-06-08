@@ -37,7 +37,7 @@ pub(super) fn generate_aper_codec_for_asn_sequence(
             fn encode(&self, data: &mut asn1_codecs::aper::AperCodecData) -> Result<(), asn1_codecs::aper::AperCodecError> {
                 log::debug!(concat!("encode: ", stringify!(#name)));
 
-                let mut bitmap = bitvec::bitvec![bitvec::prelude::Msb0, u8; 0; #opt_count];
+                let mut bitmap = bitvec::bitvec![u8, bitvec::prelude::Msb0; 0; #opt_count];
 
                 #(#hdr_encode_tokens)*
 

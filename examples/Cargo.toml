@@ -10,11 +10,11 @@ publish = false
 asn1-codecs = { path = "../codecs" }
 asn1_codecs_derive = { path = "../codecs_derive" }
 trybuild = { version = "1.0" }
-hex = "*"
-bitvec = { version = "0.22" }
-log = { version = "0.4.3" }
+hex = { version = "0.4" }
+bitvec = { version = "1.0" }
+log = { version = "0.4" }
 criterion = { version = "0.3" }
-env_logger = "*"
+env_logger = { version = "0.4" }
 
 [[bench]]
 name = "ngap_bench"

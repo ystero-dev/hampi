@@ -30,7 +30,7 @@ use bitvec::prelude::*;
 /// `BitVec`.
 #[derive(Default, Debug)]
 pub struct AperCodecData {
-    bits: BitVec<Msb0, u8>,
+    bits: BitVec<u8, Msb0>,
     decode_offset: usize,
     key: Option<i128>,
 }
@@ -44,7 +44,7 @@ impl AperCodecData {
     /// Create Our `AperCodecData` Structure from a slice of u8
     pub fn from_slice(bytes: &[u8]) -> Self {
         Self {
-            bits: BitSlice::<_, _>::from_slice(bytes).unwrap().to_bitvec(),
+            bits: BitSlice::<_, _>::from_slice(bytes).to_bitvec(),
             decode_offset: 0,
             key: None,
         }
@@ -247,7 +247,7 @@ impl AperCodecData {
         Ok(bit)
     }
 
-    fn get_bitvec(&mut self, length: usize) -> Result<BitVec<Msb0, u8>, AperCodecError> {
+    fn get_bitvec(&mut self, length: usize) -> Result<BitVec<u8, Msb0>, AperCodecError> {
         if length + self.decode_offset > self.bits.len() {
             return Err(AperCodecError::new(
                 format!(
@@ -329,7 +329,7 @@ impl AperCodecData {
         self.decode_offset = offset;
     }
 
-    pub fn swap_bits(&mut self, other: &mut BitSlice<Msb0, u8>, offset: usize) {
+    pub fn swap_bits(&mut self, other: &mut BitSlice<u8, Msb0>, offset: usize) {
         self.bits[offset..other.len() + offset].swap_with_bitslice(other);
     }
 
@@ -344,7 +344,7 @@ impl AperCodecData {
     }
 
     /// Add bits to the encoding buffer.
-    fn append_bits(&mut self, bits: &BitSlice<Msb0, u8>) {
+    fn append_bits(&mut self, bits: &BitSlice<u8, Msb0>) {
         self.bits.extend_from_bitslice(bits);
     }
 
@@ -441,8 +441,8 @@ mod tests {
     #[test]
     fn get_all_remaining_bits() {
         let mut d = AperCodecData::new();
-        d.append_bits(bits![Msb0, u8; 1,0,1,0]);
-        assert_eq!(d.get_bitvec(4).unwrap(), bitvec![Msb0,u8;1,0,1,0]);
+        d.append_bits(bits![u8, Msb0; 1,0,1,0]);
+        assert_eq!(d.get_bitvec(4).unwrap(), bitvec![u8,Msb0;1,0,1,0]);
     }
 
     // Likewise for get_bytes().
