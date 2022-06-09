@@ -1,4 +1,4 @@
-name: Hampi Build on Pull Request. 
+name: Hampi Build on Pull Request.
 
 on:
   push:
@@ -13,10 +13,29 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    name: (${{ matrix.target}}, ${{ matrix.cfg_release_channel }})
+    strategy:
+      matrix:
+        target: [
+          x86_64-unknown-linux-gnu,
+        ]
+        cfg_release_channel: [ nightly, stable]
 
     steps:
     - uses: actions/checkout@v3
+    - name: install rustup
+      run: |
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > rustup-init.sh
+        sh rustup-init.sh -y --default-toolchain none
+        rustup target add ${{ matrix.target }}
+        rustup default ${{ matrix.cfg_release_channel }}
     - name: Build
-      run: cargo build --verbose
+      run: |
+        rustc -Vv
+        cargo -V
+        cargo build --verbose
     - name: Run tests
-      run: cargo test --verbose
+      run: |
+        rustc -Vv
+        cargo -V
+        cargo test --verbose
