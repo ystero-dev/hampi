@@ -1,8 +1,11 @@
 #![allow(dead_code)]
 //! Structs related to ASN.1 Compiler
-use std::collections::HashMap;
 
-use ::rustfmt::{config::Config, format_input, Input};
+use std::collections::HashMap;
+use std::io;
+use std::io::Write;
+use std::process::{Command, Stdio};
+
 use topological_sort::TopologicalSort;
 
 use crate::error::Error;
@@ -70,19 +73,50 @@ impl Asn1Compiler {
 
     /// Generate the code
     pub fn generate(&mut self) -> Result<(), Error> {
-        // eprintln!("{}", &mut self.generator.generate(&self.resolver)?);
-
         let input_text = self.generator.generate(&self.resolver)?;
-        let input = Input::Text(input_text);
+        let output_text = self.rustfmt_generated_code(&input_text)?;
+        //let input = Input::Text(input_text);
 
-        let (summary, filemap, _) =
+        /* let (summary, filemap, _) =
             format_input(input, &Config::default(), Some(&mut std::io::stdout()))
-                .map_err(|e| resolve_error!("{:#?}", e.1))?;
+                .map_err(|e| resolve_error!("{:#?}", e))?;
 
         eprintln!("Summary: {:#?}", summary);
-        println!("{}", filemap[0].1);
+        */
+        println!("{}", output_text);
 
         Ok(())
+    }
+
+    fn rustfmt_generated_code(&self, code: &str) -> Result<String, Error> {
+        let rustfmt_binary = "rustfmt"; // TODO: Get from `env` , 'custom path' etc.
+        let mut cmd = Command::new(rustfmt_binary);
+
+        cmd.stdin(Stdio::piped()).stdout(Stdio::piped());
+
+        let mut child = cmd.spawn().map_err(|e| resolve_error!("{:#?}", e))?;
+        let mut child_stdin = child.stdin.take().unwrap();
+        let mut child_stdout = child.stdout.take().unwrap();
+
+        let code = code.to_owned();
+        let stdin_handle =
+            ::std::thread::spawn(move || match child_stdin.write_all(code.as_bytes()) {
+                Ok(_) => code,
+                Err(_) => "write error in rustfmt".to_owned(),
+            });
+
+        let mut output = vec![];
+        io::copy(&mut child_stdout, &mut output).map_err(|e| resolve_error!("{:#?}", e))?;
+
+        let status = child.wait().map_err(|e| resolve_error!("{:#?}", e))?;
+
+        match String::from_utf8(output) {
+            Ok(formatted_output) => match status.code() {
+                Some(0) => Ok(formatted_output.to_owned()),
+                _ => Err(resolve_error!("`rustfmt` failed to write some bindings.")),
+            },
+            _ => Ok(stdin_handle.join().unwrap().to_owned()),
+        }
     }
 
     fn resolve_imports(&self) -> Result<(), Error> {
