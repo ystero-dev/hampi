@@ -1,4 +1,5 @@
 //! Functionality for decoding character strings
+use bitvec::field::BitField;
 
 use crate::aper::AperCodecData;
 use crate::aper::AperCodecError;
@@ -19,44 +20,7 @@ pub fn decode_visible_string(
         ub,
         is_extensible
     );
-
-    // Following values  are never used instead Canonical decode
-    let (_val_lower, _val_higher) = (32u8, 127u8);
-
-    let num_bits = 8; // N = 95, B = 7, B2 = 8
-
-    let is_extended = if is_extensible {
-        data.decode_bool()?
-    } else {
-        false
-    };
-
-    let length = if is_extended {
-        decode_length_determinent(data, None, None, false)?
-    } else {
-        decode_length_determinent(data, lb, ub, false)?
-    };
-
-    let mut out = String::new();
-    if length > 0 {
-        let length = length * num_bits;
-
-        if length > 16 {
-            data.decode_align()?;
-        }
-
-        let bits = data.get_bitvec(length)?;
-        let decoded = bits
-            .chunks_exact(num_bits)
-            .map(|c| c[0] as u8)
-            .collect::<Vec<u8>>();
-        let decoded = std::str::from_utf8(&decoded).unwrap();
-        out += &decoded;
-    }
-
-    data.dump();
-
-    Ok(out)
+    decode_string(data, lb, ub, is_extensible)
 }
 
 /// Decode a PrintableString CharacterString Type.
@@ -72,49 +36,7 @@ pub fn decode_printable_string(
         ub,
         is_extensible
     );
-
-    let (_val_lower, _val_higher) = (32u8, 122u8);
-
-    let num_bits = 8; // N = 74, B = 7, B2 = 8
-
-    let mut alphabet = vec![' ', '\'', '(', ')', '+', ',', '-', '.', '/'];
-    alphabet.extend(('0'..='9').collect::<Vec<char>>());
-    alphabet.extend(vec![':', '=', '?']);
-    alphabet.extend(('a'..='z').collect::<Vec<char>>());
-    alphabet.extend(('A'..='Z').collect::<Vec<char>>());
-
-    let is_extended = if is_extensible {
-        data.decode_bool()?
-    } else {
-        false
-    };
-
-    let length = if is_extended {
-        decode_length_determinent(data, None, None, false)?
-    } else {
-        decode_length_determinent(data, lb, ub, false)?
-    };
-
-    let mut out = String::new();
-    if length > 0 {
-        let length = length * num_bits;
-
-        if length > 16 {
-            data.decode_align()?;
-        }
-
-        let bits = data.get_bitvec(length)?;
-        let decoded = bits
-            .chunks_exact(num_bits)
-            .map(|c| c[0] as u8)
-            .collect::<Vec<u8>>();
-        let decoded = std::str::from_utf8(&decoded).unwrap();
-        out += &decoded;
-    }
-
-    data.dump();
-
-    Ok(out)
+    decode_string(data, lb, ub, is_extensible)
 }
 
 // UTF-8 String is always - indefinite length case as it's not a fixed character width string. It's
@@ -133,31 +55,41 @@ pub fn decode_utf8_string(
         ub,
         is_extensible
     );
+    decode_string(data, lb, ub, is_extensible)
+}
 
-    let (_val_lower, _val_higher) = (0u8, 255u8);
+fn decode_string(
+    data: &mut AperCodecData,
+    lb: Option<i128>,
+    ub: Option<i128>,
+    is_extensible: bool,
+) -> Result<String, AperCodecError> {
+    let is_extended = if is_extensible {
+        data.decode_bool()?
+    } else {
+        false
+    };
 
-    let num_bits = 8; // N = 74, B = 7, B2 = 8
+    let length = if is_extended {
+        decode_length_determinent(data, None, None, false)?
+    } else {
+        decode_length_determinent(data, lb, ub, false)?
+    };
 
-    let length = decode_length_determinent(data, None, None, false)?;
-    let mut out = String::new();
-    if length > 0 {
-        let length = length * num_bits;
-
-        if length > 16 {
-            data.decode_align()?;
-        }
-
-        let bits = data.get_bitvec(length)?;
-        let decoded = bits
-            .chunks_exact(num_bits)
-            .map(|c| c[0] as u8)
-            .collect::<Vec<u8>>();
-        let decoded = String::from_utf8(decoded).unwrap();
-
-        out += &decoded;
+    let num_bits = 8;
+    let length = length * num_bits;
+    if length > 16 {
+        data.decode_align()?;
     }
+    let bits = data.get_bitvec(length)?;
+    let bytes = bits
+        .chunks_exact(num_bits)
+        .map(|c| c.load::<u8>())
+        .collect::<Vec<u8>>();
 
     data.dump();
 
-    Ok(out)
+    std::str::from_utf8(&bytes)
+        .map(|s| s.to_string())
+        .map_err(|_| AperCodecError::new("UTF decode failed"))
 }
