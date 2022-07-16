@@ -453,4 +453,22 @@ mod tests {
         d.append_bits(b.view_bits());
         assert_eq!(d.get_bytes(1).unwrap()[0], b);
     }
+
+    #[test]
+    fn printable_string_coding() {
+        let mut d = AperCodecData::new();
+        let s1 = "hello".to_string();
+        encode::encode_printable_string(&mut d, None, None, false, &s1, false).unwrap();
+        let s2 = decode::decode_printable_string(&mut d, None, None, false).unwrap();
+        assert_eq!(s1, s2);
+    }
+
+    #[test]
+    fn empty_string() {
+        let mut d = AperCodecData::new();
+        let s1 = "".to_string();
+        encode::encode_printable_string(&mut d, None, None, false, &s1, false).unwrap();
+        let s2 = decode::decode_printable_string(&mut d, None, None, false).unwrap();
+        assert_eq!(s1, s2);
+    }
 }
