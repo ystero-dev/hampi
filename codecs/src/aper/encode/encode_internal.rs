@@ -208,4 +208,12 @@ mod tests {
         encode_constrained_whole_number(&mut data, 0, 68719476735, 123).unwrap();
         assert_eq!(data.into_bytes(), [0x00, 0x7B]);
     }
+
+    #[test]
+    fn encode_u32() {
+        let mut data = AperCodecData::new();
+        let value = 0x10203040;
+        encode_constrained_whole_number(&mut data, 0, 4294967295, value).unwrap();
+        assert_eq!(data.into_bytes(), [0xC0, 0x10, 0x20, 0x30, 0x40]);
+    }
 }
