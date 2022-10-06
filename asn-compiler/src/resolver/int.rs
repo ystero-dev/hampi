@@ -56,7 +56,7 @@ impl Resolver {
             let parsed_def = module.get_definition_mut(&k);
             if parsed_def.is_none() {
                 eprintln!(
-                    "Definition '{}' Not found! It's Okay for certain Dummy References",
+                    "Warning!! Definition '{}' Not found! It's Okay for certain Dummy References",
                     k
                 );
                 continue;
@@ -80,7 +80,7 @@ impl Resolver {
             let parsed_def = module.get_definition_mut(&k);
             if parsed_def.is_none() {
                 eprintln!(
-                    "Definition '{}' Not found! It's Okay for certain Dummy References",
+                    "Warning!! Definition '{}' Not found! It's Okay for certain Dummy References",
                     k
                 );
                 continue;
