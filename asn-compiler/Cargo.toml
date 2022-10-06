@@ -20,6 +20,7 @@ proc-macro2 = { version = "1.0" }
 quote = { version = "1.0" }
 heck = { version = "0.4" }
 bitvec = { version = "1.0" }
+clap = { version = "4.0.10", features = ["derive"] }
 
 
 [[bin]]

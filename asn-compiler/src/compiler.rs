@@ -2,6 +2,7 @@
 //! Structs related to ASN.1 Compiler
 
 use std::collections::HashMap;
+use std::fs::File;
 use std::io;
 use std::io::Write;
 use std::process::{Command, Stdio};
@@ -31,21 +32,29 @@ pub struct Asn1Compiler {
 
     // Holds the 'Generator' that is used for 'generate'ing the code for the 'resolved types'.
     generator: Generator,
+
+    // Holds the file name for the output module.
+    output_filename: String,
+
+    // Debug Print during Code generation
+    debug: bool,
 }
 
 impl Default for Asn1Compiler {
     fn default() -> Self {
-        Asn1Compiler::new()
+        Asn1Compiler::new("default.rs", false)
     }
 }
 
 impl Asn1Compiler {
     /// Create a new Instance of the Compiler structure.
-    pub fn new() -> Self {
+    pub fn new(output: &str, debug: bool) -> Self {
         Asn1Compiler {
             modules: HashMap::new(),
             resolver: Resolver::new(),
-            generator: Generator::new("ngap"), // FIXME: Hard coded
+            generator: Generator::new(), // FIXME: Hard coded
+            output_filename: output.to_string(),
+            debug,
         }
     }
 
@@ -75,15 +84,17 @@ impl Asn1Compiler {
     pub fn generate(&mut self) -> Result<(), Error> {
         let input_text = self.generator.generate(&self.resolver)?;
         let output_text = self.rustfmt_generated_code(&input_text)?;
-        //let input = Input::Text(input_text);
 
-        /* let (summary, filemap, _) =
-            format_input(input, &Config::default(), Some(&mut std::io::stdout()))
-                .map_err(|e| resolve_error!("{:#?}", e))?;
+        let mut output_file = File::create(&self.output_filename).map_err(|e| {
+            let errorstr = format!("Error {} Creating File: {}", e, self.output_filename);
+            Error::CodeGenerationError(errorstr)
+        })?;
 
-        eprintln!("Summary: {:#?}", summary);
-        */
-        println!("{}", output_text);
+        output_file
+            .write_all(output_text.as_bytes())
+            .map_err(|e| Error::CodeGenerationError(e.to_string()))?;
+
+        eprintln!("\n\nWrote generated code to '{}'.", self.output_filename);
 
         Ok(())
     }
@@ -132,7 +143,9 @@ impl Asn1Compiler {
                 }
             }
         }
-        eprintln!("All IMPORTS in All Modules Resolved!");
+        if self.debug {
+            eprintln!("All IMPORTS in All Modules Resolved!");
+        }
         Ok(())
     }
 
@@ -167,16 +180,17 @@ impl Asn1Compiler {
             //let module_definitions = module.definitions_sorted();
             self.resolver.resolve_definitions(&mut module)?;
         }
-        eprintln!(
-            "Resolved Definitions: {:#?}",
-            self.resolver.resolved_defs.keys()
-        );
-        eprintln!(
-            "Parameterized Types: {:#?}",
-            self.resolver.parameterized_defs.keys()
-        );
-        eprintln!("Object Classes: {:#?}", self.resolver.classes.keys());
-
+        if self.debug {
+            eprintln!(
+                "Resolved Definitions: {:#?}",
+                self.resolver.resolved_defs.keys()
+            );
+            eprintln!(
+                "Parameterized Types: {:#?}",
+                self.resolver.parameterized_defs.keys()
+            );
+            eprintln!("Object Classes: {:#?}", self.resolver.classes.keys());
+        }
         Ok(())
     }
 }
