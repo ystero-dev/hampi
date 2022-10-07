@@ -58,8 +58,10 @@ impl Asn1ResolvedType {
         let referring = gen.to_type_ident(name);
         let reference = gen.to_type_ident(reference);
 
+        let vis = gen.get_visibility_tokens();
+
         Ok(quote! {
-            pub type #referring = #reference;
+            #vis type #referring = #reference;
         })
     }
 }
@@ -73,9 +75,11 @@ impl ResolvedSetType {
         let ty_ident = generator.to_type_ident(name);
         let ty_elements = self.generate_aux_types(generator)?;
 
+        let vis = generator.get_visibility_tokens();
+
         Ok(quote! {
             #[derive(Debug, AperCodec)]
-            pub enum #ty_ident {
+            #vis enum #ty_ident {
                 #ty_elements
             }
         })
@@ -93,10 +97,12 @@ impl ResolvedSetType {
         };
         let ty_elements = self.generate_aux_types(generator)?;
 
+        let vis = generator.get_visibility_tokens();
+
         let set_ty = quote! {
             #[derive(Debug, AperCodec)]
             #[asn(type = "OPEN")]
-            pub enum #ty_ident {
+            #vis enum #ty_ident {
                 #ty_elements
             }
         };

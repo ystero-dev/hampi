@@ -14,10 +14,11 @@ impl Asn1ResolvedBoolean {
         generator: &mut Generator,
     ) -> Result<TokenStream, Error> {
         let type_name = generator.to_type_ident(name);
+        let vis = generator.get_visibility_tokens();
         Ok(quote! {
             #[derive(Debug, AperCodec)]
             #[asn(type = "BOOLEAN")]
-            pub struct #type_name(pub bool);
+            #vis struct #type_name(#vis bool);
         })
     }
 

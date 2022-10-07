@@ -29,6 +29,8 @@ impl ResolvedConstructedType {
                 quote! { false }
             };
 
+            let vis = generator.get_visibility_tokens();
+
             let mut comp_tokens = TokenStream::new();
             let mut optional_fields = 0;
             for c in components {
@@ -49,9 +51,9 @@ impl ResolvedConstructedType {
 
                     optional_fields += 1;
 
-                    quote! { pub #comp_field_ident: Option<#comp_ty_ident>, }
+                    quote! { #vis #comp_field_ident: Option<#comp_ty_ident>, }
                 } else {
-                    quote! { pub #comp_field_ident: #comp_ty_ident, }
+                    quote! { #vis #comp_field_ident: #comp_ty_ident, }
                 };
 
                 if c.key_field {
@@ -80,7 +82,7 @@ impl ResolvedConstructedType {
             Ok(quote! {
                 #[derive(Debug, AperCodec)]
                 #[asn(#ty_tokens)]
-                pub struct #type_name {
+                #vis struct #type_name {
                     #comp_tokens
                 }
             })

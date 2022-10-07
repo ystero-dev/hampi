@@ -5,24 +5,29 @@ use std::io;
 
 use clap::Parser;
 
-use asn1_compiler::Asn1Compiler;
+use asn1_compiler::{generator::Visibility, Asn1Compiler};
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Cli {
     files: Vec<String>,
 
+    /// Name of the Rust Module to write generated code to.
     #[arg(short, long)]
     module: String,
 
     #[arg(short)]
     debug: bool,
+
+    /// Visibility of Generated Structures and members:
+    #[arg(long, value_enum, default_value_t=Visibility::Public)]
+    visibility: Visibility,
 }
 
 fn main() -> io::Result<()> {
     let cli = Cli::parse();
 
-    let mut compiler = Asn1Compiler::new(&cli.module, cli.debug);
+    let mut compiler = Asn1Compiler::new(&cli.module, cli.debug, &cli.visibility);
 
     if cli.files.len() == 0 {
         return Err(std::io::Error::new(
