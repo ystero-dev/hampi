@@ -25,10 +25,12 @@ impl Asn1ResolvedCharacterString {
             ty_attributes.extend(sz_attributes);
         }
 
+        let vis = generator.get_visibility_tokens();
+
         let struct_tokens = quote! {
             #[derive(Debug, AperCodec)]
             #[asn(#ty_attributes)]
-            pub struct #struct_name(pub String);
+            #vis struct #struct_name(#vis String);
         };
 
         Ok(struct_tokens)

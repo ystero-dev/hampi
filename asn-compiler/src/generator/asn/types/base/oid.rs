@@ -14,10 +14,13 @@ impl Asn1ResolvedObjectIdentifier {
         generator: &mut Generator,
     ) -> Result<TokenStream, Error> {
         let type_name = generator.to_type_ident(name);
+
+        let vis = generator.get_visibility_tokens();
+
         Ok(quote! {
             #[derive(Debug, AperCodec)]
             #[asn(type = "OBJECT-IDENTIFIER")]
-            pub struct #type_name;
+            #vis struct #type_name;
         })
     }
 

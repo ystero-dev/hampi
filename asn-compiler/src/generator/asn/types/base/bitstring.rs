@@ -23,10 +23,12 @@ impl Asn1ResolvedBitString {
             ty_attributes.extend(sz_attributes);
         }
 
+        let vis = generator.get_visibility_tokens();
+
         let struct_tokens = quote! {
             #[derive(Debug, AperCodec)]
             #[asn(#ty_attributes)]
-            pub struct #struct_name(pub BitVec<u8, Msb0>);
+            #vis struct #struct_name(#vis BitVec<u8, Msb0>);
         };
 
         Ok(struct_tokens)

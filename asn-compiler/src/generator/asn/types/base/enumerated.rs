@@ -27,10 +27,12 @@ impl Asn1ResolvedEnumerated {
         ty_attributes.extend(quote! { , lb = "0" });
         ty_attributes.extend(quote! { , ub =  #ub  });
 
+        let vis = generator.get_visibility_tokens();
+
         let struct_tokens = quote! {
             #[derive(Debug, AperCodec)]
             #[asn(#ty_attributes)]
-            pub struct #struct_name(pub #inner_type);
+            #vis struct #struct_name(#vis #inner_type);
 
             impl #struct_name {
                 #named_values
@@ -46,8 +48,11 @@ impl Asn1ResolvedEnumerated {
             let const_name = generator.to_const_ident(&name);
             let value_literal = generator.to_suffixed_literal(self.bits, self.signed, *value);
             let ty = generator.to_inner_type(self.bits, self.signed);
+
+            let vis = generator.get_visibility_tokens();
+
             let const_tokens = quote! {
-                pub const #const_name: #ty =  #value_literal ;
+                #vis const #const_name: #ty =  #value_literal ;
             };
             tokens.extend(const_tokens);
         }

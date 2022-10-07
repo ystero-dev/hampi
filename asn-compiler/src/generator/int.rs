@@ -10,6 +10,17 @@ use crate::resolver::Resolver;
 
 use crate::resolver::asn::structs::types::Asn1ResolvedType;
 
+/// Visibility to be used for the generated Structs, Enums etc.
+#[derive(clap::ValueEnum, Clone, Debug)]
+pub enum Visibility {
+    /// Visibility is Public
+    Public,
+    /// Visibility is Crate
+    Crate,
+    /// Visibility is Private
+    Private,
+}
+
 #[derive(Debug)]
 pub(crate) struct Generator {
     // Generated Tokens for the module.
@@ -20,14 +31,18 @@ pub(crate) struct Generator {
 
     // Auxillary Items: These are structs/that are referenced inside constructed type.
     pub(crate) aux_items: Vec<TokenStream>,
+
+    // Visibility: Visibility of Generated Items
+    pub(crate) visibility: Visibility,
 }
 
 impl Generator {
-    pub(crate) fn new() -> Self {
+    pub(crate) fn new(visibility: &Visibility) -> Self {
         Generator {
             items: vec![],
             counter: 1,
             aux_items: vec![],
+            visibility: visibility.clone(),
         }
     }
 
@@ -124,6 +139,14 @@ impl Generator {
         self.counter += 1;
 
         format!("{} {}", name, self.counter)
+    }
+
+    pub(crate) fn get_visibility_tokens(&self) -> TokenStream {
+        match self.visibility {
+            Visibility::Public => quote! { pub },
+            Visibility::Crate => quote! { pub(crate) },
+            Visibility::Private => quote! {},
+        }
     }
 
     fn generate_use_tokens(&self) -> TokenStream {

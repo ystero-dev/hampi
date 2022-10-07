@@ -13,7 +13,7 @@ use crate::error::Error;
 
 use crate::parser::asn::structs::module::Asn1Module;
 
-use crate::generator::Generator;
+use crate::generator::{Generator, Visibility};
 use crate::resolver::Resolver;
 
 /// ASN.1 Compiler Struct.
@@ -42,17 +42,17 @@ pub struct Asn1Compiler {
 
 impl Default for Asn1Compiler {
     fn default() -> Self {
-        Asn1Compiler::new("default.rs", false)
+        Asn1Compiler::new("default.rs", false, &Visibility::Public)
     }
 }
 
 impl Asn1Compiler {
     /// Create a new Instance of the Compiler structure.
-    pub fn new(output: &str, debug: bool) -> Self {
+    pub fn new(output: &str, debug: bool, visibility: &Visibility) -> Self {
         Asn1Compiler {
             modules: HashMap::new(),
             resolver: Resolver::new(),
-            generator: Generator::new(), // FIXME: Hard coded
+            generator: Generator::new(visibility), // FIXME: Hard coded
             output_filename: output.to_string(),
             debug,
         }

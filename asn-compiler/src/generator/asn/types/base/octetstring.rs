@@ -23,10 +23,12 @@ impl Asn1ResolvedOctetString {
             ty_attributes.extend(sz_attributes);
         }
 
+        let vis = generator.get_visibility_tokens();
+
         let struct_tokens = quote! {
             #[derive(Debug, AperCodec)]
             #[asn(#ty_attributes)]
-            pub struct #struct_name(pub Vec<u8>);
+            #vis struct #struct_name(#vis Vec<u8>);
         };
 
         Ok(struct_tokens)

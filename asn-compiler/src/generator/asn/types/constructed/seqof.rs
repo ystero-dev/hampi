@@ -40,10 +40,12 @@ impl ResolvedConstructedType {
                 Some(&input_type_name),
             )?;
 
+            let vis = generator.get_visibility_tokens();
+
             Ok(quote! {
                 #[derive(Debug, AperCodec)]
                 #[asn(#ty_attrs)]
-                pub struct #seq_of_type_ident(pub Vec<#seq_of_type>);
+                #vis struct #seq_of_type_ident(#vis Vec<#seq_of_type>);
             })
         } else {
             Ok(TokenStream::new())
