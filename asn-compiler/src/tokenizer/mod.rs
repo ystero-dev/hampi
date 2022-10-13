@@ -717,20 +717,19 @@ fn get_seq_extension_or_square_brackets_token(
 //
 // Note: square brackets need a special treatment due to "[[" and "]]"
 fn get_single_char_token(token: char, line: usize, begin: usize) -> Result<Token, Error> {
-    let token_type: TokenType;
-    match token {
-        '{' => token_type = TokenType::CurlyBegin,
-        '}' => token_type = TokenType::CurlyEnd,
-        '(' => token_type = TokenType::RoundBegin,
-        ')' => token_type = TokenType::RoundEnd,
-        '!' => token_type = TokenType::ExceptionMarker,
-        ';' => token_type = TokenType::SemiColon,
-        ',' => token_type = TokenType::Comma,
-        '|' => token_type = TokenType::SetUnionToken,
-        '^' => token_type = TokenType::SetIntersectionToken,
-        '<' => token_type = TokenType::LessThan,
+    let token_type: TokenType = match token {
+        '{' => TokenType::CurlyBegin,
+        '}' => TokenType::CurlyEnd,
+        '(' => TokenType::RoundBegin,
+        ')' => TokenType::RoundEnd,
+        '!' => TokenType::ExceptionMarker,
+        ';' => TokenType::SemiColon,
+        ',' => TokenType::Comma,
+        '|' => TokenType::SetUnionToken,
+        '^' => TokenType::SetIntersectionToken,
+        '<' => TokenType::LessThan,
         _ => return Err(Error::TokenizeError(21, line, begin)),
-    }
+    };
     Ok(Token {
         r#type: token_type,
         span: Span::new(

@@ -6,7 +6,7 @@ use topological_sort::TopologicalSort;
 
 use crate::parser::asn::structs::{defs::Asn1Definition, oid::ObjectIdentifier};
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum Asn1ModuleTag {
     Explicit,
     Implicit,

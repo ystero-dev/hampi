@@ -32,7 +32,7 @@ lazy_static! {
 //
 // Parses named OID components of the form `iso` or `iso(1)`
 fn parse_named_oid_component(tokens: &[Token]) -> Result<(OIDComponent, usize), Error> {
-    if !expect_token(&tokens, Token::is_value_reference)? {
+    if !expect_token(tokens, Token::is_value_reference)? {
         return Err(unexpected_token!("'IDENTIFIER'", tokens[0]));
     }
     let name_token = &tokens[0];

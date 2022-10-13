@@ -16,7 +16,7 @@ pub(super) fn generate_aper_codec_for_asn_open_type(
     }
     let (variant_decode_tokens, variant_encode_tokens) = variant_tokens.unwrap();
 
-    let encode_tokens = if variant_encode_tokens.len() > 0 {
+    let encode_tokens = if !variant_encode_tokens.is_empty() {
         quote! {
                 let mut inner = asn1_codecs::aper::AperCodecData::new();
                 let _ = match self {

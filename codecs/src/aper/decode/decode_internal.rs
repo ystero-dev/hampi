@@ -106,7 +106,7 @@ fn decode_constrained_length_determinent(
 // Called when `ub` is not determined or `ub ` - `lb` is greater than 64K and in this case value of
 // `lb` is don't care.
 fn decode_indefinite_length_determinent(data: &mut AperCodecData) -> Result<usize, AperCodecError> {
-    let _ = data.decode_align()?;
+    data.decode_align()?;
     let first = data.decode_bool()?;
     let length = if !first {
         data.decode_bits_as_integer(7, false)?
@@ -185,16 +185,16 @@ pub(super) fn decode_constrained_whole_number(
             };
             data.decode_bits_as_integer(bits, false)?
         } else if range == 256 {
-            let _ = data.decode_align()?;
+            data.decode_align()?;
             data.decode_bits_as_integer(8, false)?
         } else if range <= 65536 {
-            let _ = data.decode_align()?;
+            data.decode_align()?;
             data.decode_bits_as_integer(16, false)?
         } else {
             let bytes_needed = crate::aper::bytes_needed_for_range(range);
             log::trace!("bytes_needed : {}", bytes_needed);
             let length = decode_constrained_length_determinent(data, 1, bytes_needed as usize)?;
-            let _ = data.decode_align()?;
+            data.decode_align()?;
             data.decode_bits_as_integer(length * 8, false)?
         };
 

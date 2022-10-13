@@ -135,10 +135,10 @@ impl Asn1Compiler {
 
         match String::from_utf8(output) {
             Ok(formatted_output) => match status.code() {
-                Some(0) => Ok(formatted_output.to_owned()),
+                Some(0) => Ok(formatted_output),
                 _ => Err(resolve_error!("`rustfmt` failed to write some bindings.")),
             },
-            _ => Ok(stdin_handle.join().unwrap().to_owned()),
+            _ => Ok(stdin_handle.join().unwrap()),
         }
     }
 
@@ -187,10 +187,10 @@ impl Asn1Compiler {
     fn resolve_definitions(&mut self) -> Result<(), Error> {
         let module_names = self.sorted_modules();
         for name in module_names {
-            let mut module = self.modules.get_mut(&name).unwrap();
+            let module = self.modules.get_mut(&name).unwrap();
 
             //let module_definitions = module.definitions_sorted();
-            self.resolver.resolve_definitions(&mut module)?;
+            self.resolver.resolve_definitions(module)?;
         }
         if self.debug {
             eprintln!(

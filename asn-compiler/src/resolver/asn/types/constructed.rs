@@ -153,8 +153,7 @@ fn resolve_sequence_classfield_components(
         seq.additions
             .clone()
             .iter()
-            .map(|a| a.components.clone())
-            .flatten()
+            .flat_map(|a| a.components.clone())
             .collect::<Vec<SeqComponent>>(),
     );
     let all_components = all_components
@@ -193,10 +192,10 @@ fn resolve_sequence_classfield_components(
             },
         ))
     } else {
-        return Err(resolve_error!(
+        Err(resolve_error!(
             "Object Set '{}' not resolved yet!",
             set_reference
-        ));
+        ))
     }
 }
 

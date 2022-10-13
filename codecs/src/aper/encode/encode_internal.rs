@@ -113,10 +113,10 @@ pub(super) fn encode_indefinite_length_determinent(
     data.align();
     if value < 128 {
         let byte = value as u8;
-        data.append_bits(&byte.view_bits::<Msb0>());
+        data.append_bits(byte.view_bits::<Msb0>());
     } else if value < 16384 {
         let bytes = (value as u16 | 0x8000).to_be_bytes();
-        data.append_bits(&bytes.view_bits::<Msb0>());
+        data.append_bits(bytes.view_bits::<Msb0>());
     } else {
         return Err(AperCodecError::new(
             "Length determinent >= 16384 not implemented",

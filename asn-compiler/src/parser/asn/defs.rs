@@ -47,7 +47,7 @@ impl Asn1Definition {
             match self.kind {
                 Asn1AssignmentKind::Object(ref mut o) => {
                     if let Asn1ObjectValue::Input(s) = &o.object.value {
-                        let parsed = parse_object_from_class(&s, &c.classref)?;
+                        let parsed = parse_object_from_class(s, &c.classref)?;
                         o.object.value = parsed;
                     }
                 }
