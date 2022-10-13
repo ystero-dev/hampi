@@ -26,9 +26,10 @@ impl Asn1ResolvedCharacterString {
         }
 
         let vis = generator.get_visibility_tokens();
+        let dir = generator.generate_derive_tokens();
 
         let struct_tokens = quote! {
-            #[derive(Debug, AperCodec)]
+            #dir
             #[asn(#ty_attributes)]
             #vis struct #struct_name(#vis String);
         };

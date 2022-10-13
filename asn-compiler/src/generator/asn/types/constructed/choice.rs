@@ -49,12 +49,14 @@ impl ResolvedConstructedType {
             };
 
             let vis = generator.get_visibility_tokens();
+            let dir = generator.generate_derive_tokens();
             let struct_tokens =
                 ResolvedConstructedType::generate_struct_tokens_for_asn_choice_type(
                     &type_name,
                     &root_tokens,
                     &addition_tokens,
                     vis,
+                    dir,
                 )?;
 
             let _impl_tokens = ResolvedConstructedType::generate_impl_tokens_for_asn_choice_type(
@@ -77,6 +79,7 @@ impl ResolvedConstructedType {
         root_tokens: &[ChoiceComponentToken],
         addition_tokens: &Option<Vec<ChoiceComponentToken>>,
         vis: TokenStream,
+        dir: TokenStream,
     ) -> Result<TokenStream, Error> {
         let mut root_comp_tokens = TokenStream::new();
         for token in root_tokens {
@@ -128,7 +131,7 @@ impl ResolvedConstructedType {
         let ty_attributes = quote! { #[asn(type = "CHOICE", #lb_token, #ub_token, #additions)] };
 
         Ok(quote! {
-            #[derive(Debug, AperCodec)]
+            #dir
             #ty_attributes
             #vis enum #type_name {
                 #root_comp_tokens

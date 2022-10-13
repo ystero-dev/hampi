@@ -79,8 +79,9 @@ impl ResolvedConstructedType {
                 ty_tokens.extend(quote! { , optional_fields = #optflds });
             }
 
+            let dir = generator.generate_derive_tokens();
             Ok(quote! {
-                #[derive(Debug, AperCodec)]
+                #dir
                 #[asn(#ty_tokens)]
                 #vis struct #type_name {
                     #comp_tokens
