@@ -46,7 +46,7 @@ impl Asn1ResolvedEnumerated {
     fn generate_named_values(&self, generator: &Generator) -> Result<TokenStream, Error> {
         let mut tokens = TokenStream::new();
         for (name, value) in &self.named_root_values {
-            let const_name = generator.to_const_ident(&name);
+            let const_name = generator.to_const_ident(name);
             let value_literal = generator.to_suffixed_literal(self.bits, self.signed, *value);
             let ty = generator.to_inner_type(self.bits, self.signed);
 

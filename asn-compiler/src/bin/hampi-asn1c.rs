@@ -52,7 +52,7 @@ fn main() -> io::Result<()> {
         cli.derive.clone(),
     );
 
-    if cli.files.len() == 0 {
+    if cli.files.is_empty() {
         return Err(std::io::Error::new(
             std::io::ErrorKind::InvalidInput,
             "No Input files Specified",

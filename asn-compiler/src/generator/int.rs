@@ -129,7 +129,7 @@ impl Generator {
 
     pub(crate) fn to_type_ident(&self, name: &str) -> Ident {
         Ident::new(
-            &capitalize_first(name).replace("-", "_").replace(" ", "_"),
+            &capitalize_first(name).replace('-', "_").replace(' ', "_"),
             Span::call_site(),
         )
     }
@@ -212,12 +212,12 @@ impl Generator {
     pub(crate) fn generate_derive_tokens(&self) -> TokenStream {
         let mut tokens = vec![];
         for codec in &self.codecs {
-            let codec_token = CODEC_TOKENS.get(&codec).unwrap();
+            let codec_token = CODEC_TOKENS.get(codec).unwrap();
             tokens.push(codec_token.to_string());
         }
 
         for derive in &self.derives {
-            let derive_token = DERIVE_TOKENS.get(&derive).unwrap();
+            let derive_token = DERIVE_TOKENS.get(derive).unwrap();
             tokens.push(derive_token.to_string());
         }
 

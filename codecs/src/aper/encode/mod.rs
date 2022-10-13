@@ -105,7 +105,7 @@ pub fn encode_integer(
         data.encode_bool(extended);
     }
 
-    let _ = match (lb, ub) {
+    match (lb, ub) {
         (None, _) => encode_unconstrained_whole_number(data, value)?,
         (Some(lb), None) => encode_semi_constrained_whole_number(data, lb, value)?,
         (Some(lb), Some(ub)) => encode_constrained_whole_number(data, lb, ub, value)?,
@@ -155,7 +155,7 @@ pub fn encode_enumerated(
         data.encode_bool(extended);
     }
 
-    let _ = encode_integer(data, lb, ub, false, value, false)?;
+    encode_integer(data, lb, ub, false, value, false)?;
 
     data.dump();
 
@@ -275,13 +275,13 @@ pub fn encode_length_determinent(
     );
 
     if normally_small {
-        let _ = encode_normally_small_length_determinent(data, value)?;
+        encode_normally_small_length_determinent(data, value)?;
         data.dump_encode();
 
         return Ok(());
     }
 
-    let _ = match ub {
+    match ub {
         Some(ub) if ub < 65_536 => {
             encode_constrained_whole_number(data, lb.unwrap_or(0), ub, value as i128)?
         }

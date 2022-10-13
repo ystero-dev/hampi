@@ -144,16 +144,15 @@ fn maybe_parse_header_tags(tokens: &[Token]) -> Result<(Asn1ModuleTag, usize), E
 
     let tag =
         if expect_one_of_keywords(&tokens[consumed..], &["EXPLICIT", "IMPLICIT", "AUTOMATIC"])? {
-            let tag: Asn1ModuleTag;
-            match tokens[consumed].text.as_str() {
-                "EXPLICIT" => tag = Asn1ModuleTag::Explicit,
-                "IMPLICIT" => tag = Asn1ModuleTag::Implicit,
-                "AUTOMATIC" => tag = Asn1ModuleTag::Automatic,
+            let tag: Asn1ModuleTag = match tokens[consumed].text.as_str() {
+                "EXPLICIT" => Asn1ModuleTag::Explicit,
+                "IMPLICIT" => Asn1ModuleTag::Implicit,
+                "AUTOMATIC" => Asn1ModuleTag::Automatic,
                 _ => {
                     // Will never reach
                     return Err(parse_error!("Should Never Reach"));
                 }
-            }
+            };
             consumed += 1;
             if expect_keyword(&tokens[consumed..], "TAGS")? {
                 consumed += 1

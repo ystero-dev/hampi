@@ -190,7 +190,7 @@ pub(crate) fn resolve_object(
             let resolved = match field {
                 Asn1ObjectFieldSpec::Type { ty } => {
                     let resolved = if ty.is_some() {
-                        Some(resolve_type(&ty.as_ref().unwrap(), resolver)?)
+                        Some(resolve_type(ty.as_ref().unwrap(), resolver)?)
                     } else {
                         None
                     };
@@ -201,7 +201,7 @@ pub(crate) fn resolve_object(
 
                     let resolved_value = if value.is_some() {
                         Some(resolve_value(
-                            &value.as_ref().unwrap(),
+                            value.as_ref().unwrap(),
                             &resolved_type,
                             resolver,
                         )?)

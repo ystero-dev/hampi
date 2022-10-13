@@ -38,8 +38,7 @@ impl SeqAdditionGroup {
     pub(crate) fn dependent_references(&self) -> Vec<String> {
         self.components
             .iter()
-            .map(|c| c.dependent_references())
-            .flatten()
+            .flat_map(|c| c.dependent_references())
             .collect()
     }
 }
@@ -54,8 +53,7 @@ impl ChoiceAdditionGroup {
     pub(crate) fn dependent_references(&self) -> Vec<String> {
         self.components
             .iter()
-            .map(|c| c.dependent_references())
-            .flatten()
+            .flat_map(|c| c.dependent_references())
             .collect()
     }
 }

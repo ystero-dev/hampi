@@ -94,7 +94,7 @@ impl ResolvedSetType {
         // FIXME: This is perhaps not right
         let ty_ident = match input {
             None => generator.to_type_ident(&self.setref),
-            Some(ref inp) => generator.to_type_ident(inp),
+            Some(inp) => generator.to_type_ident(inp),
         };
         let ty_elements = self.generate_aux_types(generator)?;
 

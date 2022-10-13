@@ -88,7 +88,7 @@ impl AperCodecData {
             ));
         }
         let bit = *self.bits.get(self.decode_offset).as_deref().unwrap();
-        let _ = self.advance_maybe_err(1, true)?;
+        self.advance_maybe_err(1, true)?;
 
         Ok(bit)
     }
@@ -259,7 +259,7 @@ impl AperCodecData {
             ));
         }
         let bv = BitVec::from_bitslice(&self.bits[self.decode_offset..self.decode_offset + length]);
-        let _ = self.advance_maybe_err(length, true)?;
+        self.advance_maybe_err(length, true)?;
 
         Ok(bv)
     }

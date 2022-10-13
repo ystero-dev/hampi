@@ -42,7 +42,7 @@ impl ResolvedConstructedType {
             let addition_tokens = if additions.is_some() {
                 let additions = additions.as_ref().unwrap();
                 let addition_tokens =
-                    ResolvedConstructedType::get_component_tokens(&additions, name, generator)?;
+                    ResolvedConstructedType::get_component_tokens(additions, name, generator)?;
                 Some(addition_tokens)
             } else {
                 None
@@ -156,11 +156,11 @@ impl ResolvedConstructedType {
         };
 
         let root_comp_tokens =
-            ResolvedConstructedType::choice_component_impl_decode_aper_tokens(&root_tokens)?;
+            ResolvedConstructedType::choice_component_impl_decode_aper_tokens(root_tokens)?;
 
         let additional_comps_tokens = if addition_tokens.is_some() {
             ResolvedConstructedType::choice_component_impl_decode_aper_tokens(
-                &addition_tokens.as_ref().unwrap(),
+                addition_tokens.as_ref().unwrap(),
             )?
         } else {
             quote! { _ => Err(AperCodecError) }

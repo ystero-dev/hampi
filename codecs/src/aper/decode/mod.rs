@@ -220,7 +220,7 @@ pub fn decode_bitstring(
 
         if length > 0 {
             if length > 16 {
-                let _ = data.decode_align()?;
+                data.decode_align()?;
             }
             bv.extend(data.get_bitvec(length)?);
         }
@@ -270,7 +270,7 @@ pub fn decode_octetstring(
 
         if length > 0 {
             if length > 2 {
-                let _ = data.decode_align()?;
+                data.decode_align()?;
             }
             octets.extend(data.get_bytes(length)?);
         }
