@@ -41,9 +41,10 @@ impl ResolvedConstructedType {
             )?;
 
             let vis = generator.get_visibility_tokens();
+            let dir = generator.generate_derive_tokens();
 
             Ok(quote! {
-                #[derive(Debug, AperCodec)]
+                #dir
                 #[asn(#ty_attrs)]
                 #vis struct #seq_of_type_ident(#vis Vec<#seq_of_type>);
             })

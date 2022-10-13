@@ -53,9 +53,10 @@ impl Asn1ResolvedInteger {
         }
 
         let vis = generator.get_visibility_tokens();
+        let dir = generator.generate_derive_tokens();
 
         let struct_tokens = quote! {
-            #[derive(Debug, AperCodec)]
+            #dir
             #[asn(#ty_tokens)]
             #vis struct #struct_name(#vis #inner_type);
         };

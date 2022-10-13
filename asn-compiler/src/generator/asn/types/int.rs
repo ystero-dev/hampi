@@ -76,9 +76,10 @@ impl ResolvedSetType {
         let ty_elements = self.generate_aux_types(generator)?;
 
         let vis = generator.get_visibility_tokens();
+        let dir = generator.generate_derive_tokens();
 
         Ok(quote! {
-            #[derive(Debug, AperCodec)]
+            #dir
             #vis enum #ty_ident {
                 #ty_elements
             }
@@ -98,9 +99,10 @@ impl ResolvedSetType {
         let ty_elements = self.generate_aux_types(generator)?;
 
         let vis = generator.get_visibility_tokens();
+        let dir = generator.generate_derive_tokens();
 
         let set_ty = quote! {
-            #[derive(Debug, AperCodec)]
+            #dir
             #[asn(type = "OPEN")]
             #vis enum #ty_ident {
                 #ty_elements

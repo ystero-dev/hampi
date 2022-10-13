@@ -22,7 +22,6 @@ heck = { version = "0.4" }
 bitvec = { version = "1.0" }
 clap = { version = "4.0.10", features = ["derive"] }
 
-
 [[bin]]
 name = "hampi-asn1c"
 path = "src/bin/hampi-asn1c.rs"

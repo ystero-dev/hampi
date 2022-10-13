@@ -16,9 +16,10 @@ impl Asn1ResolvedObjectIdentifier {
         let type_name = generator.to_type_ident(name);
 
         let vis = generator.get_visibility_tokens();
+        let dir = generator.generate_derive_tokens();
 
         Ok(quote! {
-            #[derive(Debug, AperCodec)]
+            #dir
             #[asn(type = "OBJECT-IDENTIFIER")]
             #vis struct #type_name;
         })

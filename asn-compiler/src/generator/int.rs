@@ -1,14 +1,41 @@
 //! Code Generation module
 
+use std::collections::HashMap;
+
 use heck::{ToShoutySnakeCase, ToSnakeCase};
 use proc_macro2::{Ident, Literal, Span, TokenStream};
 
 use quote::quote;
 
+use lazy_static::lazy_static;
+
 use crate::error::Error;
 use crate::resolver::Resolver;
 
 use crate::resolver::asn::structs::types::Asn1ResolvedType;
+
+/// Supported Codecs
+#[derive(clap::ValueEnum, Clone, Debug, PartialEq, Eq, Hash)]
+pub enum Codec {
+    /// Generate code for ASN.1 APER Codec
+    Aper,
+}
+
+/// Supported Derive Macros
+#[derive(clap::ValueEnum, Clone, Debug, PartialEq, Eq, Hash)]
+pub enum Derive {
+    /// Generate `Debug` code for the generated strucutres.
+    Debug,
+
+    /// Generate 'Clone' code for the generated structures.
+    Clone,
+
+    /// Generate 'serde::Serialize' code for the generated structures.
+    Serialize,
+
+    /// Generate 'serde::Deserialize' code for the generated structures.
+    Deserialize,
+}
 
 /// Visibility to be used for the generated Structs, Enums etc.
 #[derive(clap::ValueEnum, Clone, Debug)]
@@ -19,6 +46,22 @@ pub enum Visibility {
     Crate,
     /// Visibility is Private
     Private,
+}
+
+lazy_static! {
+    static ref CODEC_TOKENS: HashMap<Codec, String> = {
+        let mut m = HashMap::new();
+        m.insert(Codec::Aper, "asn1_codecs_derive::AperCodec".to_string());
+        m
+    };
+    static ref DERIVE_TOKENS: HashMap<Derive, String> = {
+        let mut m = HashMap::new();
+        m.insert(Derive::Debug, "Debug".to_string());
+        m.insert(Derive::Clone, "Clone".to_string());
+        m.insert(Derive::Serialize, "serde::Serialize".to_string());
+        m.insert(Derive::Deserialize, "serde::Deserialize".to_string());
+        m
+    };
 }
 
 #[derive(Debug)]
@@ -34,15 +77,23 @@ pub(crate) struct Generator {
 
     // Visibility: Visibility of Generated Items
     pub(crate) visibility: Visibility,
+
+    // codecs
+    pub(crate) codecs: Vec<Codec>,
+
+    // Derives
+    pub(crate) derives: Vec<Derive>,
 }
 
 impl Generator {
-    pub(crate) fn new(visibility: &Visibility) -> Self {
+    pub(crate) fn new(visibility: &Visibility, codecs: Vec<Codec>, derives: Vec<Derive>) -> Self {
         Generator {
             items: vec![],
             counter: 1,
             aux_items: vec![],
             visibility: visibility.clone(),
+            codecs,
+            derives,
         }
     }
 
@@ -155,11 +206,26 @@ impl Generator {
 
             use bitvec::vec::BitVec;
             use bitvec::order::Msb0;
-
-            // FIXME: Do this based on the Codec to be supported, right now we are only supporting
-            // APER Codec.
-            use asn1_codecs_derive::AperCodec;
         }
+    }
+
+    pub(crate) fn generate_derive_tokens(&self) -> TokenStream {
+        let mut tokens = vec![];
+        for codec in &self.codecs {
+            let codec_token = CODEC_TOKENS.get(&codec).unwrap();
+            tokens.push(codec_token.to_string());
+        }
+
+        for derive in &self.derives {
+            let derive_token = DERIVE_TOKENS.get(&derive).unwrap();
+            tokens.push(derive_token.to_string());
+        }
+
+        let token_string = tokens.join(",");
+
+        let derive_token_string = format!("#[derive({})]\n", token_string);
+        let derive_token_stream: TokenStream = derive_token_string.parse().unwrap();
+        derive_token_stream
     }
 }
 

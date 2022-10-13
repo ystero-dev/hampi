@@ -11,10 +11,11 @@ asn1-codecs = { path = "../codecs", version = "=0.2.0" }
 asn1_codecs_derive = { path = "../codecs_derive", version = "=0.2.0" }
 trybuild = { version = "1.0" }
 hex = { version = "0.4" }
-bitvec = { version = "1.0" }
+bitvec = { version = "1.0" , features = ["serde"]}
 log = { version = "0.4" }
 criterion = { version = "0.3" }
 env_logger = { version = "0.4" }
+serde = { version = "1.0" , features = ["derive"]}
 
 [[bench]]
 name = "ngap_bench"
