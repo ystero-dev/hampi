@@ -1,6 +1,5 @@
 //! A simple utility to tokenize ASN files.
 
-use std::fs::File;
 use std::io;
 
 use clap::Parser;
@@ -40,6 +39,13 @@ struct Cli {
 fn main() -> io::Result<()> {
     let mut cli = Cli::parse();
 
+    if cli.files.is_empty() {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::InvalidInput,
+            "No Input files Specified",
+        ));
+    }
+
     if !cli.derive.contains(&Derive::Debug) {
         cli.derive.push(Derive::Debug);
     }
@@ -51,31 +57,7 @@ fn main() -> io::Result<()> {
         cli.codec.clone(),
         cli.derive.clone(),
     );
-
-    if cli.files.is_empty() {
-        return Err(std::io::Error::new(
-            std::io::ErrorKind::InvalidInput,
-            "No Input files Specified",
-        ));
-    }
-
-    for file in cli.files {
-        let file = File::open(file)?;
-        let mut tokens = asn1_compiler::tokenizer::tokenize(file)?;
-        let mut modules = asn1_compiler::parser::parse(&mut tokens)?;
-
-        loop {
-            let module = modules.pop();
-            if module.is_none() {
-                break;
-            }
-            let module = module.unwrap();
-            compiler.add_module(module);
-        }
-    }
-    compiler.resolve_modules()?;
-
-    compiler.generate()?;
+    compiler.compile_files(&cli.files)?;
 
     Ok(())
 }

@@ -5,6 +5,8 @@ authors = ["Abhijit Gadgil <gabhijit@iitbombay.org>"]
 edition = "2018"
 publish = false
 
+[build-dependencies]
+asn1-compiler = { path = "../asn-compiler"}
 
 [dev-dependencies]
 asn1-codecs = { path = "../codecs", version = "=0.2.0" }
