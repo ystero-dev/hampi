@@ -33,6 +33,9 @@ pub enum Error {
 
     /// Error related to code generation from resolved types.
     CodeGenerationError(String),
+
+    /// Any IO Error during compilation
+    IOError(String),
 }
 
 impl std::fmt::Display for Error {
@@ -83,6 +86,9 @@ impl std::fmt::Display for Error {
             }
             Error::CodeGenerationError(ref errstr) => {
                 write!(f, "Compilation Error: Code Generation: {}", errstr)
+            }
+            Error::IOError(ref errstr) => {
+                write!(f, "Compilation Error: IO Error: {}", errstr)
             }
         }
     }
@@ -138,6 +144,12 @@ macro_rules! resolve_error {
 macro_rules! code_generate_error {
     ($($arg: tt)*) => {
         crate::error::Error::CodeGenerationError(format!($($arg)*))
+    };
+}
+
+macro_rules! io_error {
+    ($($arg: tt)*) => {
+        crate::error::Error::IOError(format!($($arg)*))
     };
 }
 

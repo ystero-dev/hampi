@@ -4,6 +4,12 @@ use quote::quote;
 
 use crate::attrs::{parse_fld_meta_as_codec_params, TyCodecParams};
 
+struct FieldTokens {
+    decode_tokens: Vec<proc_macro2::TokenStream>,
+    encode_tokens: Vec<proc_macro2::TokenStream>,
+    hdr_encode_tokens: Vec<proc_macro2::TokenStream>,
+}
+
 pub(super) fn generate_aper_codec_for_asn_sequence(
     ast: &syn::DeriveInput,
     params: &TyCodecParams,
@@ -17,11 +23,14 @@ pub(super) fn generate_aper_codec_for_asn_sequence(
         syn::LitInt::new("0", proc_macro2::Span::call_site())
     };
 
-    let fld_tokens = generate_seq_field_codec_tokens_using_attrs(ast);
-    if fld_tokens.is_err() {
-        return fld_tokens.err().unwrap().to_compile_error().into();
+    let field_tokens = generate_seq_field_codec_tokens_using_attrs(ast);
+    if field_tokens.is_err() {
+        return field_tokens.err().unwrap().to_compile_error().into();
     }
-    let (fld_decode_tokens, hdr_encode_tokens, fld_encode_tokens) = fld_tokens.unwrap();
+    let field_tokens = field_tokens.unwrap();
+    let fld_decode_tokens = field_tokens.decode_tokens;
+    let hdr_encode_tokens = field_tokens.hdr_encode_tokens;
+    let fld_encode_tokens = field_tokens.encode_tokens;
 
     let tokens = quote! {
         impl asn1_codecs::aper::AperCodec for #name {
@@ -55,14 +64,7 @@ pub(super) fn generate_aper_codec_for_asn_sequence(
 
 fn generate_seq_field_codec_tokens_using_attrs(
     ast: &syn::DeriveInput,
-) -> Result<
-    (
-        Vec<proc_macro2::TokenStream>,
-        Vec<proc_macro2::TokenStream>,
-        Vec<proc_macro2::TokenStream>,
-    ),
-    syn::Error,
-> {
+) -> Result<FieldTokens, syn::Error> {
     let mut decode_tokens = vec![];
     let mut encode_tokens = vec![];
     let mut hdr_encode_tokens = vec![];
@@ -177,7 +179,11 @@ fn generate_seq_field_codec_tokens_using_attrs(
         }
         Err(first.clone())
     } else {
-        Ok((decode_tokens, hdr_encode_tokens, encode_tokens))
+        Ok(FieldTokens {
+            decode_tokens,
+            hdr_encode_tokens,
+            encode_tokens,
+        })
     }
 }
 

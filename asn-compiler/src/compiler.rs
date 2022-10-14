@@ -5,6 +5,7 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io;
 use std::io::Write;
+use std::path::Path;
 use std::process::{Command, Stdio};
 
 use topological_sort::TopologicalSort;
@@ -109,6 +110,27 @@ impl Asn1Compiler {
         eprintln!("\n\nWrote generated code to '{}'.", self.output_filename);
 
         Ok(())
+    }
+
+    /// The Actual compilation driver
+    pub fn compile_files<T: AsRef<Path>>(&mut self, files: &[T]) -> Result<(), Error> {
+        for file in files {
+            let file = File::open(file).map_err(|e| io_error!("{:#?}", e))?;
+            let mut tokens = crate::tokenizer::tokenize(file)?;
+            let mut modules = crate::parser::parse(&mut tokens)?;
+
+            loop {
+                let module = modules.pop();
+                if module.is_none() {
+                    break;
+                }
+                let module = module.unwrap();
+                self.add_module(module);
+            }
+        }
+        self.resolve_modules()?;
+
+        self.generate()
     }
 
     fn rustfmt_generated_code(&self, code: &str) -> Result<String, Error> {
