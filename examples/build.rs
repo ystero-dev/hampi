@@ -9,13 +9,12 @@ use asn1_compiler::{
     Asn1Compiler,
 };
 
-fn main() -> std::io::Result<()> {
-    let ranap_specs_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap())
-        .join("specs")
-        .join("ranap");
-    eprintln!("{:#?}", ranap_specs_dir);
-
-    let ranap_spec_files = ranap_specs_dir
+fn get_specs_files(
+    specs_name: &str,
+    specs_dir: std::path::PathBuf,
+    prefix: &str,
+) -> std::io::Result<Vec<PathBuf>> {
+    let specs_files = specs_dir
         .read_dir()?
         .filter_map(|e| e.ok())
         .filter(|e| e.path().file_name().is_some())
@@ -25,23 +24,37 @@ fn main() -> std::io::Result<()> {
                 .unwrap()
                 .to_str()
                 .unwrap()
-                .starts_with("RANAP")
+                .starts_with(prefix)
         })
         .map(|e| e.path())
         .collect::<Vec<_>>();
-    eprintln!("ranap_spec_files: {:#?}", ranap_spec_files);
+    eprintln!("specs_name:{} specs_files: {:#?}", specs_name, specs_files);
+    Ok(specs_files)
+}
 
-    let ranap_rs_module = PathBuf::from(env::var("OUT_DIR").unwrap()).join("ranap.rs");
-    let ranap_rs_module = ranap_rs_module.to_str().unwrap();
-    let mut compiler = Asn1Compiler::new(
-        ranap_rs_module,
-        false,
-        &Visibility::Public,
-        vec![Codec::Aper],
-        vec![Derive::Debug, Derive::Serialize, Derive::Deserialize],
-    );
+fn main() -> std::io::Result<()> {
+    let specs = vec!["ranap", "s1ap", "ngap"];
+    let modules = vec!["ranap.rs", "s1ap.rs", "ngap.rs"];
 
-    compiler.compile_files(&ranap_spec_files)?;
+    for (spec, module) in std::iter::zip(specs, modules) {
+        let specs_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap())
+            .join("specs")
+            .join(spec);
+        eprintln!("{:#?}", specs_dir);
+
+        let specs_files = get_specs_files(spec, specs_dir, &spec.to_ascii_uppercase())?;
+
+        let rs_module = PathBuf::from(env::var("OUT_DIR").unwrap()).join(module);
+        let rs_module = rs_module.to_str().unwrap();
+        let mut compiler = Asn1Compiler::new(
+            rs_module,
+            false,
+            &Visibility::Public,
+            vec![Codec::Aper],
+            vec![Derive::Debug, Derive::Serialize, Derive::Deserialize],
+        );
+        compiler.compile_files(&specs_files)?;
+    }
 
     Ok(())
 }
