@@ -1,6 +1,6 @@
 [package]
 name = "asn1-compiler"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Abhijit Gadgil <gabhijit@iitbombay.org>"]
 edition = "2018"
 description = "ASN.1 Compiler in Rust."
@@ -23,5 +23,5 @@ bitvec = { version = "1.0" }
 clap = { version = "4.0.10", features = ["derive"] }
 
 [[bin]]
-name = "hampi-asn1c"
-path = "src/bin/hampi-asn1c.rs"
+name = "hampi-rs-asn1c"
+path = "src/bin/hampi-rs-asn1c.rs"
