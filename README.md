@@ -20,13 +20,6 @@ Currently specifications from the `specs/` directory can be compiled into respec
 
 ## Getting Started
 
-The simplest way to try out this in action is - `cargo run --release specs/ngap/NGAP-*  > ngap.rs` and then take a look at generated `ngap` module. (Better CLI support is coming soon.)
-
-### Running Test Cases
-
-1. Test cases can be run through `cargo test`.
-
-
 ### `build.rs` Support
 
 Typically the compiler can be invoked also using `build.rs` mechanism. An example `build.rs` is provided in the `examples/` sub project. And the code generated through this `build.rs` can be integrated into your project. Examples of that is provided in `examples/tests/` directory.
@@ -34,4 +27,8 @@ Typically the compiler can be invoked also using `build.rs` mechanism. An exampl
 ### Using CLI tool
 
 A tool `hampi-rs-asn1c` can be installed using `cargo install hampi-rs-asn1c` and then following the CLI usage.
+
+### Running Test Cases
+
+1. Test cases can be run through `cargo test`.
 

@@ -16,19 +16,27 @@ fn get_specs_files(
 ) -> std::io::Result<Vec<PathBuf>> {
     let specs_files = specs_dir
         .read_dir()?
-        .filter_map(|e| e.ok())
-        .filter(|e| e.path().file_name().is_some())
-        .filter(|e| {
-            e.path()
-                .file_name()
-                .unwrap()
-                .to_str()
-                .unwrap()
-                .starts_with(prefix)
+        // Following will get rid of non-ok values
+        .flatten()
+        // We now get the 'path' for the `DirEntry`
+        .map(|file| file.path())
+        // Now we filter all such paths such that
+        .filter(|path| {
+            path.file_name()
+                // Filename is a valid one and if Valid is Option<&OsStr<>
+                // is changed to Option<&str>
+                .and_then(|f| f.to_str())
+                // This is a `map` on the option - converts Option<&str>, Option<bool>,
+                // Leaving `None` as it is
+                .map(|s| s.starts_with(prefix))
+                // If it's None, it's falsey, filter out
+                .unwrap_or_default()
         })
-        .map(|e| e.path())
+        // Collect everything as Vec<Path>
         .collect::<Vec<_>>();
+
     eprintln!("specs_name:{} specs_files: {:#?}", specs_name, specs_files);
+
     Ok(specs_files)
 }
 
