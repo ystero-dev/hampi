@@ -246,11 +246,18 @@ mod tests {
             consumed: usize,
         }
 
-        let test_cases = vec![ParseTypeTestCase {
-            input: "OBJECT IDENTIFIER",
-            success: true,
-            consumed: 2,
-        }];
+        let test_cases = vec![
+            ParseTypeTestCase {
+                input: "OBJECT IDENTIFIER",
+                success: true,
+                consumed: 2,
+            },
+            ParseTypeTestCase {
+                input: "SEQUENCE SIZE (1.. 1024) OF ReportData",
+                success: true,
+                consumed: 9,
+            },
+        ];
 
         for tc in test_cases {
             let reader = std::io::BufReader::new(std::io::Cursor::new(tc.input));

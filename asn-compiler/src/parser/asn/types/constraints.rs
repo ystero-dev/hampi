@@ -105,13 +105,21 @@ fn parse_subtype_constraint(tokens: &[Token]) -> Result<(Asn1Constraint, usize),
 fn parse_element_set(tokens: &[Token]) -> Result<(ElementSet, usize), Error> {
     let mut consumed = 0;
 
-    if !expect_token(&tokens[consumed..], Token::is_round_begin)? {
-        return Err(unexpected_token!("'('", tokens[0]));
+    // It is allowed to have constraints on SEQUENCE OF and SIZE OF to be defined without the '('
+    // In such cases we need to make sure that after this 'element set' is parsed, next token is
+    // keyword 'OF' see below (See Issue #47)
+    let round_begin = expect_token(tokens, Token::is_round_begin)?;
+    if round_begin {
+        consumed += 1;
     }
-    consumed += 1;
 
     let (root_elements, root_consumed) = parse_union_set(&tokens[consumed..])?;
     consumed += root_consumed;
+
+    eprintln!(
+        "consumed root: {}, tokens[consumed]: {:?}",
+        consumed, tokens[consumed]
+    );
 
     if root_elements.elements.is_empty() {
         return Err(parse_error!("Empty Set in a Constraint!"));
@@ -120,12 +128,14 @@ fn parse_element_set(tokens: &[Token]) -> Result<(ElementSet, usize), Error> {
     let mut additional_elements = None;
     if expect_token(&tokens[consumed..], Token::is_comma)? {
         consumed += 1;
+        eprintln!("found comma");
 
         // Extension Marker
         if !expect_token(&tokens[consumed..], Token::is_extension)? {
             return Err(unexpected_token!("'...'", tokens[consumed]));
         }
         consumed += 1;
+        eprintln!("found extension");
 
         if expect_token(&tokens[consumed..], Token::is_comma)? {
             consumed += 1;
@@ -138,10 +148,17 @@ fn parse_element_set(tokens: &[Token]) -> Result<(ElementSet, usize), Error> {
         }
     }
 
-    if !expect_token(&tokens[consumed..], Token::is_round_end)? {
-        return Err(unexpected_token!("')'", tokens[consumed]));
+    if round_begin {
+        if !expect_token(&tokens[consumed..], Token::is_round_end)? {
+            return Err(unexpected_token!("')'", tokens[consumed]));
+        }
+        consumed += 1;
+    } else {
+        // For #47
+        if !expect_keyword(&tokens[consumed..], "OF")? {
+            return Err(unexpected_token!("'OF'", tokens[consumed]));
+        }
     }
-    consumed += 1;
 
     Ok((
         ElementSet {
@@ -385,9 +402,10 @@ mod tests {
     #[test]
     fn parse_subtype_constraint_testcase() {
         struct ParseConstraintTestCase<'tc> {
-            input: &'tc str,                   // Input String
-            success: bool,                     // Check whether the constraint result is `is_ok`
-            root_elements_count: usize,        // Members in root_elements
+            input: &'tc str,            // Input String
+            success: bool,              // Check whether the constraint result is `is_ok`
+            root_elements_count: usize, // Members in root_elements
+
             additional_elements_present: bool, // Are additional Elements present?
             additional_elements_count: usize,  // Members in additional elements
         }
