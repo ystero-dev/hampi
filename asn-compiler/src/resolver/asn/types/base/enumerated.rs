@@ -31,8 +31,10 @@ impl Asn1ResolvedEnumerated {
             if let Some(NamedValue::Number(ref s)) = named {
                 let parsed = s.parse::<i128>().unwrap();
                 root_values.insert(parsed);
+                base.named_root_values.push((v.name.clone(), parsed));
             }
         }
+
         // TODO: Support all crazy Enumerations.
         if root_values.is_empty() {
             for (value, v) in e.root_values.iter().enumerate() {
