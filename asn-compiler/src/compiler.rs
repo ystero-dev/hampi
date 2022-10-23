@@ -16,6 +16,7 @@ use crate::parser::asn::structs::module::Asn1Module;
 
 use crate::generator::{Codec, Derive, Generator, Visibility};
 use crate::resolver::Resolver;
+use crate::tokenizer::Token;
 
 /// ASN.1 Compiler Struct.
 ///
@@ -112,25 +113,39 @@ impl Asn1Compiler {
         Ok(())
     }
 
+    /// Compilation Driver for a String as module(s).
+    pub fn compile_string(&mut self, modules_string: &str) -> Result<(), Error> {
+        let mut tokens = crate::tokenizer::tokenize_string(modules_string)?;
+        self.parse_tokens_into_modules(&mut tokens)?;
+        self.resolve_modules()?;
+
+        self.generate()
+    }
+
     /// The Actual compilation driver
     pub fn compile_files<T: AsRef<Path>>(&mut self, files: &[T]) -> Result<(), Error> {
         for file in files {
             let file = File::open(file).map_err(|e| io_error!("{:#?}", e))?;
             let mut tokens = crate::tokenizer::tokenize(file)?;
-            let mut modules = crate::parser::parse(&mut tokens)?;
-
-            loop {
-                let module = modules.pop();
-                if module.is_none() {
-                    break;
-                }
-                let module = module.unwrap();
-                self.add_module(module);
-            }
+            self.parse_tokens_into_modules(&mut tokens)?;
         }
         self.resolve_modules()?;
 
         self.generate()
+    }
+
+    fn parse_tokens_into_modules(&mut self, tokens: &mut Vec<Token>) -> Result<(), Error> {
+        let mut modules = crate::parser::parse(tokens)?;
+
+        loop {
+            let module = modules.pop();
+            if module.is_none() {
+                break;
+            }
+            let module = module.unwrap();
+            self.add_module(module);
+        }
+        Ok(())
     }
 
     fn rustfmt_generated_code(&self, code: &str) -> Result<String, Error> {
