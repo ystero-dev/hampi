@@ -116,11 +116,6 @@ fn parse_element_set(tokens: &[Token]) -> Result<(ElementSet, usize), Error> {
     let (root_elements, root_consumed) = parse_union_set(&tokens[consumed..])?;
     consumed += root_consumed;
 
-    eprintln!(
-        "consumed root: {}, tokens[consumed]: {:?}",
-        consumed, tokens[consumed]
-    );
-
     if root_elements.elements.is_empty() {
         return Err(parse_error!("Empty Set in a Constraint!"));
     }
@@ -128,14 +123,12 @@ fn parse_element_set(tokens: &[Token]) -> Result<(ElementSet, usize), Error> {
     let mut additional_elements = None;
     if expect_token(&tokens[consumed..], Token::is_comma)? {
         consumed += 1;
-        eprintln!("found comma");
 
         // Extension Marker
         if !expect_token(&tokens[consumed..], Token::is_extension)? {
             return Err(unexpected_token!("'...'", tokens[consumed]));
         }
         consumed += 1;
-        eprintln!("found extension");
 
         if expect_token(&tokens[consumed..], Token::is_comma)? {
             consumed += 1;

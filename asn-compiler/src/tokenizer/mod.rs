@@ -804,15 +804,26 @@ pub fn tokenize<T>(mut input: T) -> Result<Vec<Token>, Error>
 where
     T: std::io::Read,
 {
-    let mut line = 1;
-    let mut tokens: Vec<Token> = Vec::new();
     let mut buffer = Vec::new();
     let _ = input.read_to_end(&mut buffer).unwrap();
     let buffer = String::from_utf8(buffer).unwrap();
+
+    tokenize_string(&buffer)
+}
+
+/// Tokenize a String
+///
+/// Tokenize a given 'String' to ASN.1 Tokens. This API Can be used to write simple test cases for
+/// ASN.1 files say.
+pub fn tokenize_string(buffer: &str) -> Result<Vec<Token>, Error> {
     let chars: Vec<char> = buffer.chars().collect();
+
     let mut column = 0_usize;
     let mut processed = 0;
     let total_read = chars.len();
+
+    let mut line = 1;
+    let mut tokens: Vec<Token> = Vec::new();
     loop {
         let c = chars[processed];
         match c {
