@@ -21,7 +21,13 @@ quote = { version = "1.0" }
 heck = { version = "0.4" }
 bitvec = { version = "1.0" }
 clap = { version = "4.0.10", features = ["derive"] }
+docx-rs = { version = "0.4.5" }
+regex = { version = "1.6.0" }
 
 [[bin]]
 name = "hampi-rs-asn1c"
 path = "src/bin/hampi-rs-asn1c.rs"
+
+[[bin]]
+name = "extract-asn-spec"
+path = "src/bin/extract-asn-spec.rs"
