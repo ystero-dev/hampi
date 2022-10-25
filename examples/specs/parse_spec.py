@@ -19,6 +19,7 @@ def main(spec_file, asn_file):
         if re.match(end_asn, para.text):
             start_printing = False
 
+    out_lines = [line.replace(chr(0xa0), ' ') for line in out_lines]
     preclude = [
             "--\n",
             f"-- Generated using : {' '.join(sys.argv)}\n",

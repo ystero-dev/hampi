@@ -7,7 +7,7 @@ description = "Examples for usage of ASN.1 Compiler and Codecs."
 publish = false
 
 [build-dependencies]
-asn1-compiler = { path = "../asn-compiler", version = "=0.3.1" }
+asn1-compiler = { path = "../asn-compiler", version = "0.3.1" }
 
 [dev-dependencies]
 asn1-codecs = { path = "../codecs", version = "=0.3.1" }
