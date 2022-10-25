@@ -41,8 +41,8 @@ fn get_specs_files(
 }
 
 fn main() -> std::io::Result<()> {
-    let specs = vec!["ranap", "s1ap", "ngap"];
-    let modules = vec!["ranap.rs", "s1ap.rs", "ngap.rs"];
+    let specs = vec!["ranap", "s1ap", "ngap", "e2ap"];
+    let modules = vec!["ranap.rs", "s1ap.rs", "ngap.rs", "e2ap.rs"];
 
     for (spec, module) in std::iter::zip(specs, modules) {
         let specs_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap())
