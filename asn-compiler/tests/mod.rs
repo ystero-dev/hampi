@@ -56,4 +56,22 @@ mod tests {
 
         assert!(result.is_ok(), "{:?}", result.err());
     }
+
+    #[test]
+    fn fix_support_exports_definitions_46() {
+        let module_name = "ModuleExportsDefinitions";
+        let test_no = 2;
+
+        let module_header = super::get_module_header(module_name, test_no);
+
+        let definitions = "EXPORTS ExportedA; ExportedA ::= SEQUENCE { a INTEGER }";
+        let definitions = super::get_module_definitions(definitions);
+
+        let module_str = format!("{} {}", module_header, definitions);
+
+        let mut compiler = get_dev_null_compiler();
+        let result = compiler.compile_string(&module_str);
+
+        assert!(result.is_ok(), "{:?}", result.err());
+    }
 }

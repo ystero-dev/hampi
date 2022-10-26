@@ -74,13 +74,16 @@ where
         return Err(unexpected_token!("BEGIN", tokens[consumed]));
     }
 
+    // Parse but ignore exports if any (by default everything is exported.
+    let (_, exports_consumed) = parse_module_maybe_exports(&tokens[consumed..])?;
+    consumed += exports_consumed;
+
     let (imports, imports_consumed) = parse_module_imports(&tokens[consumed..])?;
     consumed += imports_consumed;
 
     let mut definitions = HashMap::new();
     while !expect_keyword(&tokens[consumed..], "END")? {
         let (def, definition_consumed) = parse_definition(&tokens[consumed..])?;
-        eprintln!("def : {:?}", def);
         definitions.insert(def.id(), def);
         consumed += definition_consumed;
     }
@@ -97,12 +100,33 @@ where
     Ok((module, consumed))
 }
 
+fn parse_module_maybe_exports(tokens: &[Token]) -> Result<((), usize), Error> {
+    let mut consumed = 0;
+    if expect_keyword(&tokens[consumed..], "EXPORTS")? {
+        consumed += 1;
+        loop {
+            if expect_token(&tokens[consumed..], Token::is_semicolon)? {
+                consumed += 1;
+                break;
+            }
+
+            if expect_token(&tokens[consumed..], Token::is_identifier)? {
+                consumed += 1;
+            }
+
+            if expect_token(&tokens[consumed..], Token::is_comma)? {
+                consumed += 1;
+            }
+        }
+    }
+    Ok(((), consumed))
+}
+
 fn parse_module_imports(
     tokens: &[Token],
 ) -> Result<(HashMap<String, Asn1ModuleName>, usize), Error> {
     let mut consumed = 0;
 
-    // FIXME: Parse IMPORTS and EXPORTS
     let mut imports = HashMap::new();
     if expect_keyword(&tokens[consumed..], "IMPORTS")? {
         consumed += 1;
