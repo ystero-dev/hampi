@@ -77,8 +77,11 @@ pub(crate) fn parse_type(tokens: &[Token]) -> Result<(Asn1Type, usize), Error> {
         }
 
         "BOOLEAN" => (Asn1TypeKind::Builtin(Asn1BuiltinType::Boolean), 1),
+
         "NULL" => (Asn1TypeKind::Builtin(Asn1BuiltinType::Null), 1),
-        "VisibleString" | "UTF8String" | "IA5String" | "PrintableString" => (
+
+        "VisibleString" | "UTF8String" | "IA5String" | "PrintableString" | "UTCTime"
+        | "GeneralizedTime" => (
             Asn1TypeKind::Builtin(Asn1BuiltinType::CharacterString {
                 str_type: typestr.to_string(),
             }),
@@ -92,6 +95,7 @@ pub(crate) fn parse_type(tokens: &[Token]) -> Result<(Asn1Type, usize), Error> {
                 choice_type_consumed,
             )
         }
+
         "SEQUENCE" => parse_seq_or_seq_of_type(tokens)?,
 
         "RELATIVE-OID" => (Asn1TypeKind::Builtin(Asn1BuiltinType::RelativeOid), 1),
@@ -256,6 +260,11 @@ mod tests {
                 input: "SEQUENCE SIZE (1.. 1024) OF ReportData",
                 success: true,
                 consumed: 9,
+            },
+            ParseTypeTestCase {
+                input: "CHOICE { absoluteTime  UTCTime, relativeTime  INTEGER (0..31536000)}",
+                success: true,
+                consumed: 13,
             },
         ];
 
