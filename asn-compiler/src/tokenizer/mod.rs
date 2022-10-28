@@ -102,6 +102,8 @@ const BASE_TYPES: &[&str] = &[
     "IA5String",
     "PrintableString",
     "VisibleString",
+    "UTCTime",
+    "GeneralizedTime",
     // Spliced types (Note: actual ASN.1 Type names are different.
     "OBJECT",
     "OCTET",

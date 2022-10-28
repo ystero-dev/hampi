@@ -1,6 +1,6 @@
 [package]
 name = "asn1-compiler"
-version = "0.4.0"
+version = "0.4.1"
 authors = ["Abhijit Gadgil <gabhijit@iitbombay.org>"]
 edition = "2018"
 description = "ASN.1 Compiler in Rust."
