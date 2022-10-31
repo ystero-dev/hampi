@@ -1,4 +1,4 @@
-name: Hampi Build on Pull Request.
+name: build on pull request
 
 on:
   push:
