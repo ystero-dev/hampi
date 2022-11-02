@@ -40,7 +40,7 @@ pub(super) fn generate_aper_codec_for_asn_sequence_of(
         impl asn1_codecs::aper::AperCodec for #name {
             type Output = Self;
 
-            fn decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
+            fn aper_decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
                 log::debug!(concat!("decode: ", stringify!(#name)));
 
                 let length = asn1_codecs::aper::decode::decode_length_determinent(data, #sz_lb, #sz_ub, #sz_ext)?;
@@ -48,7 +48,7 @@ pub(super) fn generate_aper_codec_for_asn_sequence_of(
                 let mut items = vec![];
                 let mut count = 0;
                 loop {
-                    items.push(#ty::decode(data)?);
+                    items.push(#ty::aper_decode(data)?);
                     count += 1;
                     if count == length {
                         break;
@@ -58,13 +58,13 @@ pub(super) fn generate_aper_codec_for_asn_sequence_of(
                 Ok(Self(items))
             }
 
-            fn encode(&self, data:&mut asn1_codecs::aper::AperCodecData) -> Result<(), asn1_codecs::aper::AperCodecError> {
+            fn aper_encode(&self, data:&mut asn1_codecs::aper::AperCodecData) -> Result<(), asn1_codecs::aper::AperCodecError> {
                 log::debug!(concat!("encode: ", stringify!(#name)));
 
                 let _ = asn1_codecs::aper::encode::encode_length_determinent(data, #sz_lb, #sz_ub, #sz_ext, self.0.len());
 
                 for elem in &self.0 {
-                    let _ = elem.encode(data)?;
+                    let _ = elem.aper_encode(data)?;
                 }
                 Ok(())
             }

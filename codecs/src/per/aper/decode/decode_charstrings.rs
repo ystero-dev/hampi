@@ -1,15 +1,16 @@
 //! Functionality for decoding character strings
 use bitvec::field::BitField;
 
-use crate::aper::AperCodecData;
-use crate::aper::AperCodecError;
+use crate::per::PerCodecData;
+
+use super::AperCodecError;
 
 use super::decode_internal::decode_length_determinent;
 
 // 27.5.3 and 27.5.4
 /// Decode a VisibleString CharacterString Type.
 pub fn decode_visible_string(
-    data: &mut AperCodecData,
+    data: &mut PerCodecData,
     lb: Option<i128>,
     ub: Option<i128>,
     is_extensible: bool,
@@ -25,7 +26,7 @@ pub fn decode_visible_string(
 
 /// Decode a PrintableString CharacterString Type.
 pub fn decode_printable_string(
-    data: &mut AperCodecData,
+    data: &mut PerCodecData,
     lb: Option<i128>,
     ub: Option<i128>,
     is_extensible: bool,
@@ -44,7 +45,7 @@ pub fn decode_printable_string(
 // 27.6
 /// Decode a UTF8String CharacterString Type.
 pub fn decode_utf8_string(
-    data: &mut AperCodecData,
+    data: &mut PerCodecData,
     lb: Option<i128>,
     ub: Option<i128>,
     is_extensible: bool,
@@ -59,7 +60,7 @@ pub fn decode_utf8_string(
 }
 
 fn decode_string(
-    data: &mut AperCodecData,
+    data: &mut PerCodecData,
     lb: Option<i128>,
     ub: Option<i128>,
     is_extensible: bool,

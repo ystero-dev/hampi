@@ -15,9 +15,8 @@ impl Error {
             context: Vec::new(),
         }
     }
-    pub fn push_context(mut self, context_elem: &str) -> Self {
+    pub fn push_context(&mut self, context_elem: &str) {
         self.context.push(context_elem.to_string());
-        self
     }
 }
 impl std::fmt::Display for Error {

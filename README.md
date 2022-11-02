@@ -4,6 +4,8 @@
 [![Crates.io](https://img.shields.io/crates/v/asn1-codecs?label=asn1-codecs)](https://crates.io/crates/asn1-codecs)
 [![Crates.io](https://img.shields.io/crates/v/asn1-compiler?label=asn1-compiler)](https://crates.io/crates/asn1-compiler)
 [![Crates.io](https://img.shields.io/crates/v/asn1_codecs_derive?label=asn1_codecs_derive)](https://crates.io/crates/asn1_codecs_derive)
+
+
 The Goal of this project is to implement an ASN.1 Compiler in Rust which can generate Rust bindings for different ASN.1 specifications, which can be used in various protocol implementations in Rust. Also, support for different ASN.1 encoding rules like DER, BER, PER is planned to be implemented as ASN.1 codecs.
 
 While it is certainly desirable to have a fully compliant ASN.1 Compiler, initial focus of the project is to be able to generate code that can be used in other software. First goal is to work with 3GPP specifications for protocols like Radio Network Access Protocl (RANAP), S1 Application protocl (S1AP) and NG Application Protocol (NGAP). Consequently current implementation also focuses on codecs used by these specifications viz. Aligned Packed Encoding Rules (APER).

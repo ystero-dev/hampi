@@ -1,10 +1,15 @@
 //! ASN.1 Aper Encoder module.
 
-use crate::aper::AperCodecData;
-use crate::aper::AperCodecError;
-use bitvec::prelude::*;
 mod encode_internal;
+
+use crate::per::PerCodecData;
+
+use super::AperCodecError;
+
+use bitvec::prelude::*;
 use bitvec::view::AsBits;
+
+#[allow(unused)]
 use encode_internal::*;
 
 /// Encode a Choice Index
@@ -12,7 +17,7 @@ use encode_internal::*;
 /// During Encoding a 'CHOICE' Type to help decoding, the 'CHOICE' Index is encoded first, followed
 /// by the actual encoding of the 'CHOICE' variant.
 pub fn encode_choice_idx(
-    data: &mut AperCodecData,
+    data: &mut PerCodecData,
     lb: i128,
     ub: i128,
     is_extensible: bool,
@@ -43,7 +48,7 @@ pub fn encode_choice_idx(
 
 /// Encode sequence header
 pub fn encode_sequence_header(
-    data: &mut AperCodecData,
+    data: &mut PerCodecData,
     is_extensible: bool,
     optionals: &BitSlice<u8, Msb0>,
     extended: bool,
@@ -79,7 +84,7 @@ pub fn encode_sequence_header(
 /// Note: The maximum (and minimum) value to be decoded is limited to an `i128` value. For the
 /// protocols that are currently supported this limit is acceptable.
 pub fn encode_integer(
-    data: &mut AperCodecData,
+    data: &mut PerCodecData,
     lb: Option<i128>,
     ub: Option<i128>,
     is_extensible: bool,
@@ -118,8 +123,8 @@ pub fn encode_integer(
 
 /// Encode a BOOLEAN Value
 ///
-/// Encodes a boolean value into the passed `AperCodecData` structure.
-pub fn encode_bool(data: &mut AperCodecData, value: bool) -> Result<(), AperCodecError> {
+/// Encodes a boolean value into the passed `PerCodecData` structure.
+pub fn encode_bool(data: &mut PerCodecData, value: bool) -> Result<(), AperCodecError> {
     log::debug!("encode_bool: {}", value);
     data.encode_bool(value);
 
@@ -129,7 +134,7 @@ pub fn encode_bool(data: &mut AperCodecData, value: bool) -> Result<(), AperCode
 
 /// Encode an ENUMERATED Value
 pub fn encode_enumerated(
-    data: &mut AperCodecData,
+    data: &mut PerCodecData,
     lb: Option<i128>,
     ub: Option<i128>,
     is_extensible: bool,
@@ -164,7 +169,7 @@ pub fn encode_enumerated(
 
 /// Encode a Bit String
 pub fn encode_bitstring(
-    data: &mut AperCodecData,
+    data: &mut PerCodecData,
     lb: Option<i128>,
     ub: Option<i128>,
     is_extensible: bool,
@@ -212,7 +217,7 @@ pub fn encode_bitstring(
 
 /// Encode an OCTET STRING
 pub fn encode_octetstring(
-    data: &mut AperCodecData,
+    data: &mut PerCodecData,
     lb: Option<i128>,
     ub: Option<i128>,
     is_extensible: bool,
@@ -260,7 +265,7 @@ pub fn encode_octetstring(
 
 // Encode a Length Determinent
 pub fn encode_length_determinent(
-    data: &mut AperCodecData,
+    data: &mut PerCodecData,
     lb: Option<i128>,
     ub: Option<i128>,
     normally_small: bool,
@@ -314,7 +319,7 @@ pub fn encode_length_determinent(
 }
 
 fn encode_string(
-    data: &mut AperCodecData,
+    data: &mut PerCodecData,
     lb: Option<i128>,
     ub: Option<i128>,
     is_extensible: bool,
@@ -342,7 +347,7 @@ fn encode_string(
 
 /// Encode a VisibleString CharacterString Type.
 pub fn encode_visible_string(
-    data: &mut AperCodecData,
+    data: &mut PerCodecData,
     lb: Option<i128>,
     ub: Option<i128>,
     is_extensible: bool,
@@ -363,7 +368,7 @@ pub fn encode_visible_string(
 
 /// Encode a PrintableString CharacterString Type.
 pub fn encode_printable_string(
-    data: &mut AperCodecData,
+    data: &mut PerCodecData,
     lb: Option<i128>,
     ub: Option<i128>,
     is_extensible: bool,
@@ -384,7 +389,7 @@ pub fn encode_printable_string(
 
 /// Encode a UTF8String CharacterString Type.
 pub fn encode_utf8_string(
-    data: &mut AperCodecData,
+    data: &mut PerCodecData,
     lb: Option<i128>,
     ub: Option<i128>,
     is_extensible: bool,
@@ -409,7 +414,7 @@ mod tests {
 
     #[test]
     fn encode_bool_always_success() {
-        let mut data = AperCodecData::new();
+        let mut data = PerCodecData::new();
 
         let result = encode_bool(&mut data, true);
         assert!(result.is_ok());
@@ -419,26 +424,20 @@ mod tests {
 
     #[test]
     fn int_too_small() {
-        assert!(encode_integer(&mut AperCodecData::new(), Some(1), None, false, 0, false).is_err());
+        assert!(encode_integer(&mut PerCodecData::new(), Some(1), None, false, 0, false).is_err());
     }
 
     #[test]
     fn int_too_big() {
-        assert!(encode_integer(
-            &mut AperCodecData::new(),
-            Some(-1),
-            Some(0),
-            false,
-            1,
-            false
-        )
-        .is_err());
+        assert!(
+            encode_integer(&mut PerCodecData::new(), Some(-1), Some(0), false, 1, false).is_err()
+        );
     }
 
     #[test]
     fn octetstring_too_small() {
         assert!(encode_octetstring(
-            &mut AperCodecData::new(),
+            &mut PerCodecData::new(),
             Some(2),
             None,
             false,
@@ -450,7 +449,7 @@ mod tests {
     #[test]
     fn octetstring_too_big() {
         assert!(encode_octetstring(
-            &mut AperCodecData::new(),
+            &mut PerCodecData::new(),
             None,
             Some(1),
             false,
@@ -463,7 +462,7 @@ mod tests {
     #[test]
     fn string_too_small() {
         assert!(encode_visible_string(
-            &mut AperCodecData::new(),
+            &mut PerCodecData::new(),
             Some(2),
             None,
             false,
@@ -476,7 +475,7 @@ mod tests {
     #[test]
     fn string_too_big() {
         assert!(encode_visible_string(
-            &mut AperCodecData::new(),
+            &mut PerCodecData::new(),
             None,
             Some(1),
             false,
@@ -489,20 +488,20 @@ mod tests {
     #[test]
     fn length_too_small() {
         assert!(
-            encode_length_determinent(&mut AperCodecData::new(), Some(2), None, false, 1,).is_err()
+            encode_length_determinent(&mut PerCodecData::new(), Some(2), None, false, 1,).is_err()
         );
     }
     #[test]
     fn length_too_big() {
         assert!(
-            encode_length_determinent(&mut AperCodecData::new(), None, Some(1), false, 2,).is_err()
+            encode_length_determinent(&mut PerCodecData::new(), None, Some(1), false, 2,).is_err()
         );
     }
 
     #[test]
     fn big_length_too_big() {
         assert!(encode_length_determinent(
-            &mut AperCodecData::new(),
+            &mut PerCodecData::new(),
             None,
             Some(65536),
             false,
@@ -514,7 +513,7 @@ mod tests {
     #[test]
     fn bitstring_too_small() {
         assert!(encode_bitstring(
-            &mut AperCodecData::new(),
+            &mut PerCodecData::new(),
             Some(2),
             None,
             false,
@@ -527,7 +526,7 @@ mod tests {
     #[test]
     fn bitstring_too_big() {
         assert!(encode_bitstring(
-            &mut AperCodecData::new(),
+            &mut PerCodecData::new(),
             None,
             Some(1),
             false,
