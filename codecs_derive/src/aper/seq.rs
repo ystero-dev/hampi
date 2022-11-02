@@ -36,14 +36,14 @@ pub(super) fn generate_aper_codec_for_asn_sequence(
         impl asn1_codecs::aper::AperCodec for #name {
             type Output = Self;
 
-            fn decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
+            fn aper_decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
                 log::debug!(concat!("decode: ", stringify!(#name)));
 
                 let (bitmap, _extensions_present) = asn1_codecs::aper::decode::decode_sequence_header(data, #ext, #opt_count)?;
                 Ok(Self{#(#fld_decode_tokens)*})
             }
 
-            fn encode(&self, data: &mut asn1_codecs::aper::AperCodecData) -> Result<(), asn1_codecs::aper::AperCodecError> {
+            fn aper_encode(&self, data: &mut asn1_codecs::aper::AperCodecData) -> Result<(), asn1_codecs::aper::AperCodecError> {
                 log::debug!(concat!("encode: ", stringify!(#name)));
 
                 let mut bitmap = bitvec::bitvec![u8, bitvec::prelude::Msb0; 0; #opt_count];
@@ -104,7 +104,7 @@ fn generate_seq_field_codec_tokens_using_attrs(
                                             {
                                             let present = bitmap[#optidx];
                                             if present {
-                                                Some(#ty_ident::decode(data)?)
+                                                Some(#ty_ident::aper_decode(data)?)
                                             } else {
                                                 None
                                             }
@@ -123,13 +123,13 @@ fn generate_seq_field_codec_tokens_using_attrs(
                                 if !is_key_field {
                                     quote! {
                                         {
-                                        #ty_ident::decode(data)?
+                                        #ty_ident::aper_decode(data)?
                                         }
                                     }
                                 } else {
                                     quote! {
                                         {
-                                        let value = #ty_ident::decode(data)?;
+                                        let value = #ty_ident::aper_decode(data)?;
                                         let _ = data.set_key(value.0 as i128);
                                         value
                                         }
@@ -142,13 +142,13 @@ fn generate_seq_field_codec_tokens_using_attrs(
                                 quote! {
                                     if self.#id.is_some() {
                                         let #id = self.#id.as_ref().unwrap();
-                                        #id.encode(data)?;
+                                        #id.aper_encode(data)?;
                                     } else {
                                     }
                                 }
                             } else {
                                 quote! {
-                                    self.#id.encode(data)?;
+                                    self.#id.aper_encode(data)?;
                                 }
                             };
                             let header_encode_token = if optional {

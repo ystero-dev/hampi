@@ -37,7 +37,7 @@ pub(super) fn generate_aper_codec_for_asn_open_type(
         impl asn1_codecs::aper::AperCodec for #name {
             type Output = Self;
 
-            fn decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
+            fn aper_decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
                 log::debug!(concat!("decode: ", stringify!(#name)));
 
                 let length = asn1_codecs::aper::decode::decode_length_determinent(data, None, None, false)?;
@@ -56,7 +56,7 @@ pub(super) fn generate_aper_codec_for_asn_open_type(
                 }
             }
 
-            fn encode(&self, data: &mut asn1_codecs::aper::AperCodecData) -> Result<(), asn1_codecs::aper::AperCodecError> {
+            fn aper_encode(&self, data: &mut asn1_codecs::aper::AperCodecData) -> Result<(), asn1_codecs::aper::AperCodecError> {
                 log::debug!(concat!("encode: ", stringify!(#name)));
 
                 #encode_tokens
@@ -95,10 +95,10 @@ fn generate_open_type_variant_tokens_using_attrs(
                             let unnamed = unnamed.as_ref().unwrap();
                             let ty = &unnamed.ty;
                             let variant_decode_token = quote! {
-                                #key => Ok(Self::#variant_ident(#ty::decode(data)?)),
+                                #key => Ok(Self::#variant_ident(#ty::aper_decode(data)?)),
                             };
                             let variant_encode_token = quote! {
-                                Self::#variant_ident(ref v) => v.encode(&mut inner)?,
+                                Self::#variant_ident(ref v) => v.aper_encode(&mut inner)?,
                             };
                             decode_tokens.push(variant_decode_token);
                             encode_tokens.push(variant_encode_token);

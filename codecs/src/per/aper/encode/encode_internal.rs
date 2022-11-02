@@ -1,10 +1,13 @@
 use crate::aper::encode::encode_length_determinent;
-use crate::aper::AperCodecData;
-use crate::aper::AperCodecError;
+
+use crate::per::PerCodecData;
+
+use super::AperCodecError;
+
 use bitvec::prelude::*;
 
 pub(super) fn encode_unconstrained_whole_number(
-    data: &mut AperCodecData,
+    data: &mut PerCodecData,
     value: i128,
 ) -> Result<(), AperCodecError> {
     let bytes_needed = if value < 0 {
@@ -30,7 +33,7 @@ pub(super) fn encode_unconstrained_whole_number(
 }
 
 pub(super) fn encode_semi_constrained_whole_number(
-    data: &mut AperCodecData,
+    data: &mut PerCodecData,
     lb: i128,
     value: i128,
 ) -> Result<(), AperCodecError> {
@@ -45,7 +48,7 @@ pub(super) fn encode_semi_constrained_whole_number(
 }
 
 pub(super) fn encode_constrained_whole_number(
-    data: &mut AperCodecData,
+    data: &mut PerCodecData,
     lb: i128,
     ub: i128,
     value: i128,
@@ -107,7 +110,7 @@ pub(super) fn encode_constrained_whole_number(
 }
 
 pub(super) fn encode_indefinite_length_determinent(
-    data: &mut AperCodecData,
+    data: &mut PerCodecData,
     value: usize,
 ) -> Result<(), AperCodecError> {
     data.align();
@@ -126,7 +129,7 @@ pub(super) fn encode_indefinite_length_determinent(
 }
 
 pub(super) fn encode_normally_small_length_determinent(
-    data: &mut AperCodecData,
+    data: &mut PerCodecData,
     value: usize,
 ) -> Result<(), AperCodecError> {
     if value <= 32 {
@@ -147,56 +150,56 @@ mod tests {
 
     #[test]
     fn encode_unconstrained() {
-        let mut data = AperCodecData::new();
+        let mut data = PerCodecData::new();
         encode_unconstrained_whole_number(&mut data, 1).unwrap();
         assert_eq!(data.into_bytes(), [0x01, 0x01]);
     }
 
     #[test]
     fn encode_tiny_constrained_integer() {
-        let mut data = AperCodecData::new();
+        let mut data = PerCodecData::new();
         encode_constrained_whole_number(&mut data, -2, 5, -1).unwrap();
         assert_eq!(data.into_bytes(), [0x20]);
     }
 
     #[test]
     fn encode_small_constrained_integer() {
-        let mut data = AperCodecData::new();
+        let mut data = PerCodecData::new();
         encode_constrained_whole_number(&mut data, 0, 1000, 1).unwrap();
         assert_eq!(data.into_bytes(), [0x00, 0x01]);
     }
 
     #[test]
     fn encode_large_constrained_integer() {
-        let mut data = AperCodecData::new();
+        let mut data = PerCodecData::new();
         encode_constrained_whole_number(&mut data, 0, 100_000, 1).unwrap();
         assert_eq!(data.into_bytes(), [0x00, 0x01]);
     }
 
     #[test]
     fn encode_tiny_indefinite_length_determinent() {
-        let mut data = AperCodecData::new();
+        let mut data = PerCodecData::new();
         encode_indefinite_length_determinent(&mut data, 1).unwrap();
         assert_eq!(data.into_bytes(), [0x01]);
     }
 
     #[test]
     fn encode_small_indefinite_length_determinent() {
-        let mut data = AperCodecData::new();
+        let mut data = PerCodecData::new();
         encode_indefinite_length_determinent(&mut data, 16383).unwrap();
         assert_eq!(data.into_bytes(), [0xbf, 0xff]);
     }
 
     #[test]
     fn encode_small_normally_small_length_determinent() {
-        let mut data = AperCodecData::new();
+        let mut data = PerCodecData::new();
         encode_normally_small_length_determinent(&mut data, 32).unwrap();
         assert_eq!(data.into_bytes(), [0x3e]);
     }
 
     #[test]
     fn encode_int_range_256() {
-        let mut data = AperCodecData::new();
+        let mut data = PerCodecData::new();
         data.encode_bool(true);
         encode_constrained_whole_number(&mut data, 0, 255, 1).unwrap();
         assert_eq!(data.into_bytes(), [0x80, 0x01]);
@@ -204,14 +207,14 @@ mod tests {
 
     #[test]
     fn encode_int_range_68719476735() {
-        let mut data = AperCodecData::new();
+        let mut data = PerCodecData::new();
         encode_constrained_whole_number(&mut data, 0, 68719476735, 123).unwrap();
         assert_eq!(data.into_bytes(), [0x00, 0x7B]);
     }
 
     #[test]
     fn encode_u32() {
-        let mut data = AperCodecData::new();
+        let mut data = PerCodecData::new();
         let value = 0x10203040;
         encode_constrained_whole_number(&mut data, 0, 4294967295, value).unwrap();
         assert_eq!(data.into_bytes(), [0xC0, 0x10, 0x20, 0x30, 0x40]);

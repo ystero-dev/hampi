@@ -26,7 +26,7 @@ pub(super) fn generate_aper_codec_for_asn_choice(
         impl asn1_codecs::aper::AperCodec for #name {
             type Output = Self;
 
-            fn decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
+            fn aper_decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
                 log::debug!(concat!("decode: ", stringify!(#name)));
 
                 let (idx, extended) = asn1_codecs::aper::decode::decode_choice_idx(data, #lb, #ub, #ext)?;
@@ -40,7 +40,7 @@ pub(super) fn generate_aper_codec_for_asn_choice(
                 }
             }
 
-            fn encode(&self, data: &mut asn1_codecs::aper::AperCodecData) -> Result<(), asn1_codecs::aper::AperCodecError> {
+            fn aper_encode(&self, data: &mut asn1_codecs::aper::AperCodecData) -> Result<(), asn1_codecs::aper::AperCodecError> {
                 log::debug!(concat!("encode: ", stringify!(#name)));
 
                 match self {
@@ -83,12 +83,12 @@ fn generate_choice_variant_decode_tokens_using_attrs(
                         if fields.unnamed.len() == 1 {
                             let ty = &fields.unnamed.first().as_ref().unwrap().ty;
                             let variant_decode_token = quote! {
-                                #key => Ok(Self::#variant_ident(#ty::decode(data)?)),
+                                #key => Ok(Self::#variant_ident(#ty::aper_decode(data)?)),
                             };
                             let variant_encode_token = quote! {
                                 Self::#variant_ident(ref v) => {
                                     asn1_codecs::aper::encode::encode_choice_idx(data, #lb, #ub, #ext, #key, #extended)?;
-                                    v.encode(data)
+                                    v.aper_encode(data)
                                 }
                             };
                             decode_tokens.push(variant_decode_token);

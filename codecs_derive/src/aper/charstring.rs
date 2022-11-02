@@ -112,14 +112,14 @@ pub(super) fn generate_aper_codec_for_asn_charstring(
         impl asn1_codecs::aper::AperCodec for #name {
             type Output = Self;
 
-            fn decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
+            fn aper_decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
                 log::debug!(concat!("decode: ", stringify!(#name)));
 
                 let decoded = asn1_codecs::aper::decode::#decode_fn_name(data, #sz_lb, #sz_ub, #sz_ext)?;
                 Ok(Self(decoded))
             }
 
-            fn encode(&self, data: &mut asn1_codecs::aper::AperCodecData) -> Result<(), asn1_codecs::aper::AperCodecError> {
+            fn aper_encode(&self, data: &mut asn1_codecs::aper::AperCodecData) -> Result<(), asn1_codecs::aper::AperCodecError> {
                 log::debug!(concat!("encode: ", stringify!(#name)));
 
                 asn1_codecs::aper::encode::#encode_fn_name(data, #sz_lb, #sz_ub, #sz_ext, &self.0, false)

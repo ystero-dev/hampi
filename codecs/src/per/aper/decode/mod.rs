@@ -1,10 +1,14 @@
 //! Decode APIs for APER Codec
-use bitvec::prelude::*;
-
-use crate::aper::AperCodecData;
-use crate::aper::AperCodecError;
 
 mod decode_internal;
+
+use bitvec::prelude::*;
+
+use crate::per::PerCodecData;
+
+use super::AperCodecError;
+
+#[allow(unused)]
 use decode_internal::*;
 
 pub use decode_internal::decode_length_determinent;
@@ -16,7 +20,7 @@ pub use decode_internal::decode_length_determinent;
 /// the value is from the 'root_extensions' or 'addtions'. The caller would then decide the
 /// appropriate `decode` function for the CHOICE variant is called.
 pub fn decode_choice_idx(
-    data: &mut AperCodecData,
+    data: &mut PerCodecData,
     lb: i128,
     ub: i128,
     is_extensible: bool,
@@ -53,7 +57,7 @@ pub fn decode_choice_idx(
 /// 1. Whether `extensions` are present in the encoding
 /// 2. Which of the OPTIONAL fields (if any) are present as a bitmap.
 pub fn decode_sequence_header(
-    data: &mut AperCodecData,
+    data: &mut PerCodecData,
     is_extensible: bool,
     optional_count: usize,
 ) -> Result<(BitVec<u8, Msb0>, bool), AperCodecError> {
@@ -88,7 +92,7 @@ pub fn decode_sequence_header(
 /// whether the value is outside the extension root (`bool`: `true` if value is outside the
 /// extension root.).
 pub fn decode_integer(
-    data: &mut AperCodecData,
+    data: &mut PerCodecData,
     lb: Option<i128>,
     ub: Option<i128>,
     is_extensible: bool,
@@ -141,7 +145,7 @@ pub fn decode_integer(
 /// Decode a Boolean
 ///
 /// Decode a Boolean value. Returns the decoded value as a `bool`.
-pub fn decode_bool(data: &mut AperCodecData) -> Result<bool, AperCodecError> {
+pub fn decode_bool(data: &mut PerCodecData) -> Result<bool, AperCodecError> {
     log::debug!("decode_bool:");
 
     let result = data.decode_bool()?;
@@ -158,7 +162,7 @@ pub fn decode_bool(data: &mut AperCodecData) -> Result<bool, AperCodecError> {
 /// `false` the value is from the `root_values`, else the value is from the `ext_values` of the
 /// ENUMERATED.
 pub fn decode_enumerated(
-    data: &mut AperCodecData,
+    data: &mut PerCodecData,
     lb: Option<i128>,
     ub: Option<i128>,
     is_extensible: bool,
@@ -192,7 +196,7 @@ pub fn decode_enumerated(
 ///
 /// Decodes the value of the BIT STRING from the Buffer.
 pub fn decode_bitstring(
-    data: &mut AperCodecData,
+    data: &mut PerCodecData,
     lb: Option<i128>,
     ub: Option<i128>,
     is_extensible: bool,
@@ -242,7 +246,7 @@ pub fn decode_bitstring(
 ///
 /// Decodes the value of the OCTET STRING from the Buffer.
 pub fn decode_octetstring(
-    data: &mut AperCodecData,
+    data: &mut PerCodecData,
     lb: Option<i128>,
     ub: Option<i128>,
     is_extensible: bool,
