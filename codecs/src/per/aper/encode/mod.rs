@@ -237,7 +237,7 @@ mod tests {
 
     #[test]
     fn encode_bool_always_success() {
-        let mut data = PerCodecData::new();
+        let mut data = PerCodecData::new_aper();
 
         let result = encode_bool(&mut data, true);
         assert!(result.is_ok());
@@ -247,20 +247,34 @@ mod tests {
 
     #[test]
     fn int_too_small() {
-        assert!(encode_integer(&mut PerCodecData::new(), Some(1), None, false, 0, false).is_err());
+        assert!(encode_integer(
+            &mut PerCodecData::new_aper(),
+            Some(1),
+            None,
+            false,
+            0,
+            false
+        )
+        .is_err());
     }
 
     #[test]
     fn int_too_big() {
-        assert!(
-            encode_integer(&mut PerCodecData::new(), Some(-1), Some(0), false, 1, false).is_err()
-        );
+        assert!(encode_integer(
+            &mut PerCodecData::new_aper(),
+            Some(-1),
+            Some(0),
+            false,
+            1,
+            false
+        )
+        .is_err());
     }
 
     #[test]
     fn octetstring_too_small() {
         assert!(encode_octetstring(
-            &mut PerCodecData::new(),
+            &mut PerCodecData::new_aper(),
             Some(2),
             None,
             false,
@@ -272,7 +286,7 @@ mod tests {
     #[test]
     fn octetstring_too_big() {
         assert!(encode_octetstring(
-            &mut PerCodecData::new(),
+            &mut PerCodecData::new_aper(),
             None,
             Some(1),
             false,
@@ -285,7 +299,7 @@ mod tests {
     #[test]
     fn string_too_small() {
         assert!(encode_visible_string(
-            &mut PerCodecData::new(),
+            &mut PerCodecData::new_aper(),
             Some(2),
             None,
             false,
@@ -298,7 +312,7 @@ mod tests {
     #[test]
     fn string_too_big() {
         assert!(encode_visible_string(
-            &mut PerCodecData::new(),
+            &mut PerCodecData::new_aper(),
             None,
             Some(1),
             false,
@@ -311,20 +325,22 @@ mod tests {
     #[test]
     fn length_too_small() {
         assert!(
-            encode_length_determinent(&mut PerCodecData::new(), Some(2), None, false, 1,).is_err()
+            encode_length_determinent(&mut PerCodecData::new_aper(), Some(2), None, false, 1,)
+                .is_err()
         );
     }
     #[test]
     fn length_too_big() {
         assert!(
-            encode_length_determinent(&mut PerCodecData::new(), None, Some(1), false, 2,).is_err()
+            encode_length_determinent(&mut PerCodecData::new_aper(), None, Some(1), false, 2,)
+                .is_err()
         );
     }
 
     #[test]
     fn big_length_too_big() {
         assert!(encode_length_determinent(
-            &mut PerCodecData::new(),
+            &mut PerCodecData::new_aper(),
             None,
             Some(65536),
             false,
@@ -336,7 +352,7 @@ mod tests {
     #[test]
     fn bitstring_too_small() {
         assert!(encode_bitstring(
-            &mut PerCodecData::new(),
+            &mut PerCodecData::new_aper(),
             Some(2),
             None,
             false,
@@ -349,7 +365,7 @@ mod tests {
     #[test]
     fn bitstring_too_big() {
         assert!(encode_bitstring(
-            &mut PerCodecData::new(),
+            &mut PerCodecData::new_aper(),
             None,
             Some(1),
             false,

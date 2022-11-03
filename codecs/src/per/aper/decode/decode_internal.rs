@@ -211,7 +211,7 @@ mod tests {
     #[test]
     fn test_decode_constrained_whole_number_range_0() {
         let data = &[0x70u8, 0, 0, 0];
-        let mut codec_data = PerCodecData::from_slice(data);
+        let mut codec_data = PerCodecData::from_slice_aper(data);
         codec_data.advance_maybe_err(1, false).unwrap();
         let value = decode_constrained_whole_number(&mut codec_data, 14, 14);
         assert!(value.is_ok());
@@ -222,7 +222,7 @@ mod tests {
     #[test]
     fn test_decode_constrained_whole_number_lt_256() {
         let data = &[0x70u8, 0, 0, 0];
-        let mut codec_data = PerCodecData::from_slice(data);
+        let mut codec_data = PerCodecData::from_slice_aper(data);
         codec_data.advance_maybe_err(1, false).unwrap();
         let value = decode_constrained_whole_number(&mut codec_data, 7, 14);
         assert!(value.is_ok());
@@ -233,7 +233,7 @@ mod tests {
     #[test]
     fn test_decode_constrained_whole_number_eq_256() {
         let data = &[0x80u8, 0x70u8, 0, 0];
-        let mut codec_data = PerCodecData::from_slice(data);
+        let mut codec_data = PerCodecData::from_slice_aper(data);
         codec_data.advance_maybe_err(1, false).unwrap();
         let value = decode_constrained_whole_number(&mut codec_data, 0, 255);
         assert!(value.is_ok(), "{:#?}", value.err());
@@ -244,7 +244,7 @@ mod tests {
     #[test]
     fn test_decode_constrained_whole_number_lt_64k() {
         let data = &[0x00u8, 0x70u8, 0x00, 1];
-        let mut codec_data = PerCodecData::from_slice(data);
+        let mut codec_data = PerCodecData::from_slice_aper(data);
         codec_data.advance_maybe_err(12, false).unwrap();
         let value = decode_constrained_whole_number(&mut codec_data, 0, 64000);
         assert!(value.is_ok(), "{:#?}", value.err());
@@ -254,7 +254,7 @@ mod tests {
 
     #[test]
     fn test_decode_int_range_68719476735() {
-        let mut data = PerCodecData::from_slice(&[0x00, 0x7B]);
+        let mut data = PerCodecData::from_slice_aper(&[0x00, 0x7B]);
         let value = decode_constrained_whole_number(&mut data, 0, 68719476735).unwrap();
         assert_eq!(value, 123);
     }
@@ -262,7 +262,7 @@ mod tests {
     #[test]
     fn test_decode_constrained_whole_number_gt_64k() {
         let data = &[0x00u8, 0x78u8, 0x01, 1, 0x01, 0x02];
-        let mut codec_data = PerCodecData::from_slice(data);
+        let mut codec_data = PerCodecData::from_slice_aper(data);
         codec_data.advance_maybe_err(12, false).unwrap();
 
         // We are now looking at the 12th bit.

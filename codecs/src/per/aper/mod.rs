@@ -31,7 +31,7 @@ mod tests {
     // A test that would fail if it were not for the `force_align()` in PerCodecData::get_bytes().
     #[test]
     fn get_bytes_unaligned() {
-        let mut d = PerCodecData::from_slice(&vec![0x0f, 0xf0]);
+        let mut d = PerCodecData::from_slice_aper(&vec![0x0f, 0xf0]);
         let _ = d.get_bitvec(4);
         let bytes = d.get_bytes(1).unwrap();
         assert_eq!(bytes, vec![0xff]);
@@ -70,7 +70,7 @@ mod tests {
         ];
         //let numbers: Vec<i128> = vec![-256, -1, -65537, 0, 11, 127, 128, 65536, 1234567, 123456789];
         for num in numbers {
-            let mut d = PerCodecData::new();
+            let mut d = PerCodecData::new_aper();
             eprintln!("number: {}", num);
             let result = encode::encode_integer(&mut d, None, None, false, num, false);
             eprintln!("{:?}", d);
@@ -84,7 +84,7 @@ mod tests {
     // Proves get_bitvec() can cope if it is asked for all the remaining bits in the buffer.
     #[test]
     fn get_all_remaining_bits() {
-        let mut d = PerCodecData::new();
+        let mut d = PerCodecData::new_aper();
         d.append_bits(bits![u8, Msb0; 1,0,1,0]);
         assert_eq!(d.get_bitvec(4).unwrap(), bitvec![u8,Msb0;1,0,1,0]);
     }
@@ -92,7 +92,7 @@ mod tests {
     // Likewise for get_bytes().
     #[test]
     fn get_all_remaining_bytes() {
-        let mut d = PerCodecData::new();
+        let mut d = PerCodecData::new_aper();
         let b: u8 = 0b10101111;
         d.append_bits(b.view_bits());
         assert_eq!(d.get_bytes(1).unwrap()[0], b);
@@ -100,7 +100,7 @@ mod tests {
 
     #[test]
     fn printable_string_coding() {
-        let mut d = PerCodecData::new();
+        let mut d = PerCodecData::new_aper();
         let s1 = "hello".to_string();
         encode::encode_printable_string(&mut d, None, None, false, &s1, false).unwrap();
         let s2 = decode::decode_printable_string(&mut d, None, None, false).unwrap();
@@ -109,7 +109,7 @@ mod tests {
 
     #[test]
     fn empty_string() {
-        let mut d = PerCodecData::new();
+        let mut d = PerCodecData::new_aper();
         let s1 = "".to_string();
         encode::encode_printable_string(&mut d, None, None, false, &s1, false).unwrap();
         let s2 = decode::decode_printable_string(&mut d, None, None, false).unwrap();
