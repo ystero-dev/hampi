@@ -192,7 +192,7 @@ pub(super) fn decode_constrained_whole_number(
             data.decode_align()?;
             data.decode_bits_as_integer(16, false)?
         } else {
-            let bytes_needed = crate::aper::bytes_needed_for_range(range);
+            let bytes_needed = crate::per::common::bytes_needed_for_range(range);
             log::trace!("bytes_needed : {}", bytes_needed);
             let length = decode_constrained_length_determinent(data, 1, bytes_needed as usize)?;
             data.decode_align()?;

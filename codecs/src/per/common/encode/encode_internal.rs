@@ -1,15 +1,12 @@
-use crate::aper::encode::encode_length_determinent;
-
-use crate::per::PerCodecData;
-
-use super::AperCodecError;
+use crate::per::{PerCodecData, PerCodecError};
 
 use bitvec::prelude::*;
 
-pub(super) fn encode_unconstrained_whole_number(
+pub(super) fn encode_unconstrained_whole_number_common(
     data: &mut PerCodecData,
     value: i128,
-) -> Result<(), AperCodecError> {
+    aligned: bool,
+) -> Result<(), PerCodecError> {
     let bytes_needed = if value < 0 {
         let leading_ones = value.leading_ones();
 
@@ -26,42 +23,51 @@ pub(super) fn encode_unconstrained_whole_number(
             16 - leading_zeroes / 8
         }
     };
-    encode_length_determinent(data, None, None, false, bytes_needed as usize)?;
+    super::encode_length_determinent_common(
+        data,
+        None,
+        None,
+        false,
+        bytes_needed as usize,
+        aligned,
+    )?;
     let bytes = value.to_be_bytes();
     data.append_bits(bytes[16 - bytes_needed as usize..16].view_bits());
     Ok(())
 }
 
-pub(super) fn encode_semi_constrained_whole_number(
+pub(super) fn encode_semi_constrained_whole_number_common(
     data: &mut PerCodecData,
     lb: i128,
     value: i128,
-) -> Result<(), AperCodecError> {
+    aligned: bool,
+) -> Result<(), PerCodecError> {
     if value < lb {
-        return Err(AperCodecError::new(format!(
+        return Err(PerCodecError::new(format!(
             "Cannot encode integer {} - less than lower bound {}",
             value, lb,
         )));
     }
 
-    encode_unconstrained_whole_number(data, value - lb)
+    encode_unconstrained_whole_number_common(data, value - lb, aligned)
 }
 
-pub(super) fn encode_constrained_whole_number(
+pub(super) fn encode_constrained_whole_number_common(
     data: &mut PerCodecData,
     lb: i128,
     ub: i128,
     value: i128,
-) -> Result<(), AperCodecError> {
+    aligned: bool,
+) -> Result<(), PerCodecError> {
     if value < lb {
-        return Err(AperCodecError::new(format!(
+        return Err(PerCodecError::new(format!(
             "Cannot encode integer {} - less than lower bound {}",
             value, lb,
         )));
     }
 
     if value > ub {
-        return Err(AperCodecError::new(format!(
+        return Err(PerCodecError::new(format!(
             "Cannot encode integer {} - greater than upper bound {}",
             value, ub,
         )));
@@ -94,14 +100,15 @@ pub(super) fn encode_constrained_whole_number(
         let bytes = (value as u16).to_be_bytes();
         data.append_bits(bytes.view_bits::<Msb0>());
     } else {
-        let bytes_needed_for_range = crate::aper::bytes_needed_for_range(range) as i128;
+        let bytes_needed_for_range = crate::per::common::bytes_needed_for_range(range) as i128;
         let bytes = value.to_be_bytes();
         let first_non_zero = bytes.iter().position(|x| *x != 0).unwrap_or(16);
-        encode_constrained_whole_number(
+        encode_constrained_whole_number_common(
             data,
             1,
             bytes_needed_for_range,
             16 - first_non_zero as i128,
+            aligned,
         )?;
         data.align();
         data.append_bits(bytes[first_non_zero..16].view_bits());
@@ -109,10 +116,11 @@ pub(super) fn encode_constrained_whole_number(
     Ok(())
 }
 
-pub(super) fn encode_indefinite_length_determinent(
+pub(super) fn encode_indefinite_length_determinent_common(
     data: &mut PerCodecData,
     value: usize,
-) -> Result<(), AperCodecError> {
+    _aligned: bool,
+) -> Result<(), PerCodecError> {
     data.align();
     if value < 128 {
         let byte = value as u8;
@@ -121,25 +129,27 @@ pub(super) fn encode_indefinite_length_determinent(
         let bytes = (value as u16 | 0x8000).to_be_bytes();
         data.append_bits(bytes.view_bits::<Msb0>());
     } else {
-        return Err(AperCodecError::new(
+        return Err(PerCodecError::new(
             "Length determinent >= 16384 not implemented",
         ));
     }
     Ok(())
 }
 
-pub(super) fn encode_normally_small_length_determinent(
+pub(super) fn encode_normally_small_length_determinent_common(
     data: &mut PerCodecData,
     value: usize,
-) -> Result<(), AperCodecError> {
+    aligned: bool,
+) -> Result<(), PerCodecError> {
     if value <= 32 {
         let byte = (value - 1) as u8;
         data.encode_bool(false);
         data.append_bits(&byte.view_bits::<Msb0>()[2..8]);
     } else {
         data.encode_bool(true);
-        encode_indefinite_length_determinent(data, value)?;
+        encode_indefinite_length_determinent_common(data, value, aligned)?;
     }
+
     Ok(())
 }
 
@@ -149,74 +159,74 @@ mod tests {
     use super::*;
 
     #[test]
-    fn encode_unconstrained() {
+    fn encode_unconstrained_aligned() {
         let mut data = PerCodecData::new();
-        encode_unconstrained_whole_number(&mut data, 1).unwrap();
+        encode_unconstrained_whole_number_common(&mut data, 1, true).unwrap();
         assert_eq!(data.into_bytes(), [0x01, 0x01]);
     }
 
     #[test]
-    fn encode_tiny_constrained_integer() {
+    fn encode_tiny_constrained_integer_aligned() {
         let mut data = PerCodecData::new();
-        encode_constrained_whole_number(&mut data, -2, 5, -1).unwrap();
+        encode_constrained_whole_number_common(&mut data, -2, 5, -1, true).unwrap();
         assert_eq!(data.into_bytes(), [0x20]);
     }
 
     #[test]
-    fn encode_small_constrained_integer() {
+    fn encode_small_constrained_integer_aligned() {
         let mut data = PerCodecData::new();
-        encode_constrained_whole_number(&mut data, 0, 1000, 1).unwrap();
+        encode_constrained_whole_number_common(&mut data, 0, 1000, 1, true).unwrap();
         assert_eq!(data.into_bytes(), [0x00, 0x01]);
     }
 
     #[test]
-    fn encode_large_constrained_integer() {
+    fn encode_large_constrained_integer_aligned() {
         let mut data = PerCodecData::new();
-        encode_constrained_whole_number(&mut data, 0, 100_000, 1).unwrap();
+        encode_constrained_whole_number_common(&mut data, 0, 100_000, 1, true).unwrap();
         assert_eq!(data.into_bytes(), [0x00, 0x01]);
     }
 
     #[test]
-    fn encode_tiny_indefinite_length_determinent() {
+    fn encode_tiny_indefinite_length_determinent_aligned() {
         let mut data = PerCodecData::new();
-        encode_indefinite_length_determinent(&mut data, 1).unwrap();
+        encode_indefinite_length_determinent_common(&mut data, 1, true).unwrap();
         assert_eq!(data.into_bytes(), [0x01]);
     }
 
     #[test]
-    fn encode_small_indefinite_length_determinent() {
+    fn encode_small_indefinite_length_determinent_aligned() {
         let mut data = PerCodecData::new();
-        encode_indefinite_length_determinent(&mut data, 16383).unwrap();
+        encode_indefinite_length_determinent_common(&mut data, 16383, true).unwrap();
         assert_eq!(data.into_bytes(), [0xbf, 0xff]);
     }
 
     #[test]
-    fn encode_small_normally_small_length_determinent() {
+    fn encode_small_normally_small_length_determinent_aligned() {
         let mut data = PerCodecData::new();
-        encode_normally_small_length_determinent(&mut data, 32).unwrap();
+        encode_normally_small_length_determinent_common(&mut data, 32, true).unwrap();
         assert_eq!(data.into_bytes(), [0x3e]);
     }
 
     #[test]
-    fn encode_int_range_256() {
+    fn encode_int_range_256_aligned() {
         let mut data = PerCodecData::new();
         data.encode_bool(true);
-        encode_constrained_whole_number(&mut data, 0, 255, 1).unwrap();
+        encode_constrained_whole_number_common(&mut data, 0, 255, 1, true).unwrap();
         assert_eq!(data.into_bytes(), [0x80, 0x01]);
     }
 
     #[test]
-    fn encode_int_range_68719476735() {
+    fn encode_int_range_68719476735_aligned() {
         let mut data = PerCodecData::new();
-        encode_constrained_whole_number(&mut data, 0, 68719476735, 123).unwrap();
+        encode_constrained_whole_number_common(&mut data, 0, 68719476735, 123, true).unwrap();
         assert_eq!(data.into_bytes(), [0x00, 0x7B]);
     }
 
     #[test]
-    fn encode_u32() {
+    fn encode_u32_aligned() {
         let mut data = PerCodecData::new();
         let value = 0x10203040;
-        encode_constrained_whole_number(&mut data, 0, 4294967295, value).unwrap();
+        encode_constrained_whole_number_common(&mut data, 0, 4294967295, value, true).unwrap();
         assert_eq!(data.into_bytes(), [0xC0, 0x10, 0x20, 0x30, 0x40]);
     }
 }
