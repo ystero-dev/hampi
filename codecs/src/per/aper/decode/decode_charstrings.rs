@@ -1,11 +1,9 @@
 //! Functionality for decoding character strings
-use bitvec::field::BitField;
 
+use crate::per::common::decode::decode_string_common;
 use crate::per::PerCodecData;
 
 use super::AperCodecError;
-
-use super::decode_internal::decode_length_determinent;
 
 // 27.5.3 and 27.5.4
 /// Decode a VisibleString CharacterString Type.
@@ -21,7 +19,7 @@ pub fn decode_visible_string(
         ub,
         is_extensible
     );
-    decode_string(data, lb, ub, is_extensible)
+    decode_string_common(data, lb, ub, is_extensible, true)
 }
 
 /// Decode a PrintableString CharacterString Type.
@@ -37,7 +35,7 @@ pub fn decode_printable_string(
         ub,
         is_extensible
     );
-    decode_string(data, lb, ub, is_extensible)
+    decode_string_common(data, lb, ub, is_extensible, true)
 }
 
 // UTF-8 String is always - indefinite length case as it's not a fixed character width string. It's
@@ -56,41 +54,5 @@ pub fn decode_utf8_string(
         ub,
         is_extensible
     );
-    decode_string(data, lb, ub, is_extensible)
-}
-
-fn decode_string(
-    data: &mut PerCodecData,
-    lb: Option<i128>,
-    ub: Option<i128>,
-    is_extensible: bool,
-) -> Result<String, AperCodecError> {
-    let is_extended = if is_extensible {
-        data.decode_bool()?
-    } else {
-        false
-    };
-
-    let length = if is_extended {
-        decode_length_determinent(data, None, None, false)?
-    } else {
-        decode_length_determinent(data, lb, ub, false)?
-    };
-
-    let num_bits = 8;
-    let length = length * num_bits;
-    if length > 16 {
-        data.decode_align()?;
-    }
-    let bits = data.get_bitvec(length)?;
-    let bytes = bits
-        .chunks_exact(num_bits)
-        .map(|c| c.load::<u8>())
-        .collect::<Vec<u8>>();
-
-    data.dump();
-
-    std::str::from_utf8(&bytes)
-        .map(|s| s.to_string())
-        .map_err(|_| AperCodecError::new("UTF decode failed"))
+    decode_string_common(data, lb, ub, is_extensible, true)
 }
