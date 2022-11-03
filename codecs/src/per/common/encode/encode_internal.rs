@@ -160,56 +160,56 @@ mod tests {
 
     #[test]
     fn encode_unconstrained_aligned() {
-        let mut data = PerCodecData::new();
+        let mut data = PerCodecData::new_aper();
         encode_unconstrained_whole_number_common(&mut data, 1, true).unwrap();
         assert_eq!(data.into_bytes(), [0x01, 0x01]);
     }
 
     #[test]
     fn encode_tiny_constrained_integer_aligned() {
-        let mut data = PerCodecData::new();
+        let mut data = PerCodecData::new_aper();
         encode_constrained_whole_number_common(&mut data, -2, 5, -1, true).unwrap();
         assert_eq!(data.into_bytes(), [0x20]);
     }
 
     #[test]
     fn encode_small_constrained_integer_aligned() {
-        let mut data = PerCodecData::new();
+        let mut data = PerCodecData::new_aper();
         encode_constrained_whole_number_common(&mut data, 0, 1000, 1, true).unwrap();
         assert_eq!(data.into_bytes(), [0x00, 0x01]);
     }
 
     #[test]
     fn encode_large_constrained_integer_aligned() {
-        let mut data = PerCodecData::new();
+        let mut data = PerCodecData::new_aper();
         encode_constrained_whole_number_common(&mut data, 0, 100_000, 1, true).unwrap();
         assert_eq!(data.into_bytes(), [0x00, 0x01]);
     }
 
     #[test]
     fn encode_tiny_indefinite_length_determinent_aligned() {
-        let mut data = PerCodecData::new();
+        let mut data = PerCodecData::new_aper();
         encode_indefinite_length_determinent_common(&mut data, 1, true).unwrap();
         assert_eq!(data.into_bytes(), [0x01]);
     }
 
     #[test]
     fn encode_small_indefinite_length_determinent_aligned() {
-        let mut data = PerCodecData::new();
+        let mut data = PerCodecData::new_aper();
         encode_indefinite_length_determinent_common(&mut data, 16383, true).unwrap();
         assert_eq!(data.into_bytes(), [0xbf, 0xff]);
     }
 
     #[test]
     fn encode_small_normally_small_length_determinent_aligned() {
-        let mut data = PerCodecData::new();
+        let mut data = PerCodecData::new_aper();
         encode_normally_small_length_determinent_common(&mut data, 32, true).unwrap();
         assert_eq!(data.into_bytes(), [0x3e]);
     }
 
     #[test]
     fn encode_int_range_256_aligned() {
-        let mut data = PerCodecData::new();
+        let mut data = PerCodecData::new_aper();
         data.encode_bool(true);
         encode_constrained_whole_number_common(&mut data, 0, 255, 1, true).unwrap();
         assert_eq!(data.into_bytes(), [0x80, 0x01]);
@@ -217,14 +217,14 @@ mod tests {
 
     #[test]
     fn encode_int_range_68719476735_aligned() {
-        let mut data = PerCodecData::new();
+        let mut data = PerCodecData::new_aper();
         encode_constrained_whole_number_common(&mut data, 0, 68719476735, 123, true).unwrap();
         assert_eq!(data.into_bytes(), [0x00, 0x7B]);
     }
 
     #[test]
     fn encode_u32_aligned() {
-        let mut data = PerCodecData::new();
+        let mut data = PerCodecData::new_aper();
         let value = 0x10203040;
         encode_constrained_whole_number_common(&mut data, 0, 4294967295, value, true).unwrap();
         assert_eq!(data.into_bytes(), [0xC0, 0x10, 0x20, 0x30, 0x40]);

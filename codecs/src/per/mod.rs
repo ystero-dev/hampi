@@ -20,20 +20,39 @@ pub struct PerCodecData {
     bits: BitVec<u8, Msb0>,
     decode_offset: usize,
     key: Option<i128>,
+    aligned: bool,
 }
 
 impl PerCodecData {
-    /// Default `PerCodecData`
-    pub fn new() -> Self {
+    /// Default `PerCodecData` for AperCodec
+    pub fn new_aper() -> Self {
+        Self {
+            aligned: true,
+            ..Self::default()
+        }
+    }
+
+    /// Default `PerCodecData` for UperCodec
+    pub fn new_uper() -> Self {
         Self::default()
     }
 
-    /// Create Our `PerCodecData` Structure from a slice of u8
-    pub fn from_slice(bytes: &[u8]) -> Self {
+    /// Create Our `PerCodecData` Structure from a slice of u8 for AperCodec
+    pub fn from_slice_aper(bytes: &[u8]) -> Self {
+        Self::from_slice_internal(bytes, true)
+    }
+
+    /// Create Our `PerCodecData` Structure from a slice of u8 for UperCodec
+    pub fn from_slice_uper(bytes: &[u8]) -> Self {
+        Self::from_slice_internal(bytes, false)
+    }
+
+    fn from_slice_internal(bytes: &[u8], aligned: bool) -> Self {
         Self {
             bits: BitSlice::<_, _>::from_slice(bytes).to_bitvec(),
             decode_offset: 0,
             key: None,
+            aligned,
         }
     }
 

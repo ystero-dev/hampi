@@ -12,11 +12,11 @@ fn main() {
 
     let ngap_byte_str = "0015404a000004001b00084002f898000000000052400f06004d79206c6974746c6520674e420066001f01000000000002f8980001000800800000010002f8390001001881c00013880015400140";
     let ngap_data = hex::decode(ngap_byte_str).unwrap();
-    let mut codec_data = AperCodecData::from_slice(&ngap_data);
+    let mut codec_data = AperCodecData::from_slice_aper(&ngap_data);
     let ngap_pdu = ngap::NGAP_PDU::aper_decode(&mut codec_data).unwrap();
 
     eprintln!("ngap_pdu: {:#?}", ngap_pdu);
-    let mut encode_codec_data = AperCodecData::new();
+    let mut encode_codec_data = AperCodecData::new_aper();
     let result = ngap_pdu.aper_encode(&mut encode_codec_data);
     eprintln!("result: {:#?}", result);
     let ngap_encoded_data = encode_codec_data.get_inner().unwrap();
