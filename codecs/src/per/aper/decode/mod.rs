@@ -1,17 +1,12 @@
 //! Decode APIs for APER Codec
 
-mod decode_internal;
-
 use bitvec::prelude::*;
 
+#[allow(unused)]
+use crate::per::common::decode::*;
 use crate::per::PerCodecData;
 
 use super::AperCodecError;
-
-#[allow(unused)]
-use decode_internal::*;
-
-pub use decode_internal::decode_length_determinent;
 
 /// Decode a Choice Index.
 ///
@@ -32,23 +27,7 @@ pub fn decode_choice_idx(
         is_extensible
     );
 
-    let (idx, extended) = if is_extensible {
-        let extended = data.decode_bool()?;
-        if !extended {
-            let (idx, _) = decode_integer(data, Some(lb), Some(ub), false)?;
-            (idx, extended)
-        } else {
-            let idx = decode_normally_small_non_negative_whole_number(data)?;
-            (idx, extended)
-        }
-    } else {
-        let (idx, _) = decode_integer(data, Some(lb), Some(ub), false)?;
-        (idx, false)
-    };
-
-    data.dump();
-
-    Ok((idx, extended))
+    decode_choice_idx_common(data, lb, ub, is_extensible, true)
 }
 
 /// Decode The Sequence Header
@@ -63,19 +42,7 @@ pub fn decode_sequence_header(
 ) -> Result<(BitVec<u8, Msb0>, bool), AperCodecError> {
     log::debug!("decode_sequence_header: extensible: {}", is_extensible);
 
-    let extended = if is_extensible {
-        data.decode_bool()?
-    } else {
-        false
-    };
-
-    let mut bitmap = BitVec::new();
-    if optional_count > 0 {
-        bitmap.extend(data.get_bitvec(optional_count)?);
-    }
-
-    data.dump();
-    Ok((bitmap, extended))
+    decode_sequence_header_common(data, is_extensible, optional_count, true)
 }
 
 /// Decode an Integer
@@ -104,42 +71,7 @@ pub fn decode_integer(
         is_extensible
     );
 
-    let extended_value = if is_extensible {
-        data.decode_bool()?
-    } else {
-        false
-    };
-
-    let value = if extended_value {
-        // 12.1
-        decode_unconstrained_whole_number(data)?
-    } else {
-        // 12.2
-        match lb {
-            None =>
-            // 12.2.4
-            {
-                decode_unconstrained_whole_number(data)?
-            }
-            Some(lb) => {
-                match ub {
-                    None =>
-                    // 12.2.3
-                    {
-                        decode_semi_constrained_whole_number(data, lb)?
-                    }
-                    Some(ub) => {
-                        // 12.2.1 and 12.2.2
-                        decode_constrained_whole_number(data, lb, ub)?
-                    }
-                }
-            }
-        }
-    };
-
-    data.dump();
-
-    Ok((value, extended_value))
+    decode_integer_common(data, lb, ub, is_extensible, true)
 }
 
 /// Decode a Boolean
@@ -148,11 +80,7 @@ pub fn decode_integer(
 pub fn decode_bool(data: &mut PerCodecData) -> Result<bool, AperCodecError> {
     log::debug!("decode_bool:");
 
-    let result = data.decode_bool()?;
-
-    data.dump();
-
-    Ok(result)
+    decode_bool_common(data, true)
 }
 
 /// Decode an Enumerated Value
@@ -174,22 +102,7 @@ pub fn decode_enumerated(
         is_extensible
     );
 
-    let is_extended = if is_extensible {
-        data.decode_bool()?
-    } else {
-        false
-    };
-
-    let decoded = if !is_extended {
-        let decoded = decode_integer(data, lb, ub, false)?;
-        decoded.0
-    } else {
-        decode_normally_small_non_negative_whole_number(data)?
-    };
-
-    data.dump();
-
-    Ok((decoded, is_extended))
+    decode_enumerated_common(data, lb, ub, is_extensible, true)
 }
 
 /// Decode a Bit String
@@ -208,38 +121,7 @@ pub fn decode_bitstring(
         is_extensible
     );
 
-    let is_extended = if is_extensible {
-        data.decode_bool()?
-    } else {
-        false
-    };
-
-    let mut bv = BitVec::new();
-    loop {
-        let length = if is_extended {
-            decode_length_determinent(data, None, None, false)?
-        } else {
-            decode_length_determinent(data, lb, ub, false)?
-        };
-
-        if length > 0 {
-            if length > 16 {
-                data.decode_align()?;
-            }
-            bv.extend(data.get_bitvec(length)?);
-        }
-
-        // Fragmented So get the chunks in multiples of 16384,
-        if length >= 16384 {
-            continue;
-        } else {
-            break;
-        }
-    }
-
-    data.dump();
-
-    Ok(bv)
+    decode_bitstring_common(data, lb, ub, is_extensible, true)
 }
 
 /// Decode an OCTET STRING
@@ -258,38 +140,19 @@ pub fn decode_octetstring(
         is_extensible
     );
 
-    let is_extended = if is_extensible {
-        data.decode_bool()?
-    } else {
-        false
-    };
+    decode_octetstring_common(data, lb, ub, is_extensible, true)
+}
 
-    let mut octets = Vec::new();
-    loop {
-        let length = if is_extended {
-            decode_length_determinent(data, None, None, false)?
-        } else {
-            decode_length_determinent(data, lb, ub, false)?
-        };
+/// Decodes a Length determinent
+pub fn decode_length_determinent(
+    data: &mut PerCodecData,
+    lb: Option<i128>,
+    ub: Option<i128>,
+    normally_small: bool,
+) -> Result<usize, AperCodecError> {
+    log::debug!("decode_length_determinent:");
 
-        if length > 0 {
-            if length > 2 {
-                data.decode_align()?;
-            }
-            octets.extend(data.get_bytes(length)?);
-        }
-
-        // Fragmented So get the chunks in multiples of 16384,
-        if length >= 16384 {
-            continue;
-        } else {
-            break;
-        }
-    }
-
-    data.dump();
-
-    Ok(octets)
+    decode_length_determinent_common(data, lb, ub, normally_small, true)
 }
 
 mod decode_charstrings;

@@ -9,14 +9,15 @@ use super::AperCodecError;
 //
 // This is typically usedd when encoding/decoding Choice Indexes that are not present in the
 // extension root.
-pub(super) fn decode_normally_small_non_negative_whole_number(
+pub(super) fn decode_normally_small_non_negative_whole_number_common(
     data: &mut PerCodecData,
+    aligned: bool,
 ) -> Result<i128, AperCodecError> {
     let is_small = data.decode_bool()?;
     if !is_small {
         data.decode_bits_as_integer(6, false)
     } else {
-        decode_semi_constrained_whole_number(data, 0_i128)
+        decode_semi_constrained_whole_number_common(data, 0_i128, aligned)
     }
 }
 // Decode "Normally Small" Length Determinent
@@ -25,32 +26,32 @@ pub(super) fn decode_normally_small_non_negative_whole_number(
 // TODO: Support for the case when the length is greater than 64. We almost never come across this
 // case in practice, so right now it just Errors, if in real life we actually see this error for
 // any time it might have to be implemented to take care of that case.
-fn decode_normally_small_length_determinent(
+fn decode_normally_small_length_determinent_common(
     data: &mut PerCodecData,
+    aligned: bool,
 ) -> Result<usize, AperCodecError> {
     let is_small = data.decode_bool()?;
     if !is_small {
         Ok(data.decode_bits_as_integer(6, false)? as usize + 1_usize)
     } else {
-        decode_indefinite_length_determinent(data)
+        decode_indefinite_length_determinent_common(data, aligned)
     }
 }
 
 // Decode a Length Determinent (Section 10.9)
 //
 // Decodes a Length Determinent.
-pub fn decode_length_determinent(
+pub(crate) fn decode_length_determinent_common(
     data: &mut PerCodecData,
     lb: Option<i128>,
     ub: Option<i128>,
     normally_small: bool,
+    aligned: bool,
 ) -> Result<usize, AperCodecError> {
     // Normally small is told to us by caller and we don't care about `lb` and `ub` values in that
     // case. We simply follow the procedure as explained in 10.9.3.4
-    log::debug!("decode_length_determinent:");
-
     if normally_small {
-        return decode_normally_small_length_determinent(data);
+        return decode_normally_small_length_determinent_common(data, aligned);
     }
 
     let lb = if let Some(l) = lb {
@@ -67,21 +68,22 @@ pub fn decode_length_determinent(
             }
 
             // 10.9.3.3
-            decode_constrained_length_determinent(data, lb, ub)
+            decode_constrained_length_determinent_common(data, lb, ub, aligned)
         } else {
-            decode_indefinite_length_determinent(data)
+            decode_indefinite_length_determinent_common(data, aligned)
         }
     } else {
         // ub is None, it's an unconstrained one
-        decode_indefinite_length_determinent(data)
+        decode_indefinite_length_determinent_common(data, aligned)
     }
 }
 
 // Called when `lb` and `ub` are known and the range is less than 64K
-fn decode_constrained_length_determinent(
+fn decode_constrained_length_determinent_common(
     data: &mut PerCodecData,
     lb: usize,
     ub: usize,
+    aligned: bool,
 ) -> Result<usize, AperCodecError> {
     log::trace!(
         "decode_constrained_length_determinent, lb: {}, ub: {}",
@@ -93,7 +95,7 @@ fn decode_constrained_length_determinent(
 
     if range <= 65536 {
         // Almost always for our use cases, so let's just use it.
-        let length = decode_constrained_whole_number(data, lb as i128, ub as i128)?;
+        let length = decode_constrained_whole_number_common(data, lb as i128, ub as i128, aligned)?;
         log::trace!("decoded length : {}", length);
 
         data.dump();
@@ -106,7 +108,10 @@ fn decode_constrained_length_determinent(
 
 // Called when `ub` is not determined or `ub ` - `lb` is greater than 64K and in this case value of
 // `lb` is don't care.
-fn decode_indefinite_length_determinent(data: &mut PerCodecData) -> Result<usize, AperCodecError> {
+fn decode_indefinite_length_determinent_common(
+    data: &mut PerCodecData,
+    _aligned: bool,
+) -> Result<usize, AperCodecError> {
     data.decode_align()?;
     let first = data.decode_bool()?;
     let length = if !first {
@@ -131,24 +136,26 @@ fn decode_indefinite_length_determinent(data: &mut PerCodecData) -> Result<usize
 }
 
 // Section 10.8 X.691
-pub(super) fn decode_unconstrained_whole_number(
+pub(super) fn decode_unconstrained_whole_number_common(
     data: &mut PerCodecData,
+    aligned: bool,
 ) -> Result<i128, AperCodecError> {
     log::trace!("decode_unconstrained_length:");
 
-    let length = decode_length_determinent(data, None, None, false)?;
+    let length = decode_length_determinent_common(data, None, None, false, aligned)?;
     let bits = length * 8;
     data.decode_bits_as_integer(bits, true)
 }
 
 // Section 10.7 X.691
-pub(super) fn decode_semi_constrained_whole_number(
+pub(super) fn decode_semi_constrained_whole_number_common(
     data: &mut PerCodecData,
     lb: i128,
+    aligned: bool,
 ) -> Result<i128, AperCodecError> {
     log::trace!("decode_semi_constrained_whole_number:");
 
-    let length = decode_length_determinent(data, None, None, false)?;
+    let length = decode_length_determinent_common(data, None, None, false, aligned)?;
 
     let bits = length * 8;
     let val = data.decode_bits_as_integer(bits, false)?;
@@ -159,10 +166,11 @@ pub(super) fn decode_semi_constrained_whole_number(
 // Decode a 'constrained' whole number where both `lb` and `ub` are available.
 //
 // From Section 10.5
-pub(super) fn decode_constrained_whole_number(
+pub(super) fn decode_constrained_whole_number_common(
     data: &mut PerCodecData,
     lb: i128,
     ub: i128,
+    aligned: bool,
 ) -> Result<i128, AperCodecError> {
     log::trace!("decode_constrained_whole_number: lb: {}, ub: {}", lb, ub,);
 
@@ -194,7 +202,12 @@ pub(super) fn decode_constrained_whole_number(
         } else {
             let bytes_needed = crate::per::common::bytes_needed_for_range(range);
             log::trace!("bytes_needed : {}", bytes_needed);
-            let length = decode_constrained_length_determinent(data, 1, bytes_needed as usize)?;
+            let length = decode_constrained_length_determinent_common(
+                data,
+                1,
+                bytes_needed as usize,
+                aligned,
+            )?;
             data.decode_align()?;
             data.decode_bits_as_integer(length * 8, false)?
         };
@@ -209,58 +222,59 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_decode_constrained_whole_number_range_0() {
+    fn test_decode_constrained_whole_number_range_0_aligned() {
         let data = &[0x70u8, 0, 0, 0];
         let mut codec_data = PerCodecData::from_slice_aper(data);
         codec_data.advance_maybe_err(1, false).unwrap();
-        let value = decode_constrained_whole_number(&mut codec_data, 14, 14);
+        let value = decode_constrained_whole_number_common(&mut codec_data, 14, 14, true);
         assert!(value.is_ok());
         let value = value.unwrap();
         assert_eq!(value, 14i128);
     }
 
     #[test]
-    fn test_decode_constrained_whole_number_lt_256() {
+    fn test_decode_constrained_whole_number_lt_256_aligned() {
         let data = &[0x70u8, 0, 0, 0];
         let mut codec_data = PerCodecData::from_slice_aper(data);
         codec_data.advance_maybe_err(1, false).unwrap();
-        let value = decode_constrained_whole_number(&mut codec_data, 7, 14);
+        let value = decode_constrained_whole_number_common(&mut codec_data, 7, 14, true);
         assert!(value.is_ok());
         let value = value.unwrap();
         assert_eq!(value, 14i128);
     }
 
     #[test]
-    fn test_decode_constrained_whole_number_eq_256() {
+    fn test_decode_constrained_whole_number_eq_256_aligned() {
         let data = &[0x80u8, 0x70u8, 0, 0];
         let mut codec_data = PerCodecData::from_slice_aper(data);
         codec_data.advance_maybe_err(1, false).unwrap();
-        let value = decode_constrained_whole_number(&mut codec_data, 0, 255);
+        let value = decode_constrained_whole_number_common(&mut codec_data, 0, 255, true);
         assert!(value.is_ok(), "{:#?}", value.err());
         let value = value.unwrap();
         assert_eq!(value, 0x70i128);
     }
 
     #[test]
-    fn test_decode_constrained_whole_number_lt_64k() {
+    fn test_decode_constrained_whole_number_lt_64k_aligned() {
         let data = &[0x00u8, 0x70u8, 0x00, 1];
         let mut codec_data = PerCodecData::from_slice_aper(data);
         codec_data.advance_maybe_err(12, false).unwrap();
-        let value = decode_constrained_whole_number(&mut codec_data, 0, 64000);
+        let value = decode_constrained_whole_number_common(&mut codec_data, 0, 64000, true);
         assert!(value.is_ok(), "{:#?}", value.err());
         let value = value.unwrap();
         assert_eq!(value, 1_i128);
     }
 
     #[test]
-    fn test_decode_int_range_68719476735() {
+    fn test_decode_int_range_68719476735_aligned() {
         let mut data = PerCodecData::from_slice_aper(&[0x00, 0x7B]);
-        let value = decode_constrained_whole_number(&mut data, 0, 68719476735).unwrap();
+        let value =
+            decode_constrained_whole_number_common(&mut data, 0, 68719476735, true).unwrap();
         assert_eq!(value, 123);
     }
 
     #[test]
-    fn test_decode_constrained_whole_number_gt_64k() {
+    fn test_decode_constrained_whole_number_gt_64k_aligned() {
         let data = &[0x00u8, 0x78u8, 0x01, 1, 0x01, 0x02];
         let mut codec_data = PerCodecData::from_slice_aper(data);
         codec_data.advance_maybe_err(12, false).unwrap();
@@ -268,7 +282,7 @@ mod tests {
         // We are now looking at the 12th bit.
         // 0000 0000 0111 >> 1000 0000 0001 0000 0001 0000 0001 0000 0002
 
-        let value = decode_constrained_whole_number(&mut codec_data, 0, 20_000_000);
+        let value = decode_constrained_whole_number_common(&mut codec_data, 0, 20_000_000, true);
         assert!(value.is_ok(), "{:#?}", value.err());
         let value = value.unwrap();
 
