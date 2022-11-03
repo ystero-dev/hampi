@@ -1,16 +1,13 @@
 //! ASN.1 Aper Encoder module.
 
-mod encode_internal;
+use bitvec::prelude::*;
 
 use crate::per::PerCodecData;
 
-use super::AperCodecError;
-
-use bitvec::prelude::*;
-use bitvec::view::AsBits;
-
 #[allow(unused)]
-use encode_internal::*;
+use crate::per::common::encode::*;
+
+use super::AperCodecError;
 
 /// Encode a Choice Index
 ///
@@ -33,17 +30,7 @@ pub fn encode_choice_idx(
         extended
     );
 
-    if extended {
-        return Err(AperCodecError::new(
-            "Encode of extended choice not yet implemented",
-        ));
-    }
-
-    if is_extensible {
-        data.encode_bool(extended);
-    }
-
-    encode_integer(data, Some(lb), Some(ub), false, idx, false)
+    encode_choice_idx_common(data, lb, ub, is_extensible, idx, extended, true)
 }
 
 /// Encode sequence header
@@ -60,21 +47,7 @@ pub fn encode_sequence_header(
         extended
     );
 
-    if extended {
-        return Err(AperCodecError::new(
-            "Encode of extended sequence not yet implemented",
-        ));
-    }
-
-    if is_extensible {
-        data.encode_bool(extended);
-    }
-
-    data.append_bits(optionals);
-
-    data.dump_encode();
-
-    Ok(())
+    encode_sequence_header_common(data, is_extensible, optionals, extended, true)
 }
 
 /// Encode an INTEGER
@@ -100,25 +73,7 @@ pub fn encode_integer(
         extended
     );
 
-    if extended {
-        return Err(AperCodecError::new(
-            "Encode of extended integer not yet implemented",
-        ));
-    }
-
-    if is_extensible {
-        data.encode_bool(extended);
-    }
-
-    match (lb, ub) {
-        (None, _) => encode_unconstrained_whole_number(data, value)?,
-        (Some(lb), None) => encode_semi_constrained_whole_number(data, lb, value)?,
-        (Some(lb), Some(ub)) => encode_constrained_whole_number(data, lb, ub, value)?,
-    };
-
-    data.dump_encode();
-
-    Ok(())
+    encode_integer_common(data, lb, ub, is_extensible, value, extended, true)
 }
 
 /// Encode a BOOLEAN Value
@@ -126,10 +81,8 @@ pub fn encode_integer(
 /// Encodes a boolean value into the passed `PerCodecData` structure.
 pub fn encode_bool(data: &mut PerCodecData, value: bool) -> Result<(), AperCodecError> {
     log::debug!("encode_bool: {}", value);
-    data.encode_bool(value);
 
-    data.dump_encode();
-    Ok(())
+    encode_bool_common(data, value, true)
 }
 
 /// Encode an ENUMERATED Value
@@ -150,21 +103,7 @@ pub fn encode_enumerated(
         extended
     );
 
-    if extended {
-        return Err(AperCodecError::new(
-            "Encode of extended enumerated not yet implemented",
-        ));
-    }
-
-    if is_extensible {
-        data.encode_bool(extended);
-    }
-
-    encode_integer(data, lb, ub, false, value, false)?;
-
-    data.dump();
-
-    Ok(())
+    encode_enumerated_common(data, lb, ub, is_extensible, value, extended, true)
 }
 
 /// Encode a Bit String
@@ -185,34 +124,7 @@ pub fn encode_bitstring(
         extended
     );
 
-    if extended {
-        return Err(AperCodecError::new(
-            "Encode of extended bitstring not yet implemented",
-        ));
-    }
-
-    if is_extensible {
-        data.encode_bool(extended);
-    }
-
-    let length = bit_string.len();
-    if length >= 16384 {
-        return Err(AperCodecError::new(
-            "Encode of fragmented bitstring not yet implemented",
-        ));
-    }
-
-    encode_length_determinent(data, lb, ub, false, length)?;
-    if length > 0 {
-        if length > 16 {
-            data.align();
-        }
-        data.append_bits(bit_string);
-    }
-
-    data.dump_encode();
-
-    Ok(())
+    encode_bitstring_common(data, lb, ub, is_extensible, bit_string, extended, true)
 }
 
 /// Encode an OCTET STRING
@@ -233,34 +145,7 @@ pub fn encode_octetstring(
         extended
     );
 
-    if extended {
-        return Err(AperCodecError::new(
-            "Encode of extended octetstring not yet implemented",
-        ));
-    }
-
-    if is_extensible {
-        data.encode_bool(extended);
-    }
-
-    let length = octet_string.len();
-    if length >= 16384 {
-        return Err(AperCodecError::new(
-            "Encode of fragmented octetstring not yet implemented",
-        ));
-    }
-
-    encode_length_determinent(data, lb, ub, false, length)?;
-
-    if length > 0 {
-        if length > 2 {
-            data.align();
-        }
-        data.append_bits(octet_string.view_bits());
-    }
-
-    data.dump_encode();
-    Ok(())
+    encode_octet_string_common(data, lb, ub, is_extensible, octet_string, extended, true)
 }
 
 // Encode a Length Determinent
@@ -279,70 +164,7 @@ pub fn encode_length_determinent(
         value
     );
 
-    if normally_small {
-        encode_normally_small_length_determinent(data, value)?;
-        data.dump_encode();
-
-        return Ok(());
-    }
-
-    match ub {
-        Some(ub) if ub < 65_536 => {
-            encode_constrained_whole_number(data, lb.unwrap_or(0), ub, value as i128)?
-        }
-        _ => {
-            if let Some(u) = ub {
-                if value > u as usize {
-                    return Err(AperCodecError::new(format!(
-                        "Cannot encode length determinent {} - greater than upper bound {}",
-                        value, u,
-                    )));
-                }
-            }
-
-            if let Some(l) = lb {
-                if value < l as usize {
-                    return Err(AperCodecError::new(format!(
-                        "Cannot encode length determinent {} - less than lower bound {}",
-                        value, l,
-                    )));
-                }
-            }
-
-            encode_indefinite_length_determinent(data, value)?
-        }
-    };
-
-    data.dump_encode();
-
-    Ok(())
-}
-
-fn encode_string(
-    data: &mut PerCodecData,
-    lb: Option<i128>,
-    ub: Option<i128>,
-    is_extensible: bool,
-    value: &String,
-    extended: bool,
-) -> Result<(), AperCodecError> {
-    if extended {
-        return Err(AperCodecError::new(
-            "Encode of extended visible string not yet implemented",
-        ));
-    }
-
-    if is_extensible {
-        data.encode_bool(extended);
-    }
-    encode_length_determinent(data, lb, ub, false, value.len())?;
-    if value.len() > 2 {
-        data.align();
-    }
-    data.append_bits(value.as_bits());
-
-    data.dump_encode();
-    Ok(())
+    encode_length_determinent_common(data, lb, ub, normally_small, value, true)
 }
 
 /// Encode a VisibleString CharacterString Type.
@@ -363,7 +185,7 @@ pub fn encode_visible_string(
         extended
     );
 
-    encode_string(data, lb, ub, is_extensible, value, extended)
+    encode_string_common(data, lb, ub, is_extensible, value, extended, true)
 }
 
 /// Encode a PrintableString CharacterString Type.
@@ -384,7 +206,7 @@ pub fn encode_printable_string(
         extended
     );
 
-    encode_string(data, lb, ub, is_extensible, value, extended)
+    encode_string_common(data, lb, ub, is_extensible, value, extended, true)
 }
 
 /// Encode a UTF8String CharacterString Type.
@@ -405,8 +227,9 @@ pub fn encode_utf8_string(
         extended
     );
 
-    encode_string(data, lb, ub, is_extensible, value, extended)
+    encode_string_common(data, lb, ub, is_extensible, value, extended, true)
 }
+
 #[cfg(test)]
 mod tests {
 
