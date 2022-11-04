@@ -5,10 +5,6 @@ pub mod encode;
 
 pub mod decode;
 
-pub use crate::per::error::Error as AperCodecError;
-pub use crate::per::PerCodecData;
-pub use crate::per::PerCodecData as AperCodecData;
-
 /// Trait representing an 'APER Codec'.
 ///
 ///
@@ -16,9 +12,9 @@ pub use crate::per::PerCodecData as AperCodecData;
 pub trait AperCodec {
     type Output;
 
-    fn aper_decode(data: &mut PerCodecData) -> Result<Self::Output, AperCodecError>;
+    fn aper_decode(data: &mut crate::PerCodecData) -> Result<Self::Output, crate::PerCodecError>;
 
-    fn aper_encode(&self, _data: &mut PerCodecData) -> Result<(), AperCodecError> {
+    fn aper_encode(&self, _data: &mut crate::PerCodecData) -> Result<(), crate::PerCodecError> {
         todo!();
     }
 }
@@ -26,6 +22,7 @@ pub trait AperCodec {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::PerCodecData;
     use bitvec::prelude::*;
 
     // A test that would fail if it were not for the `force_align()` in PerCodecData::get_bytes().

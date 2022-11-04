@@ -2,12 +2,10 @@
 
 use bitvec::prelude::*;
 
-use crate::per::PerCodecData;
+use crate::{PerCodecData, PerCodecError};
 
 #[allow(unused)]
 use crate::per::common::encode::*;
-
-use crate::PerCodecError;
 
 /// Encode a Choice Index
 ///
@@ -30,7 +28,7 @@ pub fn encode_choice_idx(
         extended
     );
 
-    encode_choice_idx_common(data, lb, ub, is_extensible, idx, extended, true)
+    encode_choice_idx_common(data, lb, ub, is_extensible, idx, extended, false)
 }
 
 /// Encode sequence header
@@ -47,7 +45,7 @@ pub fn encode_sequence_header(
         extended
     );
 
-    encode_sequence_header_common(data, is_extensible, optionals, extended, true)
+    encode_sequence_header_common(data, is_extensible, optionals, extended, false)
 }
 
 /// Encode an INTEGER
@@ -73,7 +71,7 @@ pub fn encode_integer(
         extended
     );
 
-    encode_integer_common(data, lb, ub, is_extensible, value, extended, true)
+    encode_integer_common(data, lb, ub, is_extensible, value, extended, false)
 }
 
 /// Encode a BOOLEAN Value
@@ -103,7 +101,7 @@ pub fn encode_enumerated(
         extended
     );
 
-    encode_enumerated_common(data, lb, ub, is_extensible, value, extended, true)
+    encode_enumerated_common(data, lb, ub, is_extensible, value, extended, false)
 }
 
 /// Encode a Bit String
@@ -124,7 +122,7 @@ pub fn encode_bitstring(
         extended
     );
 
-    encode_bitstring_common(data, lb, ub, is_extensible, bit_string, extended, true)
+    encode_bitstring_common(data, lb, ub, is_extensible, bit_string, extended, false)
 }
 
 /// Encode an OCTET STRING
@@ -145,7 +143,7 @@ pub fn encode_octetstring(
         extended
     );
 
-    encode_octet_string_common(data, lb, ub, is_extensible, octet_string, extended, true)
+    encode_octet_string_common(data, lb, ub, is_extensible, octet_string, extended, false)
 }
 
 // Encode a Length Determinent
@@ -164,7 +162,7 @@ pub fn encode_length_determinent(
         value
     );
 
-    encode_length_determinent_common(data, lb, ub, normally_small, value, true)
+    encode_length_determinent_common(data, lb, ub, normally_small, value, false)
 }
 
 /// Encode a VisibleString CharacterString Type.
@@ -185,7 +183,7 @@ pub fn encode_visible_string(
         extended
     );
 
-    encode_string_common(data, lb, ub, is_extensible, value, extended, true)
+    encode_string_common(data, lb, ub, is_extensible, value, extended, false)
 }
 
 /// Encode a PrintableString CharacterString Type.
@@ -206,7 +204,7 @@ pub fn encode_printable_string(
         extended
     );
 
-    encode_string_common(data, lb, ub, is_extensible, value, extended, true)
+    encode_string_common(data, lb, ub, is_extensible, value, extended, false)
 }
 
 /// Encode a UTF8String CharacterString Type.
@@ -227,7 +225,7 @@ pub fn encode_utf8_string(
         extended
     );
 
-    encode_string_common(data, lb, ub, is_extensible, value, extended, true)
+    encode_string_common(data, lb, ub, is_extensible, value, extended, false)
 }
 
 #[cfg(test)]
@@ -237,7 +235,7 @@ mod tests {
 
     #[test]
     fn encode_bool_always_success() {
-        let mut data = PerCodecData::new_aper();
+        let mut data = PerCodecData::new_uper();
 
         let result = encode_bool(&mut data, true);
         assert!(result.is_ok());
@@ -248,7 +246,7 @@ mod tests {
     #[test]
     fn int_too_small() {
         assert!(encode_integer(
-            &mut PerCodecData::new_aper(),
+            &mut PerCodecData::new_uper(),
             Some(1),
             None,
             false,
@@ -261,7 +259,7 @@ mod tests {
     #[test]
     fn int_too_big() {
         assert!(encode_integer(
-            &mut PerCodecData::new_aper(),
+            &mut PerCodecData::new_uper(),
             Some(-1),
             Some(0),
             false,
@@ -274,7 +272,7 @@ mod tests {
     #[test]
     fn octetstring_too_small() {
         assert!(encode_octetstring(
-            &mut PerCodecData::new_aper(),
+            &mut PerCodecData::new_uper(),
             Some(2),
             None,
             false,
@@ -286,7 +284,7 @@ mod tests {
     #[test]
     fn octetstring_too_big() {
         assert!(encode_octetstring(
-            &mut PerCodecData::new_aper(),
+            &mut PerCodecData::new_uper(),
             None,
             Some(1),
             false,
@@ -299,7 +297,7 @@ mod tests {
     #[test]
     fn string_too_small() {
         assert!(encode_visible_string(
-            &mut PerCodecData::new_aper(),
+            &mut PerCodecData::new_uper(),
             Some(2),
             None,
             false,
@@ -312,7 +310,7 @@ mod tests {
     #[test]
     fn string_too_big() {
         assert!(encode_visible_string(
-            &mut PerCodecData::new_aper(),
+            &mut PerCodecData::new_uper(),
             None,
             Some(1),
             false,
@@ -325,14 +323,14 @@ mod tests {
     #[test]
     fn length_too_small() {
         assert!(
-            encode_length_determinent(&mut PerCodecData::new_aper(), Some(2), None, false, 1,)
+            encode_length_determinent(&mut PerCodecData::new_uper(), Some(2), None, false, 1,)
                 .is_err()
         );
     }
     #[test]
     fn length_too_big() {
         assert!(
-            encode_length_determinent(&mut PerCodecData::new_aper(), None, Some(1), false, 2,)
+            encode_length_determinent(&mut PerCodecData::new_uper(), None, Some(1), false, 2,)
                 .is_err()
         );
     }
@@ -340,7 +338,7 @@ mod tests {
     #[test]
     fn big_length_too_big() {
         assert!(encode_length_determinent(
-            &mut PerCodecData::new_aper(),
+            &mut PerCodecData::new_uper(),
             None,
             Some(65536),
             false,
@@ -352,7 +350,7 @@ mod tests {
     #[test]
     fn bitstring_too_small() {
         assert!(encode_bitstring(
-            &mut PerCodecData::new_aper(),
+            &mut PerCodecData::new_uper(),
             Some(2),
             None,
             false,
@@ -365,7 +363,7 @@ mod tests {
     #[test]
     fn bitstring_too_big() {
         assert!(encode_bitstring(
-            &mut PerCodecData::new_aper(),
+            &mut PerCodecData::new_uper(),
             None,
             Some(1),
             false,

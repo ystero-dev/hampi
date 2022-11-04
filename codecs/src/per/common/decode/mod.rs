@@ -4,8 +4,7 @@ mod decode_internal;
 
 use bitvec::prelude::*;
 
-use crate::per::aper::AperCodecError;
-use crate::per::PerCodecData;
+use crate::{PerCodecData, PerCodecError};
 
 #[allow(unused)]
 use decode_internal::*;
@@ -23,7 +22,7 @@ pub fn decode_choice_idx_common(
     ub: i128,
     is_extensible: bool,
     aligned: bool,
-) -> Result<(i128, bool), AperCodecError> {
+) -> Result<(i128, bool), PerCodecError> {
     let (idx, extended) = if is_extensible {
         let extended = data.decode_bool()?;
         if !extended {
@@ -49,7 +48,7 @@ pub fn decode_sequence_header_common(
     is_extensible: bool,
     optional_count: usize,
     _aligned: bool,
-) -> Result<(BitVec<u8, Msb0>, bool), AperCodecError> {
+) -> Result<(BitVec<u8, Msb0>, bool), PerCodecError> {
     let extended = if is_extensible {
         data.decode_bool()?
     } else {
@@ -72,7 +71,7 @@ pub fn decode_integer_common(
     ub: Option<i128>,
     is_extensible: bool,
     aligned: bool,
-) -> Result<(i128, bool), AperCodecError> {
+) -> Result<(i128, bool), PerCodecError> {
     let extended_value = if is_extensible {
         data.decode_bool()?
     } else {
@@ -112,7 +111,7 @@ pub fn decode_integer_common(
 }
 
 // Common function to decode a Boolean
-pub fn decode_bool_common(data: &mut PerCodecData, _aligned: bool) -> Result<bool, AperCodecError> {
+pub fn decode_bool_common(data: &mut PerCodecData, _aligned: bool) -> Result<bool, PerCodecError> {
     let result = data.decode_bool()?;
 
     data.dump();
@@ -127,7 +126,7 @@ pub fn decode_enumerated_common(
     ub: Option<i128>,
     is_extensible: bool,
     aligned: bool,
-) -> Result<(i128, bool), AperCodecError> {
+) -> Result<(i128, bool), PerCodecError> {
     log::debug!(
         "decode_enumerated: lb: {:?}, ub: {:?}, is_extensible: {}",
         lb,
@@ -160,7 +159,7 @@ pub fn decode_bitstring_common(
     ub: Option<i128>,
     is_extensible: bool,
     aligned: bool,
-) -> Result<BitVec<u8, Msb0>, AperCodecError> {
+) -> Result<BitVec<u8, Msb0>, PerCodecError> {
     let is_extended = if is_extensible {
         data.decode_bool()?
     } else {
@@ -202,7 +201,7 @@ pub fn decode_octetstring_common(
     ub: Option<i128>,
     is_extensible: bool,
     aligned: bool,
-) -> Result<Vec<u8>, AperCodecError> {
+) -> Result<Vec<u8>, PerCodecError> {
     log::debug!(
         "decode_bitstring: lb: {:?}, ub: {:?}, is_extensible: {}",
         lb,
@@ -250,7 +249,7 @@ pub(crate) fn decode_string_common(
     ub: Option<i128>,
     is_extensible: bool,
     aligned: bool,
-) -> Result<String, AperCodecError> {
+) -> Result<String, PerCodecError> {
     let is_extended = if is_extensible {
         data.decode_bool()?
     } else {
@@ -278,5 +277,5 @@ pub(crate) fn decode_string_common(
 
     std::str::from_utf8(&bytes)
         .map(|s| s.to_string())
-        .map_err(|_| AperCodecError::new("UTF decode failed"))
+        .map_err(|_| PerCodecError::new("UTF decode failed"))
 }
