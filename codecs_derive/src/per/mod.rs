@@ -18,6 +18,7 @@ mod seqof;
 pub(crate) fn generate_codec(
     ast: &syn::DeriveInput,
     params: &TyCodecParams,
+    _aligned: bool,
 ) -> proc_macro::TokenStream {
     let ty = params.ty.as_ref().unwrap();
     match ty.value().as_str() {
