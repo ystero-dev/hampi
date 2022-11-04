@@ -5,16 +5,16 @@ mod ranap {
 }
 
 fn main() {
-    use asn1_codecs::aper::*;
+    use asn1_codecs::{aper::AperCodec, PerCodecData};
     eprintln!("RANAP");
 
     let ranap_data = hex::decode("000100080000010004400122").unwrap();
-    let mut codec_data = AperCodecData::from_slice_aper(&ranap_data);
+    let mut codec_data = PerCodecData::from_slice_aper(&ranap_data);
     let ranap_pdu = ranap::RANAP_PDU::aper_decode(&mut codec_data).unwrap();
     eprintln!("ranap_pdu: {:#?}", ranap_pdu);
 
     let ranap_data = hex::decode("0014400f0000020010400302832a003b400100").unwrap();
-    let mut codec_data = AperCodecData::from_slice_aper(&ranap_data);
+    let mut codec_data = PerCodecData::from_slice_aper(&ranap_data);
     let ranap_pdu = ranap::RANAP_PDU::aper_decode(&mut codec_data).unwrap();
     eprintln!("ranap_pdu: {:#?}", ranap_pdu);
 }
