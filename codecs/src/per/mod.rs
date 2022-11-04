@@ -5,9 +5,11 @@ pub mod error;
 
 pub mod aper;
 
+pub mod uper;
+
 mod common;
 
-use error::Error as PerCodecError;
+pub use error::Error as PerCodecError;
 
 use bitvec::prelude::*;
 

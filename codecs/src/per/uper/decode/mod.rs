@@ -4,9 +4,7 @@ use bitvec::prelude::*;
 
 #[allow(unused)]
 use crate::per::common::decode::*;
-use crate::per::PerCodecData;
-
-use crate::PerCodecError;
+use crate::{PerCodecData, PerCodecError};
 
 /// Decode a Choice Index.
 ///
@@ -27,7 +25,7 @@ pub fn decode_choice_idx(
         is_extensible
     );
 
-    decode_choice_idx_common(data, lb, ub, is_extensible, true)
+    decode_choice_idx_common(data, lb, ub, is_extensible, false)
 }
 
 /// Decode The Sequence Header
@@ -42,7 +40,7 @@ pub fn decode_sequence_header(
 ) -> Result<(BitVec<u8, Msb0>, bool), PerCodecError> {
     log::debug!("decode_sequence_header: extensible: {}", is_extensible);
 
-    decode_sequence_header_common(data, is_extensible, optional_count, true)
+    decode_sequence_header_common(data, is_extensible, optional_count, false)
 }
 
 /// Decode an Integer
@@ -71,7 +69,7 @@ pub fn decode_integer(
         is_extensible
     );
 
-    decode_integer_common(data, lb, ub, is_extensible, true)
+    decode_integer_common(data, lb, ub, is_extensible, false)
 }
 
 /// Decode a Boolean
@@ -80,7 +78,7 @@ pub fn decode_integer(
 pub fn decode_bool(data: &mut PerCodecData) -> Result<bool, PerCodecError> {
     log::debug!("decode_bool:");
 
-    decode_bool_common(data, true)
+    decode_bool_common(data, false)
 }
 
 /// Decode an Enumerated Value
@@ -102,7 +100,7 @@ pub fn decode_enumerated(
         is_extensible
     );
 
-    decode_enumerated_common(data, lb, ub, is_extensible, true)
+    decode_enumerated_common(data, lb, ub, is_extensible, false)
 }
 
 /// Decode a Bit String
@@ -121,7 +119,7 @@ pub fn decode_bitstring(
         is_extensible
     );
 
-    decode_bitstring_common(data, lb, ub, is_extensible, true)
+    decode_bitstring_common(data, lb, ub, is_extensible, false)
 }
 
 /// Decode an OCTET STRING
@@ -140,7 +138,7 @@ pub fn decode_octetstring(
         is_extensible
     );
 
-    decode_octetstring_common(data, lb, ub, is_extensible, true)
+    decode_octetstring_common(data, lb, ub, is_extensible, false)
 }
 
 /// Decodes a Length determinent
@@ -152,7 +150,7 @@ pub fn decode_length_determinent(
 ) -> Result<usize, PerCodecError> {
     log::debug!("decode_length_determinent:");
 
-    decode_length_determinent_common(data, lb, ub, normally_small, true)
+    decode_length_determinent_common(data, lb, ub, normally_small, false)
 }
 
 mod decode_charstrings;

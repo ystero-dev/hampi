@@ -1,9 +1,7 @@
 //! Internal decode functions.
 use std::convert::TryInto;
 
-use crate::per::PerCodecData;
-
-use super::AperCodecError;
+use crate::{PerCodecData, PerCodecError};
 
 // Decode a "Normally Small" non-negative number
 //
@@ -12,7 +10,7 @@ use super::AperCodecError;
 pub(super) fn decode_normally_small_non_negative_whole_number_common(
     data: &mut PerCodecData,
     aligned: bool,
-) -> Result<i128, AperCodecError> {
+) -> Result<i128, PerCodecError> {
     let is_small = data.decode_bool()?;
     if !is_small {
         data.decode_bits_as_integer(6, false)
@@ -29,7 +27,7 @@ pub(super) fn decode_normally_small_non_negative_whole_number_common(
 fn decode_normally_small_length_determinent_common(
     data: &mut PerCodecData,
     aligned: bool,
-) -> Result<usize, AperCodecError> {
+) -> Result<usize, PerCodecError> {
     let is_small = data.decode_bool()?;
     if !is_small {
         Ok(data.decode_bits_as_integer(6, false)? as usize + 1_usize)
@@ -47,7 +45,7 @@ pub(crate) fn decode_length_determinent_common(
     ub: Option<i128>,
     normally_small: bool,
     aligned: bool,
-) -> Result<usize, AperCodecError> {
+) -> Result<usize, PerCodecError> {
     // Normally small is told to us by caller and we don't care about `lb` and `ub` values in that
     // case. We simply follow the procedure as explained in 10.9.3.4
     if normally_small {
@@ -84,7 +82,7 @@ fn decode_constrained_length_determinent_common(
     lb: usize,
     ub: usize,
     aligned: bool,
-) -> Result<usize, AperCodecError> {
+) -> Result<usize, PerCodecError> {
     log::trace!(
         "decode_constrained_length_determinent, lb: {}, ub: {}",
         lb,
@@ -111,7 +109,7 @@ fn decode_constrained_length_determinent_common(
 fn decode_indefinite_length_determinent_common(
     data: &mut PerCodecData,
     _aligned: bool,
-) -> Result<usize, AperCodecError> {
+) -> Result<usize, PerCodecError> {
     data.decode_align()?;
     let first = data.decode_bool()?;
     let length = if !first {
@@ -123,7 +121,7 @@ fn decode_indefinite_length_determinent_common(
         } else {
             let length = data.decode_bits_as_integer(6, false)?;
             if !(1..=4).contains(&length) {
-                return Err(AperCodecError::new("The value should be 1 to 4"));
+                return Err(PerCodecError::new("The value should be 1 to 4"));
             } else {
                 length * 16384
             }
@@ -139,7 +137,7 @@ fn decode_indefinite_length_determinent_common(
 pub(super) fn decode_unconstrained_whole_number_common(
     data: &mut PerCodecData,
     aligned: bool,
-) -> Result<i128, AperCodecError> {
+) -> Result<i128, PerCodecError> {
     log::trace!("decode_unconstrained_length:");
 
     let length = decode_length_determinent_common(data, None, None, false, aligned)?;
@@ -152,7 +150,7 @@ pub(super) fn decode_semi_constrained_whole_number_common(
     data: &mut PerCodecData,
     lb: i128,
     aligned: bool,
-) -> Result<i128, AperCodecError> {
+) -> Result<i128, PerCodecError> {
     log::trace!("decode_semi_constrained_whole_number:");
 
     let length = decode_length_determinent_common(data, None, None, false, aligned)?;
@@ -171,12 +169,12 @@ pub(super) fn decode_constrained_whole_number_common(
     lb: i128,
     ub: i128,
     aligned: bool,
-) -> Result<i128, AperCodecError> {
+) -> Result<i128, PerCodecError> {
     log::trace!("decode_constrained_whole_number: lb: {}, ub: {}", lb, ub,);
 
     let range = ub - lb + 1;
     if range <= 0 {
-        Err(AperCodecError::new(
+        Err(PerCodecError::new(
             "Range for the Integer Constraint is negative.",
         ))
     } else {

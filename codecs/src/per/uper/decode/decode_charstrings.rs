@@ -1,8 +1,7 @@
 //! Functionality for decoding character strings
 
 use crate::per::common::decode::decode_string_common;
-use crate::per::PerCodecData;
-use crate::PerCodecError;
+use crate::{PerCodecData, PerCodecError};
 
 // 27.5.3 and 27.5.4
 /// Decode a VisibleString CharacterString Type.
@@ -18,7 +17,7 @@ pub fn decode_visible_string(
         ub,
         is_extensible
     );
-    decode_string_common(data, lb, ub, is_extensible, true)
+    decode_string_common(data, lb, ub, is_extensible, false)
 }
 
 /// Decode a PrintableString CharacterString Type.
@@ -34,7 +33,7 @@ pub fn decode_printable_string(
         ub,
         is_extensible
     );
-    decode_string_common(data, lb, ub, is_extensible, true)
+    decode_string_common(data, lb, ub, is_extensible, false)
 }
 
 // UTF-8 String is always - indefinite length case as it's not a fixed character width string. It's
@@ -53,5 +52,5 @@ pub fn decode_utf8_string(
         ub,
         is_extensible
     );
-    decode_string_common(data, lb, ub, is_extensible, true)
+    decode_string_common(data, lb, ub, is_extensible, false)
 }
