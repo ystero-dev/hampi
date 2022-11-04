@@ -7,7 +7,7 @@ mod attrs;
 
 mod symbol;
 
-mod aper;
+mod per;
 
 mod utils;
 
@@ -21,7 +21,7 @@ pub fn derive_aper_codec(input: TokenStream) -> TokenStream {
         codec_params.err().unwrap().to_compile_error().into()
     } else {
         let codec_params = codec_params.unwrap();
-        aper::generate_codec(&ast, &codec_params, true)
+        per::generate_codec(&ast, &codec_params, true)
     }
 }
 
@@ -35,7 +35,7 @@ pub fn derive_uper_codec(input: TokenStream) -> TokenStream {
         codec_params.err().unwrap().to_compile_error().into()
     } else {
         let codec_params = codec_params.unwrap();
-        aper::generate_codec(&ast, &codec_params, false)
+        per::generate_codec(&ast, &codec_params, false)
     }
 }
 

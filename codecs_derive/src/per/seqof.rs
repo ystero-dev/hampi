@@ -7,9 +7,28 @@ use crate::{attrs::TyCodecParams, utils};
 pub(super) fn generate_aper_codec_for_asn_sequence_of(
     ast: &syn::DeriveInput,
     params: &TyCodecParams,
+    aligned: bool,
 ) -> proc_macro::TokenStream {
     let name = &ast.ident;
 
+    let (codec_path, codec_encode_fn, codec_decode_fn, ty_encode_path, ty_decode_path) = if aligned
+    {
+        (
+            quote!(asn1_codecs::aper::AperCodec),
+            quote!(aper_encode),
+            quote!(aper_decode),
+            quote!(asn1_codecs::aper::encode::encode_length_determinent),
+            quote!(asn1_codecs::aper::decode::decode_length_determinent),
+        )
+    } else {
+        (
+            quote!(asn1_codecs::uper::UperCodec),
+            quote!(uper_encode),
+            quote!(uper_decode),
+            quote!(asn1_codecs::uper::encode::encode_length_determinent),
+            quote!(asn1_codecs::uper::decode::decode_length_determinent),
+        )
+    };
     let ty = if let syn::Data::Struct(ref d) = &ast.data {
         match d.fields {
             syn::Fields::Unnamed(ref f) => {
@@ -37,18 +56,18 @@ pub(super) fn generate_aper_codec_for_asn_sequence_of(
 
     let tokens = quote! {
 
-        impl asn1_codecs::aper::AperCodec for #name {
+        impl #codec_path for #name {
             type Output = Self;
 
-            fn aper_decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
+            fn #codec_decode_fn(data: &mut asn1_codecs::PerCodecData) -> Result<Self::Output, asn1_codecs::PerCodecError> {
                 log::debug!(concat!("decode: ", stringify!(#name)));
 
-                let length = asn1_codecs::aper::decode::decode_length_determinent(data, #sz_lb, #sz_ub, #sz_ext)?;
+                let length = #ty_decode_path(data, #sz_lb, #sz_ub, #sz_ext)?;
 
                 let mut items = vec![];
                 let mut count = 0;
                 loop {
-                    items.push(#ty::aper_decode(data)?);
+                    items.push(#ty::#codec_decode_fn(data)?);
                     count += 1;
                     if count == length {
                         break;
@@ -58,13 +77,13 @@ pub(super) fn generate_aper_codec_for_asn_sequence_of(
                 Ok(Self(items))
             }
 
-            fn aper_encode(&self, data:&mut asn1_codecs::aper::AperCodecData) -> Result<(), asn1_codecs::aper::AperCodecError> {
+            fn #codec_encode_fn(&self, data:&mut asn1_codecs::PerCodecData) -> Result<(), asn1_codecs::PerCodecError> {
                 log::debug!(concat!("encode: ", stringify!(#name)));
 
-                let _ = asn1_codecs::aper::encode::encode_length_determinent(data, #sz_lb, #sz_ub, #sz_ext, self.0.len());
+                let _ = #ty_encode_path(data, #sz_lb, #sz_ub, #sz_ext, self.0.len());
 
                 for elem in &self.0 {
-                    let _ = elem.aper_encode(data)?;
+                    let _ = elem.#codec_encode_fn(data)?;
                 }
                 Ok(())
             }

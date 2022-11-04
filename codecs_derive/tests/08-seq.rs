@@ -1,12 +1,12 @@
 #![allow(non_camel_case_types, dead_code)]
 
-use asn1_codecs_derive::AperCodec;
+use asn1_codecs_derive::{AperCodec, UperCodec};
 
-#[derive(Debug, AperCodec)]
+#[derive(Debug, AperCodec, UperCodec)]
 #[asn(type = "INTEGER", lb = "0", ub = "65535")]
 pub struct ProtocolIE_ID(u16);
 
-#[derive(Debug, AperCodec)]
+#[derive(Debug, AperCodec, UperCodec)]
 #[asn(type = "ENUMERATED", lb = "0", ub = "2")]
 pub struct Criticality(u8);
 impl Criticality {
@@ -15,7 +15,7 @@ impl Criticality {
     const NOTIFY: u8 = 2u8;
 }
 
-#[derive(Debug, AperCodec)]
+#[derive(Debug, AperCodec, UperCodec)]
 #[asn(type = "SEQUENCE", extensible = false, optional_fields = 1)]
 pub struct Bearers_SubjectToEarlyStatusTransferListItem {
     pub id: ProtocolIE_ID,

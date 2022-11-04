@@ -1,8 +1,8 @@
 #![allow(non_camel_case_types)]
 
-use asn1_codecs_derive::AperCodec;
+use asn1_codecs_derive::{AperCodec, UperCodec};
 
-#[derive(Debug, AperCodec)]
+#[derive(Debug, AperCodec, UperCodec)]
 #[asn(type = "NULL")]
 pub struct NULL_3;
 
