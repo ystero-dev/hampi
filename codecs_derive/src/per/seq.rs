@@ -13,8 +13,28 @@ struct FieldTokens {
 pub(super) fn generate_aper_codec_for_asn_sequence(
     ast: &syn::DeriveInput,
     params: &TyCodecParams,
+    aligned: bool,
 ) -> proc_macro::TokenStream {
     let name = &ast.ident;
+
+    let (codec_path, codec_encode_fn, codec_decode_fn, ty_encode_path, ty_decode_path) = if aligned
+    {
+        (
+            quote!(asn1_codecs::aper::AperCodec),
+            quote!(aper_encode),
+            quote!(aper_decode),
+            quote!(asn1_codecs::aper::encode::encode_sequence_header),
+            quote!(asn1_codecs::aper::decode::decode_sequence_header),
+        )
+    } else {
+        (
+            quote!(asn1_codecs::uper::UperCodec),
+            quote!(uper_encode),
+            quote!(uper_decode),
+            quote!(asn1_codecs::uper::encode::encode_sequence_header),
+            quote!(asn1_codecs::uper::decode::decode_sequence_header),
+        )
+    };
 
     let ext = params.ext.as_ref();
     let opt_count = if params.optional_fields.is_some() {
@@ -23,7 +43,11 @@ pub(super) fn generate_aper_codec_for_asn_sequence(
         syn::LitInt::new("0", proc_macro2::Span::call_site())
     };
 
-    let field_tokens = generate_seq_field_codec_tokens_using_attrs(ast);
+    let field_tokens = generate_seq_field_codec_tokens_using_attrs(
+        ast,
+        codec_encode_fn.clone(),
+        codec_decode_fn.clone(),
+    );
     if field_tokens.is_err() {
         return field_tokens.err().unwrap().to_compile_error().into();
     }
@@ -33,24 +57,24 @@ pub(super) fn generate_aper_codec_for_asn_sequence(
     let fld_encode_tokens = field_tokens.encode_tokens;
 
     let tokens = quote! {
-        impl asn1_codecs::aper::AperCodec for #name {
+        impl #codec_path for #name {
             type Output = Self;
 
-            fn aper_decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
+            fn #codec_decode_fn(data: &mut asn1_codecs::PerCodecData) -> Result<Self::Output, asn1_codecs::PerCodecError> {
                 log::debug!(concat!("decode: ", stringify!(#name)));
 
-                let (bitmap, _extensions_present) = asn1_codecs::aper::decode::decode_sequence_header(data, #ext, #opt_count)?;
+                let (bitmap, _extensions_present) = #ty_decode_path(data, #ext, #opt_count)?;
                 Ok(Self{#(#fld_decode_tokens)*})
             }
 
-            fn aper_encode(&self, data: &mut asn1_codecs::aper::AperCodecData) -> Result<(), asn1_codecs::aper::AperCodecError> {
+            fn #codec_encode_fn(&self, data: &mut asn1_codecs::PerCodecData) -> Result<(), asn1_codecs::PerCodecError> {
                 log::debug!(concat!("encode: ", stringify!(#name)));
 
                 let mut bitmap = bitvec::bitvec![u8, bitvec::prelude::Msb0; 0; #opt_count];
 
                 #(#hdr_encode_tokens)*
 
-                asn1_codecs::aper::encode::encode_sequence_header(data, #ext, &bitmap, false)?;
+                #ty_encode_path(data, #ext, &bitmap, false)?;
 
                 #(#fld_encode_tokens)*
 
@@ -64,6 +88,8 @@ pub(super) fn generate_aper_codec_for_asn_sequence(
 
 fn generate_seq_field_codec_tokens_using_attrs(
     ast: &syn::DeriveInput,
+    codec_encode_fn: proc_macro2::TokenStream,
+    codec_decode_fn: proc_macro2::TokenStream,
 ) -> Result<FieldTokens, syn::Error> {
     let mut decode_tokens = vec![];
     let mut encode_tokens = vec![];
@@ -104,7 +130,7 @@ fn generate_seq_field_codec_tokens_using_attrs(
                                             {
                                             let present = bitmap[#optidx];
                                             if present {
-                                                Some(#ty_ident::aper_decode(data)?)
+                                                Some(#ty_ident::#codec_decode_fn(data)?)
                                             } else {
                                                 None
                                             }
@@ -123,13 +149,13 @@ fn generate_seq_field_codec_tokens_using_attrs(
                                 if !is_key_field {
                                     quote! {
                                         {
-                                        #ty_ident::aper_decode(data)?
+                                        #ty_ident::#codec_decode_fn(data)?
                                         }
                                     }
                                 } else {
                                     quote! {
                                         {
-                                        let value = #ty_ident::aper_decode(data)?;
+                                        let value = #ty_ident::#codec_decode_fn(data)?;
                                         let _ = data.set_key(value.0 as i128);
                                         value
                                         }
@@ -142,13 +168,13 @@ fn generate_seq_field_codec_tokens_using_attrs(
                                 quote! {
                                     if self.#id.is_some() {
                                         let #id = self.#id.as_ref().unwrap();
-                                        #id.aper_encode(data)?;
+                                        #id.#codec_encode_fn(data)?;
                                     } else {
                                     }
                                 }
                             } else {
                                 quote! {
-                                    self.#id.aper_encode(data)?;
+                                    self.#id.#codec_encode_fn(data)?;
                                 }
                             };
                             let header_encode_token = if optional {

@@ -8,6 +8,7 @@ use crate::attrs::TyCodecParams;
 pub(super) fn generate_aper_codec_for_asn_charstring(
     ast: &syn::DeriveInput,
     params: &TyCodecParams,
+    aligned: bool,
 ) -> proc_macro::TokenStream {
     let ty_attr = params.ty.as_ref().unwrap();
 
@@ -40,6 +41,24 @@ pub(super) fn generate_aper_codec_for_asn_charstring(
             .into();
     }
 
+    let (codec_path, codec_encode_fn, codec_decode_fn, ty_encode_path, ty_decode_path) = if aligned
+    {
+        (
+            quote!(asn1_codecs::aper::AperCodec),
+            quote!(aper_encode),
+            quote!(aper_decode),
+            quote!(asn1_codecs::aper::encode::#encode_fn_name),
+            quote!(asn1_codecs::aper::decode::#decode_fn_name),
+        )
+    } else {
+        (
+            quote!(asn1_codecs::uper::UperCodec),
+            quote!(uper_encode),
+            quote!(uper_decode),
+            quote!(asn1_codecs::uper::encode::#encode_fn_name),
+            quote!(asn1_codecs::uper::decode::#decode_fn_name),
+        )
+    };
     let name = &ast.ident;
 
     let ty = if let syn::Data::Struct(ref d) = &ast.data {
@@ -109,20 +128,20 @@ pub(super) fn generate_aper_codec_for_asn_charstring(
 
     let tokens = quote! {
 
-        impl asn1_codecs::aper::AperCodec for #name {
+        impl #codec_path for #name {
             type Output = Self;
 
-            fn aper_decode(data: &mut asn1_codecs::aper::AperCodecData) -> Result<Self::Output, asn1_codecs::aper::AperCodecError> {
+            fn #codec_decode_fn(data: &mut asn1_codecs::PerCodecData) -> Result<Self::Output, asn1_codecs::PerCodecError> {
                 log::debug!(concat!("decode: ", stringify!(#name)));
 
-                let decoded = asn1_codecs::aper::decode::#decode_fn_name(data, #sz_lb, #sz_ub, #sz_ext)?;
+                let decoded = #ty_decode_path(data, #sz_lb, #sz_ub, #sz_ext)?;
                 Ok(Self(decoded))
             }
 
-            fn aper_encode(&self, data: &mut asn1_codecs::aper::AperCodecData) -> Result<(), asn1_codecs::aper::AperCodecError> {
+            fn #codec_encode_fn(&self, data: &mut asn1_codecs::PerCodecData) -> Result<(), asn1_codecs::PerCodecError> {
                 log::debug!(concat!("encode: ", stringify!(#name)));
 
-                asn1_codecs::aper::encode::#encode_fn_name(data, #sz_lb, #sz_ub, #sz_ext, &self.0, false)
+                #ty_encode_path(data, #sz_lb, #sz_ub, #sz_ext, &self.0, false)
             }
         }
     };
