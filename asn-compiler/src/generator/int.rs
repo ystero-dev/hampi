@@ -19,6 +19,9 @@ use crate::resolver::asn::structs::types::Asn1ResolvedType;
 pub enum Codec {
     /// Generate code for ASN.1 APER Codec
     Aper,
+
+    /// Generate code for ASN.1 UPER Codec
+    Uper,
 }
 
 /// Supported Derive Macros
@@ -52,6 +55,7 @@ lazy_static! {
     static ref CODEC_TOKENS: HashMap<Codec, String> = {
         let mut m = HashMap::new();
         m.insert(Codec::Aper, "asn1_codecs_derive::AperCodec".to_string());
+        m.insert(Codec::Uper, "asn1_codecs_derive::UperCodec".to_string());
         m
     };
     static ref DERIVE_TOKENS: HashMap<Derive, String> = {
