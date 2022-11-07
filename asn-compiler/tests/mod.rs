@@ -74,4 +74,44 @@ mod tests {
 
         assert!(result.is_ok(), "{:?}", result.err());
     }
+
+    #[test]
+    fn compile_example_from_x691_spec() {
+        let module_name = "ExampleFromX691";
+        let test_no = 3;
+        let module_header = super::get_module_header(module_name, test_no);
+
+        let definitions = r#"
+PersonnelRecord ::=  SET {
+        name Name,
+        title VisibleString,
+        number EmployeeNumber,
+        dateOfHire Date,
+        nameOfSpouse Name,
+        children SEQUENCE OF ChildInformation DEFAULT {}
+}
+ChildInformation ::= SET {
+    name Name,
+    dateOfBirth Date
+}
+
+Name ::= SEQUENCE {
+    givenName VisibleString,
+    initial VisibleString,
+    familyName VisibleString
+}
+EmployeeNumber ::= INTEGER
+Date ::= VisibleString -- YYYYMMDD"#;
+
+        let definitions = super::get_module_definitions(definitions);
+
+        let module_str = format!("{} {}", module_header, definitions);
+
+        eprintln!("{}", module_str);
+
+        let mut compiler = get_dev_null_compiler();
+        let result = compiler.compile_string(&module_str);
+
+        assert!(result.is_ok(), "{:#?}", result.err().unwrap());
+    }
 }

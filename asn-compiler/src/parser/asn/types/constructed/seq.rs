@@ -3,7 +3,7 @@
 use crate::error::Error;
 use crate::tokenizer::Token;
 
-use crate::parser::utils::{expect_keyword, expect_token};
+use crate::parser::utils::{expect_keyword, expect_one_of_keywords, expect_token};
 
 use crate::parser::asn::{
     structs::types::{
@@ -17,7 +17,7 @@ use crate::parser::asn::{
 use super::utils::parse_component;
 
 pub(crate) fn parse_seq_or_seq_of_type(tokens: &[Token]) -> Result<(Asn1TypeKind, usize), Error> {
-    if !expect_keyword(tokens, "SEQUENCE")? {
+    if !expect_one_of_keywords(tokens, &["SEQUENCE", "SET"])? {
         return Err(unexpected_token!("'SEQUENCE'", tokens[0]));
     }
 

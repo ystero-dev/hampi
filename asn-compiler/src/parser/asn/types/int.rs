@@ -96,7 +96,7 @@ pub(crate) fn parse_type(tokens: &[Token]) -> Result<(Asn1Type, usize), Error> {
             )
         }
 
-        "SEQUENCE" => parse_seq_or_seq_of_type(tokens)?,
+        "SEQUENCE" | "SET" => parse_seq_or_seq_of_type(tokens)?,
 
         "RELATIVE-OID" => (Asn1TypeKind::Builtin(Asn1BuiltinType::RelativeOid), 1),
 
