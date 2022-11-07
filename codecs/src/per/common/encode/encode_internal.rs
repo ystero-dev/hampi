@@ -2,6 +2,7 @@ use crate::per::{PerCodecData, PerCodecError};
 
 use bitvec::prelude::*;
 
+// Refer to section 10.8
 pub(super) fn encode_unconstrained_whole_number_common(
     data: &mut PerCodecData,
     value: i128,
@@ -23,6 +24,8 @@ pub(super) fn encode_unconstrained_whole_number_common(
             16 - leading_zeroes / 8
         }
     };
+    // The alignement is performed inside `encode_length_determinent_common` when `aligned` is
+    // `true`.
     super::encode_length_determinent_common(
         data,
         None,
@@ -36,6 +39,7 @@ pub(super) fn encode_unconstrained_whole_number_common(
     Ok(())
 }
 
+// Refer to section 10.7
 pub(super) fn encode_semi_constrained_whole_number_common(
     data: &mut PerCodecData,
     lb: i128,
@@ -52,6 +56,7 @@ pub(super) fn encode_semi_constrained_whole_number_common(
     encode_unconstrained_whole_number_common(data, value - lb, aligned)
 }
 
+// Refer to Section 10.5.6 when `aligned` is `false` and 10.5.7 when `aligned` is `true`
 pub(super) fn encode_constrained_whole_number_common(
     data: &mut PerCodecData,
     lb: i128,
@@ -76,52 +81,64 @@ pub(super) fn encode_constrained_whole_number_common(
     let range = ub - lb + 1;
     let value = value - lb;
 
-    if range <= 256 {
-        let byte = value as u8;
-        let bits = match range {
-            1 => 0,
-            2 => 1,
-            3..=4 => 2,
-            5..=8 => 3,
-            9..=16 => 4,
-            17..=32 => 5,
-            33..=64 => 6,
-            65..=128 => 7,
-            129..=255 => 8,
-            256 => {
-                data.align();
-                8
-            }
-            _ => unreachable!(),
-        };
-        data.append_bits(&byte.view_bits::<Msb0>()[(8 - bits)..8]);
-    } else if range <= 65536 {
-        data.align();
-        let bytes = (value as u16).to_be_bytes();
-        data.append_bits(bytes.view_bits::<Msb0>());
+    if aligned {
+        if range <= 256 {
+            let byte = value as u8;
+            let bits = match range {
+                1 => 0,
+                2 => 1,
+                3..=4 => 2,
+                5..=8 => 3,
+                9..=16 => 4,
+                17..=32 => 5,
+                33..=64 => 6,
+                65..=128 => 7,
+                129..=255 => 8,
+                256 => {
+                    data.align();
+                    8
+                }
+                _ => unreachable!(),
+            };
+            data.append_bits(&byte.view_bits::<Msb0>()[(8 - bits)..8]);
+        } else if range <= 65536 {
+            data.align();
+            let bytes = (value as u16).to_be_bytes();
+            data.append_bits(bytes.view_bits::<Msb0>());
+        } else {
+            let bytes_needed_for_range = crate::per::common::bytes_needed_for_range(range) as i128;
+            let bytes = value.to_be_bytes();
+            let first_non_zero = bytes.iter().position(|x| *x != 0).unwrap_or(16);
+            encode_constrained_whole_number_common(
+                data,
+                1,
+                bytes_needed_for_range,
+                16 - first_non_zero as i128,
+                aligned,
+            )?;
+            data.align();
+            data.append_bits(bytes[first_non_zero..16].view_bits());
+        }
     } else {
-        let bytes_needed_for_range = crate::per::common::bytes_needed_for_range(range) as i128;
+        // Minimum number of bits required to encode length is calculated as follows
+        // Let's say range is 100 -> 0b_0000_0000_0110_0100 (Minimum number of bits needed is 7)
+        // Let's say range is 1000 -> 0b_0000_0011_1110_1000 (Minimum number of bits needed is 10)
+        let leading_zeros = range.leading_zeros() as usize;
         let bytes = value.to_be_bytes();
-        let first_non_zero = bytes.iter().position(|x| *x != 0).unwrap_or(16);
-        encode_constrained_whole_number_common(
-            data,
-            1,
-            bytes_needed_for_range,
-            16 - first_non_zero as i128,
-            aligned,
-        )?;
-        data.align();
-        data.append_bits(bytes[first_non_zero..16].view_bits());
+        data.append_bits(bytes[leading_zeros..].view_bits())
     }
     Ok(())
 }
 
+// Section 10.9 Note 2. Actual procedure in 10.9.3.6 -> 10.9.3.8
 pub(super) fn encode_indefinite_length_determinent_common(
     data: &mut PerCodecData,
     value: usize,
-    _aligned: bool,
+    aligned: bool,
 ) -> Result<(), PerCodecError> {
-    data.align();
+    if aligned {
+        data.align();
+    }
     if value < 128 {
         let byte = value as u8;
         data.append_bits(byte.view_bits::<Msb0>());

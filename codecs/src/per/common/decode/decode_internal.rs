@@ -108,9 +108,11 @@ fn decode_constrained_length_determinent_common(
 // `lb` is don't care.
 fn decode_indefinite_length_determinent_common(
     data: &mut PerCodecData,
-    _aligned: bool,
+    aligned: bool,
 ) -> Result<usize, PerCodecError> {
-    data.decode_align()?;
+    if aligned {
+        data.decode_align()?;
+    }
     let first = data.decode_bool()?;
     let length = if !first {
         data.decode_bits_as_integer(7, false)?
@@ -163,7 +165,7 @@ pub(super) fn decode_semi_constrained_whole_number_common(
 
 // Decode a 'constrained' whole number where both `lb` and `ub` are available.
 //
-// From Section 10.5
+// Refer to Section 10.5.6 when `aligned` is `false` and 10.5.7 when `aligned` is `true`
 pub(super) fn decode_constrained_whole_number_common(
     data: &mut PerCodecData,
     lb: i128,
@@ -178,39 +180,46 @@ pub(super) fn decode_constrained_whole_number_common(
             "Range for the Integer Constraint is negative.",
         ))
     } else {
-        let value = if range < 256 {
-            let bits = match range as u8 {
-                0..=1 => 0,
-                2 => 1,
-                3..=4 => 2,
-                5..=8 => 3,
-                9..=16 => 4,
-                17..=32 => 5,
-                33..=64 => 6,
-                65..=128 => 7,
-                129..=255 => 8,
+        if aligned {
+            let value = if range < 256 {
+                let bits = match range as u8 {
+                    0..=1 => 0,
+                    2 => 1,
+                    3..=4 => 2,
+                    5..=8 => 3,
+                    9..=16 => 4,
+                    17..=32 => 5,
+                    33..=64 => 6,
+                    65..=128 => 7,
+                    129..=255 => 8,
+                };
+                data.decode_bits_as_integer(bits, false)?
+            } else if range == 256 {
+                data.decode_align()?;
+                data.decode_bits_as_integer(8, false)?
+            } else if range <= 65536 {
+                data.decode_align()?;
+                data.decode_bits_as_integer(16, false)?
+            } else {
+                let bytes_needed = crate::per::common::bytes_needed_for_range(range);
+                log::trace!("bytes_needed : {}", bytes_needed);
+                let length = decode_constrained_length_determinent_common(
+                    data,
+                    1,
+                    bytes_needed as usize,
+                    aligned,
+                )?;
+                data.decode_align()?;
+                data.decode_bits_as_integer(length * 8, false)?
             };
-            data.decode_bits_as_integer(bits, false)?
-        } else if range == 256 {
-            data.decode_align()?;
-            data.decode_bits_as_integer(8, false)?
-        } else if range <= 65536 {
-            data.decode_align()?;
-            data.decode_bits_as_integer(16, false)?
-        } else {
-            let bytes_needed = crate::per::common::bytes_needed_for_range(range);
-            log::trace!("bytes_needed : {}", bytes_needed);
-            let length = decode_constrained_length_determinent_common(
-                data,
-                1,
-                bytes_needed as usize,
-                aligned,
-            )?;
-            data.decode_align()?;
-            data.decode_bits_as_integer(length * 8, false)?
-        };
 
-        Ok(value + lb)
+            Ok(value + lb)
+        } else {
+            let leading_zeros = range.leading_zeros();
+            let bits = 128 - leading_zeros as usize;
+            let value = data.decode_bits_as_integer(bits, false)?;
+            Ok(value + lb)
+        }
     }
 }
 
