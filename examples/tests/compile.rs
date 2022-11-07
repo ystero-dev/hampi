@@ -7,4 +7,5 @@ fn tests() {
     t.pass("tests/13-ngap.rs");
     t.pass("tests/14-e2ap.rs");
     t.pass("tests/15-supl.rs");
+    t.pass("tests/16-example.rs");
 }

@@ -1,0 +1,28 @@
+-- Exampl Structure from X.691 for APER and UPER encodings
+
+ExampleFromX691Spec DEFINITIONS AUTOMATIC TAGS ::=
+
+BEGIN
+
+PersonnelRecord ::=  SET {
+        name Name,
+        number EmployeeNumber,
+	title VisibleString,
+        dateOfHire Date,
+        nameOfSpouse Name,
+        children SEQUENCE OF ChildInformation DEFAULT {}
+}
+ChildInformation ::= SET {
+    name Name,
+    dateOfBirth Date
+}
+
+Name ::= SEQUENCE {
+    givenName VisibleString,
+    initial VisibleString,
+    familyName VisibleString
+}
+EmployeeNumber ::= INTEGER
+Date ::= VisibleString -- YYYYMMDD"#;
+
+END
