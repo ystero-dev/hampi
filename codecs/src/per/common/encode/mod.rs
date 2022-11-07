@@ -134,6 +134,7 @@ pub(crate) fn encode_enumerated_common(
 }
 
 // Common function to encode a bitstring
+// Refer to Section 15.
 pub(crate) fn encode_bitstring_common(
     data: &mut PerCodecData,
     lb: Option<i128>,
@@ -163,11 +164,14 @@ pub(crate) fn encode_bitstring_common(
     encode_length_determinent_common(data, lb, ub, false, length, aligned)?;
     if length > 0 {
         if length > 16 {
-            data.align();
+            if aligned {
+                data.align();
+            }
         }
         data.append_bits(bit_string);
     }
 
+    // TODO: Not sure if 15.11 is handled correctly?
     data.dump_encode();
 
     Ok(())
@@ -204,7 +208,9 @@ pub(crate) fn encode_octet_string_common(
 
     if length > 0 {
         if length > 2 {
-            data.align();
+            if aligned {
+                data.align();
+            }
         }
         data.append_bits(octet_string.view_bits());
     }
@@ -286,7 +292,9 @@ pub(crate) fn encode_string_common(
     }
     encode_length_determinent_common(data, lb, ub, false, value.len(), aligned)?;
     if value.len() > 2 {
-        data.align();
+        if aligned {
+            data.align();
+        }
     }
     data.append_bits(value.as_bits());
 
