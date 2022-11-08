@@ -183,7 +183,7 @@ pub fn encode_visible_string(
         extended
     );
 
-    encode_string_common(data, lb, ub, is_extensible, value, extended, false)
+    encode_ascii_ish_string_common(data, lb, ub, is_extensible, value, extended)
 }
 
 /// Encode a PrintableString CharacterString Type.
@@ -204,7 +204,7 @@ pub fn encode_printable_string(
         extended
     );
 
-    encode_string_common(data, lb, ub, is_extensible, value, extended, false)
+    encode_ascii_ish_string_common(data, lb, ub, is_extensible, value, extended)
 }
 
 /// Encode a UTF8String CharacterString Type.
@@ -225,7 +225,52 @@ pub fn encode_utf8_string(
         extended
     );
 
-    encode_string_common(data, lb, ub, is_extensible, value, extended, false)
+    encode_octet_string_common(
+        data,
+        lb,
+        ub,
+        is_extensible,
+        value.as_bytes(),
+        extended,
+        false,
+    )
+}
+
+// Common function used by PrintableString and VisibleString
+fn encode_ascii_ish_string_common(
+    data: &mut PerCodecData,
+    lb: Option<i128>,
+    ub: Option<i128>,
+    is_extensible: bool,
+    value: &String,
+    extended: bool,
+) -> Result<(), PerCodecError> {
+    if extended {
+        return Err(PerCodecError::new(
+            "Encode of extended octetstring not yet implemented",
+        ));
+    }
+
+    if is_extensible {
+        data.encode_bool(extended);
+    }
+
+    encode_length_determinent_common(data, lb, ub, false, value.len(), false)?;
+
+    // FIXME: bits_per_char is hardcoded it shold be obtained from the 'alphabet' of the string.
+    let bits_per_char = 7;
+    let offset = 8 - bits_per_char;
+    let chars_vec = value
+        .chars()
+        .map(|c| BitSlice::<_, Msb0>::from_element(&(c as u8))[offset..].to_bitvec())
+        .collect::<Vec<_>>()
+        .into_iter()
+        .flatten()
+        .collect::<BitVec<u8, Msb0>>();
+
+    data.append_bits(chars_vec.as_bitslice());
+
+    Ok(())
 }
 
 #[cfg(test)]
@@ -371,5 +416,14 @@ mod tests {
             false
         )
         .is_err());
+    }
+
+    #[test]
+    fn bitstring_uper_ascii_ish_string() {
+        // Taken from the example in x.691
+        let value = "John".to_string();
+        let mut codec_data = &mut PerCodecData::new_uper();
+        let result = encode_visible_string(&mut codec_data, None, None, false, &value, false);
+        assert!(result.is_ok(), "{:#?}", result.err().unwrap());
     }
 }

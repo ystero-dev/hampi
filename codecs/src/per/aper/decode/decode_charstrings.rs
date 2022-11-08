@@ -18,7 +18,7 @@ pub fn decode_visible_string(
         ub,
         is_extensible
     );
-    decode_string_common(data, lb, ub, is_extensible, true)
+    decode_string_common(data, lb, ub, is_extensible, 8, true)
 }
 
 /// Decode a PrintableString CharacterString Type.
@@ -34,7 +34,7 @@ pub fn decode_printable_string(
         ub,
         is_extensible
     );
-    decode_string_common(data, lb, ub, is_extensible, true)
+    decode_string_common(data, lb, ub, is_extensible, 8, true)
 }
 
 // UTF-8 String is always - indefinite length case as it's not a fixed character width string. It's
@@ -53,5 +53,5 @@ pub fn decode_utf8_string(
         ub,
         is_extensible
     );
-    decode_string_common(data, lb, ub, is_extensible, true)
+    decode_string_common(data, lb, ub, is_extensible, 8, true)
 }
