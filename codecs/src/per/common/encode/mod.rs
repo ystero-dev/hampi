@@ -183,7 +183,7 @@ pub(crate) fn encode_octet_string_common(
     lb: Option<i128>,
     ub: Option<i128>,
     is_extensible: bool,
-    octet_string: &Vec<u8>,
+    octet_string: &[u8],
     extended: bool,
     aligned: bool,
 ) -> Result<(), PerCodecError> {

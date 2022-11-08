@@ -55,6 +55,7 @@ pub fn decode_sequence_header_common(
         false
     };
 
+    eprintln!("optional_count: {}", optional_count);
     let mut bitmap = BitVec::new();
     if optional_count > 0 {
         bitmap.extend(data.get_bitvec(optional_count)?);
@@ -176,7 +177,9 @@ pub fn decode_bitstring_common(
 
         if length > 0 {
             if length > 16 {
-                data.decode_align()?;
+                if aligned {
+                    data.decode_align()?;
+                }
             }
             bv.extend(data.get_bitvec(length)?);
         }
@@ -225,7 +228,9 @@ pub fn decode_octetstring_common(
 
         if length > 0 {
             if length > 2 {
-                data.decode_align()?;
+                if aligned {
+                    data.decode_align()?;
+                }
             }
             octets.extend(data.get_bytes(length)?);
         }
@@ -248,6 +253,7 @@ pub(crate) fn decode_string_common(
     lb: Option<i128>,
     ub: Option<i128>,
     is_extensible: bool,
+    bits_per_char: usize,
     aligned: bool,
 ) -> Result<String, PerCodecError> {
     let is_extended = if is_extensible {
@@ -262,15 +268,24 @@ pub(crate) fn decode_string_common(
         decode_length_determinent_common(data, lb, ub, false, aligned)?
     };
 
-    let num_bits = 8;
-    let length = length * num_bits;
+    let length = length * bits_per_char;
     if length > 16 {
-        data.decode_align()?;
+        if aligned {
+            data.decode_align()?;
+        }
     }
     let bits = data.get_bitvec(length)?;
     let bytes = bits
-        .chunks_exact(num_bits)
-        .map(|c| c.load::<u8>())
+        .chunks_exact(bits_per_char)
+        .map(|c| {
+            let mut v = c.to_bitvec();
+            let howmany = 8 - bits_per_char;
+            for _ in 0..howmany {
+                v.insert(0, false);
+            }
+            let o = v.load_be::<u8>();
+            o
+        })
         .collect::<Vec<u8>>();
 
     data.dump();
