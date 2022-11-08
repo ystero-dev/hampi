@@ -55,7 +55,6 @@ pub fn decode_sequence_header_common(
         false
     };
 
-    eprintln!("optional_count: {}", optional_count);
     let mut bitmap = BitVec::new();
     if optional_count > 0 {
         bitmap.extend(data.get_bitvec(optional_count)?);
