@@ -19,7 +19,7 @@ impl Component {
 pub(crate) struct SeqComponent {
     pub(crate) component: Component,
     pub(crate) optional: bool,
-    pub(crate) _default: Option<String>, // FIXME: Should be Asn1Value later on
+    pub(crate) default: Option<String>, // FIXME: Should be Asn1Value later on
 }
 
 impl SeqComponent {
