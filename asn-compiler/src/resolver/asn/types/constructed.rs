@@ -106,7 +106,7 @@ fn resolve_sequence_type(
         };
         let seq_component = ResolvedSeqComponent {
             component,
-            optional: c.optional,
+            optional: c.optional || c.default.is_some(),
             class_field_type: None,
             key_field: false,
         };

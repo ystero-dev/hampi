@@ -143,7 +143,7 @@ fn parse_seq_component(tokens: &[Token]) -> Result<(Option<SeqComponent>, usize)
             false
         };
 
-        let _default = if expect_keyword(&tokens[consumed..], "DEFAULT")? {
+        let default = if expect_keyword(&tokens[consumed..], "DEFAULT")? {
             consumed += 1;
             let (value, value_consumed) = parse_value(&tokens[consumed..])?;
             consumed += value_consumed;
@@ -152,7 +152,7 @@ fn parse_seq_component(tokens: &[Token]) -> Result<(Option<SeqComponent>, usize)
             None
         };
 
-        if _default.is_some() && optional {
+        if default.is_some() && optional {
             return Err(parse_error!(
                 "Both OPTIONAL and DEFAULT not allowed for a value!"
             ));
@@ -162,7 +162,7 @@ fn parse_seq_component(tokens: &[Token]) -> Result<(Option<SeqComponent>, usize)
             Some(SeqComponent {
                 component,
                 optional,
-                _default,
+                default,
             }),
             consumed,
         ))
