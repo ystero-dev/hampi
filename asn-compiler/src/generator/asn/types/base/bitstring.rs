@@ -29,7 +29,7 @@ impl Asn1ResolvedBitString {
         let struct_tokens = quote! {
             #dir
             #[asn(#ty_attributes)]
-            #vis struct #struct_name(#vis BitVec<u8, Msb0>);
+            #vis struct #struct_name(#vis bitvec::vec::BitVec<u8, bitvec::order::Msb0>);
         };
 
         Ok(struct_tokens)

@@ -106,9 +106,6 @@ impl Generator {
     pub(crate) fn generate(&mut self, resolver: &Resolver) -> Result<String, Error> {
         // FIXME: Not sure how to make sure the crates defined here are a dependency.
         // May be can just do with documenting it.
-        let use_tokens = self.generate_use_tokens();
-        self.items.push(use_tokens);
-
         let mut items = vec![];
         for (k, t) in resolver.get_resolved_types() {
             let item = Asn1ResolvedType::generate_for_type(k, t, self)?;
@@ -201,13 +198,6 @@ impl Generator {
             Visibility::Public => quote! { pub },
             Visibility::Crate => quote! { pub(crate) },
             Visibility::Private => quote! {},
-        }
-    }
-
-    fn generate_use_tokens(&self) -> TokenStream {
-        quote! {
-            use bitvec::vec::BitVec;
-            use bitvec::order::Msb0;
         }
     }
 

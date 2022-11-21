@@ -1,10 +1,5 @@
 #![allow(dead_code, unreachable_patterns, non_camel_case_types)]
 
-use asn1_codecs::{aper::AperCodec, uper::UperCodec, PerCodecData};
-
-use bitvec::order::Msb0;
-use bitvec::vec::BitVec;
-
 #[derive(asn1_codecs_derive :: AperCodec, asn1_codecs_derive :: UperCodec, Debug)]
 #[asn(type = "SEQUENCE", extensible = false)]
 pub struct ChildInformation {
@@ -61,6 +56,7 @@ pub struct CharacterString_5(pub String);
 pub struct PersonnelRecordChildren(pub Vec<ChildInformation>);
 
 fn main() {
+    use asn1_codecs::{aper::AperCodec, uper::UperCodec, PerCodecData};
     let example_bytes_aper = "80044A6F686E015005536D6974680133084469726563746F72083139373130393137044D617279015405536D697468020552616C7068015405536D69746808313935373131313105537573616E0142054A6F6E6573083139353930373137";
     let example_data_aper = hex::decode(example_bytes_aper).unwrap();
     let mut codec_data = PerCodecData::from_slice_aper(&example_data_aper);

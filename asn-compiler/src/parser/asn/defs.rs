@@ -552,9 +552,9 @@ UE-RadioAccessCapability-LaterNonCriticalExtensions ::= SEQUENCE {
                 "{}:{}",
                 tc.input,
                 if tc.success {
-                    format!("{:#?}", def.err())
+                    format!("{:#?}", def.err().unwrap())
                 } else {
-                    format!("{:#?}", def.ok())
+                    format!("{:#?}", def.ok().unwrap())
                 }
             );
         }

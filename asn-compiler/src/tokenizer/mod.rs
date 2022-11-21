@@ -953,7 +953,7 @@ mod tests {
     fn tokenize_identifier_tokens() {
         let reader = std::io::BufReader::new(std::io::Cursor::new(b"Hello World!"));
         let result = tokenize(reader);
-        assert!(result.is_ok(), "{:#?}", result.err());
+        assert!(result.is_ok(), "{:#?}", result.err().unwrap());
         let tokens = result.unwrap();
         assert!(tokens.len() == 3, "{:#?}", tokens);
     }

@@ -256,7 +256,7 @@ mod tests {
         let mut codec_data = PerCodecData::from_slice_aper(data);
         codec_data.advance_maybe_err(1, false).unwrap();
         let value = decode_constrained_whole_number_common(&mut codec_data, 0, 255, true);
-        assert!(value.is_ok(), "{:#?}", value.err());
+        assert!(value.is_ok(), "{:#?}", value.err().unwrap());
         let value = value.unwrap();
         assert_eq!(value, 0x70i128);
     }
@@ -267,7 +267,7 @@ mod tests {
         let mut codec_data = PerCodecData::from_slice_aper(data);
         codec_data.advance_maybe_err(12, false).unwrap();
         let value = decode_constrained_whole_number_common(&mut codec_data, 0, 64000, true);
-        assert!(value.is_ok(), "{:#?}", value.err());
+        assert!(value.is_ok(), "{:#?}", value.err().unwrap());
         let value = value.unwrap();
         assert_eq!(value, 1_i128);
     }
@@ -290,7 +290,7 @@ mod tests {
         // 0000 0000 0111 >> 1000 0000 0001 0000 0001 0000 0001 0000 0002
 
         let value = decode_constrained_whole_number_common(&mut codec_data, 0, 20_000_000, true);
-        assert!(value.is_ok(), "{:#?}", value.err());
+        assert!(value.is_ok(), "{:#?}", value.err().unwrap());
         let value = value.unwrap();
 
         // Bytes needed for range 0-20000000 = 4.

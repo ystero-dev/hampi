@@ -54,7 +54,7 @@ mod tests {
         let mut compiler = get_dev_null_compiler();
         let result = compiler.compile_string(&module_str);
 
-        assert!(result.is_ok(), "{:?}", result.err());
+        assert!(result.is_ok(), "{:?}", result.err().unwrap());
     }
 
     #[test]
@@ -72,7 +72,7 @@ mod tests {
         let mut compiler = get_dev_null_compiler();
         let result = compiler.compile_string(&module_str);
 
-        assert!(result.is_ok(), "{:?}", result.err());
+        assert!(result.is_ok(), "{:?}", result.err().unwrap());
     }
 
     #[test]
