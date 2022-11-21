@@ -178,7 +178,6 @@ impl PerCodecData {
                         inner as i128
                     }
                     56 => {
-                        eprintln!("{}", self.decode_offset);
                         let inner = self.bits[self.decode_offset..self.decode_offset + bits]
                             .load_be::<u64>() as u64;
                         let inner = if self.bits[self.decode_offset] {

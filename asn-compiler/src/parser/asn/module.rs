@@ -248,7 +248,7 @@ mod tests {
 
         let mut tokens = tokens.unwrap();
         let module = parse_module(&mut tokens);
-        assert!(module.is_ok(), "{}: {:#?}", input, module.err());
+        assert!(module.is_ok(), "{}: {:#?}", input, module.err().unwrap());
 
         let (module, consumed) = module.unwrap();
         assert_eq!(consumed, 5);

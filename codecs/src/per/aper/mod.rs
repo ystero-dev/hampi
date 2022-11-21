@@ -68,12 +68,16 @@ mod tests {
         //let numbers: Vec<i128> = vec![-256, -1, -65537, 0, 11, 127, 128, 65536, 1234567, 123456789];
         for num in numbers {
             let mut d = PerCodecData::new_aper();
-            eprintln!("number: {}", num);
             let result = encode::encode_integer(&mut d, None, None, false, num, false);
-            eprintln!("{:?}", d);
-            assert!(result.is_ok(), "{:#?}", d);
+            assert!(
+                result.is_ok(),
+                "number: {}, d: {:#?}, error: {:#?}",
+                num,
+                d,
+                result.err().unwrap()
+            );
             let value = decode::decode_integer(&mut d, None, None, false);
-            assert!(value.is_ok(), "{:#?}", value.err());
+            assert!(value.is_ok(), "{:#?}", value.err().unwrap());
             assert!(value.unwrap().0 == num);
         }
     }

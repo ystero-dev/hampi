@@ -281,9 +281,9 @@ mod tests {
                 "{}:{}",
                 tc.input,
                 if tc.success {
-                    format!("{:#?}", ty.err())
+                    format!("{:#?}", ty.err().unwrap())
                 } else {
-                    format!("{:#?}", ty.ok())
+                    format!("{:#?}", ty.ok().unwrap())
                 }
             );
 

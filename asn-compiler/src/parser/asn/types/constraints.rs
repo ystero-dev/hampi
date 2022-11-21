@@ -453,7 +453,7 @@ mod tests {
                 tc.success,
                 "{:#?}, {:#?}",
                 tc.input,
-                constraint.err()
+                constraint.err().unwrap()
             );
 
             if tc.success {

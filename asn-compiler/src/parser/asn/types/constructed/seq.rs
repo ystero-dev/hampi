@@ -342,9 +342,9 @@ mod tests {
                 "{}:{}",
                 tc.input,
                 if tc.success {
-                    format!("{:#?}", sequence.err())
+                    format!("{:#?}", sequence.err().unwrap())
                 } else {
-                    format!("{:#?}", sequence.ok())
+                    format!("{:#?}", sequence.ok().unwrap())
                 }
             );
 
