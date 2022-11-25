@@ -107,8 +107,6 @@ Date ::= VisibleString -- YYYYMMDD"#;
 
         let module_str = format!("{} {}", module_header, definitions);
 
-        eprintln!("{}", module_str);
-
         let mut compiler = get_dev_null_compiler();
         let result = compiler.compile_string(&module_str);
 
