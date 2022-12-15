@@ -12,4 +12,5 @@ fn tests() {
     t.pass("tests/08-seq.rs");
     t.pass("tests/09-open.rs");
     t.pass("tests/10-seqof.rs");
+    t.pass("tests/11-issue-59.rs");
 }

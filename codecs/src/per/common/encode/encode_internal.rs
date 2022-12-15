@@ -125,7 +125,7 @@ pub(super) fn encode_constrained_whole_number_common(
         // Let's say range is 1000 -> 0b_0000_0011_1110_1000 (Minimum number of bits needed is 10)
         let leading_zeros = range.leading_zeros() as usize;
         let bytes = value.to_be_bytes();
-        data.append_bits(bytes[leading_zeros..].view_bits())
+        data.append_bits(&bytes.view_bits()[leading_zeros..])
     }
     Ok(())
 }
