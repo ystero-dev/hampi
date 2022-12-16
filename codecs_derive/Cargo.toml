@@ -3,7 +3,7 @@ name = "asn1_codecs_derive"
 authors = ["Abhijit Gadgil <gabhijit@iitbombay.org>"]
 description = "ASN.1 Codecs derive Macros"
 keywords = ["asn1", "per"]
-version = "0.5.1"
+version = "0.5.2"
 edition = "2018"
 license-file = "LICENSE"
 repository = "https://github.com/gabhijit/hampi.git"
@@ -18,7 +18,7 @@ proc-macro = true
 
 [dependencies]
 log = { version = "0.4" }
-asn1-codecs = { path = "../codecs" , version = "=0.5.1"}
+asn1-codecs = { path = "../codecs" , version = "=0.5.2"}
 bitvec = { version = "1.0" }
 proc-macro2 = { version = "1.0" }
 quote = { version = "1.0" }
