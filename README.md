@@ -1,6 +1,6 @@
 # Hampi - Rust ASN.1 Toolkit
 
-[![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/gabhijit/hampi/build%20on%20pull%20request/master)](https://github.com/gabhijit/hampi/actions/workflows/CI.yml)
+[![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/gabhijit/hampi/CI.yml?branch=master)](https://github.com/gabhijit/hampi/actions/workflows/CI.yml)
 [![Crates.io](https://img.shields.io/crates/v/asn1-codecs?label=asn1-codecs)](https://crates.io/crates/asn1-codecs)
 [![Crates.io](https://img.shields.io/crates/v/asn1-compiler?label=asn1-compiler)](https://crates.io/crates/asn1-compiler)
 [![Crates.io](https://img.shields.io/crates/v/asn1_codecs_derive?label=asn1_codecs_derive)](https://crates.io/crates/asn1_codecs_derive)
