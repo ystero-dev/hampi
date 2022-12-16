@@ -7,7 +7,14 @@ use asn1_codecs::{uper::UperCodec, PerCodecData};
 pub struct INTEGER_20(pub u8);
 
 fn main() {
-    let mut data: PerCodecData = PerCodecData::new_uper();
+    let mut data = PerCodecData::new_uper();
     let my_int: INTEGER_20 = INTEGER_20(3);
-    let _result = my_int.uper_encode(&mut data);
+    let result = my_int.uper_encode(&mut data);
+    assert!(result.is_ok());
+
+    let decoded = INTEGER_20::uper_decode(&mut data);
+    assert!(decoded.is_ok());
+
+    let INTEGER_20(v) = decoded.unwrap();
+    assert!(v == 3u8);
 }
