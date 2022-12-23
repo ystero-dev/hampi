@@ -38,8 +38,13 @@ impl Asn1ResolvedBitString {
     pub(crate) fn generate_ident_and_aux_type(
         &self,
         generator: &mut Generator,
+        input: Option<&String>,
     ) -> Result<Ident, Error> {
-        let unique_name = generator.get_unique_name("BIT STRING");
+        let unique_name = if input.is_none() {
+            generator.get_unique_name("BIT STRING")
+        } else {
+            input.unwrap().to_string()
+        };
 
         let item = self.generate(&unique_name, generator)?;
         generator.aux_items.push(item);

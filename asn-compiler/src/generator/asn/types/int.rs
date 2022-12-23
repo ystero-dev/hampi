@@ -30,7 +30,9 @@ impl Asn1ResolvedType {
         input: Option<&String>,
     ) -> Result<Ident, Error> {
         match ty {
-            Asn1ResolvedType::Base(ref b) => b.generate_ident_and_aux_type_for_base(generator),
+            Asn1ResolvedType::Base(ref b) => {
+                b.generate_ident_and_aux_type_for_base(generator, input)
+            }
             Asn1ResolvedType::Reference(ref r) => {
                 Asn1ResolvedType::generate_ident_for_reference(r, generator)
             }
@@ -118,7 +120,8 @@ impl ResolvedSetType {
         let mut variant_tokens = TokenStream::new();
         for (name, ty) in &self.types {
             let variant_ident = generator.to_type_ident(&name.0);
-            let ty_ident = Asn1ResolvedType::generate_name_maybe_aux_type(&ty.1, generator, None)?;
+            let ty_ident =
+                Asn1ResolvedType::generate_name_maybe_aux_type(&ty.1, generator, Some(&name.0))?;
             let key: proc_macro2::TokenStream = ty.0.to_string().parse().unwrap();
             let key_tokens = quote! {
                 #[asn(key = #key)]
