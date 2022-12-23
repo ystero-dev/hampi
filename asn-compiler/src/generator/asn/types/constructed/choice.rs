@@ -141,7 +141,7 @@ impl ResolvedConstructedType {
         let mut out_components = vec![];
         for (i, c) in components.iter().enumerate() {
             let comp_variant_ident = generator.to_type_ident(&c.id);
-            let input_comp_type_ident = format!("{}{}", name, c.id);
+            let input_comp_type_ident = format!("{}_{}", name, c.id);
             let comp_variant_ty_ident = Asn1ResolvedType::generate_name_maybe_aux_type(
                 &c.ty,
                 generator,

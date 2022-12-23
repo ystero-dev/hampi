@@ -43,16 +43,21 @@ impl ResolvedBaseType {
     pub(crate) fn generate_ident_and_aux_type_for_base(
         &self,
         generator: &mut Generator,
+        input: Option<&String>,
     ) -> Result<Ident, Error> {
         match self {
-            ResolvedBaseType::Integer(ref i) => i.generate_ident_and_aux_type(generator),
-            ResolvedBaseType::Enum(ref e) => e.generate_ident_and_aux_type(generator),
-            ResolvedBaseType::BitString(ref b) => b.generate_ident_and_aux_type(generator),
-            ResolvedBaseType::Boolean(ref b) => b.generate_ident_and_aux_type(generator),
-            ResolvedBaseType::OctetString(ref o) => o.generate_ident_and_aux_type(generator),
-            ResolvedBaseType::CharacterString(ref c) => c.generate_ident_and_aux_type(generator),
-            ResolvedBaseType::Null(ref n) => n.generate_ident_and_aux_type(generator),
-            ResolvedBaseType::ObjectIdentifier(ref o) => o.generate_ident_and_aux_type(generator),
+            ResolvedBaseType::Integer(ref i) => i.generate_ident_and_aux_type(generator, input),
+            ResolvedBaseType::Enum(ref e) => e.generate_ident_and_aux_type(generator, input),
+            ResolvedBaseType::BitString(ref b) => b.generate_ident_and_aux_type(generator, input),
+            ResolvedBaseType::Boolean(ref b) => b.generate_ident_and_aux_type(generator, input),
+            ResolvedBaseType::OctetString(ref o) => o.generate_ident_and_aux_type(generator, input),
+            ResolvedBaseType::CharacterString(ref c) => {
+                c.generate_ident_and_aux_type(generator, input)
+            }
+            ResolvedBaseType::Null(ref n) => n.generate_ident_and_aux_type(generator, input),
+            ResolvedBaseType::ObjectIdentifier(ref o) => {
+                o.generate_ident_and_aux_type(generator, input)
+            }
         }
     }
 }
