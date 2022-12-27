@@ -19,8 +19,8 @@ struct Cli {
     #[arg(short, long)]
     module: String,
 
-    #[arg(short)]
-    debug: bool,
+    #[arg(short, action=clap::ArgAction::Count)]
+    debug: u8,
 
     /// Visibility of Generated Structures and members:
     #[arg(long, value_enum, default_value_t=Visibility::Public)]
@@ -50,9 +50,21 @@ fn main() -> io::Result<()> {
         cli.derive.push(Derive::Debug);
     }
 
+    let level = if cli.debug > 0 {
+        if cli.debug == 1 {
+            "debug"
+        } else {
+            "trace"
+        }
+    } else {
+        "info"
+    };
+
+    let env = env_logger::Env::default().filter_or("MY_LOG_LEVEL", level);
+    env_logger::init_from_env(env);
+
     let mut compiler = Asn1Compiler::new(
         &cli.module,
-        cli.debug,
         &cli.visibility,
         cli.codec.clone(),
         cli.derive.clone(),
