@@ -63,7 +63,6 @@ fn main() -> std::io::Result<()> {
         let rs_module = rs_module.to_str().unwrap();
         let mut compiler = Asn1Compiler::new(
             rs_module,
-            false,
             &Visibility::Public,
             codecs_map.get(module).unwrap().clone(),
             vec![Derive::Debug, Derive::Serialize, Derive::Deserialize],
