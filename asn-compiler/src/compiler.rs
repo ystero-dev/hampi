@@ -37,20 +37,11 @@ pub struct Asn1Compiler {
 
     // Holds the file name for the output module.
     output_filename: String,
-
-    // Debug Print during Code generation
-    debug: bool,
 }
 
 impl Default for Asn1Compiler {
     fn default() -> Self {
-        Asn1Compiler::new(
-            "default.rs",
-            false,
-            &Visibility::Public,
-            vec![Codec::Aper],
-            vec![],
-        )
+        Asn1Compiler::new("default.rs", &Visibility::Public, vec![Codec::Aper], vec![])
     }
 }
 
@@ -58,7 +49,6 @@ impl Asn1Compiler {
     /// Create a new Instance of the Compiler structure.
     pub fn new(
         output: &str,
-        debug: bool,
         visibility: &Visibility,
         codecs: Vec<Codec>,
         derives: Vec<Derive>,
@@ -68,7 +58,6 @@ impl Asn1Compiler {
             resolver: Resolver::new(),
             generator: Generator::new(visibility, codecs, derives), // FIXME: Hard coded
             output_filename: output.to_string(),
-            debug,
         }
     }
 
@@ -76,6 +65,7 @@ impl Asn1Compiler {
     ///
     /// If the module alredy exists, returns `false` else returns `true`.
     pub fn add_module(&mut self, module: Asn1Module) -> bool {
+        log::debug!("Adding module: {}", module.get_module_name());
         self.modules
             .insert(module.get_module_name(), module)
             .is_some()
@@ -90,12 +80,17 @@ impl Asn1Compiler {
     /// definitions much easier.
     // FIXME: Support the case where module is imported by a name different from it's actual name.
     pub fn resolve_modules(&mut self) -> Result<(), Error> {
+        log::info!("Resolving imports from all modules.");
         self.resolve_imports()?;
+
+        log::info!("Resolving definitions from all modules.");
         self.resolve_definitions()
     }
 
     /// Generate the code
     pub fn generate(&mut self) -> Result<(), Error> {
+        log::info!("Generating code, writing to file: {}", self.output_filename);
+
         let input_text = self.generator.generate(&self.resolver)?;
         let output_text = self.rustfmt_generated_code(&input_text)?;
 
@@ -123,8 +118,12 @@ impl Asn1Compiler {
     }
 
     /// The Actual compilation driver
-    pub fn compile_files<T: AsRef<Path>>(&mut self, files: &[T]) -> Result<(), Error> {
+    pub fn compile_files<T: AsRef<Path> + std::fmt::Debug>(
+        &mut self,
+        files: &[T],
+    ) -> Result<(), Error> {
         for file in files {
+            log::info!("Processing file: {:?}", file);
             let file = File::open(file).map_err(|e| io_error!("{:#?}", e))?;
             let mut tokens = crate::tokenizer::tokenize(file)?;
             self.parse_tokens_into_modules(&mut tokens)?;
@@ -135,20 +134,22 @@ impl Asn1Compiler {
     }
 
     fn parse_tokens_into_modules(&mut self, tokens: &mut Vec<Token>) -> Result<(), Error> {
+        log::debug!("Parsing tokens.");
         let mut modules = crate::parser::parse(tokens)?;
-
         loop {
             let module = modules.pop();
             if module.is_none() {
                 break;
             }
             let module = module.unwrap();
+            log::debug!("Adding module : {}", module.get_module_name());
             self.add_module(module);
         }
         Ok(())
     }
 
     fn rustfmt_generated_code(&self, code: &str) -> Result<String, Error> {
+        log::debug!("Runing `rustfmt` on the generated code.");
         let rustfmt_binary = "rustfmt"; // TODO: Get from `env` , 'custom path' etc.
         let mut cmd = Command::new(rustfmt_binary);
 
@@ -180,6 +181,7 @@ impl Asn1Compiler {
     }
 
     fn resolve_imports(&self) -> Result<(), Error> {
+        log::debug!("Resolving imports.");
         for (_, module) in self.modules.iter() {
             for (import, module_name) in module.get_imported_defs() {
                 let target = self.modules.get(module_name.name_as_str());
@@ -192,13 +194,13 @@ impl Asn1Compiler {
                 }
             }
         }
-        if self.debug {
-            eprintln!("All IMPORTS in All Modules Resolved!");
-        }
+
+        log::debug!("All IMPORTS in All Modules Resolved!");
         Ok(())
     }
 
     fn sorted_modules(&self) -> Vec<String> {
+        log::trace!("Topologically sorting modules.");
         let mut ts = TopologicalSort::<String>::new();
 
         for module in self.modules.values() {
@@ -229,17 +231,16 @@ impl Asn1Compiler {
             //let module_definitions = module.definitions_sorted();
             self.resolver.resolve_definitions(module)?;
         }
-        if self.debug {
-            eprintln!(
-                "Resolved Definitions: {:#?}",
-                self.resolver.resolved_defs.keys()
-            );
-            eprintln!(
-                "Parameterized Types: {:#?}",
-                self.resolver.parameterized_defs.keys()
-            );
-            eprintln!("Object Classes: {:#?}", self.resolver.classes.keys());
-        }
+        log::trace!(
+            "Resolved Definitions: {:#?}",
+            self.resolver.resolved_defs.keys()
+        );
+        log::trace!(
+            "Parameterized Types: {:#?}",
+            self.resolver.parameterized_defs.keys()
+        );
+        log::trace!("Object Classes: {:#?}", self.resolver.classes.keys());
+
         Ok(())
     }
 }
