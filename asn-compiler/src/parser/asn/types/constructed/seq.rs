@@ -42,11 +42,15 @@ fn parse_sequence_type(tokens: &[Token]) -> Result<(Asn1TypeKind, usize), Error>
     let mut root_components = vec![];
     let mut additions = vec![];
     let mut ext_marker_found = 0;
+    let mut loop_consumed;
+    let mut loop_count = 1;
     loop {
+        loop_consumed = consumed;
         let (component, component_consumed) = match parse_seq_component(&tokens[consumed..]) {
             Ok(result) => result,
             Err(_) => (None, 0),
         };
+
         if let Some(root_comp) = component {
             root_components.push(root_comp);
         }
@@ -82,6 +86,21 @@ fn parse_sequence_type(tokens: &[Token]) -> Result<(Asn1TypeKind, usize), Error>
         if expect_token(&tokens[consumed..], Token::is_curly_end)? {
             consumed += 1;
             break;
+        }
+
+        if loop_consumed == consumed {
+            log::warn!(
+                "No tokens consumed in {} iterations of the loop",
+                loop_count
+            );
+
+            loop_count += 1;
+            if loop_count == 3 {
+                return Err(parse_error!(
+                    "Parser Stuck at Token: {:?}",
+                    tokens[consumed]
+                ));
+            }
         }
     }
 

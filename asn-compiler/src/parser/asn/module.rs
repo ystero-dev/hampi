@@ -50,6 +50,11 @@ where
     // Module Name and Object Identifier
     let (name, name_consumed) = parse_module_name(&tokens[consumed..])?;
     consumed += name_consumed;
+    log::trace!(
+        "Parsed module name '{}'. Consumed {} tokens",
+        name.name,
+        consumed
+    );
 
     // DEFINITIONS Keywords
     if expect_keyword(&tokens[consumed..], "DEFINITIONS")? {
@@ -60,6 +65,11 @@ where
 
     let (tags, tags_consumed) = maybe_parse_header_tags(&tokens[consumed..])?;
     consumed += tags_consumed;
+    log::trace!(
+        "Parsed Header Tags '{:?}'.  Consumed {} tokens",
+        tags,
+        consumed
+    );
 
     // FIXME: Handle EXTENSIBILITY
 
@@ -74,18 +84,28 @@ where
         return Err(unexpected_token!("BEGIN", tokens[consumed]));
     }
 
-    // Parse but ignore exports if any (by default everything is exported.
+    // Parse but ignore exports if any (by default everything is exported).
     let (_, exports_consumed) = parse_module_maybe_exports(&tokens[consumed..])?;
     consumed += exports_consumed;
+    log::trace!("Parsed EXPORTS. Consumed {} tokens.", consumed);
 
     let (imports, imports_consumed) = parse_module_imports(&tokens[consumed..])?;
     consumed += imports_consumed;
+    log::trace!(
+        "Parsed IMPORTS. Consumed {} tokens. Parsing Definitions Now",
+        consumed
+    );
 
     let mut definitions = HashMap::new();
     while !expect_keyword(&tokens[consumed..], "END")? {
         let (def, definition_consumed) = parse_definition(&tokens[consumed..])?;
-        definitions.insert(def.id(), def);
         consumed += definition_consumed;
+        log::trace!(
+            "Parsed '{}' Definition. Consumed {} tokens so far",
+            def.id(),
+            consumed
+        );
+        definitions.insert(def.id(), def);
     }
 
     // Comes out of the loop when END is found.

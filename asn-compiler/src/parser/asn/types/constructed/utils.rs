@@ -18,6 +18,7 @@ pub(crate) fn parse_component(tokens: &[Token]) -> Result<(Component, usize), Er
     let (ty, ty_consumed) = parse_type(&tokens[consumed..])?;
     consumed += ty_consumed;
 
+    log::trace!("parse_component returns");
     Ok((Component { id, ty }, consumed))
 }
 
