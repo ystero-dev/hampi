@@ -32,7 +32,6 @@ mod tests {
     fn get_dev_null_compiler() -> Asn1Compiler {
         Asn1Compiler::new(
             "/dev/null",
-            false,
             &Visibility::Public,
             vec![Codec::Aper],
             vec![Derive::Debug, Derive::Serialize, Derive::Deserialize],
