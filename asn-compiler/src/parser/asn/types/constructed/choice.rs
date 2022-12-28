@@ -31,7 +31,9 @@ pub(crate) fn parse_choice_type(tokens: &[Token]) -> Result<(Asn1TypeChoice, usi
     let mut additions = vec![];
     let mut no_ver_additions_components = vec![];
     let mut extension_markers = 0;
+    let mut loop_count = 1;
     loop {
+        let loop_consumed = consumed;
         let (component, component_consumed) = match parse_component(&tokens[consumed..]) {
             Ok(result) => (Some(result.0), result.1),
             Err(_) => (None, 0),
@@ -84,6 +86,18 @@ pub(crate) fn parse_choice_type(tokens: &[Token]) -> Result<(Asn1TypeChoice, usi
             consumed += 1;
             break;
         }
+
+        if loop_consumed == consumed {
+            log::warn!(
+                "No tokens consumed in {} iterations of the loop",
+                loop_count
+            );
+
+            loop_count += 1;
+            if loop_count == 3 {
+                return Err(parse_error!("Parser stuck at Token {:?}", tokens[consumed]));
+            }
+        }
     }
 
     let additions = if extension_markers > 0 {
@@ -129,7 +143,9 @@ fn parse_choice_addition_group(tokens: &[Token]) -> Result<(ChoiceAdditionGroup,
     };
 
     let mut components = vec![];
+    let mut loop_count = 1;
     loop {
+        let loop_consumed = consumed;
         let (component, component_consumed) = match parse_component(&tokens[consumed..]) {
             Ok(result) => (Some(result.0), result.1),
             Err(_) => (None, 0),
@@ -147,6 +163,18 @@ fn parse_choice_addition_group(tokens: &[Token]) -> Result<(ChoiceAdditionGroup,
         if expect_token(&tokens[consumed..], Token::is_addition_groups_end)? {
             consumed += 1;
             break;
+        }
+
+        if loop_consumed == consumed {
+            log::warn!(
+                "No tokens consumed in {} iterations of the loop",
+                loop_count
+            );
+
+            loop_count += 1;
+            if loop_count == 3 {
+                return Err(parse_error!("Parser stuck at Token {:?}", tokens[consumed]));
+            }
         }
     }
     if components.is_empty() {

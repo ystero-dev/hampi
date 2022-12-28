@@ -134,7 +134,7 @@ impl Asn1Compiler {
     }
 
     fn parse_tokens_into_modules(&mut self, tokens: &mut Vec<Token>) -> Result<(), Error> {
-        log::debug!("Parsing tokens.");
+        log::debug!("Parsing {} tokens.", tokens.len());
         let mut modules = crate::parser::parse(tokens)?;
         loop {
             let module = modules.pop();

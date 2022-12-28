@@ -16,7 +16,7 @@ trybuild = { version = "1.0" }
 hex = { version = "0.4" }
 bitvec = { version = "1.0" , features = ["serde"]}
 log = { version = "0.4" }
-criterion = { version = "0.4" }
+criterion = { version = "0.4" , features = ["rayon"]}
 env_logger = { version = "0.9" }
 serde = { version = "1.0" , features = ["derive"]}
 

@@ -20,6 +20,10 @@ pub fn parse(tokens: &mut Vec<Token>) -> Result<Vec<Asn1Module>, Error> {
     let mut total = 0;
     loop {
         let (module, consumed) = parse_module(&tokens[total..])?;
+        log::trace!(
+            "Module '{}' parsed, adding to the list of modules to be compiled...",
+            module.get_module_name()
+        );
         modules.push(module);
         total += consumed;
         if total == tokens.len() {

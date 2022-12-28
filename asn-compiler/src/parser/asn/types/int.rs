@@ -36,6 +36,7 @@ pub(crate) fn parse_type(tokens: &[Token]) -> Result<(Asn1Type, usize), Error> {
     let typestr = token.text.as_str();
     let (kind, kind_consumed) = match typestr {
         "BIT" => {
+            log::trace!("Parsing `BIT STRING` type.");
             let (bitstr_type, bitstr_type_consumed) = parse_bitstring_type(tokens)?;
             (
                 Asn1TypeKind::Builtin(Asn1BuiltinType::BitString(bitstr_type)),
@@ -43,16 +44,23 @@ pub(crate) fn parse_type(tokens: &[Token]) -> Result<(Asn1Type, usize), Error> {
             )
         }
 
-        "OCTET" => (Asn1TypeKind::Builtin(Asn1BuiltinType::OctetString), 2),
+        "OCTET" => {
+            log::trace!("Parsing `OCTET STRING` type.");
+            (Asn1TypeKind::Builtin(Asn1BuiltinType::OctetString), 2)
+        }
 
-        "CHARACTER" => (
-            Asn1TypeKind::Builtin(Asn1BuiltinType::CharacterString {
-                str_type: "CHARACTER-STRING".to_string(),
-            }),
-            2,
-        ),
+        "CHARACTER" => {
+            log::trace!("Parsing `CHARACTER STRING` type.");
+            (
+                Asn1TypeKind::Builtin(Asn1BuiltinType::CharacterString {
+                    str_type: "CHARACTER-STRING".to_string(),
+                }),
+                2,
+            )
+        }
 
         "ENUMERATED" => {
+            log::trace!("Parsing `ENUMERATED` type.");
             let (enum_type, enum_type_consumed) = parse_enumerated_type(tokens)?;
             (
                 Asn1TypeKind::Builtin(Asn1BuiltinType::Enumerated(enum_type)),
@@ -61,6 +69,7 @@ pub(crate) fn parse_type(tokens: &[Token]) -> Result<(Asn1Type, usize), Error> {
         }
 
         "INTEGER" => {
+            log::trace!("Parsing `INTEGER` type.");
             let (int_type, int_type_consumed) = parse_integer_type(tokens)?;
             (
                 Asn1TypeKind::Builtin(Asn1BuiltinType::Integer(int_type)),
@@ -69,6 +78,7 @@ pub(crate) fn parse_type(tokens: &[Token]) -> Result<(Asn1Type, usize), Error> {
         }
 
         "OBJECT" => {
+            log::trace!("Parsing `OBJECT IDENTIFIER` type.");
             if !expect_keywords(&tokens[consumed..], &["OBJECT", "IDENTIFIER"])? {
                 return Err(unexpected_token!("'IDENTIFIER'", tokens[consumed + 1]));
             }
@@ -76,19 +86,29 @@ pub(crate) fn parse_type(tokens: &[Token]) -> Result<(Asn1Type, usize), Error> {
             (Asn1TypeKind::Builtin(Asn1BuiltinType::ObjectIdentifier), 2)
         }
 
-        "BOOLEAN" => (Asn1TypeKind::Builtin(Asn1BuiltinType::Boolean), 1),
+        "BOOLEAN" => {
+            log::trace!("Parsing `BOOLEAN` type.");
+            (Asn1TypeKind::Builtin(Asn1BuiltinType::Boolean), 1)
+        }
 
-        "NULL" => (Asn1TypeKind::Builtin(Asn1BuiltinType::Null), 1),
+        "NULL" => {
+            log::trace!("Parsing `NULL` type.");
+            (Asn1TypeKind::Builtin(Asn1BuiltinType::Null), 1)
+        }
 
         "VisibleString" | "UTF8String" | "IA5String" | "PrintableString" | "UTCTime"
-        | "GeneralizedTime" => (
-            Asn1TypeKind::Builtin(Asn1BuiltinType::CharacterString {
-                str_type: typestr.to_string(),
-            }),
-            1,
-        ),
+        | "GeneralizedTime" => {
+            log::trace!("Parsing `String` type.");
+            (
+                Asn1TypeKind::Builtin(Asn1BuiltinType::CharacterString {
+                    str_type: typestr.to_string(),
+                }),
+                1,
+            )
+        }
 
         "CHOICE" => {
+            log::trace!("Parsing `CHOICE` type.");
             let (choice_type, choice_type_consumed) = parse_choice_type(tokens)?;
             (
                 Asn1TypeKind::Constructed(Asn1ConstructedType::Choice(choice_type)),
@@ -96,11 +116,20 @@ pub(crate) fn parse_type(tokens: &[Token]) -> Result<(Asn1Type, usize), Error> {
             )
         }
 
-        "SEQUENCE" | "SET" => parse_seq_or_seq_of_type(tokens)?,
+        "SEQUENCE" | "SET" => {
+            log::trace!("Parsing `SEQUENCE or SET` type.");
+            parse_seq_or_seq_of_type(tokens)?
+        }
 
-        "RELATIVE-OID" => (Asn1TypeKind::Builtin(Asn1BuiltinType::RelativeOid), 1),
+        "RELATIVE-OID" => {
+            log::trace!("Parsing `RELATIVE-OID` type.");
+            (Asn1TypeKind::Builtin(Asn1BuiltinType::RelativeOid), 1)
+        }
 
-        _ => parse_referenced_type(tokens)?,
+        _ => {
+            log::trace!("Parsing a Reference type.");
+            parse_referenced_type(tokens)?
+        }
     };
     consumed += kind_consumed;
 

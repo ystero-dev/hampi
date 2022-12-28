@@ -167,6 +167,7 @@ fn parse_union_set(tokens: &[Token]) -> Result<(UnionSet, usize), Error> {
 
     let mut elements = vec![];
     // UnionSet Loop
+    // TODO: May be error when stuck in loop?
     loop {
         // IntersectionSet Loop
         let mut iset_elements = vec![];
