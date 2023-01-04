@@ -61,14 +61,14 @@ pub(super) fn generate_aper_codec_for_asn_sequence(
             type Output = Self;
 
             fn #codec_decode_fn(data: &mut asn1_codecs::PerCodecData) -> Result<Self::Output, asn1_codecs::PerCodecError> {
-                log::debug!(concat!("decode: ", stringify!(#name)));
+                log::trace!(concat!("decode: ", stringify!(#name)));
 
                 let (bitmap, _extensions_present) = #ty_decode_path(data, #ext, #opt_count)?;
                 Ok(Self{#(#fld_decode_tokens)*})
             }
 
             fn #codec_encode_fn(&self, data: &mut asn1_codecs::PerCodecData) -> Result<(), asn1_codecs::PerCodecError> {
-                log::debug!(concat!("encode: ", stringify!(#name)));
+                log::trace!(concat!("encode: ", stringify!(#name)));
 
                 let mut bitmap = bitvec::bitvec![u8, bitvec::prelude::Msb0; 0; #opt_count];
 

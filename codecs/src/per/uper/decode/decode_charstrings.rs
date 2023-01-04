@@ -11,7 +11,7 @@ pub fn decode_visible_string(
     ub: Option<i128>,
     is_extensible: bool,
 ) -> Result<String, PerCodecError> {
-    log::debug!(
+    log::trace!(
         "decode_visible_string: lb: {:?}, ub: {:?}, is_extensible: {}",
         lb,
         ub,
@@ -27,7 +27,7 @@ pub fn decode_printable_string(
     ub: Option<i128>,
     is_extensible: bool,
 ) -> Result<String, PerCodecError> {
-    log::debug!(
+    log::trace!(
         "decode_printable_string: lb: {:?}, ub: {:?}, is_extensible: {}",
         lb,
         ub,
@@ -46,7 +46,7 @@ pub fn decode_utf8_string(
     ub: Option<i128>,
     is_extensible: bool,
 ) -> Result<String, PerCodecError> {
-    log::debug!(
+    log::trace!(
         "decode_utf8_string: lb: {:?}, ub: {:?}, is_extensible: {}",
         lb,
         ub,

@@ -54,7 +54,7 @@ pub(super) fn generate_aper_codec_for_asn_choice(
             type Output = Self;
 
             fn #codec_decode_fn(data: &mut asn1_codecs::PerCodecData) -> Result<Self::Output, asn1_codecs::PerCodecError> {
-                log::debug!(concat!("decode: ", stringify!(#name)));
+                log::trace!(concat!("decode: ", stringify!(#name)));
 
                 let (idx, extended) = #ty_decode_path(data, #lb, #ub, #ext)?;
                 if !extended {
@@ -68,7 +68,7 @@ pub(super) fn generate_aper_codec_for_asn_choice(
             }
 
             fn #codec_encode_fn(&self, data: &mut asn1_codecs::PerCodecData) -> Result<(), asn1_codecs::PerCodecError> {
-                log::debug!(concat!("encode: ", stringify!(#name)));
+                log::trace!(concat!("encode: ", stringify!(#name)));
 
                 match self {
                     #(#variant_encode_tokens)*

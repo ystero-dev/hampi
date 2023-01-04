@@ -127,7 +127,7 @@ pub fn decode_enumerated_common(
     is_extensible: bool,
     aligned: bool,
 ) -> Result<(i128, bool), PerCodecError> {
-    log::debug!(
+    log::trace!(
         "decode_enumerated: lb: {:?}, ub: {:?}, is_extensible: {}",
         lb,
         ub,
@@ -204,7 +204,7 @@ pub fn decode_octetstring_common(
     is_extensible: bool,
     aligned: bool,
 ) -> Result<Vec<u8>, PerCodecError> {
-    log::debug!(
+    log::trace!(
         "decode_bitstring: lb: {:?}, ub: {:?}, is_extensible: {}",
         lb,
         ub,
