@@ -60,7 +60,7 @@ pub(super) fn generate_aper_codec_for_asn_sequence_of(
             type Output = Self;
 
             fn #codec_decode_fn(data: &mut asn1_codecs::PerCodecData) -> Result<Self::Output, asn1_codecs::PerCodecError> {
-                log::debug!(concat!("decode: ", stringify!(#name)));
+                log::trace!(concat!("decode: ", stringify!(#name)));
 
                 let length = #ty_decode_path(data, #sz_lb, #sz_ub, #sz_ext)?;
 
@@ -78,7 +78,7 @@ pub(super) fn generate_aper_codec_for_asn_sequence_of(
             }
 
             fn #codec_encode_fn(&self, data:&mut asn1_codecs::PerCodecData) -> Result<(), asn1_codecs::PerCodecError> {
-                log::debug!(concat!("encode: ", stringify!(#name)));
+                log::trace!(concat!("encode: ", stringify!(#name)));
 
                 let _ = #ty_encode_path(data, #sz_lb, #sz_ub, #sz_ext, self.0.len());
 

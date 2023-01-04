@@ -20,7 +20,7 @@ pub fn decode_choice_idx(
     ub: i128,
     is_extensible: bool,
 ) -> Result<(i128, bool), PerCodecError> {
-    log::debug!(
+    log::trace!(
         "decode_choice_idx: lb: {}, ub: {}, extensible: {}",
         lb,
         ub,
@@ -40,7 +40,7 @@ pub fn decode_sequence_header(
     is_extensible: bool,
     optional_count: usize,
 ) -> Result<(BitVec<u8, Msb0>, bool), PerCodecError> {
-    log::debug!("decode_sequence_header: extensible: {}", is_extensible);
+    log::trace!("decode_sequence_header: extensible: {}", is_extensible);
 
     decode_sequence_header_common(data, is_extensible, optional_count, true)
 }
@@ -64,7 +64,7 @@ pub fn decode_integer(
     ub: Option<i128>,
     is_extensible: bool,
 ) -> Result<(i128, bool), PerCodecError> {
-    log::debug!(
+    log::trace!(
         "decode_integer: Lower: {:?} Upper:{:?} Extensible: {}",
         lb,
         ub,
@@ -78,7 +78,7 @@ pub fn decode_integer(
 ///
 /// Decode a Boolean value. Returns the decoded value as a `bool`.
 pub fn decode_bool(data: &mut PerCodecData) -> Result<bool, PerCodecError> {
-    log::debug!("decode_bool:");
+    log::trace!("decode_bool:");
 
     decode_bool_common(data, true)
 }
@@ -95,7 +95,7 @@ pub fn decode_enumerated(
     ub: Option<i128>,
     is_extensible: bool,
 ) -> Result<(i128, bool), PerCodecError> {
-    log::debug!(
+    log::trace!(
         "decode_enumerated: lb: {:?}, ub: {:?}, is_extensible: {}",
         lb,
         ub,
@@ -114,7 +114,7 @@ pub fn decode_bitstring(
     ub: Option<i128>,
     is_extensible: bool,
 ) -> Result<BitVec<u8, Msb0>, PerCodecError> {
-    log::debug!(
+    log::trace!(
         "decode_bitstring: lb: {:?}, ub: {:?}, is_extensible: {}",
         lb,
         ub,
@@ -133,7 +133,7 @@ pub fn decode_octetstring(
     ub: Option<i128>,
     is_extensible: bool,
 ) -> Result<Vec<u8>, PerCodecError> {
-    log::debug!(
+    log::trace!(
         "decode_bitstring: lb: {:?}, ub: {:?}, is_extensible: {}",
         lb,
         ub,
@@ -150,7 +150,7 @@ pub fn decode_length_determinent(
     ub: Option<i128>,
     normally_small: bool,
 ) -> Result<usize, PerCodecError> {
-    log::debug!("decode_length_determinent:");
+    log::trace!("decode_length_determinent:");
 
     decode_length_determinent_common(data, lb, ub, normally_small, true)
 }
