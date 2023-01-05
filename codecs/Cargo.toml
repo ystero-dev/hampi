@@ -1,6 +1,6 @@
 [package]
 name = "asn1-codecs"
-version = "0.5.2"
+version = "0.5.3"
 description = "ASN.1 Codecs for Rust Types representing ASN.1 Types."
 authors = ["Abhijit Gadgil <gabhijit@iitbombay.org>"]
 keywords = ["asn1", "per", "decoder", "encoder"]

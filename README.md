@@ -33,7 +33,11 @@ Typically the compiler can be invoked also using `build.rs` mechanism. An exampl
 
 ### Using CLI tool
 
-A tool `hampi-rs-asn1c` can be installed using `cargo install hampi-rs-asn1c` and then following the CLI usage.
+A tool `hampi-rs-asn1c` can be installed using `cargo install asn1-compiler` and then following the CLI usage.
+```shell
+cargo install asn1-compiler
+hampi-rs-asn1c --help
+```
 
 ### Running Test Cases
 
@@ -41,7 +45,7 @@ A tool `hampi-rs-asn1c` can be installed using `cargo install hampi-rs-asn1c` an
 
 ### Generating ASN.1 spec files
 
-Currently there are two ways of generating the 'ASN.1' spec files from the '.docx' specifications.
+Currently there are two ways of generating the 'ASN.1' spec files from the '.docx' specifications (This mainly applies to 3GPP specifications).
 
 1. Using the script inside `examples/specs/parse_specs.py`. This is recommended way. (note: this requires installation of `docx` or `python-docx` in the case of Python3).
 2. Using the rust binary `extract-asn-spec`. Note: this is not the recommended way and your mileage may vary. Eventual goal is to make this the default way - so as to also have a `build.rs` integration. But this is for now a work in progress.
