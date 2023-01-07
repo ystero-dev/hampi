@@ -27,7 +27,8 @@ pub enum Codec {
 /// Supported Derive Macros
 #[derive(clap::ValueEnum, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Derive {
-    /// Generate `Debug` code for the generated strucutres.
+    /// Generate `Debug` code for the generated strucutres. Generated for all structures by
+    /// default.
     Debug,
 
     /// Generate 'Clone' code for the generated structures.
@@ -38,6 +39,12 @@ pub enum Derive {
 
     /// Generate 'serde::Deserialize' code for the generated structures.
     Deserialize,
+
+    /// Generate `Eq` and `PartialEq` code for the generated structures.
+    EqPartialEq,
+
+    /// Generate code for all supported derives for the generated structures.
+    All,
 }
 
 /// Visibility to be used for the generated Structs, Enums etc.
@@ -64,6 +71,7 @@ lazy_static! {
         m.insert(Derive::Clone, "Clone".to_string());
         m.insert(Derive::Serialize, "serde::Serialize".to_string());
         m.insert(Derive::Deserialize, "serde::Deserialize".to_string());
+        m.insert(Derive::EqPartialEq, "Eq, PartialEq".to_string());
         m
     };
 }
@@ -209,8 +217,14 @@ impl Generator {
         }
 
         for derive in &self.derives {
-            let derive_token = DERIVE_TOKENS.get(derive).unwrap();
-            tokens.push(derive_token.to_string());
+            if derive == &Derive::All {
+                for derive_token in DERIVE_TOKENS.values() {
+                    tokens.push(derive_token.to_string());
+                }
+            } else {
+                let derive_token = DERIVE_TOKENS.get(derive).unwrap();
+                tokens.push(derive_token.to_string());
+            }
         }
 
         let token_string = tokens.join(",");
