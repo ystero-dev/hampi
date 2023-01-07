@@ -46,9 +46,17 @@ fn main() -> io::Result<()> {
         ));
     }
 
-    if !cli.derive.contains(&Derive::Debug) {
-        cli.derive.push(Derive::Debug);
-    }
+    let derives = if cli.derive.contains(&Derive::All) {
+        cli.derive
+            .into_iter()
+            .filter(|t| t == &Derive::All)
+            .collect::<Vec<Derive>>()
+    } else {
+        if !cli.derive.contains(&Derive::Debug) {
+            cli.derive.push(Derive::Debug);
+        }
+        cli.derive
+    };
 
     let level = if cli.debug > 0 {
         if cli.debug == 1 {
@@ -67,7 +75,7 @@ fn main() -> io::Result<()> {
         &cli.module,
         &cli.visibility,
         cli.codec.clone(),
-        cli.derive.clone(),
+        derives.clone(),
     );
     compiler.compile_files(&cli.files)?;
 

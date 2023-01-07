@@ -65,7 +65,12 @@ fn main() -> std::io::Result<()> {
             rs_module,
             &Visibility::Public,
             codecs_map.get(module).unwrap().clone(),
-            vec![Derive::Debug, Derive::Serialize, Derive::Deserialize],
+            vec![
+                Derive::Debug,
+                Derive::EqPartialEq,
+                Derive::Serialize,
+                Derive::Deserialize,
+            ],
         );
         compiler.compile_files(&specs_files)?;
     }
