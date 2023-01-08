@@ -48,5 +48,5 @@ hampi-rs-asn1c --help
 Currently there are two ways of generating the 'ASN.1' spec files from the '.docx' specifications (This mainly applies to 3GPP specifications).
 
 1. Using the script inside `examples/specs/parse_specs.py`. This is recommended way. (note: this requires installation of `docx` or `python-docx` in the case of Python3).
-2. Using the rust binary `extract-asn-spec`. Note: this is not the recommended way and your mileage may vary. Eventual goal is to make this the default way - so as to also have a `build.rs` integration. But this is for now a work in progress.
+2. Using the rust binary `extract-asn-spec`. Note: this is not the recommended way and your mileage may vary. Eventual goal is to make this the default way - so as to also have a `build.rs` integration. But this is for now a work in progress. This is not available by default and is enabled only with a feature flag `rs-specs-gen`.
 
