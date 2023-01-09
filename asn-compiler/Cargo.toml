@@ -6,7 +6,7 @@ edition = "2018"
 description = "ASN.1 Compiler in Rust."
 keywords = ["asn1", "per"]
 repository = "https://github.com/gabhijit/hampi.git"
-license-file = "LICENSE"
+license = "Apache-2.0 or MIT"
 readme = "README.md"
 include = ["src/**/*.rs", "README.md", "ARChITECTURE.md", "Cargo.toml", "LICENSE", "LICENSE-MIT", "LICENSE-Apache2"]
 
