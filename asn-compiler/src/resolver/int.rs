@@ -56,8 +56,9 @@ impl Resolver {
             let parsed_def = module.get_definition_mut(&k);
             if parsed_def.is_none() {
                 eprintln!(
-                    "Warning!! Definition '{}' Not found! It's Okay for certain Dummy References",
-                    k
+                    "Warning!! Definition '{}' in module '{}' Not found! It's Okay for certain Dummy References",
+                    k,
+                    module.get_module_name()
                 );
                 continue;
             }
@@ -65,10 +66,8 @@ impl Resolver {
             if parsed_def.params.is_some() {
                 self.parameterized_defs
                     .insert(k.to_string(), parsed_def.clone());
-                parsed_def.resolved = true;
             } else if parsed_def.is_class_assignment() {
                 self.classes.insert(k.to_string(), parsed_def.clone());
-                parsed_def.resolved = true;
             } else {
                 let resolved_def = resolve_definition(parsed_def, self)?;
                 self.resolved_defs.insert(k.clone(), resolved_def);
