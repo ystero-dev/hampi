@@ -12,7 +12,7 @@ use lazy_static::lazy_static;
 use crate::error::Error;
 use crate::resolver::Resolver;
 
-use crate::resolver::asn::structs::types::Asn1ResolvedType;
+use crate::resolver::asn::structs::{types::Asn1ResolvedType, values::Asn1ResolvedValue};
 
 /// Supported Codecs
 #[derive(clap::ValueEnum, Clone, Debug, PartialEq, Eq, Hash)]
@@ -114,7 +114,17 @@ impl Generator {
     pub(crate) fn generate(&mut self, resolver: &Resolver) -> Result<String, Error> {
         // FIXME: Not sure how to make sure the crates defined here are a dependency.
         // May be can just do with documenting it.
+
+        // First Get the 'consts' for builtin values.
         let mut items = vec![];
+        for (k, v) in resolver.get_resolved_values() {
+            let item = Asn1ResolvedValue::generate_const_for_base_value(k, v, self)?;
+            if let Some(it) = item {
+                items.push(it)
+            }
+        }
+
+        // Now get the types
         for (k, t) in resolver.get_resolved_types() {
             let item = Asn1ResolvedType::generate_for_type(k, t, self)?;
             if let Some(it) = item {
