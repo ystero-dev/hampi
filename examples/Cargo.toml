@@ -4,6 +4,7 @@ version = "0.5.5"
 authors = ["Abhijit Gadgil <gabhijit@iitbombay.org>"]
 edition = "2018"
 description = "Examples for usage of ASN.1 Compiler and Codecs."
+license = "Apache-2.0 OR MIT"
 publish = false
 
 [build-dependencies]
