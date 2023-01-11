@@ -6,7 +6,9 @@ use crate::error::Error;
 
 use crate::parser::asn::structs::{defs::Asn1Definition, module::Asn1Module};
 
-use crate::resolver::asn::structs::{defs::Asn1ResolvedDefinition, types::Asn1ResolvedType};
+use crate::resolver::asn::structs::{
+    defs::Asn1ResolvedDefinition, types::Asn1ResolvedType, values::Asn1ResolvedValue,
+};
 
 use crate::resolver::asn::defs::resolve_definition;
 
@@ -105,6 +107,16 @@ impl Resolver {
                 _ => None,
             })
             .collect::<Vec<(&String, &Asn1ResolvedType)>>()
+    }
+
+    pub(crate) fn get_resolved_values(&self) -> Vec<(&String, &Asn1ResolvedValue)> {
+        self.resolved_defs
+            .iter()
+            .filter_map(|(k, v)| match v {
+                Asn1ResolvedDefinition::Value(ref v) => Some((k, v)),
+                _ => None,
+            })
+            .collect::<Vec<(&String, &Asn1ResolvedValue)>>()
     }
 
     fn resolve_classes_in_current_module(&mut self, module: &Asn1Module) {
