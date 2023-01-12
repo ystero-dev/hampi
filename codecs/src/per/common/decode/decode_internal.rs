@@ -215,10 +215,14 @@ pub(super) fn decode_constrained_whole_number_common(
 
             Ok(value + lb)
         } else {
-            let leading_zeros = range.leading_zeros();
-            let bits = 128 - leading_zeros as usize;
-            let value = data.decode_bits_as_integer(bits, false)?;
-            Ok(value + lb)
+            if range > 1 {
+                let leading_zeros = (range - 1).leading_zeros();
+                let bits = 128 - leading_zeros as usize;
+                let value = data.decode_bits_as_integer(bits, false)?;
+                Ok(value + lb)
+            } else {
+                Ok(lb)
+            }
         }
     }
 }
