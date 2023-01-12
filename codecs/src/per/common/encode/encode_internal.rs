@@ -120,12 +120,15 @@ pub(super) fn encode_constrained_whole_number_common(
             data.append_bits(bytes[first_non_zero..16].view_bits());
         }
     } else {
-        // Minimum number of bits required to encode length is calculated as follows
-        // Let's say range is 100 -> 0b_0000_0000_0110_0100 (Minimum number of bits needed is 7)
-        // Let's say range is 1000 -> 0b_0000_0011_1110_1000 (Minimum number of bits needed is 10)
-        let leading_zeros = range.leading_zeros() as usize;
-        let bytes = value.to_be_bytes();
-        data.append_bits(&bytes.view_bits()[leading_zeros..])
+        if range > 1 {
+            // Minimum number of bits required to encode length is calculated as follows
+            // Let's say range is 100 -> 0b_0000_0000_0110_0100 (Minimum number of bits needed is 7)
+            // Let's say range is 1000 -> 0b_0000_0011_1110_1000 (Minimum number of bits needed is 10)
+
+            let leading_zeros = (range - 1).leading_zeros() as usize;
+            let bytes = value.to_be_bytes();
+            data.append_bits(&bytes.view_bits()[leading_zeros..])
+        }
     }
     Ok(())
 }
@@ -194,6 +197,34 @@ mod tests {
         let mut data = PerCodecData::new_aper();
         encode_constrained_whole_number_common(&mut data, 0, 1000, 1, true).unwrap();
         assert_eq!(data.into_bytes(), [0x00, 0x01]);
+    }
+
+    #[test]
+    fn encode_small_constrained_integer_aligned_range_0() {
+        let mut data = PerCodecData::new_aper();
+        encode_constrained_whole_number_common(&mut data, 1000, 1000, 1000, true).unwrap();
+        assert_eq!(data.into_bytes(), []);
+    }
+
+    #[test]
+    fn encode_small_constrained_integer_unaligned_range_0() {
+        let mut data = PerCodecData::new_aper();
+        encode_constrained_whole_number_common(&mut data, 1000, 1000, 1000, false).unwrap();
+        assert_eq!(data.into_bytes(), []);
+    }
+
+    #[test]
+    fn encode_small_constrained_integer_unaligned_range_non_0() {
+        let mut data = PerCodecData::new_aper();
+        encode_constrained_whole_number_common(&mut data, 0, 1, 1, false).unwrap();
+        assert_eq!(data.into_bytes(), [0x80]);
+    }
+
+    #[test]
+    fn encode_small_constrained_integer_aligned_range_0_higher() {
+        let mut data = PerCodecData::new_aper();
+        let result = encode_constrained_whole_number_common(&mut data, 1000, 1000, 1001, true);
+        assert!(result.is_err(), "{:#?}", result.ok().unwrap());
     }
 
     #[test]
