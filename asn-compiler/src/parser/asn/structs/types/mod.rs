@@ -31,6 +31,8 @@ pub(crate) enum Asn1BuiltinType {
 pub(crate) struct Asn1Type {
     pub(crate) kind: Asn1TypeKind,
     pub(crate) constraints: Option<Vec<Asn1Constraint>>,
+    #[allow(dead_code)]
+    pub(crate) tag: Option<Asn1Tag>,
 }
 
 impl Asn1Type {
@@ -136,4 +138,26 @@ impl Asn1ConstructedType {
             _ => vec![],
         }
     }
+}
+
+#[derive(Debug, Clone)]
+pub(crate) enum Asn1TagMode {
+    Explicit,
+    Implicit,
+}
+
+#[derive(Debug, Clone)]
+pub(crate) enum Asn1TagClass {
+    Universal,
+    Application,
+    ContextSpecific,
+    Private,
+}
+
+#[allow(dead_code)]
+#[derive(Debug, Clone)]
+pub(crate) struct Asn1Tag {
+    pub(crate) class: Asn1TagClass,
+    pub(crate) number: u32,
+    pub(crate) mode: Option<Asn1TagMode>,
 }
