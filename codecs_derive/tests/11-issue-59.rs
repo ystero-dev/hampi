@@ -13,8 +13,8 @@ fn main() {
     assert!(result.is_ok());
 
     let decoded = INTEGER_20::uper_decode(&mut data);
-    assert!(decoded.is_ok());
+    assert!(decoded.is_ok(), "{:?}", decoded.err().unwrap());
 
     let INTEGER_20(v) = decoded.unwrap();
-    assert!(v == 3u8);
+    assert!(v == 3u8, "decoded: {}", v);
 }
