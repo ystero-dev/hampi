@@ -2,10 +2,13 @@ use crate::error::Error;
 use crate::tokenizer::Token;
 
 use crate::parser::asn::structs::types::{
-    ActualParam, Asn1BuiltinType, Asn1ConstructedType, Asn1Type, Asn1TypeKind, Asn1TypeReference,
+    ActualParam, Asn1BuiltinType, Asn1ConstructedType, Asn1Tag, Asn1TagClass, Asn1TagMode, Asn1Type, Asn1TypeKind,
+    Asn1TypeReference,
 };
 
-use crate::parser::utils::{expect_keywords, expect_one_of_tokens, expect_token, expect_tokens};
+use crate::parser::utils::{
+    expect_keywords, expect_one_of_keywords, expect_one_of_tokens, expect_token, expect_tokens,
+};
 
 use super::{
     base::{parse_bitstring_type, parse_enumerated_type, parse_integer_type},
@@ -17,8 +20,12 @@ use super::{
 pub(crate) fn parse_type(tokens: &[Token]) -> Result<(Asn1Type, usize), Error> {
     let mut consumed = 0;
 
+    // Optional Tag
+    let (tag, tag_consumed) = maybe_parse_tag(&tokens[consumed..])?;
+    consumed += tag_consumed;
+
     if !expect_one_of_tokens(
-        tokens,
+        &tokens[consumed..],
         &[
             Token::is_type_reference,
             Token::is_asn_builtin_type,
@@ -27,17 +34,17 @@ pub(crate) fn parse_type(tokens: &[Token]) -> Result<(Asn1Type, usize), Error> {
     )? {
         return Err(unexpected_token!(
             "'Type Reference' or 'Builtin Type'",
-            tokens[0]
+            tokens[consumed]
         ));
     }
 
     // Now: Parse The Type definition.
-    let token = &tokens[0];
+    let token = &tokens[consumed];
     let typestr = token.text.as_str();
     let (kind, kind_consumed) = match typestr {
         "BIT" => {
             log::trace!("Parsing `BIT STRING` type.");
-            let (bitstr_type, bitstr_type_consumed) = parse_bitstring_type(tokens)?;
+            let (bitstr_type, bitstr_type_consumed) = parse_bitstring_type(&tokens[consumed..])?;
             (
                 Asn1TypeKind::Builtin(Asn1BuiltinType::BitString(bitstr_type)),
                 bitstr_type_consumed,
@@ -61,7 +68,7 @@ pub(crate) fn parse_type(tokens: &[Token]) -> Result<(Asn1Type, usize), Error> {
 
         "ENUMERATED" => {
             log::trace!("Parsing `ENUMERATED` type.");
-            let (enum_type, enum_type_consumed) = parse_enumerated_type(tokens)?;
+            let (enum_type, enum_type_consumed) = parse_enumerated_type(&tokens[consumed..])?;
             (
                 Asn1TypeKind::Builtin(Asn1BuiltinType::Enumerated(enum_type)),
                 enum_type_consumed,
@@ -70,7 +77,7 @@ pub(crate) fn parse_type(tokens: &[Token]) -> Result<(Asn1Type, usize), Error> {
 
         "INTEGER" => {
             log::trace!("Parsing `INTEGER` type.");
-            let (int_type, int_type_consumed) = parse_integer_type(tokens)?;
+            let (int_type, int_type_consumed) = parse_integer_type(&tokens[consumed..])?;
             (
                 Asn1TypeKind::Builtin(Asn1BuiltinType::Integer(int_type)),
                 int_type_consumed,
@@ -109,7 +116,7 @@ pub(crate) fn parse_type(tokens: &[Token]) -> Result<(Asn1Type, usize), Error> {
 
         "CHOICE" => {
             log::trace!("Parsing `CHOICE` type.");
-            let (choice_type, choice_type_consumed) = parse_choice_type(tokens)?;
+            let (choice_type, choice_type_consumed) = parse_choice_type(&tokens[consumed..])?;
             (
                 Asn1TypeKind::Constructed(Asn1ConstructedType::Choice(choice_type)),
                 choice_type_consumed,
@@ -118,7 +125,7 @@ pub(crate) fn parse_type(tokens: &[Token]) -> Result<(Asn1Type, usize), Error> {
 
         "SEQUENCE" | "SET" => {
             log::trace!("Parsing `SEQUENCE or SET` type.");
-            parse_seq_or_seq_of_type(tokens)?
+            parse_seq_or_seq_of_type(&tokens[consumed..])?
         }
 
         "RELATIVE-OID" => {
@@ -128,7 +135,7 @@ pub(crate) fn parse_type(tokens: &[Token]) -> Result<(Asn1Type, usize), Error> {
 
         _ => {
             log::trace!("Parsing a Reference type.");
-            parse_referenced_type(tokens)?
+            parse_referenced_type(&tokens[consumed..])?
         }
     };
     consumed += kind_consumed;
@@ -139,7 +146,7 @@ pub(crate) fn parse_type(tokens: &[Token]) -> Result<(Asn1Type, usize), Error> {
     };
     consumed += constraints_str_consumed;
 
-    Ok((Asn1Type { kind, constraints }, consumed))
+    Ok((Asn1Type { kind, constraints, tag }, consumed))
 }
 
 fn parse_referenced_type(tokens: &[Token]) -> Result<(Asn1TypeKind, usize), Error> {
@@ -266,6 +273,76 @@ fn parse_actual_params(tokens: &[Token]) -> Result<(Vec<ActualParam>, usize), Er
     Ok((params, consumed))
 }
 
+fn maybe_parse_tag(tokens: &[Token]) -> Result<(Option<Asn1Tag>, usize), Error> {
+    match expect_token(tokens, Token::is_square_begin) {
+        Ok(success) => {
+            if success {
+                match parse_tag(tokens) {
+                    Ok((oid, consumed)) => Ok((Some(oid), consumed)),
+                    Err(e) => Err(e),
+                }
+            } else {
+                Ok((None, 0))
+            }
+        }
+        Err(_) => Ok((None, 0)),
+    }
+}
+
+fn parse_tag(tokens: &[Token]) -> Result<(Asn1Tag, usize), Error> {
+    let mut consumed = 0;
+    if !expect_token(&tokens[consumed..], Token::is_square_begin)? {
+        return Err(unexpected_token!("[", tokens[consumed]));
+    }
+    consumed += 1;
+
+    let class = if expect_one_of_keywords(&tokens[consumed..],
+        &["UNIVERSAL", "APPLICATION", "PRIVATE"])? {
+
+        let token = &tokens[consumed];
+        consumed += 1;
+        let typestr = token.text.as_str();
+        match typestr {
+            "UNIVERSAL" => Asn1TagClass::Universal,
+            "APPLICATION" => Asn1TagClass::Application,
+            "PRIVATE" => Asn1TagClass::Private,
+            _ => return Err(unexpected_token!("", token)),
+        }
+    } else {
+        Asn1TagClass::ContextSpecific
+    };
+
+    if !expect_token(&tokens[consumed..], Token::is_numeric)? {
+        return Err(unexpected_token!("<integer>", tokens[consumed]));
+    }
+    let number_token = &tokens[consumed];
+    let number = number_token
+        .text
+        .parse::<u32>()
+        .map_err(|_| invalid_token!(number_token))?;
+    consumed += 1;
+
+    if !expect_token(&tokens[consumed..], Token::is_square_end)? {
+        return Err(unexpected_token!("]", tokens[consumed]));
+    }
+    consumed += 1;
+
+    let mode = if expect_one_of_keywords(&tokens[consumed..], &["IMPLICIT", "EXPLICIT"])? {
+        let token = &tokens[consumed];
+        consumed += 1;
+        let typestr = token.text.as_str();
+        match typestr {
+            "IMPLICIT" => Some(Asn1TagMode::Implicit),
+            "EXPLICIT" => Some(Asn1TagMode::Explicit),
+            _ => return Err(unexpected_token!("", token)),
+        }
+    } else {
+        None
+    };
+
+    Ok((Asn1Tag { class, number, mode }, consumed))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -294,6 +371,21 @@ mod tests {
                 input: "CHOICE { absoluteTime  UTCTime, relativeTime  INTEGER (0..31536000)}",
                 success: true,
                 consumed: 13,
+            },
+            ParseTypeTestCase {
+                input: "[1] INTEGER",
+                success: true,
+                consumed: 4,
+            },
+            ParseTypeTestCase {
+                input: "[APPLICATION 1] EXPLICIT INTEGER",
+                success: true,
+                consumed: 6,
+            },
+            ParseTypeTestCase {
+                input: "[PRIVATE bla] INTEGER",
+                success: false,
+                consumed: 3,
             },
         ];
 
