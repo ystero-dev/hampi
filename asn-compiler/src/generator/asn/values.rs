@@ -48,9 +48,10 @@ impl Asn1ResolvedValue {
                 if let ResolvedBaseType::Integer(typ) = b {
                     let const_type = gen.to_inner_type(typ.bits, typ.signed);
                     let const_id = gen.to_const_ident(name);
+                    let vis = gen.get_visibility_tokens();
                     let val = Literal::i128_unsuffixed(i.value);
                     let tokens = quote! {
-                        const #const_id : #const_type = #val;
+                        #vis const #const_id : #const_type = #val;
                     };
 
                     return Ok(Some(tokens));
