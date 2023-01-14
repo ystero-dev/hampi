@@ -25,4 +25,14 @@ fn main() {
     eprintln!("{}", ngap_data.len() == ngap_encoded_data.len());
     let ngap_pdu = ngap::NGAP_PDU::aper_decode(&mut encode_codec_data);
     eprintln!("ngap_pdu: {:#?}", ngap_pdu);
+
+    // Error response!
+    let response_data = [
+        32, 21, 0, 48, 0, 0, 4, 0, 21, 0, 12, 4, 128, 116, 97, 120, 105, 108, 97, 45, 97, 109, 102,
+        0, 96, 0, 8, 0, 0, 9, 241, 7, 1, 2, 191, 0, 80, 0, 8, 0, 9, 241, 7, 0, 0, 0, 8, 0, 86, 0,
+        1, 255,
+    ];
+    let mut codec_data = PerCodecData::from_slice_aper(&response_data);
+    let ngap_pdu = ngap::NGAP_PDU::aper_decode(&mut codec_data);
+    eprintln!("ngap_pdu: {:?}", ngap_pdu);
 }
