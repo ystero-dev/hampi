@@ -930,6 +930,9 @@ pub fn tokenize_string(buffer: &str) -> Result<Vec<Token>, Error> {
             '\u{feff}' => {
                 processed += 1;
             }
+            '\r' => {
+                processed += 1;
+            }
             _ => {
                 panic!(
                     "Unsupported First character for a token: '{:?}'. Line: {}, Column: {}",

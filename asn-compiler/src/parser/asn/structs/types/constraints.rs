@@ -18,6 +18,7 @@ pub(crate) enum SubtypeElements {
     },
     SizeConstraint(ElementSet),
     PermittedAlphabet(ElementSet),
+    PermittedAlphabetExcept(ElementSet),
 }
 
 #[derive(Debug, Clone)]
