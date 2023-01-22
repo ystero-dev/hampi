@@ -115,7 +115,10 @@ pub(super) fn parse_definition(tokens: &[Token]) -> Result<(Asn1Definition, usiz
             parse_typeish_definition(&tokens[consumed..])
         }
     } else {
-        Err(parse_error!("Not Implemented!"))
+        Err(parse_error!(
+            "Not Implemented @token: {:#?}",
+            tokens[consumed]
+        ))
     }
 }
 
@@ -545,6 +548,10 @@ UE-RadioAccessCapability-LaterNonCriticalExtensions ::= SEQUENCE {
     }
 }
 "#,
+                success: true,
+            },
+            ParseDefinitionTestCase {
+                input: r#"IdentifierString ::= VisibleString (FROM (ALL EXCEPT " "))"#,
                 success: true,
             },
         ];

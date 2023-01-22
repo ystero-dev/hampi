@@ -399,6 +399,7 @@ impl SubtypeElements {
             }
             Self::SizeConstraint(ref s) => s.clone().dependent_references(),
             Self::PermittedAlphabet(ref _p) => vec![], // FIXME: Should we?
+            Self::PermittedAlphabetExcept(ref _p) => vec![], // FIXME: Should we?
         }
     }
 }

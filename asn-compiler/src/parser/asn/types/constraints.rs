@@ -98,11 +98,11 @@ fn parse_table_constraint(tokens: &[Token]) -> Result<(Asn1Constraint, usize), E
 }
 
 fn parse_subtype_constraint(tokens: &[Token]) -> Result<(Asn1Constraint, usize), Error> {
-    let (element_set, element_set_consumed) = parse_element_set(tokens)?;
+    let (element_set, element_set_consumed, _all_except) = parse_element_set(tokens)?;
     Ok((Asn1Constraint::Subtype(element_set), element_set_consumed))
 }
 
-fn parse_element_set(tokens: &[Token]) -> Result<(ElementSet, usize), Error> {
+fn parse_element_set(tokens: &[Token]) -> Result<(ElementSet, usize, bool), Error> {
     let mut consumed = 0;
 
     // It is allowed to have constraints on SEQUENCE OF and SIZE OF to be defined without the '('
@@ -112,6 +112,17 @@ fn parse_element_set(tokens: &[Token]) -> Result<(ElementSet, usize), Error> {
     if round_begin {
         consumed += 1;
     }
+
+    let all_except = if expect_keyword(&tokens[consumed..], "ALL")? {
+        consumed += 1;
+        if !expect_keyword(&tokens[consumed..], "EXCEPT")? {
+            return Err(unexpected_token!("EXCEPT", tokens[consumed]));
+        }
+        consumed += 1;
+        true
+    } else {
+        false
+    };
 
     let (root_elements, root_consumed) = parse_union_set(&tokens[consumed..])?;
     consumed += root_consumed;
@@ -159,6 +170,7 @@ fn parse_element_set(tokens: &[Token]) -> Result<(ElementSet, usize), Error> {
             additional_elements,
         },
         consumed,
+        all_except,
     ))
 }
 
@@ -218,7 +230,7 @@ fn parse_intersection_set(tokens: &[Token]) -> Result<(Elements, usize), Error> 
     // First try to Parse a Size
     if expect_one_of_keywords(&tokens[consumed..], &["SIZE", "FROM"])? {
         // If we come inside, following is guaranteed. to succeed.
-        let variant = if expect_keyword(&tokens[consumed..], "SIZE").unwrap() {
+        let mut variant = if expect_keyword(&tokens[consumed..], "SIZE").unwrap() {
             SubtypeElements::SizeConstraint
         } else {
             SubtypeElements::PermittedAlphabet
@@ -226,8 +238,12 @@ fn parse_intersection_set(tokens: &[Token]) -> Result<(Elements, usize), Error> 
         consumed += 1;
 
         if expect_token(&tokens[consumed..], Token::is_round_begin)? {
-            let (element_set, element_set_consumed) = parse_element_set(&tokens[consumed..])?;
+            let (element_set, element_set_consumed, all_except) =
+                parse_element_set(&tokens[consumed..])?;
             consumed += element_set_consumed;
+            if all_except {
+                variant = SubtypeElements::PermittedAlphabetExcept;
+            }
 
             return Ok((Elements::Subtype(variant(element_set)), consumed));
         }
@@ -243,7 +259,8 @@ fn parse_intersection_set(tokens: &[Token]) -> Result<(Elements, usize), Error> 
 
     // Parse nested UnionSet Constraint
     if expect_token(&tokens[consumed..], Token::is_round_begin)? {
-        let (element_set, element_set_consumed) = parse_element_set(&tokens[consumed..])?;
+        let (element_set, element_set_consumed, _all_except) =
+            parse_element_set(&tokens[consumed..])?;
         consumed += element_set_consumed;
 
         return Ok((Elements::Set(element_set), consumed));
@@ -438,6 +455,13 @@ mod tests {
                 success: true,
                 root_elements_count: 1,
                 additional_elements_present: true,
+                additional_elements_count: 1,
+            },
+            ParseConstraintTestCase {
+                input: r#"(FROM (ALL EXCEPT " "))"#,
+                success: true,
+                root_elements_count: 1,
+                additional_elements_present: false,
                 additional_elements_count: 1,
             },
             // FIXME: Add more test cases for subtype constraints
