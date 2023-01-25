@@ -332,6 +332,11 @@ impl PerCodecData {
         self.decode_offset = offset;
     }
 
+    /// Advance the decode offset by a given number of bits (for example, to skip over an unknown extension)
+    pub fn advance(&mut self, bits: usize) -> Result<(), PerCodecError> {
+        self.advance_maybe_err(bits, false)
+    }
+
     pub fn swap_bits(&mut self, other: &mut BitSlice<u8, Msb0>, offset: usize) {
         self.bits[offset..other.len() + offset].swap_with_bitslice(other);
     }
