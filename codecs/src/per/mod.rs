@@ -214,7 +214,11 @@ impl PerCodecData {
         }
     }
 
-    fn advance_maybe_err(&mut self, bits: usize, ignore: bool) -> Result<(), PerCodecError> {
+    /// Advance the decode offset by a given number of bits.
+    /// If there are not enough bits remaining, the behaviour depends on the `ignore` argument.
+    /// -  If `true`, the offset is advanced to the end of the buffer, and Ok is returned.
+    /// -  If `false`, the offset is left unchanged, and Err is returned.
+    pub fn advance_maybe_err(&mut self, bits: usize, ignore: bool) -> Result<(), PerCodecError> {
         let offset = self.decode_offset + bits;
         if offset > self.bits.len() {
             if ignore {
