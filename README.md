@@ -50,3 +50,10 @@ Currently there are two ways of generating the 'ASN.1' spec files from the '.doc
 1. Using the script inside `examples/specs/parse_specs.py`. This is recommended way. (note: this requires installation of `docx` or `python-docx` in the case of Python3).
 2. Using the rust binary `extract-asn-spec`. Note: this is not the recommended way and your mileage may vary. Eventual goal is to make this the default way - so as to also have a `build.rs` integration. But this is for now a work in progress. This is not available by default and is enabled only with a feature flag `rs-specs-gen`.
 
+## License
+
+Licensed under either of
+
+* Apache License, Version 2.0 ([LICENSE-Apache](https://github.com/gabhijit/hampi/blob/master/LICENSE-Apache2) or [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0))
+* MIT License ([LICENSE-MIT](https://github.com/gabhijit/hampi/blob/master/LICENSE-MIT) or [http://opensource.org/licenses/MIT](http://opensource.org/licenses/MIT))
+
