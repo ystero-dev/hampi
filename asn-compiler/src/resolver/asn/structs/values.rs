@@ -28,9 +28,16 @@ pub(crate) struct Asn1ResolvedEnumValue {
 }
 
 #[derive(Debug, Clone)]
+pub(crate) struct Asn1ResolvedOidValue {
+    pub(crate) typeref: Asn1ResolvedType,
+    pub(crate) value: Vec<u32>,
+}
+
+#[derive(Debug, Clone)]
 pub(crate) enum ResolvedBaseValue {
     Integer(Asn1ResolvedIntegerValue),
     Enum(Asn1ResolvedEnumValue),
+    ObjectIdentifier(Asn1ResolvedOidValue),
 }
 
 #[derive(Debug, Clone)]
@@ -53,6 +60,9 @@ impl Asn1ResolvedValue {
     pub(crate) fn get_base_integer_value(&self) -> Option<i128> {
         match self {
             Self::Base(ResolvedBaseValue::Integer(ref i)) => Some(i.value as i128),
+            Self::Base(ResolvedBaseValue::ObjectIdentifier(ref i)) => {
+                Some(i.value.iter().sum::<u32>() as i128)
+            }
             Self::ReferencedType { value, .. } => value.get_base_integer_value(),
             _ => None,
         }

@@ -15,6 +15,8 @@ pub(crate) mod values;
 
 /// Implementation of Object Identifier.
 mod oid;
+// Required during resolution of Object Identifier values.
+pub(crate) use oid::{parse_object_identifier, WELL_KNOWN_OID_NAMES};
 
 /// Output Types of the Parsers.
 pub(crate) mod structs;

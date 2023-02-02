@@ -113,6 +113,7 @@ pub(crate) fn resolve_object_set(
                                                         // Get the actual Value - Usually this value is an
                                                         // Integer Value. This Value is to be used by the
                                                         // decoder.
+                                                        log::trace!("value: {:#?}", v);
                                                         let v = format!(
                                                             "{}",
                                                             v.get_base_integer_value().unwrap()

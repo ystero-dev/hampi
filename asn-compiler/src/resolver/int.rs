@@ -48,6 +48,10 @@ impl Resolver {
     // After that we resolve definitions in a Topologically sorted order. Fairly straight forward.
     // We do not need to do any `Pending` definitions, as we were doing before.
     pub(crate) fn resolve_definitions(&mut self, module: &mut Asn1Module) -> Result<(), Error> {
+        log::debug!(
+            "Resolving Definitions in module: {}",
+            module.get_module_name()
+        );
         // We need to first get Classes in the current module - resolved
         self.resolve_classes_in_current_module(module);
 
@@ -57,7 +61,7 @@ impl Resolver {
         for k in definitions_sorted {
             let parsed_def = module.get_definition_mut(&k);
             if parsed_def.is_none() {
-                eprintln!(
+                log::warn!(
                     "Warning!! Definition '{}' in module '{}' Not found! It's Okay for certain Dummy References",
                     k,
                     module.get_module_name()
@@ -66,11 +70,14 @@ impl Resolver {
             }
             let parsed_def = parsed_def.unwrap();
             if parsed_def.params.is_some() {
+                log::trace!("Resolving definition with params : {:#?}", parsed_def);
                 self.parameterized_defs
                     .insert(k.to_string(), parsed_def.clone());
             } else if parsed_def.is_class_assignment() {
+                log::trace!("Resolving Class Assignment Definition : {:#?}", parsed_def);
                 self.classes.insert(k.to_string(), parsed_def.clone());
             } else {
+                log::trace!("Resolving definition : {:#?}", parsed_def);
                 let resolved_def = resolve_definition(parsed_def, self)?;
                 self.resolved_defs.insert(k.clone(), resolved_def);
             }
