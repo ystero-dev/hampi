@@ -2,8 +2,8 @@
 
 #[derive(Clone)]
 pub struct OIDComponent {
-    name: Option<String>,
-    number: u32,
+    pub(crate) name: Option<String>,
+    pub(crate) number: u32,
 }
 
 impl OIDComponent {
@@ -29,7 +29,7 @@ impl std::fmt::Debug for OIDComponent {
 }
 #[derive(Default, Clone)]
 pub struct ObjectIdentifier {
-    components: Vec<OIDComponent>,
+    pub(crate) components: Vec<OIDComponent>,
 }
 
 impl ObjectIdentifier {

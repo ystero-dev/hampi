@@ -7,8 +7,8 @@ use crate::resolver::{
         defs::Asn1ResolvedDefinition,
         types::{base::ResolvedBaseType, Asn1ResolvedType},
         values::{
-            Asn1ResolvedEnumValue, Asn1ResolvedIntegerValue, Asn1ResolvedValue, BaseInteger,
-            ResolvedBaseValue,
+            Asn1ResolvedEnumValue, Asn1ResolvedIntegerValue, Asn1ResolvedOidValue,
+            Asn1ResolvedValue, BaseInteger, ResolvedBaseValue,
         },
     },
     Resolver,
@@ -44,6 +44,12 @@ pub(crate) fn resolve_value(
                             },
                         )))
                     }
+                    ResolvedBaseType::ObjectIdentifier(ref _o) => Ok(Asn1ResolvedValue::Base(
+                        ResolvedBaseValue::ObjectIdentifier(Asn1ResolvedOidValue {
+                            typeref: typeref.clone(),
+                            value: resolve_object_identifier_value(value, resolver)?,
+                        }),
+                    )),
                     _ => Err(resolve_error!(
                         "resolve_value: Not Supported Yet! value: {:#?}: {:#?}",
                         value,
@@ -82,4 +88,34 @@ pub(crate) fn resolve_value(
             _ => Err(resolve_error!("{} Not a Referenved Value!", value)),
         },
     }
+}
+
+// Resolve the Object Identifier values For now we are simply supporting Well Known Names if
+// present as named component in the 'value' string.
+//
+//
+fn resolve_object_identifier_value(value: &str, _resolver: &Resolver) -> Result<Vec<u32>, Error> {
+    use crate::parser::asn::{parse_object_identifier, WELL_KNOWN_OID_NAMES};
+    use crate::tokenizer::tokenize;
+
+    let reader = std::io::BufReader::new(std::io::Cursor::new(value));
+    let tokens = tokenize(reader)?;
+    let (parsed_oid, _) = parse_object_identifier(&tokens)?;
+
+    let mut values = vec![];
+    for component in parsed_oid.components {
+        if component.name.is_some() {
+            let name = component.name.unwrap();
+            let num = WELL_KNOWN_OID_NAMES.get(name.as_str());
+            if num.is_none() {
+                return Err(resolve_error!(
+                    "Name '{}' not found. Named component other than Well known named components not supported yet!", name));
+            }
+            values.push(*num.unwrap());
+        } else {
+            values.push(component.number);
+        }
+    }
+
+    Ok(values)
 }

@@ -12,7 +12,7 @@ use crate::parser::utils::{expect_one_of_tokens, expect_token, expect_tokens};
 use super::structs::oid::{OIDComponent, ObjectIdentifier};
 
 lazy_static! {
-    static ref WELL_KNOWN_OID_NAMES: HashMap<&'static str, u32> = {
+    pub(crate) static ref WELL_KNOWN_OID_NAMES: HashMap<&'static str, u32> = {
         let mut m = HashMap::new();
         m.insert("iso", 1);
         m.insert("itu-t", 0);
@@ -101,7 +101,10 @@ fn parse_oid_component(tokens: &[Token]) -> Result<(OIDComponent, usize), Error>
     }
 }
 
-pub(super) fn parse_object_identifier(
+// This is required by 'resolver' to resolve object identifier values (which requires the value
+// which is basically just a string of the form '{ iso ... }' to be parsed (and resolved) there.
+// Hence this module is `pub(crate)`.
+pub(crate) fn parse_object_identifier(
     tokens: &[Token],
 ) -> Result<(ObjectIdentifier, usize), Error> {
     let mut consumed = 0;
