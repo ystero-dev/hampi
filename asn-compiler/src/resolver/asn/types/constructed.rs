@@ -180,10 +180,12 @@ fn resolve_sequence_classfield_components(
             set_reference
         ));
     }
-    if let Some(Asn1ResolvedDefinition::ObjectSet(ref set)) = objects {
+    let objects = objects.unwrap().clone();
+
+    if let Asn1ResolvedDefinition::ObjectSet(ref set) = objects {
         let objects = &set.objects;
         let components =
-            resolve_seq_components_for_objects(&all_components, &set_reference, objects)?;
+            resolve_seq_components_for_objects(&all_components, &set_reference, objects, resolver)?;
         Ok(Asn1ResolvedType::Constructed(
             ResolvedConstructedType::Sequence {
                 name: None,
@@ -203,6 +205,7 @@ fn resolve_seq_components_for_objects(
     input_components: &[Component],
     set_reference: &str,
     objects: &ResolvedObjectSet,
+    resolver: &mut Resolver,
 ) -> Result<Vec<ResolvedSeqComponent>, Error> {
     if objects.elements.is_empty() {
         return Ok(vec![]);
@@ -247,7 +250,26 @@ fn resolve_seq_components_for_objects(
                     };
                     result.push(seq_component);
                 }
+            } else {
+                log::warn!("WARN!");
             }
+        } else {
+            // It is possible that there are types in an Object Set that are not Class Reference,
+            // we simply try to `resolve_type` them like sequence above, except an error here is an
+            // actual error, since we are not expecting ClassField components inside Classfield
+            // components (For now).
+            let ty = resolve_type(&component.ty, resolver)?;
+            let component = ResolvedComponent {
+                id: component.id.clone(),
+                ty,
+            };
+            let seq_component = ResolvedSeqComponent {
+                component,
+                optional: false, // FIXME: Not sure
+                class_field_type: None,
+                key_field: false,
+            };
+            result.push(seq_component);
         }
     }
     // Only add to the result if Every Component in the Input is also found in the Object. This
