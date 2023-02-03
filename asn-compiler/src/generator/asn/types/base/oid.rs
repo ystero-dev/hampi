@@ -21,7 +21,7 @@ impl Asn1ResolvedObjectIdentifier {
         Ok(quote! {
             #dir
             #[asn(type = "OBJECT-IDENTIFIER")]
-            #vis struct #type_name;
+            #vis struct #type_name(Vec<u32>);
         })
     }
 
