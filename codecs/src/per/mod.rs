@@ -366,7 +366,7 @@ impl PerCodecData {
     /// Get the length of the data in bytes
     /// This is useful when encoding an open type.
     pub fn length_in_bytes(&self) -> usize {
-        ((self.bits.len() - 1) / 8) + 1
+        (self.bits.len() + 7) / 8
     }
 
     /// Append one encoding to another preserving byte alignment.
