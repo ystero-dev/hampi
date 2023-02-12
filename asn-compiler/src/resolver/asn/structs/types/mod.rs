@@ -1,5 +1,7 @@
 use std::collections::BTreeMap;
 
+use crate::parser::asn::structs::types::Asn1TagClass;
+
 pub(crate) mod constructed;
 use constructed::ResolvedConstructedType;
 
@@ -31,4 +33,12 @@ pub(crate) enum Asn1ResolvedType {
 
     // A Set of Resolved Types. This is true if the type is obtained from Object Sets or Value Sets
     Set(ResolvedSetType),
+}
+
+// When tags are to be supported, an instance of this class will be available for each of the
+// 'resolved' type.
+#[derive(Debug, Clone, Default)]
+pub(crate) struct Asn1ResolvedTag {
+    num: u32,
+    class: Asn1TagClass,
 }
