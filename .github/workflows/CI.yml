@@ -3,15 +3,32 @@ name: build on pull request
 on:
   push:
     branches: [ master ]
+    paths:
+      - 'asn-compiler/**'
+      - 'codecs/**'
+      - '!codecs/specs/**'
+      - 'examples/**'
+      - '!examples/specs/**'
+      - '!README*'
+      - '!LICENSE*'
+      - '.gitignore'
   pull_request:
     branches: [ master ]
+    paths:
+      - 'asn-compiler/**'
+      - 'codecs/**'
+      - '!codecs/specs/**'
+      - 'examples/**'
+      - '!examples/specs/**'
+      - '!README*'
+      - '!LICENSE*'
+      - '.gitignore'
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     name: (${{ matrix.target}}, ${{ matrix.cfg_release_channel }})
     strategy:
