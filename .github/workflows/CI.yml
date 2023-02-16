@@ -11,7 +11,7 @@ on:
       - '!examples/specs/**'
       - '!README*'
       - '!LICENSE*'
-      - '.gitignore'
+      - '!.gitignore'
   pull_request:
     branches: [ master ]
     paths:
@@ -22,7 +22,7 @@ on:
       - '!examples/specs/**'
       - '!README*'
       - '!LICENSE*'
-      - '.gitignore'
+      - '!.gitignore'
 
 env:
   CARGO_TERM_COLOR: always
