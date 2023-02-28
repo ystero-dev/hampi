@@ -111,4 +111,55 @@ Date ::= VisibleString -- YYYYMMDD"#;
 
         assert!(result.is_ok(), "{:#?}", result.err().unwrap());
     }
+
+    #[ignore]
+    #[test]
+    fn compile_example_from_rrc_spec() {
+        let module_name = "ExampleFrom36331RRCSpec";
+        let test_no = 4;
+        let module_header = super::get_module_header(module_name, test_no);
+
+        let definitions = r#"
+AS-Config ::=                           SEQUENCE {
+        sourceMeasConfig                                        MeasConfig,
+        sourceRadioResourceConfig                       RadioResourceConfigDedicated,
+        sourceSecurityAlgorithmConfig           SecurityAlgorithmConfig,
+        sourceUE-Identity                                       C-RNTI,
+        sourceMasterInformationBlock            MasterInformationBlock,
+        sourceSystemInformationBlockType1       SystemInformationBlockType1(WITH COMPONENTS
+                                                                                        {..., nonCriticalExtension ABSENT}),
+        sourceSystemInformationBlockType2       SystemInformationBlockType2,
+        antennaInfoCommon                                       AntennaInfoCommon,
+        sourceDl-CarrierFreq                            ARFCN-ValueEUTRA,
+        ...,
+        [[      sourceSystemInformationBlockType1Ext    OCTET STRING (CONTAINING
+                                                                                                SystemInformationBlockType1-v890-IEs)   OPTIONAL,
+                sourceOtherConfig-r9                            OtherConfig-r9
+        -- sourceOtherConfig-r9 should have been optional. A target eNB compliant with this transfer
+        -- syntax should support receiving an AS-Config not including this extension addition group
+        -- e.g. from a legacy source eNB
+        ]],
+        [[      sourceSCellConfigList-r10                       SCellToAddModList-r10                   OPTIONAL
+        ]],
+        [[      sourceConfigSCG-r12                                     SCG-Config-r12          OPTIONAL
+        ]],
+        [[      as-ConfigNR-r15                                         AS-ConfigNR-r15                                 OPTIONAL
+        ]],
+        [[      as-Config-v1550                                         AS-Config-v1550                                 OPTIONAL
+        ]],
+        [[      as-ConfigNR-v1570                                       AS-ConfigNR-v1570                               OPTIONAL
+        ]],
+        [[      as-ConfigNR-v1620                                       AS-ConfigNR-v1620                               OPTIONAL
+        ]]
+}
+"#;
+        let definitions = super::get_module_definitions(definitions);
+
+        let module_str = format!("{} {}", module_header, definitions);
+
+        let mut compiler = get_dev_null_compiler();
+        let result = compiler.compile_string(&module_str);
+
+        assert!(result.is_ok(), "{:#?}", result.err().unwrap());
+    }
 }
