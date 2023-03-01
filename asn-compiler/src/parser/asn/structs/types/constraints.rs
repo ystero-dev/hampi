@@ -65,4 +65,7 @@ pub(crate) enum Asn1Constraint {
         _containing: String,                   // Reference to referenced type
         _encoded_by: Option<ObjectIdentifier>, // Encoding Object Identifier (Right now always None)
     },
+    WithComponents {
+        _spec: String, // With component specification, right now we are simply collecting the string as spec
+    },
 }

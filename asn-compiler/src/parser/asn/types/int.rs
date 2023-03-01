@@ -2,8 +2,8 @@ use crate::error::Error;
 use crate::tokenizer::Token;
 
 use crate::parser::asn::structs::types::{
-    ActualParam, Asn1BuiltinType, Asn1ConstructedType, Asn1Tag, Asn1TagClass, Asn1TagMode, Asn1Type, Asn1TypeKind,
-    Asn1TypeReference,
+    ActualParam, Asn1BuiltinType, Asn1ConstructedType, Asn1Tag, Asn1TagClass, Asn1TagMode,
+    Asn1Type, Asn1TypeKind, Asn1TypeReference,
 };
 
 use crate::parser::utils::{
@@ -140,13 +140,24 @@ pub(crate) fn parse_type(tokens: &[Token]) -> Result<(Asn1Type, usize), Error> {
     };
     consumed += kind_consumed;
 
+    log::trace!("Parsing constraint");
     let (constraints, constraints_str_consumed) = match parse_constraints(&tokens[consumed..]) {
         Ok((s, c)) => (Some(s), c),
-        Err(_) => (None, 0),
+        Err(_) => {
+            log::error!("Parse Constraint failed.");
+            (None, 0)
+        }
     };
     consumed += constraints_str_consumed;
 
-    Ok((Asn1Type { kind, constraints, tag }, consumed))
+    Ok((
+        Asn1Type {
+            kind,
+            constraints,
+            tag,
+        },
+        consumed,
+    ))
 }
 
 fn parse_referenced_type(tokens: &[Token]) -> Result<(Asn1TypeKind, usize), Error> {
@@ -296,9 +307,10 @@ fn parse_tag(tokens: &[Token]) -> Result<(Asn1Tag, usize), Error> {
     }
     consumed += 1;
 
-    let class = if expect_one_of_keywords(&tokens[consumed..],
-        &["UNIVERSAL", "APPLICATION", "PRIVATE"])? {
-
+    let class = if expect_one_of_keywords(
+        &tokens[consumed..],
+        &["UNIVERSAL", "APPLICATION", "PRIVATE"],
+    )? {
         let token = &tokens[consumed];
         consumed += 1;
         let typestr = token.text.as_str();
@@ -340,7 +352,14 @@ fn parse_tag(tokens: &[Token]) -> Result<(Asn1Tag, usize), Error> {
         None
     };
 
-    Ok((Asn1Tag { class, number, mode }, consumed))
+    Ok((
+        Asn1Tag {
+            class,
+            number,
+            mode,
+        },
+        consumed,
+    ))
 }
 
 #[cfg(test)]

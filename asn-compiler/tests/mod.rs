@@ -1,6 +1,15 @@
 #![cfg(test)]
 
+fn init() {
+    let _ = env_logger::builder()
+        .filter_level(log::LevelFilter::max())
+        .is_test(true)
+        .try_init();
+}
+
 fn get_module_header(module_name: &str, test_no: u16) -> String {
+    init();
+
     format!(
         r#"{module_name}
         {{ iso org(3) dod(6) internet (1) private(4) enterprise(1)
@@ -51,7 +60,7 @@ mod tests {
         let module_str = format!("{} {}", module_header, definitions);
 
         let mut compiler = get_dev_null_compiler();
-        let result = compiler.compile_string(&module_str);
+        let result = compiler.compile_string(&module_str, false);
 
         assert!(result.is_ok(), "{:?}", result.err().unwrap());
     }
@@ -69,7 +78,7 @@ mod tests {
         let module_str = format!("{} {}", module_header, definitions);
 
         let mut compiler = get_dev_null_compiler();
-        let result = compiler.compile_string(&module_str);
+        let result = compiler.compile_string(&module_str, false);
 
         assert!(result.is_ok(), "{:?}", result.err().unwrap());
     }
@@ -107,12 +116,11 @@ Date ::= VisibleString -- YYYYMMDD"#;
         let module_str = format!("{} {}", module_header, definitions);
 
         let mut compiler = get_dev_null_compiler();
-        let result = compiler.compile_string(&module_str);
+        let result = compiler.compile_string(&module_str, false);
 
         assert!(result.is_ok(), "{:#?}", result.err().unwrap());
     }
 
-    #[ignore]
     #[test]
     fn compile_example_from_rrc_spec() {
         let module_name = "ExampleFrom36331RRCSpec";
@@ -158,7 +166,7 @@ AS-Config ::=                           SEQUENCE {
         let module_str = format!("{} {}", module_header, definitions);
 
         let mut compiler = get_dev_null_compiler();
-        let result = compiler.compile_string(&module_str);
+        let result = compiler.compile_string(&module_str, true);
 
         assert!(result.is_ok(), "{:#?}", result.err().unwrap());
     }

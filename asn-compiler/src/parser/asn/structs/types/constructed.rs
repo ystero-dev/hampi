@@ -107,6 +107,12 @@ pub(crate) struct Asn1TypeSequenceOf {
 
 impl Asn1TypeSequenceOf {
     pub(crate) fn dependent_references(&self) -> Vec<String> {
-        self.ty.dependent_references()
+        let mut output = vec![];
+        if self.size.is_some() {
+            let size = self.size.as_ref().unwrap().clone();
+            output.extend(size.dependent_references());
+        }
+        output.extend(self.ty.dependent_references());
+        output
     }
 }

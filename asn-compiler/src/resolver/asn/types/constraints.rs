@@ -77,6 +77,7 @@ impl Asn1Constraint {
             Self::Table(ref _t) => vec![self.get_set_reference().unwrap()],
             Self::Subtype(ref s) => s.clone().dependent_references(), // FIXME: Need to get reference
             Self::Contents { .. } => vec![], // FIXME: Not sure but perhaps this causes lot of circular dependencies
+            Self::WithComponents { .. } => vec![], // FIXME: Not sure but perhaps this causes lot of circular dependencies
         }
     }
 

@@ -109,12 +109,15 @@ impl Asn1Compiler {
     }
 
     /// Compilation Driver for a String as module(s).
-    pub fn compile_string(&mut self, modules_string: &str) -> Result<(), Error> {
+    pub fn compile_string(&mut self, modules_string: &str, parse_only: bool) -> Result<(), Error> {
         let mut tokens = crate::tokenizer::tokenize_string(modules_string)?;
         self.parse_tokens_into_modules(&mut tokens)?;
-        self.resolve_modules()?;
-
-        self.generate()
+        if !parse_only {
+            self.resolve_modules()?;
+            self.generate()
+        } else {
+            Ok(())
+        }
     }
 
     /// The Actual compilation driver
