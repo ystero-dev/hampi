@@ -6,7 +6,8 @@ use crate::tokenizer::Token;
 use crate::parser::{
     asn::values::parse_value,
     utils::{
-        expect_keyword, expect_one_of_keywords, expect_one_of_tokens, expect_token, expect_tokens,
+        expect_keyword, expect_keywords, expect_one_of_keywords, expect_one_of_tokens,
+        expect_token, expect_tokens, parse_set_ish_value,
     },
 };
 
@@ -32,6 +33,8 @@ pub(crate) fn parse_constraint(tokens: &[Token]) -> Result<(Asn1Constraint, usiz
         Ok(table)
     } else if let Ok(containing) = parse_contents_constraint(tokens) {
         Ok(containing)
+    } else if let Ok(with_components) = parse_with_components_constraint(tokens) {
+        Ok(with_components)
     } else {
         Err(parse_error!(
             "Parsing of this constraint not yet supported!"
@@ -402,6 +405,29 @@ fn parse_contents_constraint(tokens: &[Token]) -> Result<(Asn1Constraint, usize)
         },
         consumed,
     ))
+}
+
+fn parse_with_components_constraint(tokens: &[Token]) -> Result<(Asn1Constraint, usize), Error> {
+    let mut consumed = 0;
+    if !expect_token(&tokens[consumed..], Token::is_round_begin)? {
+        return Err(unexpected_token!("'('", tokens[consumed]));
+    }
+    consumed += 1;
+
+    if !expect_keywords(&tokens[consumed..], &["WITH", "COMPONENTS"])? {
+        return Err(unexpected_token!("'WITH COMPONENTS'", tokens[consumed]));
+    }
+    consumed += 2;
+
+    let (value, value_consumed) = parse_set_ish_value(&tokens[consumed..])?;
+    consumed += value_consumed;
+
+    if !expect_token(&tokens[consumed..], Token::is_round_end)? {
+        return Err(unexpected_token!("')'", tokens[consumed]));
+    }
+    consumed += 1;
+
+    Ok((Asn1Constraint::WithComponents { _spec: value }, consumed))
 }
 
 #[cfg(test)]
