@@ -93,7 +93,11 @@ fn resolve_sequence_type(
 ) -> Result<Asn1ResolvedType, Error> {
     let mut components = vec![];
     // FIXME: implement for additional_components too
-    for c in &sequence.root_components {
+    let mut all_components = sequence.root_components.clone();
+    for addition in &sequence.additions {
+        all_components.extend(addition.components.clone());
+    }
+    for c in all_components {
         let ty = match resolve_type(&c.component.ty, resolver) {
             Ok(ty) => ty,
             Err(_e) => {
