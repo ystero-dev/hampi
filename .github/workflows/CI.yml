@@ -23,6 +23,7 @@ on:
       - '!README*'
       - '!LICENSE*'
       - '!.gitignore'
+      - '!**/Cargo.toml'
 
 env:
   CARGO_TERM_COLOR: always

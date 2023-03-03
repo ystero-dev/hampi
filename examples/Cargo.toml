@@ -1,6 +1,6 @@
 [package]
 name = "hampi-examples"
-version = "0.5.7"
+version = "0.5.8"
 authors = ["Abhijit Gadgil <gabhijit@iitbombay.org>"]
 edition = "2018"
 description = "Examples for usage of ASN.1 Compiler and Codecs."
@@ -8,11 +8,11 @@ license = "Apache-2.0 OR MIT"
 publish = false
 
 [build-dependencies]
-asn1-compiler = { path = "../asn-compiler", version = "=0.5.7" }
+asn1-compiler = { path = "../asn-compiler", version = "=0.5.8" }
 
 [dev-dependencies]
-asn1-codecs = { path = "../codecs", version = "=0.5.7" }
-asn1_codecs_derive = { path = "../codecs_derive", version = "=0.5.7" }
+asn1-codecs = { path = "../codecs", version = "=0.5.8" }
+asn1_codecs_derive = { path = "../codecs_derive", version = "=0.5.8" }
 trybuild = { version = "1.0" }
 hex = { version = "0.4" }
 bitvec = { version = "1.0" , features = ["serde"]}
