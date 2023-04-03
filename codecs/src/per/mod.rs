@@ -12,6 +12,7 @@ mod common;
 pub use error::Error as PerCodecError;
 
 use bitvec::prelude::*;
+use std::convert::TryFrom;
 
 /// Structure representing an APER Codec.
 ///
@@ -120,9 +121,22 @@ impl PerCodecData {
             let value = if !signed {
                 if bits == 0 {
                     0_i128
+                } else if bits > 128 {
+                    return Err(
+                        PerCodecError::new(
+                            format!(
+                                "For an unsigned number, requested bits {} not supported!",
+                                bits)));
                 } else {
-                    self.bits[self.decode_offset..self.decode_offset + bits].load_be::<u128>()
-                        as i128
+                    let unsigned_value = self.bits[self.decode_offset..self.decode_offset + bits].load_be::<u128>();
+                    match i128::try_from(unsigned_value) {
+                        Ok(v) => v,
+                        Err(_) => return Err(
+                            PerCodecError::new(
+                                format!(
+                                    "Unsigned value {} exceeded signed bounds for 128-bit integer!",
+                                    unsigned_value))),
+                    }
                 }
             } else {
                 match bits {
