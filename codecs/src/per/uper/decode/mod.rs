@@ -1,4 +1,4 @@
-//! Decode APIs for APER Codec
+//! Decode APIs for UPER Codec
 
 use bitvec::prelude::*;
 

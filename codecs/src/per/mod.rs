@@ -14,7 +14,7 @@ pub use error::Error as PerCodecError;
 use bitvec::prelude::*;
 use std::convert::TryFrom;
 
-/// Structure representing an APER Codec.
+/// Structure representing a PER Codec.
 ///
 /// While En(De)coding ASN.1 Types using the APER encoding scheme, the encoded data is stored in a
 /// `BitVec`.
