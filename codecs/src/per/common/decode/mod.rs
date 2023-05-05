@@ -57,9 +57,9 @@ pub fn decode_sequence_header_common(
 
     let mut bitmap = BitVec::new();
     if optional_count > 0 {
+        log::trace!("{:?} optionals found", optional_count);
         bitmap.extend(data.get_bitvec(optional_count)?);
     }
-
     data.dump();
     Ok((bitmap, extended))
 }

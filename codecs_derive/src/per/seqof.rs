@@ -66,12 +66,9 @@ pub(super) fn generate_aper_codec_for_asn_sequence_of(
 
                 let mut items = vec![];
                 let mut count = 0;
-                loop {
+
+                for _ in 0..length {
                     items.push(#ty::#codec_decode_fn(data)?);
-                    count += 1;
-                    if count == length {
-                        break;
-                    }
                 }
 
                 Ok(Self(items))
