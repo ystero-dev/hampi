@@ -40,8 +40,11 @@ pub enum Derive {
     /// Generate 'serde::Deserialize' code for the generated structures.
     Deserialize,
 
-    /// Generate `Eq` and `PartialEq` code for the generated structures.
-    EqPartialEq,
+    /// Generate `Eq` code for the generated structures.
+    Eq,
+
+    /// Generate `PartialEq` code for the generated structures.
+    PartialEq,
 
     /// Generate code for all supported derives for the generated structures.
     All,
@@ -71,7 +74,8 @@ lazy_static! {
         m.insert(Derive::Clone, "Clone".to_string());
         m.insert(Derive::Serialize, "serde::Serialize".to_string());
         m.insert(Derive::Deserialize, "serde::Deserialize".to_string());
-        m.insert(Derive::EqPartialEq, "Eq, PartialEq".to_string());
+        m.insert(Derive::Eq, "Eq".to_string());
+        m.insert(Derive::PartialEq, "PartialEq".to_string());
         m
     };
 }

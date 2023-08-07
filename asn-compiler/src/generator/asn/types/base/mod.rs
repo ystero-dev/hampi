@@ -16,6 +16,8 @@ mod null;
 
 mod oid;
 
+mod real;
+
 use proc_macro2::{Ident, TokenStream};
 
 use crate::error::Error;
@@ -36,6 +38,7 @@ impl ResolvedBaseType {
             ResolvedBaseType::OctetString(ref o) => o.generate(name, generator),
             ResolvedBaseType::CharacterString(ref c) => c.generate(name, generator),
             ResolvedBaseType::Null(ref n) => n.generate(name, generator),
+            ResolvedBaseType::Real(ref r) => r.generate(name, generator),
             ResolvedBaseType::ObjectIdentifier(ref o) => o.generate(name, generator),
         }
     }
@@ -55,6 +58,7 @@ impl ResolvedBaseType {
                 c.generate_ident_and_aux_type(generator, input)
             }
             ResolvedBaseType::Null(ref n) => n.generate_ident_and_aux_type(generator, input),
+            ResolvedBaseType::Real(ref r) => r.generate_ident_and_aux_type(generator, input),
             ResolvedBaseType::ObjectIdentifier(ref o) => {
                 o.generate_ident_and_aux_type(generator, input)
             }
