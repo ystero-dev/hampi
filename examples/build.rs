@@ -42,13 +42,16 @@ fn get_specs_files(
 }
 
 fn main() -> std::io::Result<()> {
-    let specs = vec!["ranap", "s1ap", "ngap", "e2ap", "supl", "rrc"];
-    let modules = vec!["ranap.rs", "s1ap.rs", "ngap.rs", "e2ap.rs", "supl.rs", "rrc.rs"];
+    let specs = vec!["ranap", "s1ap", "ngap", "e2ap", "e2sm", "supl", "rrc"];
+    let modules = vec![
+        "ranap.rs", "s1ap.rs", "ngap.rs", "e2ap.rs", "e2sm.rs", "supl.rs", "rrc.rs",
+    ];
     let mut codecs_map = HashMap::new();
     codecs_map.insert("ranap.rs", vec![Codec::Aper]);
     codecs_map.insert("s1ap.rs", vec![Codec::Aper]);
     codecs_map.insert("ngap.rs", vec![Codec::Aper]);
     codecs_map.insert("e2ap.rs", vec![Codec::Aper]);
+    codecs_map.insert("e2sm.rs", vec![Codec::Aper]);
     codecs_map.insert("supl.rs", vec![Codec::Uper]);
     codecs_map.insert("rrc.rs", vec![Codec::Uper]);
 
@@ -68,7 +71,7 @@ fn main() -> std::io::Result<()> {
             codecs_map.get(module).unwrap().clone(),
             vec![
                 Derive::Debug,
-                Derive::EqPartialEq,
+                Derive::PartialEq,
                 Derive::Serialize,
                 Derive::Deserialize,
             ],

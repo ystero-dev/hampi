@@ -9,4 +9,5 @@ fn tests() {
     t.pass("tests/15-supl.rs");
     t.pass("tests/16-example.rs");
     t.pass("tests/17-rrc.rs");
+    t.pass("tests/18-e2sm.rs");
 }
