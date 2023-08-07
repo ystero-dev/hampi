@@ -81,6 +81,15 @@ pub fn decode_bool(data: &mut PerCodecData) -> Result<bool, PerCodecError> {
     decode_bool_common(data, false)
 }
 
+/// Decode a Real
+///
+/// Decode a Real value. Returns the decoded value as a `f64`.
+pub fn decode_real(_data: &mut PerCodecData) -> Result<f64, PerCodecError> {
+    log::trace!("decode_real:");
+
+    todo!()
+}
+
 /// Decode an Enumerated Value
 ///
 /// Decodes an Enumerated value as an index into either `root_values` of the ENUMERATED or

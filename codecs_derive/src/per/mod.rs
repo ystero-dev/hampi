@@ -12,6 +12,7 @@ mod null;
 mod octetstring;
 mod oid;
 mod open;
+mod real;
 mod seq;
 mod seqof;
 
@@ -34,6 +35,7 @@ pub(crate) fn generate_codec(
             charstring::generate_aper_codec_for_asn_charstring(ast, params, aligned)
         }
         "NULL" => null::generate_aper_codec_for_asn_null(ast, params, aligned),
+        "REAL" => real::generate_aper_codec_for_asn_real(ast, params, aligned),
         "SEQUENCE" => seq::generate_aper_codec_for_asn_sequence(ast, params, aligned),
         "OPEN" => open::generate_aper_codec_for_asn_open_type(ast, params, aligned),
         "SEQUENCE-OF" => seqof::generate_aper_codec_for_asn_sequence_of(ast, params, aligned),
