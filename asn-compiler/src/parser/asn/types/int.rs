@@ -133,6 +133,11 @@ pub(crate) fn parse_type(tokens: &[Token]) -> Result<(Asn1Type, usize), Error> {
             (Asn1TypeKind::Builtin(Asn1BuiltinType::RelativeOid), 1)
         }
 
+        "REAL" => {
+            log::trace!("Parsing `REAL` type.");
+            (Asn1TypeKind::Builtin(Asn1BuiltinType::Real), 1)
+        }
+
         _ => {
             log::trace!("Parsing a Reference type.");
             parse_referenced_type(&tokens[consumed..])?
@@ -405,6 +410,11 @@ mod tests {
                 input: "[PRIVATE bla] INTEGER",
                 success: false,
                 consumed: 3,
+            },
+            ParseTypeTestCase {
+                input: "REAL",
+                success: true,
+                consumed: 1,
             },
         ];
 

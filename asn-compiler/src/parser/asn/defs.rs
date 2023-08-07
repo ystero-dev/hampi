@@ -554,6 +554,10 @@ UE-RadioAccessCapability-LaterNonCriticalExtensions ::= SEQUENCE {
                 input: r#"IdentifierString ::= VisibleString (FROM (ALL EXCEPT " "))"#,
                 success: true,
             },
+            ParseDefinitionTestCase {
+                input: r#"pi REAL ::= 3.14159"#,
+                success: true,
+            },
         ];
 
         for tc in test_cases {

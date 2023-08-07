@@ -256,6 +256,14 @@ mod tests {
                 addition_components_count: 0,
                 tokens_consumed: 0,
             },
+            ParseChoiceTestCase {
+                input: "CHOICE { a INTEGER , r REAL, ...}",
+                success: true,
+                components_count: 2,
+                extensions_present: true,
+                addition_components_count: 0,
+                tokens_consumed: 10,
+            },
         ];
 
         for tc in test_cases {
