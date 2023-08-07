@@ -25,7 +25,7 @@ pub(crate) enum TokenType {
     Keyword,              // eg. "INTEGER", "ENUMERATED", "RELATIVE-OID", "TYPE-IDENTIFIER"
     Comment,              // "-- and everything after up to newline or EOF
     AndIdentifier,        // "&Attribute-Type", "&id" etc.
-    NumberInt,            // eg. 123456
+    NumberInt,            // eg. 123456, 3.14
     BitString,            // '010...'B
     HexString,            // 'FEEDBAC...'h
     TString,              // " A string "

@@ -21,6 +21,7 @@ pub(crate) enum Asn1BuiltinType {
     Null,
     OctetString,
     ObjectIdentifier,
+    Real,
     RelativeOid,
 
     // Consumes a lot of String Types.

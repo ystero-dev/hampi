@@ -109,6 +109,7 @@ const BASE_TYPES: &[&str] = &[
     "OCTET",
     "BIT",
     "CHARACTER",
+    "REAL",
 ];
 
 const CONSTRUCTED_TYPES: &[&str] = &["SEQUENCE", "SET", "CHOICE"];
@@ -518,6 +519,10 @@ fn get_at_component_id_list(
     ))
 }
 // Get token for a number Integer or Real
+// This function will try to tokenize strings of following forms -
+// 1..2 => Will return 1 as a number
+// 1.2 => Will return 1.2 as a number
+// -1.2.3 => Will return Error
 fn get_number_token(chars: &[char], line: usize, begin: usize) -> Result<(Token, usize), Error> {
     let neg = (chars[0] == '-') as usize;
 
@@ -526,24 +531,57 @@ fn get_number_token(chars: &[char], line: usize, begin: usize) -> Result<(Token,
     }
 
     let mut consumed = neg;
-    let last = chars[neg..].iter().position(|&x| !x.is_numeric());
+    let last = chars[neg..]
+        .iter()
+        .position(|&x| !(x.is_numeric() || x == '.'));
     if let Some(lst) = last {
         consumed += lst;
     } else {
         consumed += chars[neg..].len();
     }
 
-    Ok((
-        Token {
-            r#type: TokenType::NumberInt,
-            span: Span::new(
-                LineColumn::new(line, begin),
-                LineColumn::new(line, begin + consumed),
-            ),
-            text: chars[..consumed].iter().collect::<String>(), // include the sign as well
-        },
-        consumed,
-    ))
+    let text = chars[..consumed].iter().collect::<String>();
+    if text.parse::<f32>().is_err() {
+        let dot_index = chars[neg..].iter().position(|&x| x == '.');
+        if let Some(index) = dot_index {
+            if index == chars.len() {
+                Err(Error::TokenizeError(14, line, begin))
+                // Error (Last .)
+            } else {
+                if chars[index + 1] == '.' {
+                    // Atleast two .. Return this number, this becomes a parse error later on
+                    Ok((
+                        Token {
+                            r#type: TokenType::NumberInt,
+                            span: Span::new(
+                                LineColumn::new(line, begin),
+                                LineColumn::new(line, begin + consumed),
+                            ),
+                            text: chars[..index + neg].iter().collect::<String>(), // include the sign as well
+                        },
+                        index + neg,
+                    ))
+                } else {
+                    // Error something in weird form like 3.14.159
+                    Err(Error::TokenizeError(14, line, begin))
+                }
+            }
+        } else {
+            unreachable!();
+        }
+    } else {
+        Ok((
+            Token {
+                r#type: TokenType::NumberInt,
+                span: Span::new(
+                    LineColumn::new(line, begin),
+                    LineColumn::new(line, begin + consumed),
+                ),
+                text, // include the sign as well
+            },
+            consumed,
+        ))
+    }
 }
 
 // Get token for Identifier or a Keyword
