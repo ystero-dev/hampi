@@ -13,6 +13,7 @@ pub(crate) enum ResolvedBaseType {
     CharacterString(Asn1ResolvedCharacterString),
     ObjectIdentifier(Asn1ResolvedObjectIdentifier),
     Null(Asn1ResolvedNull),
+    Real(Asn1ResolvedReal),
 }
 
 // An intermediate representation for a Resolved Integer Type
@@ -82,6 +83,10 @@ pub(crate) struct Asn1ResolvedBoolean;
 // Just an empty structure for Resolved `NULL` type.
 #[derive(Debug, Default, Clone)]
 pub(crate) struct Asn1ResolvedNull;
+
+// Just an empty structure for Resolved `NULL` type.
+#[derive(Debug, Default, Clone)]
+pub(crate) struct Asn1ResolvedReal;
 
 // A structure representing a Resolved `OCTET STRING`. `SIZE` Constraint is resolved as well. The
 // `CONTAINING` Constraint is not resolved.
