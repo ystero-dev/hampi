@@ -10,6 +10,9 @@ pub use per::PerCodecData;
 pub use per::PerCodecError;
 
 #[doc(inline)]
+pub use per::PerCodecErrorCause;
+
+#[doc(inline)]
 pub use per::aper;
 
 #[doc(inline)]

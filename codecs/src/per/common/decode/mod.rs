@@ -4,7 +4,7 @@ mod decode_internal;
 
 use bitvec::prelude::*;
 
-use crate::{PerCodecData, PerCodecError};
+use crate::{PerCodecData, PerCodecError, PerCodecErrorCause};
 
 #[allow(unused)]
 use decode_internal::*;
@@ -291,5 +291,5 @@ pub(crate) fn decode_string_common(
 
     std::str::from_utf8(&bytes)
         .map(|s| s.to_string())
-        .map_err(|_| PerCodecError::new("UTF decode failed"))
+        .map_err(|_| PerCodecError::new(PerCodecErrorCause::Generic, "UTF decode failed"))
 }

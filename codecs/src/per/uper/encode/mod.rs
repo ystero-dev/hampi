@@ -2,7 +2,7 @@
 
 use bitvec::prelude::*;
 
-use crate::{PerCodecData, PerCodecError};
+use crate::{PerCodecData, PerCodecError, PerCodecErrorCause};
 
 #[allow(unused)]
 use crate::per::common::encode::*;
@@ -256,6 +256,7 @@ fn encode_ascii_ish_string_common(
 ) -> Result<(), PerCodecError> {
     if extended {
         return Err(PerCodecError::new(
+            PerCodecErrorCause::EncodeNotSupported,
             "Encode of extended octetstring not yet implemented",
         ));
     }

@@ -2,7 +2,7 @@
 
 use bitvec::prelude::*;
 
-use crate::per::{PerCodecData, PerCodecError};
+use crate::per::{PerCodecData, PerCodecError, PerCodecErrorCause};
 
 mod encode_internal;
 
@@ -25,6 +25,7 @@ pub(crate) fn encode_choice_idx_common(
 ) -> Result<(), PerCodecError> {
     if extended {
         return Err(PerCodecError::new(
+            PerCodecErrorCause::EncodeNotSupported,
             "Encode of extended choice not yet implemented",
         ));
     }
@@ -46,6 +47,7 @@ pub(crate) fn encode_sequence_header_common(
 ) -> Result<(), PerCodecError> {
     if extended {
         return Err(PerCodecError::new(
+            PerCodecErrorCause::EncodeNotSupported,
             "Encode of extended sequence not yet implemented",
         ));
     }
@@ -73,6 +75,7 @@ pub(crate) fn encode_integer_common(
 ) -> Result<(), PerCodecError> {
     if extended {
         return Err(PerCodecError::new(
+            PerCodecErrorCause::EncodeNotSupported,
             "Encode of extended integer not yet implemented",
         ));
     }
@@ -118,6 +121,7 @@ pub(crate) fn encode_enumerated_common(
 ) -> Result<(), PerCodecError> {
     if extended {
         return Err(PerCodecError::new(
+            PerCodecErrorCause::EncodeNotSupported,
             "Encode of extended enumerated not yet implemented",
         ));
     }
@@ -146,6 +150,7 @@ pub(crate) fn encode_bitstring_common(
 ) -> Result<(), PerCodecError> {
     if extended {
         return Err(PerCodecError::new(
+            PerCodecErrorCause::EncodeNotSupported,
             "Encode of extended bitstring not yet implemented",
         ));
     }
@@ -157,6 +162,7 @@ pub(crate) fn encode_bitstring_common(
     let length = bit_string.len();
     if length >= 16384 {
         return Err(PerCodecError::new(
+            PerCodecErrorCause::EncodeNotSupported,
             "Encode of fragmented bitstring not yet implemented",
         ));
     }
@@ -189,6 +195,7 @@ pub(crate) fn encode_octet_string_common(
 ) -> Result<(), PerCodecError> {
     if extended {
         return Err(PerCodecError::new(
+            PerCodecErrorCause::EncodeNotSupported,
             "Encode of extended octetstring not yet implemented",
         ));
     }
@@ -200,6 +207,7 @@ pub(crate) fn encode_octet_string_common(
     let length = octet_string.len();
     if length >= 16384 {
         return Err(PerCodecError::new(
+            PerCodecErrorCause::EncodeNotSupported,
             "Encode of fragmented octetstring not yet implemented",
         ));
     }
@@ -246,19 +254,25 @@ pub(crate) fn encode_length_determinent_common(
         _ => {
             if let Some(u) = ub {
                 if value > u as usize {
-                    return Err(PerCodecError::new(format!(
-                        "Cannot encode length determinent {} - greater than upper bound {}",
-                        value, u,
-                    )));
+                    return Err(PerCodecError::new(
+                        PerCodecErrorCause::Generic,
+                        format!(
+                            "Cannot encode length determinent {} - greater than upper bound {}",
+                            value, u,
+                        ),
+                    ));
                 }
             }
 
             if let Some(l) = lb {
                 if value < l as usize {
-                    return Err(PerCodecError::new(format!(
-                        "Cannot encode length determinent {} - less than lower bound {}",
-                        value, l,
-                    )));
+                    return Err(PerCodecError::new(
+                        PerCodecErrorCause::Generic,
+                        format!(
+                            "Cannot encode length determinent {} - less than lower bound {}",
+                            value, l,
+                        ),
+                    ));
                 }
             }
 
@@ -283,6 +297,7 @@ pub(crate) fn encode_string_common(
 ) -> Result<(), PerCodecError> {
     if extended {
         return Err(PerCodecError::new(
+            PerCodecErrorCause::EncodeNotSupported,
             "Encode of extended visible string not yet implemented",
         ));
     }
