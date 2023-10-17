@@ -239,6 +239,27 @@ pub fn encode_utf8_string(
     encode_string_common(data, lb, ub, is_extensible, value, extended, true)
 }
 
+/// Encode a UTCTime CharacterString Type.
+pub fn encode_utc_time(
+    data: &mut PerCodecData,
+    lb: Option<i128>,
+    ub: Option<i128>,
+    is_extensible: bool,
+    value: &String,
+    extended: bool,
+) -> Result<(), PerCodecError> {
+    log::trace!(
+        "encode_utc_time: lb: {:?}, ub: {:?}, is_extensible: {}, value: {}, extended: {}",
+        lb,
+        ub,
+        is_extensible,
+        value,
+        extended
+    );
+
+    encode_string_common(data, lb, ub, is_extensible, value, extended, true)
+}
+
 #[cfg(test)]
 mod tests {
 

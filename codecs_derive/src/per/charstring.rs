@@ -5,7 +5,7 @@ use quote::quote;
 
 use crate::attrs::TyCodecParams;
 
-pub(super) fn generate_aper_codec_for_asn_charstring(
+pub(super) fn generate_per_codec_for_asn_charstring(
     ast: &syn::DeriveInput,
     params: &TyCodecParams,
     aligned: bool,
@@ -14,6 +14,11 @@ pub(super) fn generate_aper_codec_for_asn_charstring(
 
     let (decode_fn_name, encode_fn_name): (syn::Ident, syn::Ident) = match ty_attr.value().as_str()
     {
+        "UTCTime" => (
+            syn::Ident::new("decode_utc_time", Span::call_site()),
+            syn::Ident::new("encode_utc_time", Span::call_site()),
+        ),
+
         "UTF8String" => (
             syn::Ident::new("decode_utf8_string", Span::call_site()),
             syn::Ident::new("encode_utf8_string", Span::call_site()),

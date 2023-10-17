@@ -4,7 +4,7 @@ use quote::quote;
 
 use crate::{attrs::TyCodecParams, utils};
 
-pub(super) fn generate_aper_codec_for_asn_sequence_of(
+pub(super) fn generate_per_codec_for_asn_sequence_of(
     ast: &syn::DeriveInput,
     params: &TyCodecParams,
     aligned: bool,

@@ -11,6 +11,10 @@ use asn1_codecs_derive::{AperCodec, UperCodec};
 )]
 pub struct RANNodeName(String);
 
+#[derive(Debug, AperCodec, UperCodec)]
+#[asn(type = "UTCTime")]
+pub struct Timestamp(String);
+
 #[derive(Debug, AperCodec)]
 #[asn(type = "UTF8String", sz_extensible = false, sz_lb = "1", sz_ub = "150")]
 pub struct RANNodeNameUTF8String(String);

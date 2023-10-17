@@ -4,7 +4,7 @@ use quote::quote;
 
 use crate::attrs::TyCodecParams;
 
-pub(super) fn generate_aper_codec_for_asn_null(
+pub(super) fn generate_per_codec_for_asn_null(
     ast: &syn::DeriveInput,
     _params: &TyCodecParams,
     aligned: bool,

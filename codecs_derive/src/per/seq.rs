@@ -10,7 +10,7 @@ struct FieldTokens {
     hdr_encode_tokens: Vec<proc_macro2::TokenStream>,
 }
 
-pub(super) fn generate_aper_codec_for_asn_sequence(
+pub(super) fn generate_per_codec_for_asn_sequence(
     ast: &syn::DeriveInput,
     params: &TyCodecParams,
     aligned: bool,

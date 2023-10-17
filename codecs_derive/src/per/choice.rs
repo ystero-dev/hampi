@@ -5,7 +5,7 @@ use quote::quote;
 
 use crate::attrs::{parse_fld_meta_as_codec_params, TyCodecParams};
 
-pub(super) fn generate_aper_codec_for_asn_choice(
+pub(super) fn generate_per_codec_for_asn_choice(
     ast: &syn::DeriveInput,
     params: &TyCodecParams,
     aligned: bool,
