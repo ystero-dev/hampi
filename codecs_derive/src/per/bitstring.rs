@@ -4,7 +4,7 @@ use quote::quote;
 
 use crate::{attrs::TyCodecParams, utils};
 
-pub(super) fn generate_aper_codec_for_asn_bitstring(
+pub(super) fn generate_per_codec_for_asn_bitstring(
     ast: &syn::DeriveInput,
     params: &TyCodecParams,
     aligned: bool,

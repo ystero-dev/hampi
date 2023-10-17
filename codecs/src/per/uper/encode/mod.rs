@@ -245,6 +245,35 @@ pub fn encode_utf8_string(
     )
 }
 
+/// Encode a UTF8String CharacterString Type.
+pub fn encode_utc_time(
+    data: &mut PerCodecData,
+    lb: Option<i128>,
+    ub: Option<i128>,
+    is_extensible: bool,
+    value: &String,
+    extended: bool,
+) -> Result<(), PerCodecError> {
+    log::trace!(
+        "encode_utc_time: lb: {:?}, ub: {:?}, is_extensible: {}, value: {}, extended: {}",
+        lb,
+        ub,
+        is_extensible,
+        value,
+        extended
+    );
+
+    encode_octet_string_common(
+        data,
+        lb,
+        ub,
+        is_extensible,
+        value.as_bytes(),
+        extended,
+        false,
+    )
+}
+
 // Common function used by PrintableString and VisibleString
 fn encode_ascii_ish_string_common(
     data: &mut PerCodecData,
