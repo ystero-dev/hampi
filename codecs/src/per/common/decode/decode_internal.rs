@@ -1,7 +1,7 @@
 //! Internal decode functions.
 use std::convert::TryInto;
 
-use crate::{PerCodecData, PerCodecError};
+use crate::{PerCodecData, PerCodecError, PerCodecErrorCause};
 
 // Decode a "Normally Small" non-negative number
 //
@@ -123,7 +123,10 @@ fn decode_indefinite_length_determinent_common(
         } else {
             let length = data.decode_bits_as_integer(6, false)?;
             if !(1..=4).contains(&length) {
-                return Err(PerCodecError::new("The value should be 1 to 4"));
+                return Err(PerCodecError::new(
+                    PerCodecErrorCause::Generic,
+                    "The value should be 1 to 4",
+                ));
             } else {
                 length * 16384
             }
@@ -177,6 +180,7 @@ pub(super) fn decode_constrained_whole_number_common(
     let range = ub - lb + 1;
     if range <= 0 {
         Err(PerCodecError::new(
+            PerCodecErrorCause::Generic,
             "Range for the Integer Constraint is negative.",
         ))
     } else {

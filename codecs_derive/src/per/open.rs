@@ -76,14 +76,18 @@ pub(super) fn generate_aper_codec_for_asn_open_type(
                 log::trace!("open type: decoded length: {}", length);
 
                 if data.get_key().is_none() {
-                    return Err(asn1_codecs::PerCodecError::new("Decoding OPEN Type, but `key` is not determined!"));
+                    return Err(asn1_codecs::PerCodecError::new(
+                            asn1_codecs::PerCodecErrorCause::Generic,
+                            "Decoding OPEN Type, but `key` is not determined!"));
                 }
 
                 let key = data.get_key().unwrap();
 
                 match key {
                     #(#variant_decode_tokens)*
-                    _ => Err(asn1_codecs::PerCodecError::new(format!("Key {} Not Found", key).as_str()))
+                    _ => Err(asn1_codecs::PerCodecError::new(
+                            asn1_codecs::PerCodecErrorCause::Generic,
+                            format!("Key {} Not Found", key).as_str()))
                 }
             }
 

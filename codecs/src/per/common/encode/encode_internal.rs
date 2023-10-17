@@ -1,4 +1,4 @@
-use crate::per::{PerCodecData, PerCodecError};
+use crate::per::{PerCodecData, PerCodecError, PerCodecErrorCause};
 
 use bitvec::prelude::*;
 
@@ -47,10 +47,13 @@ pub(super) fn encode_semi_constrained_whole_number_common(
     aligned: bool,
 ) -> Result<(), PerCodecError> {
     if value < lb {
-        return Err(PerCodecError::new(format!(
-            "Cannot encode integer {} - less than lower bound {}",
-            value, lb,
-        )));
+        return Err(PerCodecError::new(
+            PerCodecErrorCause::Generic,
+            format!(
+                "Cannot encode integer {} - less than lower bound {}",
+                value, lb,
+            ),
+        ));
     }
 
     encode_unconstrained_whole_number_common(data, value - lb, aligned)
@@ -65,17 +68,23 @@ pub(super) fn encode_constrained_whole_number_common(
     aligned: bool,
 ) -> Result<(), PerCodecError> {
     if value < lb {
-        return Err(PerCodecError::new(format!(
-            "Cannot encode integer {} - less than lower bound {}",
-            value, lb,
-        )));
+        return Err(PerCodecError::new(
+            PerCodecErrorCause::Generic,
+            format!(
+                "Cannot encode integer {} - less than lower bound {}",
+                value, lb,
+            ),
+        ));
     }
 
     if value > ub {
-        return Err(PerCodecError::new(format!(
-            "Cannot encode integer {} - greater than upper bound {}",
-            value, ub,
-        )));
+        return Err(PerCodecError::new(
+            PerCodecErrorCause::Generic,
+            format!(
+                "Cannot encode integer {} - greater than upper bound {}",
+                value, ub,
+            ),
+        ));
     }
 
     let range = ub - lb + 1;
@@ -150,6 +159,7 @@ pub(super) fn encode_indefinite_length_determinent_common(
         data.append_bits(bytes.view_bits::<Msb0>());
     } else {
         return Err(PerCodecError::new(
+            PerCodecErrorCause::EncodeNotSupported,
             "Length determinent >= 16384 not implemented",
         ));
     }

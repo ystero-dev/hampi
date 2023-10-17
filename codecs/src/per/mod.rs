@@ -10,6 +10,7 @@ pub mod uper;
 mod common;
 
 pub use error::Error as PerCodecError;
+pub use error::ErrorCause as PerCodecErrorCause;
 
 use bitvec::prelude::*;
 use std::convert::TryFrom;
@@ -78,6 +79,7 @@ impl PerCodecData {
             .all(|b| b == false)
         {
             Err(PerCodecError::new(
+                PerCodecErrorCause::InvalidAlignment,
                 format!(
                     "{} Padding bits at Offset {} not all '0'.",
                     remaining, self.decode_offset,
@@ -93,6 +95,7 @@ impl PerCodecData {
     fn decode_bool(&mut self) -> Result<bool, PerCodecError> {
         if self.bits.len() == self.decode_offset {
             return Err(PerCodecError::new(
+                PerCodecErrorCause::BufferTooShort,
                 "perCodec:DecodeError:End of Bitstream reached while trying to decode bool.",
             ));
         }
@@ -106,6 +109,7 @@ impl PerCodecData {
         let remaining = self.bits.len() - self.decode_offset;
         if remaining < bits {
             Err(PerCodecError::new(
+                PerCodecErrorCause::BufferTooShort,
                 format!(
                     "PerCodec:DecodeError:Requested Bits to decode {}, Remaining bits {}",
                     bits, remaining
@@ -122,20 +126,27 @@ impl PerCodecData {
                 if bits == 0 {
                     0_i128
                 } else if bits > 128 {
-                    return Err(
-                        PerCodecError::new(
-                            format!(
-                                "For an unsigned number, requested bits {} not supported!",
-                                bits)));
+                    return Err(PerCodecError::new(
+                        PerCodecErrorCause::Generic,
+                        format!(
+                            "For an unsigned number, requested bits {} not supported!",
+                            bits
+                        ),
+                    ));
                 } else {
-                    let unsigned_value = self.bits[self.decode_offset..self.decode_offset + bits].load_be::<u128>();
+                    let unsigned_value =
+                        self.bits[self.decode_offset..self.decode_offset + bits].load_be::<u128>();
                     match i128::try_from(unsigned_value) {
                         Ok(v) => v,
-                        Err(_) => return Err(
-                            PerCodecError::new(
+                        Err(_) => {
+                            return Err(PerCodecError::new(
+                                PerCodecErrorCause::Generic,
                                 format!(
                                     "Unsigned value {} exceeded signed bounds for 128-bit integer!",
-                                    unsigned_value))),
+                                    unsigned_value
+                                ),
+                            ))
+                        }
                     }
                 }
             } else {
@@ -216,6 +227,7 @@ impl PerCodecData {
                     _ => {
                         return Err(
                             PerCodecError::new(
+                                PerCodecErrorCause::Generic,
                                 format!(
                                     "For a signed number in 2's compliment form, requested bits {} not supported!",
                                     bits)));
@@ -240,6 +252,7 @@ impl PerCodecData {
             } else {
                 let remaining = self.bits.len() - self.decode_offset;
                 return Err(PerCodecError::new(
+                    PerCodecErrorCause::BufferTooShort,
                     format!(
                         "PerCodec:DecodeError:Requested Bits to advance {}, Remaining bits {}",
                         bits, remaining
@@ -256,6 +269,7 @@ impl PerCodecData {
     fn get_bit(&self) -> Result<bool, PerCodecError> {
         if self.decode_offset >= self.bits.len() {
             return Err(PerCodecError::new(
+                PerCodecErrorCause::BufferTooShort,
                 format!(
                     "PerCodec:GetBitError:Requested Bit {}, Remaining bits {}",
                     self.decode_offset,
@@ -271,6 +285,7 @@ impl PerCodecData {
     fn get_bitvec(&mut self, length: usize) -> Result<BitVec<u8, Msb0>, PerCodecError> {
         if length + self.decode_offset > self.bits.len() {
             return Err(PerCodecError::new(
+                PerCodecErrorCause::BufferTooShort,
                 format!(
                     "PerCodec:GetBitError:Requested Bit {}, Remaining bits {}",
                     length,
@@ -289,6 +304,7 @@ impl PerCodecData {
         let length = length * 8;
         if length + self.decode_offset > self.bits.len() {
             return Err(PerCodecError::new(
+                PerCodecErrorCause::BufferTooShort,
                 format!(
                     "PerCodec:GetBitError:Requested Bits {}, Remaining bits {}",
                     length,

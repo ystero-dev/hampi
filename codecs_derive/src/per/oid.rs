@@ -33,12 +33,16 @@ pub(super) fn generate_aper_codec_for_asn_object_identifier(
             fn #codec_decode_fn(_data: &mut asn1_codecs::PerCodecData) -> Result<Self::Output, asn1_codecs::PerCodecError> {
                 log::trace!(concat!("decode: ", stringify!(#name)));
 
-                Err(asn1_codecs::PerCodecError::new("Object Identifier Decode Not Supported!"))
+                Err(asn1_codecs::PerCodecError::new(
+                        asn1_codecs::PerCodecErrorCause::DecodeNotSupported,
+                        "Object Identifier Decode Not Supported!"))
             }
             fn #codec_encode_fn(&self, _data: &mut asn1_codecs::PerCodecData) -> Result<(), asn1_codecs::PerCodecError> {
                 log::trace!(concat!("encode: ", stringify!(#name)));
 
-                Err(asn1_codecs::PerCodecError::new("Object Identifier Encode Not Supported!"))
+                Err(asn1_codecs::PerCodecError::new(
+                        asn1_codecs::PerCodecErrorCause::DecodeNotSupported,
+                        "Object Identifier Encode Not Supported!"))
             }
         }
     };

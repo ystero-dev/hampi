@@ -60,10 +60,14 @@ pub(super) fn generate_aper_codec_for_asn_choice(
                 if !extended {
                     match idx {
                         #(#variant_decode_tokens)*
-                        _ => Err(asn1_codecs::PerCodecError::new(format!("Index {} is not a valid Choice Index", idx).as_str()))
+                        _ => Err(asn1_codecs::PerCodecError::new(
+                                asn1_codecs::PerCodecErrorCause::Generic,
+                                format!("Index {} is not a valid Choice Index", idx).as_str()))
                     }
                 } else {
-                    Err(asn1_codecs::PerCodecError::new("CHOICE Additions not supported yet."))
+                    Err(asn1_codecs::PerCodecError::new(
+                            asn1_codecs::PerCodecErrorCause::EncodeNotSupported,
+                            "CHOICE Additions not supported yet."))
                 }
             }
 

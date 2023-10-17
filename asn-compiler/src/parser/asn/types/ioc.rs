@@ -385,7 +385,7 @@ pub(crate) fn parse_object_set_from_class(
     set: &mut Asn1ObjectSet,
     class: &Asn1ObjectClass,
 ) -> Result<(), Error> {
-    let mut objectset = &mut set.objects;
+    let objectset = &mut set.objects;
 
     let mut root_elements = vec![];
     loop {
