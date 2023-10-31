@@ -6,6 +6,8 @@ use bitvec::prelude::*;
 
 use crate::{PerCodecData, PerCodecError, PerCodecErrorCause};
 
+use std::convert::TryFrom;
+
 #[allow(unused)]
 use decode_internal::*;
 
@@ -108,6 +110,82 @@ pub fn decode_integer_common(
     data.dump();
 
     Ok((value, extended_value))
+}
+
+// Common function to decode a REAL value
+pub(crate) fn decode_real_common(
+    data: &mut PerCodecData,
+    aligned: bool,
+) -> Result<f64, PerCodecError> {
+    // ITU X.691 section 15 notes that this value starts with a length
+    // determinant. For now, UPER and APER are identical other than
+    // determining alignment for the length determinant.
+    let length = decode_length_determinent_common(data, None, None, false, aligned)?;
+    let decoded_value: f64;
+
+    // ITU X.691 section 15 largely refers to ITU X.690 section 8.5 for REAL
+    // encoding and decoding.
+    if length == 0 {
+        // ITU X.690 section 8.5.2: if there is no content, then return +0.
+        decoded_value = 0.;
+    } else {
+        let first_byte = data.decode_bits_as_integer(8, false)?;
+        if let Ok(first_byte) = u8::try_from(first_byte) {
+            // ITU X.690 section 8.5.6: determine whether this is a special
+            // value. If not, figure out which base this is encoded with.
+            // Section 8.5.9 covers special values, section 8.5.7 covers
+            // binary encoding of base 2/8/16, and section 8.5.8 covers
+            // ISO 6093 encoding of base 10 values.
+            match first_byte {
+                super::NEGATIVE_ZERO => {
+                    decoded_value = -0.;
+                }
+                super::INFINITY => {
+                    decoded_value = f64::INFINITY;
+                }
+                super::NEGATIVE_INFINITY => {
+                    decoded_value = f64::NEG_INFINITY;
+                }
+                super::NOT_A_NUMBER => {
+                    decoded_value = f64::NAN;
+                }
+                super::BASE_10_NR1 | super::BASE_10_NR2 | super::BASE_10_NR3 => {
+                    // Subtract 1 from length, since first byte was metadata.
+                    // We currently decode ISO 6093 NR1, NR2, and NR3 all using
+                    // the same underlying approach.
+                    log::trace!("Decoding REAL as a base 10 value using ISO 6093 with {} bytes", length - 1);
+                    decoded_value = decode_real_as_decimal(data, length - 1)?;
+                }
+                first_byte => {
+                    if real_uses_binary(first_byte) {
+                        // Subtract 1 from length, since first byte was metadata.
+                        // We currently decode base 2, base 8, and base 16 all
+                        // using the same underlying approach.
+                        log::trace!("Decoding REAL as a binary value with {} bytes", length - 1);
+                        decoded_value = decode_real_as_binary(first_byte, data, length - 1)?;
+                    } else {
+                        // TODO: Change cause to InvalidValue once it is supported
+                        return Err(PerCodecError::new(
+                            PerCodecErrorCause::Generic,
+                            format!(
+                                "Can only decode REAL values with reserved values, binary-encoded values, or base 10 values (encoded first byte: {:b})",
+                                first_byte
+                            )
+                        ));
+                    }
+
+                }
+            }
+        } else {
+            return Err(PerCodecError::new(
+                PerCodecErrorCause::Generic, 
+                "Could not convert i128 with 8 data bits into a u8; please contact the developers"
+            ));
+        }
+    }
+
+    data.dump();
+    Ok(decoded_value)
 }
 
 // Common function to decode a Boolean
@@ -292,4 +370,70 @@ pub(crate) fn decode_string_common(
     std::str::from_utf8(&bytes)
         .map(|s| s.to_string())
         .map_err(|_| PerCodecError::new(PerCodecErrorCause::Generic, "UTF decode failed"))
+}
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    #[test]
+    fn test_decode_real_base_2() {
+        let data = &[0x03, 0x80, 0xFB, 0x05];
+        let mut codec_data = PerCodecData::from_slice_aper(data);
+        let value = decode_real_common(&mut codec_data, true);
+        assert!(value.is_ok(), "{:#?}", value.err().unwrap());
+        let value = value.unwrap();
+        assert_eq!(value, 0.15625);
+    }
+
+    #[test]
+    fn test_decode_real_base_8() {
+        let data = &[0x03, 0x90, 0xFE, 0x0A];
+        let mut codec_data = PerCodecData::from_slice_aper(data);
+        let value = decode_real_common(&mut codec_data, true);
+        assert!(value.is_ok(), "{:#?}", value.err().unwrap());
+        let value = value.unwrap();
+        assert_eq!(value, 0.15625);
+    }
+
+    #[test]
+    fn test_decode_real_base_16() {
+        let data = &[0x03, 0xAC, 0xFE, 0x05];
+        let mut codec_data = PerCodecData::from_slice_aper(data);
+        let value = decode_real_common(&mut codec_data, true);
+        assert!(value.is_ok(), "{:#?}", value.err().unwrap());
+        let value = value.unwrap();
+        assert_eq!(value, 0.15625);
+    }
+
+    #[test]
+    fn test_decode_real_base_10_nr1() {
+        let data = &[0x04, super::super::BASE_10_NR1, b'1', b'2', b'3'];
+        let mut codec_data = PerCodecData::from_slice_aper(data);
+        let value = decode_real_common(&mut codec_data, true);
+        assert!(value.is_ok(), "{:#?}", value.err().unwrap());
+        let value = value.unwrap();
+        assert_eq!(value, 123.0f64);
+    }
+
+    #[test]
+    fn test_decode_real_base_10_nr2() {
+        let data = &[0x08, super::super::BASE_10_NR2, b'0', b'.', b'1', b'5', b'6', b'2', b'5'];
+        let mut codec_data = PerCodecData::from_slice_aper(data);
+        let value = decode_real_common(&mut codec_data, true);
+        assert!(value.is_ok(), "{:#?}", value.err().unwrap());
+        let value = value.unwrap();
+        assert_eq!(value, 0.15625);
+    }
+
+    #[test]
+    fn test_decode_real_base_10_nr3() {
+        let data = &[0x0A, super::super::BASE_10_NR2, b'1', b'.', b'5', b'6', b'2', b'5', b'e', b'-', b'1'];
+        let mut codec_data = PerCodecData::from_slice_aper(data);
+        let value = decode_real_common(&mut codec_data, true);
+        assert!(value.is_ok(), "{:#?}", value.err().unwrap());
+        let value = value.unwrap();
+        assert_eq!(value, 0.15625);
+    }
 }

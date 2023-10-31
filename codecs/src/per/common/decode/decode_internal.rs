@@ -1,5 +1,5 @@
 //! Internal decode functions.
-use std::convert::TryInto;
+use std::convert::{TryInto, TryFrom};
 
 use crate::{PerCodecData, PerCodecError, PerCodecErrorCause};
 
@@ -228,6 +228,180 @@ pub(super) fn decode_constrained_whole_number_common(
                 Ok(lb)
             }
         }
+    }
+}
+
+pub(super) fn real_uses_binary(first_byte: u8) -> bool {
+    first_byte & 0b1000_0000 == 0b1000_0000
+}
+
+// ITU X.690 section 8.5.7.1: get the value of the sign
+fn get_sign(first_byte: u8) -> i8 {
+    if first_byte & 0b0100_0000 == 0b0100_0000 { -1 } else { 1 }
+}
+
+// ITU X.690 section 8.5.7.2: get the value of the base used for encoding
+fn get_base(first_byte: u8) -> Result<u8, PerCodecError> {
+    // Get the log_2(2) value
+    match first_byte & 0b0011_0000 {
+        0b0000_0000 => {
+            Ok(2)
+        }
+        0b0001_0000 => {
+            Ok(8)
+        }
+        0b0010_0000 => {
+            Ok(16)
+        }
+        0b0011_0000 => {
+            // TODO: Change cause to InvalidValue once it is supported
+            Err(PerCodecError::new(PerCodecErrorCause::Generic, "Binary PER decoding of REAL encountered an unexpected reserved value"))
+        }
+        _ => {
+            // TODO: Change cause to InvalidValue once it is supported
+            Err(PerCodecError::new(PerCodecErrorCause::Generic, "Binary PER decoding of REAL encountered a software issue"))
+        }
+    }
+}
+
+// ITU X.690 section 8.5.7.3: get the value of the scale factor
+fn get_scaling_factor(first_byte: u8) -> u8 {
+    // Extract the exponent of the scaling factor
+    let scaling_factor_exp = ((first_byte & 0b0000_1100) >> 2) as u32;
+    // Raising 2^x is the is the same as 1 << x
+    1u8 << scaling_factor_exp
+}
+
+// ITU X.690 section 8.5.7.4: get the length in bytes of the encoded exponent
+fn get_exponent_length(first_byte: u8, data: &mut PerCodecData, total_length: usize) -> Result<(usize, usize), PerCodecError> {
+    let format_value = first_byte & 0b0000_0011;
+    if first_byte & 0b0000_0011 == 0b0000_0011 {
+        let second_byte = data.decode_bits_as_integer(8, false)?;
+        if let Ok(second_byte) = u8::try_from(second_byte) {
+            // The second byte contains the number of bytes that
+            // the exponent will use
+            let exponent_length: usize = second_byte.into();
+            let total_length = total_length - 1;
+
+            // Verify that the exponent value fits in the expected total length
+            if exponent_length > total_length {
+                return Err(PerCodecError::new(PerCodecErrorCause::Generic, "Encoded exponent length too long for reported REAL encoding size"));
+            }
+            let total_length = total_length - exponent_length;
+            Ok((exponent_length, total_length))
+        } else {
+            return Err(PerCodecError::new(
+                PerCodecErrorCause::Generic,
+                "Could not convert i128 with 8 data bits into a u8; please contact the developers"
+            ));
+        }
+    } else {
+        // The number of bytes in the exponent happens to be the
+        // value of the enumerated format + 1 for all values except
+        // the last one.
+        let exponent_length: usize = (format_value + 1).into();
+
+        // Verify that the exponent value fits in the expected total length
+        if exponent_length > total_length {
+            return Err(PerCodecError::new(PerCodecErrorCause::Generic, "Encoded exponent length too long for reported REAL encoding size"));
+        }
+        let total_length = total_length - exponent_length;
+
+        Ok((exponent_length, total_length))
+    }
+}
+
+// ITU X.690 section 8.5.7.4: get the value of the exponent
+fn get_exponent(first_byte: u8, data: &mut PerCodecData, remaining_length: usize) -> Result<(f64, usize), PerCodecError> {
+    let (exponent_length, remaining_length) = get_exponent_length(first_byte, data, remaining_length)?;
+    let exponent_bytes = data.get_bytes(exponent_length)?;
+    let mut exponent = 0.0f64;
+    for exponent_byte in exponent_bytes {
+        // This is the equivalent of bit-shifting the existing
+        // unsigned integer value to the left by 8 and putting
+        // the new value in the least significant byte. The
+        // difference is that this is being done over a floating
+        // point value. Note that the exponent can be negative,
+        // so the bytes are encoded as two's complement.
+        exponent = exponent * 256.0f64 + (exponent_byte as i8) as f64;
+    }
+    Ok((exponent, remaining_length))
+}
+
+// ITU X.690 section 8.5.7.4: get the value of the mantissa
+fn get_mantissa_input(data: &mut PerCodecData, remaining_length: usize) -> Result<f64, PerCodecError> {
+    let mantissa_input_bytes = data.get_bytes(remaining_length)?;
+    let mut mantissa_input = 0.0f64;
+    for mantissa_input_byte in mantissa_input_bytes {
+        // This is the equivalent of bit-shifting the existing
+        // unsigned integer value to the left by 8 and putting
+        // the new value in the least significant byte. The
+        // difference is that this is being done over a floating
+        // point value.
+        mantissa_input = mantissa_input * 256.0f64 + mantissa_input_byte as f64;
+    }
+    Ok(mantissa_input)
+}
+
+// ITU X.690 section 8.5.7: decode the binary value
+pub(super) fn decode_real_as_binary(first_byte: u8, data: &mut PerCodecData, length: usize) -> Result<f64, PerCodecError> {
+    let sign = get_sign(first_byte) as f64;
+    let base = get_base(first_byte)? as f64;
+    let scaling_factor = get_scaling_factor(first_byte) as f64;
+    let (exponent, remaining_length) = get_exponent(first_byte, data, length)?;
+    let mantissa_input = get_mantissa_input(data, remaining_length)?;
+    log::trace!(
+        "REAL binary components: Sign: {sign}, Base: {base}, Scaling factor: {scaling_factor}, Exponent: {exponent}, N: {mantissa_input}"
+    );
+
+    // From the spec: M = S x N x 2^F
+    let mantissa = sign * mantissa_input * scaling_factor;
+
+    // The REAL value is mantissa * base^exponent
+    Ok(mantissa * base.powf(exponent))
+}
+
+// ITU X.690 section 8.5.8: decode the ISO 6093-encoded value
+pub(super) fn decode_real_as_decimal(data: &mut PerCodecData, remaining_length: usize) -> Result<f64, PerCodecError> {
+    // Decode as base 10 NR1, NR2, or NR3
+    if let Ok(decoded_bytes) = data.get_bytes(remaining_length) {
+        if let Ok(decoded_str) = String::from_utf8(decoded_bytes) {
+
+            // Replace commas separators with dot separators.
+            // The comma is allowed in the ISO 6093 spec, but
+            // it cannot be used for conversion in Rust's parse.
+            let decoded_str: String = decoded_str.chars()
+            .map(|x| match x {
+                ',' => '.',
+                _ => x
+            }).collect();
+
+            // The parse function handles NR1, NR2, and NR3 encoding
+            if let Ok(parsed_value) = decoded_str.parse::<f64>() {
+                return Ok(parsed_value);
+            } else {
+                return Err(PerCodecError::new(
+                    PerCodecErrorCause::Generic,
+                    format!(
+                        "Invalid REAL encoded string detected: {}",
+                        decoded_str,
+                    )
+                ));
+            }
+        } else {
+            return Err(PerCodecError::new(
+                PerCodecErrorCause::Generic,
+                "Unable to decode REAL value as utf8 string"
+            ));
+        }
+    } else {
+        return Err(PerCodecError::new(
+            PerCodecErrorCause::Generic,
+            format!(
+                "Unable to get {} bytes to decode REAL value",
+                remaining_length,
+            )
+        ));
     }
 }
 

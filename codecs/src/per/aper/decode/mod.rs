@@ -86,10 +86,9 @@ pub fn decode_bool(data: &mut PerCodecData) -> Result<bool, PerCodecError> {
 /// Decode a Real
 ///
 /// Decode a Boolean value. Returns the decoded value as a `f64`.
-pub fn decode_real(_data: &mut PerCodecData) -> Result<f64, PerCodecError> {
+pub fn decode_real(data: &mut PerCodecData) -> Result<f64, PerCodecError> {
     log::trace!("decode_real:");
-
-    todo!()
+    decode_real_common(data, true)
 }
 
 /// Decode an Enumerated Value

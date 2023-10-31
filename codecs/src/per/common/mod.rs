@@ -11,3 +11,12 @@ pub(crate) fn bytes_needed_for_range(range: i128) -> u8 {
     }
     bytes_needed
 }
+
+// See X.690 section 8.5.9 for details on special REAL values
+const NEGATIVE_ZERO: u8 = 0b0100_0011;
+const INFINITY: u8 = 0b0100_0000;
+const NEGATIVE_INFINITY: u8 = 0b0100_0001;
+const NOT_A_NUMBER: u8 = 0b0100_0010;
+const BASE_10_NR1: u8 = 0b0000_0001;
+const BASE_10_NR2: u8 = 0b0000_0010;
+const BASE_10_NR3: u8 = 0b0000_0011;
