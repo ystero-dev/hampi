@@ -3,7 +3,9 @@ use std::collections::BTreeMap;
 use crate::error::Error;
 
 use crate::parser::asn::structs::types::{
-    constructed::{Asn1TypeChoice, Asn1TypeSequence, Asn1TypeSequenceOf, Component, SeqComponent},
+    constructed::{
+        AdditionGroupOrComponent, Asn1TypeChoice, Asn1TypeSequence, Asn1TypeSequenceOf, Component,
+    },
     Asn1ConstructedType, Asn1Type, Asn1TypeKind, Asn1TypeReference,
 };
 
@@ -92,12 +94,9 @@ fn resolve_sequence_type(
     resolver: &mut Resolver,
 ) -> Result<Asn1ResolvedType, Error> {
     let mut components = vec![];
-    // FIXME: implement for additional_components too
-    let mut all_components = sequence.root_components.clone();
-    for addition in &sequence.additions {
-        all_components.extend(addition.components.clone());
-    }
-    for c in all_components {
+
+    eprintln!("sequence: {:#?}", sequence);
+    for c in &sequence.root_components {
         let ty = match resolve_type(&c.component.ty, resolver) {
             Ok(ty) => ty,
             Err(_e) => {
@@ -117,11 +116,68 @@ fn resolve_sequence_type(
         components.push(seq_component);
     }
 
+    let additions = if sequence.additions.is_empty() {
+        None
+    } else {
+        let mut additions = vec![];
+        for addition in &sequence.additions {
+            match addition {
+                AdditionGroupOrComponent::AdditionGroup(ref group) => {
+                    for c in &group.components {
+                        let ty = match resolve_type(&c.component.ty, resolver) {
+                            Ok(ty) => ty,
+                            Err(_e) => {
+                                return resolve_sequence_classfield_components(sequence, resolver);
+                            }
+                        };
+                        let component = ResolvedComponent {
+                            id: c.component.id.clone(),
+                            ty,
+                        };
+                        let seq_component = ResolvedSeqComponent {
+                            component,
+                            optional: c.optional || c.default.is_some(),
+                            class_field_type: None,
+                            key_field: false,
+                        };
+                        additions.push(seq_component);
+                    }
+                }
+                AdditionGroupOrComponent::Component(ref c) => {
+                    let ty = match resolve_type(&c.component.ty, resolver) {
+                        Ok(ty) => ty,
+                        Err(_e) => {
+                            return resolve_sequence_classfield_components(sequence, resolver);
+                        }
+                    };
+                    let component = ResolvedComponent {
+                        id: c.component.id.clone(),
+                        ty,
+                    };
+                    let seq_component = ResolvedSeqComponent {
+                        component,
+                        optional: c.optional || c.default.is_some(),
+                        class_field_type: None,
+                        key_field: false,
+                    };
+                    additions.push(seq_component);
+                }
+            }
+        }
+
+        if additions.is_empty() {
+            None
+        } else {
+            Some(additions)
+        }
+    };
+
     Ok(Asn1ResolvedType::Constructed(
         ResolvedConstructedType::Sequence {
             components,
             extensible: sequence.extensible,
             name: None,
+            additions,
         },
     ))
 }
@@ -153,13 +209,9 @@ fn resolve_sequence_classfield_components(
 ) -> Result<Asn1ResolvedType, Error> {
     let mut all_components = vec![];
     all_components.extend(seq.root_components.clone());
-    all_components.extend(
-        seq.additions
-            .clone()
-            .iter()
-            .flat_map(|a| a.components.clone())
-            .collect::<Vec<SeqComponent>>(),
-    );
+
+    // TODO: Sequence additions as sequence classfield components.
+
     let all_components = all_components
         .iter()
         .map(|c| c.component.clone())
@@ -192,6 +244,7 @@ fn resolve_sequence_classfield_components(
             resolve_seq_components_for_objects(&all_components, &set_reference, objects, resolver)?;
         Ok(Asn1ResolvedType::Constructed(
             ResolvedConstructedType::Sequence {
+                additions: None,
                 name: None,
                 extensible: seq.extensible,
                 components,
@@ -301,4 +354,51 @@ fn get_seq_component_for_object_set(
         }
     }
     Ok(types)
+}
+
+#[cfg(test)]
+mod tests {
+
+    use super::{resolve_constructed_type, Asn1ResolvedType, ResolvedConstructedType};
+    use crate::parser::asn::types::parse_type;
+    use crate::resolver::Resolver;
+    use crate::tokenizer::tokenize;
+
+    #[test]
+    fn e2sm_kpm_with_seq_additions() {
+        let measurement_labels = r#" SEQUENCE {
+	min						ENUMERATED {true, ...}				OPTIONAL,
+	max						ENUMERATED {true, ...}				OPTIONAL,
+	avg						ENUMERATED {true, ...}				OPTIONAL,
+	...,
+	ssbIndex					INTEGER (1.. 65535, ...)			OPTIONAL,
+	nonGoB-BFmode-Index	INTEGER (1.. 65535, ...)			OPTIONAL,
+	mIMO-mode-Index		INTEGER (1.. 2, ...)					OPTIONAL
+}"#;
+        let reader = std::io::BufReader::new(std::io::Cursor::new(measurement_labels));
+        let tokens = tokenize(reader);
+        assert!(tokens.is_ok());
+        let tokens = tokens.unwrap();
+
+        let ty = parse_type(&tokens);
+        assert!(ty.is_ok(), "{}", ty.err().unwrap());
+
+        let (ty, _) = ty.unwrap();
+        let mut resolver = Resolver::new();
+        let resolved = resolve_constructed_type(&ty, &mut resolver);
+        assert!(resolved.is_ok(), "{}", resolved.err().unwrap());
+
+        let resolved = resolved.unwrap();
+        if let Asn1ResolvedType::Constructed(ResolvedConstructedType::Sequence {
+            ref components,
+            ..
+        }) = resolved
+        {
+            assert!(
+                components.len() == 3,
+                "expected 3: actual {}",
+                components.len()
+            );
+        };
+    }
 }

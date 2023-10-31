@@ -7,7 +7,10 @@ use crate::parser::utils::{expect_keyword, expect_one_of_keywords, expect_token}
 
 use crate::parser::asn::{
     structs::types::{
-        constructed::{Asn1TypeSequence, Asn1TypeSequenceOf, SeqAdditionGroup, SeqComponent},
+        constructed::{
+            AdditionGroupOrComponent, Asn1TypeSequence, Asn1TypeSequenceOf, SeqAdditionGroup,
+            SeqComponent,
+        },
         Asn1ConstructedType, Asn1TypeKind,
     },
     types::{constraints::parse_constraint, parse_type},
@@ -51,8 +54,12 @@ fn parse_sequence_type(tokens: &[Token]) -> Result<(Asn1TypeKind, usize), Error>
             Err(_) => (None, 0),
         };
 
-        if let Some(root_comp) = component {
-            root_components.push(root_comp);
+        if let Some(comp) = component {
+            if ext_marker_found < 1 {
+                root_components.push(comp);
+            } else {
+                additions.push(AdditionGroupOrComponent::Component(comp));
+            }
         }
         consumed += component_consumed;
 
@@ -63,7 +70,7 @@ fn parse_sequence_type(tokens: &[Token]) -> Result<(Asn1TypeKind, usize), Error>
                 let (ext_group, ext_group_consumed) =
                     parse_seq_addition_group(&tokens[consumed..])?;
                 consumed += ext_group_consumed;
-                additions.push(ext_group);
+                additions.push(AdditionGroupOrComponent::AdditionGroup(ext_group));
             } else {
                 return Err(parse_error!(
                     "Addition groups can only be added between first and second extension markers!"
@@ -293,8 +300,8 @@ mod tests {
             ParseSequenceTestCase {
                 input: " SEQUENCE { a INTEGER, b BOOLEAN OPTIONAL, ..., c CHOICE { d INTEGER, e Enum}} ",
                 success: true,
-                root_components_count: 3,
-                additional_components_count: 0,
+                root_components_count: 2,
+                additional_components_count: 1,
                 consumed_tokens: 21,
             },
             ParseSequenceTestCase {
@@ -328,8 +335,8 @@ mod tests {
             ParseSequenceTestCase {
                 input: " SEQUENCE { a INTEGER, b BOOLEAN OPTIONAL, ..., [[  d INTEGER, e Enum ]], ...,  f INTEGER  } ",
                 success: true,
-                root_components_count: 3,
-                additional_components_count: 1,
+                root_components_count: 2,
+                additional_components_count: 2,
                 consumed_tokens: 24,
             },
             ParseSequenceTestCase {
