@@ -18,6 +18,7 @@ impl ResolvedConstructedType {
         if let ResolvedConstructedType::Sequence {
             ref components,
             ref extensible,
+            ref additions,
             ..
         } = self
         {
@@ -70,6 +71,10 @@ impl ResolvedConstructedType {
                     #fld_attr_tokens #fld_tokens
                 });
             }
+
+            if additions.is_some() {
+                log::warn!("Fields for some sequence additions may not be generated!");
+            };
 
             let mut ty_tokens = quote! { type = "SEQUENCE", extensible = #extensible };
 

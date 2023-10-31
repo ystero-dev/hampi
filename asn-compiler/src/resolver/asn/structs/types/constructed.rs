@@ -13,6 +13,7 @@ pub(crate) enum ResolvedConstructedType {
         name: Option<String>,
         extensible: bool,
         components: Vec<ResolvedSeqComponent>,
+        additions: Option<Vec<ResolvedSeqComponent>>,
     },
     SequenceOf {
         name: Option<String>,

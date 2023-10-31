@@ -29,6 +29,21 @@ impl SeqComponent {
 }
 
 #[derive(Debug, Clone)]
+pub(crate) enum AdditionGroupOrComponent {
+    Component(SeqComponent),
+    AdditionGroup(SeqAdditionGroup),
+}
+
+impl AdditionGroupOrComponent {
+    pub(crate) fn dependent_references(&self) -> Vec<String> {
+        match self {
+            Self::Component(ref c) => c.dependent_references(),
+            Self::AdditionGroup(ref g) => g.dependent_references(),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub(crate) struct SeqAdditionGroup {
     pub(crate) _version: Option<String>,
     pub(crate) components: Vec<SeqComponent>,
@@ -61,7 +76,7 @@ impl ChoiceAdditionGroup {
 #[derive(Debug, Clone)]
 pub(crate) struct Asn1TypeSequence {
     pub(crate) root_components: Vec<SeqComponent>,
-    pub(crate) additions: Vec<SeqAdditionGroup>,
+    pub(crate) additions: Vec<AdditionGroupOrComponent>,
     pub(crate) extensible: bool,
 }
 
