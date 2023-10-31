@@ -88,10 +88,9 @@ pub fn encode_bool(data: &mut PerCodecData, value: bool) -> Result<(), PerCodecE
 /// Encode a REAL Value
 ///
 /// Encodes a boolean value into the passed `PerCodecData` structure.
-pub fn encode_real(_data: &mut PerCodecData, value: f64) -> Result<(), PerCodecError> {
+pub fn encode_real(data: &mut PerCodecData, value: f64) -> Result<(), PerCodecError> {
     log::trace!("encode_real: {}", value);
-
-    todo!()
+    encode_real_common(data, value, true)
 }
 
 /// Encode an ENUMERATED Value
