@@ -67,6 +67,13 @@ pub(super) fn encode_constrained_whole_number_common(
     value: i128,
     aligned: bool,
 ) -> Result<(), PerCodecError> {
+    log::trace!(
+        "encode_constrained_whole_number: {}, {}, {}, {}",
+        lb,
+        ub,
+        value,
+        aligned
+    );
     if value < lb {
         return Err(PerCodecError::new(
             PerCodecErrorCause::Generic,
@@ -117,7 +124,12 @@ pub(super) fn encode_constrained_whole_number_common(
         } else {
             let bytes_needed_for_range = crate::per::common::bytes_needed_for_range(range) as i128;
             let bytes = value.to_be_bytes();
-            let first_non_zero = bytes.iter().position(|x| *x != 0).unwrap_or(16);
+            let first_non_zero = if value > 0 {
+                bytes.iter().position(|x| *x != 0).unwrap_or(16)
+            } else {
+                // If value is '0' we need to encode the length value as '1'
+                15
+            };
             encode_constrained_whole_number_common(
                 data,
                 1,
@@ -286,5 +298,14 @@ mod tests {
         let value = 0x10203040;
         encode_constrained_whole_number_common(&mut data, 0, 4294967295, value, true).unwrap();
         assert_eq!(data.into_bytes(), [0xC0, 0x10, 0x20, 0x30, 0x40]);
+    }
+
+    #[test]
+    fn encode_constrained_whole_number_0_in_0_4294967295_aligned() {
+        let mut data = PerCodecData::new_aper();
+
+        let value = 0;
+        let result = encode_constrained_whole_number_common(&mut data, 0, 4294967295, value, true);
+        assert!(result.is_ok(), "{}", result.err().unwrap());
     }
 }
