@@ -1,8 +1,12 @@
+#![allow(dead_code, unreachable_patterns, non_camel_case_types)]
+
 use criterion::{criterion_group, criterion_main, Criterion};
 
-use asn1_codecs::aper::{AperCodec, AperCodecData};
-mod ngap;
-use ngap::NGAP_PDU;
+use asn1_codecs::{aper::AperCodec, PerCodecData};
+
+mod ngap {
+    include!(concat!(env!("OUT_DIR"), "/ngap.rs"));
+}
 
 pub fn ngap_decode_bench(c: &mut Criterion) {
     let ngap_data = hex::decode(
@@ -11,8 +15,8 @@ pub fn ngap_decode_bench(c: &mut Criterion) {
 
     c.bench_function("NGAP_decode", |b| {
         b.iter(|| {
-            let mut codec_data = AperCodecData::from_slice(&ngap_data);
-            let _ = NGAP_PDU::decode(&mut codec_data).unwrap();
+            let mut codec_data = PerCodecData::from_slice_aper(&ngap_data);
+            let _ = ngap::NGAP_PDU::aper_decode(&mut codec_data).unwrap();
         });
     });
 }
