@@ -153,7 +153,10 @@ pub(crate) fn decode_real_common(
                     // Subtract 1 from length, since first byte was metadata.
                     // We currently decode ISO 6093 NR1, NR2, and NR3 all using
                     // the same underlying approach.
-                    log::trace!("Decoding REAL as a base 10 value using ISO 6093 with {} bytes", length - 1);
+                    log::trace!(
+                        "Decoding REAL as a base 10 value using ISO 6093 with {} bytes",
+                        length - 1
+                    );
                     decoded_value = decode_real_as_decimal(data, length - 1)?;
                 }
                 first_byte => {
@@ -173,13 +176,12 @@ pub(crate) fn decode_real_common(
                             )
                         ));
                     }
-
                 }
             }
         } else {
             return Err(PerCodecError::new(
-                PerCodecErrorCause::Generic, 
-                "Could not convert i128 with 8 data bits into a u8; please contact the developers"
+                PerCodecErrorCause::Generic,
+                "Could not convert i128 with 8 data bits into a u8; please contact the developers",
             ));
         }
     }
@@ -253,10 +255,8 @@ pub fn decode_bitstring_common(
         };
 
         if length > 0 {
-            if length > 16 {
-                if aligned {
-                    data.decode_align()?;
-                }
+            if length > 16 && aligned {
+                data.decode_align()?;
             }
             bv.extend(data.get_bitvec(length)?);
         }
@@ -304,10 +304,8 @@ pub fn decode_octetstring_common(
         };
 
         if length > 0 {
-            if length > 2 {
-                if aligned {
-                    data.decode_align()?;
-                }
+            if length > 2 && aligned {
+                data.decode_align()?;
             }
             octets.extend(data.get_bytes(length)?);
         }
@@ -346,10 +344,8 @@ pub(crate) fn decode_string_common(
     };
 
     let length = length * bits_per_char;
-    if length > 16 {
-        if aligned {
-            data.decode_align()?;
-        }
+    if length > 16 && aligned {
+        data.decode_align()?;
     }
     let bits = data.get_bitvec(length)?;
     let bytes = bits
@@ -360,8 +356,7 @@ pub(crate) fn decode_string_common(
             for _ in 0..howmany {
                 v.insert(0, false);
             }
-            let o = v.load_be::<u8>();
-            o
+            v.load_be::<u8>()
         })
         .collect::<Vec<u8>>();
 
@@ -419,7 +414,17 @@ mod tests {
 
     #[test]
     fn test_decode_real_base_10_nr2() {
-        let data = &[0x08, super::super::BASE_10_NR2, b'0', b'.', b'1', b'5', b'6', b'2', b'5'];
+        let data = &[
+            0x08,
+            super::super::BASE_10_NR2,
+            b'0',
+            b'.',
+            b'1',
+            b'5',
+            b'6',
+            b'2',
+            b'5',
+        ];
         let mut codec_data = PerCodecData::from_slice_aper(data);
         let value = decode_real_common(&mut codec_data, true);
         assert!(value.is_ok(), "{:#?}", value.err().unwrap());
@@ -429,7 +434,19 @@ mod tests {
 
     #[test]
     fn test_decode_real_base_10_nr3() {
-        let data = &[0x0A, super::super::BASE_10_NR2, b'1', b'.', b'5', b'6', b'2', b'5', b'e', b'-', b'1'];
+        let data = &[
+            0x0A,
+            super::super::BASE_10_NR2,
+            b'1',
+            b'.',
+            b'5',
+            b'6',
+            b'2',
+            b'5',
+            b'e',
+            b'-',
+            b'1',
+        ];
         let mut codec_data = PerCodecData::from_slice_aper(data);
         let value = decode_real_common(&mut codec_data, true);
         assert!(value.is_ok(), "{:#?}", value.err().unwrap());

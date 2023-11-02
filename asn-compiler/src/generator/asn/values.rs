@@ -44,19 +44,17 @@ impl Asn1ResolvedValue {
         gen: &mut Generator,
     ) -> Result<Option<TokenStream>, Error> {
         if let ResolvedBaseValue::Integer(i) = base {
-            if let Asn1ResolvedType::Base(ref b) = i.typeref {
-                if let ResolvedBaseType::Integer(typ) = b {
-                    let const_type = gen.to_inner_type(typ.bits, typ.signed);
-                    let const_id = gen.to_const_ident(name);
-                    let vis = gen.get_visibility_tokens();
-                    let val = Literal::i128_unsuffixed(i.value);
-                    let tokens = quote! {
-                        #vis const #const_id : #const_type = #val;
-                    };
-
-                    return Ok(Some(tokens));
+            if let Asn1ResolvedType::Base(ResolvedBaseType::Integer(ref typ)) = i.typeref {
+                let const_type = gen.to_inner_type(typ.bits, typ.signed);
+                let const_id = gen.to_const_ident(name);
+                let vis = gen.get_visibility_tokens();
+                let val = Literal::i128_unsuffixed(i.value);
+                let tokens = quote! {
+                    #vis const #const_id : #const_type = #val;
                 };
-            }
+
+                return Ok(Some(tokens));
+            };
         };
         Ok(None)
     }

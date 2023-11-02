@@ -59,7 +59,7 @@ pub(crate) enum Asn1ResolvedValue {
 impl Asn1ResolvedValue {
     pub(crate) fn get_base_integer_value(&self) -> Option<i128> {
         match self {
-            Self::Base(ResolvedBaseValue::Integer(ref i)) => Some(i.value as i128),
+            Self::Base(ResolvedBaseValue::Integer(ref i)) => Some(i.value),
             Self::Base(ResolvedBaseValue::ObjectIdentifier(ref i)) => {
                 Some(i.value.iter().sum::<u32>() as i128)
             }

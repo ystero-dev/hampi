@@ -1,5 +1,5 @@
 //! Internal decode functions.
-use std::convert::{TryInto, TryFrom};
+use std::convert::{TryFrom, TryInto};
 
 use crate::{PerCodecData, PerCodecError, PerCodecErrorCause};
 
@@ -179,55 +179,53 @@ pub(super) fn decode_constrained_whole_number_common(
 
     let range = ub - lb + 1;
     if range <= 0 {
-        Err(PerCodecError::new(
+        return Err(PerCodecError::new(
             PerCodecErrorCause::Generic,
             "Range for the Integer Constraint is negative.",
-        ))
-    } else {
-        if aligned {
-            let value = if range < 256 {
-                let bits = match range as u8 {
-                    0..=1 => 0,
-                    2 => 1,
-                    3..=4 => 2,
-                    5..=8 => 3,
-                    9..=16 => 4,
-                    17..=32 => 5,
-                    33..=64 => 6,
-                    65..=128 => 7,
-                    129..=255 => 8,
-                };
-                data.decode_bits_as_integer(bits, false)?
-            } else if range == 256 {
-                data.decode_align()?;
-                data.decode_bits_as_integer(8, false)?
-            } else if range <= 65536 {
-                data.decode_align()?;
-                data.decode_bits_as_integer(16, false)?
-            } else {
-                let bytes_needed = crate::per::common::bytes_needed_for_range(range);
-                log::trace!("bytes_needed : {}", bytes_needed);
-                let length = decode_constrained_length_determinent_common(
-                    data,
-                    1,
-                    bytes_needed as usize,
-                    aligned,
-                )?;
-                data.decode_align()?;
-                data.decode_bits_as_integer(length * 8, false)?
-            };
+        ));
+    }
 
-            Ok(value + lb)
+    if aligned {
+        let value = if range < 256 {
+            let bits = match range as u8 {
+                0..=1 => 0,
+                2 => 1,
+                3..=4 => 2,
+                5..=8 => 3,
+                9..=16 => 4,
+                17..=32 => 5,
+                33..=64 => 6,
+                65..=128 => 7,
+                129..=255 => 8,
+            };
+            data.decode_bits_as_integer(bits, false)?
+        } else if range == 256 {
+            data.decode_align()?;
+            data.decode_bits_as_integer(8, false)?
+        } else if range <= 65536 {
+            data.decode_align()?;
+            data.decode_bits_as_integer(16, false)?
         } else {
-            if range > 1 {
-                let leading_zeros = (range - 1).leading_zeros();
-                let bits = 128 - leading_zeros as usize;
-                let value = data.decode_bits_as_integer(bits, false)?;
-                Ok(value + lb)
-            } else {
-                Ok(lb)
-            }
-        }
+            let bytes_needed = crate::per::common::bytes_needed_for_range(range);
+            log::trace!("bytes_needed : {}", bytes_needed);
+            let length = decode_constrained_length_determinent_common(
+                data,
+                1,
+                bytes_needed as usize,
+                aligned,
+            )?;
+            data.decode_align()?;
+            data.decode_bits_as_integer(length * 8, false)?
+        };
+
+        Ok(value + lb)
+    } else if range > 1 {
+        let leading_zeros = (range - 1).leading_zeros();
+        let bits = 128 - leading_zeros as usize;
+        let value = data.decode_bits_as_integer(bits, false)?;
+        Ok(value + lb)
+    } else {
+        Ok(lb)
     }
 }
 
@@ -237,29 +235,33 @@ pub(super) fn real_uses_binary(first_byte: u8) -> bool {
 
 // ITU X.690 section 8.5.7.1: get the value of the sign
 fn get_sign(first_byte: u8) -> i8 {
-    if first_byte & 0b0100_0000 == 0b0100_0000 { -1 } else { 1 }
+    if first_byte & 0b0100_0000 == 0b0100_0000 {
+        -1
+    } else {
+        1
+    }
 }
 
 // ITU X.690 section 8.5.7.2: get the value of the base used for encoding
 fn get_base(first_byte: u8) -> Result<u8, PerCodecError> {
     // Get the log_2(2) value
     match first_byte & 0b0011_0000 {
-        0b0000_0000 => {
-            Ok(2)
-        }
-        0b0001_0000 => {
-            Ok(8)
-        }
-        0b0010_0000 => {
-            Ok(16)
-        }
+        0b0000_0000 => Ok(2),
+        0b0001_0000 => Ok(8),
+        0b0010_0000 => Ok(16),
         0b0011_0000 => {
             // TODO: Change cause to InvalidValue once it is supported
-            Err(PerCodecError::new(PerCodecErrorCause::Generic, "Binary PER decoding of REAL encountered an unexpected reserved value"))
+            Err(PerCodecError::new(
+                PerCodecErrorCause::Generic,
+                "Binary PER decoding of REAL encountered an unexpected reserved value",
+            ))
         }
         _ => {
             // TODO: Change cause to InvalidValue once it is supported
-            Err(PerCodecError::new(PerCodecErrorCause::Generic, "Binary PER decoding of REAL encountered a software issue"))
+            Err(PerCodecError::new(
+                PerCodecErrorCause::Generic,
+                "Binary PER decoding of REAL encountered a software issue",
+            ))
         }
     }
 }
@@ -273,7 +275,11 @@ fn get_scaling_factor(first_byte: u8) -> u8 {
 }
 
 // ITU X.690 section 8.5.7.4: get the length in bytes of the encoded exponent
-fn get_exponent_length(first_byte: u8, data: &mut PerCodecData, total_length: usize) -> Result<(usize, usize), PerCodecError> {
+fn get_exponent_length(
+    first_byte: u8,
+    data: &mut PerCodecData,
+    total_length: usize,
+) -> Result<(usize, usize), PerCodecError> {
     let format_value = first_byte & 0b0000_0011;
     if first_byte & 0b0000_0011 == 0b0000_0011 {
         let second_byte = data.decode_bits_as_integer(8, false)?;
@@ -285,15 +291,18 @@ fn get_exponent_length(first_byte: u8, data: &mut PerCodecData, total_length: us
 
             // Verify that the exponent value fits in the expected total length
             if exponent_length > total_length {
-                return Err(PerCodecError::new(PerCodecErrorCause::Generic, "Encoded exponent length too long for reported REAL encoding size"));
+                return Err(PerCodecError::new(
+                    PerCodecErrorCause::Generic,
+                    "Encoded exponent length too long for reported REAL encoding size",
+                ));
             }
             let total_length = total_length - exponent_length;
             Ok((exponent_length, total_length))
         } else {
-            return Err(PerCodecError::new(
+            Err(PerCodecError::new(
                 PerCodecErrorCause::Generic,
-                "Could not convert i128 with 8 data bits into a u8; please contact the developers"
-            ));
+                "Could not convert i128 with 8 data bits into a u8; please contact the developers",
+            ))
         }
     } else {
         // The number of bytes in the exponent happens to be the
@@ -303,7 +312,10 @@ fn get_exponent_length(first_byte: u8, data: &mut PerCodecData, total_length: us
 
         // Verify that the exponent value fits in the expected total length
         if exponent_length > total_length {
-            return Err(PerCodecError::new(PerCodecErrorCause::Generic, "Encoded exponent length too long for reported REAL encoding size"));
+            return Err(PerCodecError::new(
+                PerCodecErrorCause::Generic,
+                "Encoded exponent length too long for reported REAL encoding size",
+            ));
         }
         let total_length = total_length - exponent_length;
 
@@ -312,8 +324,13 @@ fn get_exponent_length(first_byte: u8, data: &mut PerCodecData, total_length: us
 }
 
 // ITU X.690 section 8.5.7.4: get the value of the exponent
-fn get_exponent(first_byte: u8, data: &mut PerCodecData, remaining_length: usize) -> Result<(f64, usize), PerCodecError> {
-    let (exponent_length, remaining_length) = get_exponent_length(first_byte, data, remaining_length)?;
+fn get_exponent(
+    first_byte: u8,
+    data: &mut PerCodecData,
+    remaining_length: usize,
+) -> Result<(f64, usize), PerCodecError> {
+    let (exponent_length, remaining_length) =
+        get_exponent_length(first_byte, data, remaining_length)?;
     let exponent_bytes = data.get_bytes(exponent_length)?;
     let mut exponent = 0.0f64;
     for exponent_byte in exponent_bytes {
@@ -329,7 +346,10 @@ fn get_exponent(first_byte: u8, data: &mut PerCodecData, remaining_length: usize
 }
 
 // ITU X.690 section 8.5.7.4: get the value of the mantissa
-fn get_mantissa_input(data: &mut PerCodecData, remaining_length: usize) -> Result<f64, PerCodecError> {
+fn get_mantissa_input(
+    data: &mut PerCodecData,
+    remaining_length: usize,
+) -> Result<f64, PerCodecError> {
     let mantissa_input_bytes = data.get_bytes(remaining_length)?;
     let mut mantissa_input = 0.0f64;
     for mantissa_input_byte in mantissa_input_bytes {
@@ -344,7 +364,11 @@ fn get_mantissa_input(data: &mut PerCodecData, remaining_length: usize) -> Resul
 }
 
 // ITU X.690 section 8.5.7: decode the binary value
-pub(super) fn decode_real_as_binary(first_byte: u8, data: &mut PerCodecData, length: usize) -> Result<f64, PerCodecError> {
+pub(super) fn decode_real_as_binary(
+    first_byte: u8,
+    data: &mut PerCodecData,
+    length: usize,
+) -> Result<f64, PerCodecError> {
     let sign = get_sign(first_byte) as f64;
     let base = get_base(first_byte)? as f64;
     let scaling_factor = get_scaling_factor(first_byte) as f64;
@@ -362,46 +386,47 @@ pub(super) fn decode_real_as_binary(first_byte: u8, data: &mut PerCodecData, len
 }
 
 // ITU X.690 section 8.5.8: decode the ISO 6093-encoded value
-pub(super) fn decode_real_as_decimal(data: &mut PerCodecData, remaining_length: usize) -> Result<f64, PerCodecError> {
+pub(super) fn decode_real_as_decimal(
+    data: &mut PerCodecData,
+    remaining_length: usize,
+) -> Result<f64, PerCodecError> {
     // Decode as base 10 NR1, NR2, or NR3
     if let Ok(decoded_bytes) = data.get_bytes(remaining_length) {
         if let Ok(decoded_str) = String::from_utf8(decoded_bytes) {
-
             // Replace commas separators with dot separators.
             // The comma is allowed in the ISO 6093 spec, but
             // it cannot be used for conversion in Rust's parse.
-            let decoded_str: String = decoded_str.chars()
-            .map(|x| match x {
-                ',' => '.',
-                _ => x
-            }).collect();
+            let decoded_str: String = decoded_str
+                .chars()
+                .map(|x| match x {
+                    ',' => '.',
+                    _ => x,
+                })
+                .collect();
 
             // The parse function handles NR1, NR2, and NR3 encoding
             if let Ok(parsed_value) = decoded_str.parse::<f64>() {
-                return Ok(parsed_value);
+                Ok(parsed_value)
             } else {
-                return Err(PerCodecError::new(
+                Err(PerCodecError::new(
                     PerCodecErrorCause::Generic,
-                    format!(
-                        "Invalid REAL encoded string detected: {}",
-                        decoded_str,
-                    )
-                ));
+                    format!("Invalid REAL encoded string detected: {}", decoded_str,),
+                ))
             }
         } else {
-            return Err(PerCodecError::new(
+            Err(PerCodecError::new(
                 PerCodecErrorCause::Generic,
-                "Unable to decode REAL value as utf8 string"
-            ));
+                "Unable to decode REAL value as utf8 string",
+            ))
         }
     } else {
-        return Err(PerCodecError::new(
+        Err(PerCodecError::new(
             PerCodecErrorCause::Generic,
             format!(
                 "Unable to get {} bytes to decode REAL value",
                 remaining_length,
-            )
-        ));
+            ),
+        ))
     }
 }
 

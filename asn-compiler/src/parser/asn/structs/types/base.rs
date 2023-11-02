@@ -9,6 +9,7 @@ pub(crate) enum NamedValue {
 /// A Structure representing ASN.1 Integer
 #[derive(Debug, Clone)]
 pub(crate) struct Asn1TypeInteger {
+    #[allow(dead_code)]
     pub(crate) named_values: Option<Vec<(String, NamedValue)>>,
 }
 

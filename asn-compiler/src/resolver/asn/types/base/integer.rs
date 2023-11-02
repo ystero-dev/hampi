@@ -10,7 +10,7 @@ impl Asn1ResolvedInteger {
     // Resolves the parsed integer to it's Resolved variant with right bit width and signedness.
     pub(super) fn resolve_integer(
         ty: &Asn1Type,
-        i: &Asn1TypeInteger,
+        _i: &Asn1TypeInteger,
         resolver: &mut Resolver,
     ) -> Result<Asn1ResolvedInteger, Error> {
         let mut base = Asn1ResolvedInteger::default();
@@ -27,11 +27,7 @@ impl Asn1ResolvedInteger {
         // Get the Values that are expected
         let value_set = ty.get_integer_valueset_from_constraint(resolver)?;
         if let Some(x) = value_set.root_values.min() {
-            if x < 0 {
-                base.signed = true
-            } else {
-                base.signed = false
-            }
+            base.signed = x < 0
         }
 
         let bit_width = if base.signed {
@@ -60,7 +56,7 @@ impl Asn1ResolvedInteger {
         };
 
         // TODO: If we have named values, They should be added to Global list of resolved definitions.
-        if i.named_values.is_some() {}
+        // if i.named_values.is_some() {}
 
         let _ = base.resolved_constraints.replace(value_set);
         Ok(base)

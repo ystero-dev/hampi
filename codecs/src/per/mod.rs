@@ -163,7 +163,7 @@ impl PerCodecData {
                     }
                     24 => {
                         let inner = self.bits[self.decode_offset..self.decode_offset + bits]
-                            .load_be::<u32>() as u32;
+                            .load_be::<u32>();
                         let inner = if self.bits[self.decode_offset] {
                             // Bit is 1 negative no.
                             inner | 0xFF000000
@@ -180,7 +180,7 @@ impl PerCodecData {
                     }
                     40 => {
                         let inner = self.bits[self.decode_offset..self.decode_offset + bits]
-                            .load_be::<u64>() as u64;
+                            .load_be::<u64>();
                         let inner = if self.bits[self.decode_offset] {
                             // Bit is 1 negative no.
                             inner | 0xFFFFFF0000000000
@@ -192,7 +192,7 @@ impl PerCodecData {
                     }
                     48 => {
                         let inner = self.bits[self.decode_offset..self.decode_offset + bits]
-                            .load_be::<u64>() as u64;
+                            .load_be::<u64>();
                         let inner = if self.bits[self.decode_offset] {
                             // Bit is 1 negative no.
                             inner | 0xFFFF000000000000
@@ -204,7 +204,7 @@ impl PerCodecData {
                     }
                     56 => {
                         let inner = self.bits[self.decode_offset..self.decode_offset + bits]
-                            .load_be::<u64>() as u64;
+                            .load_be::<u64>();
                         let inner = if self.bits[self.decode_offset] {
                             // Bit is 1 negative no.
                             inner | 0xFF00000000000000
@@ -219,11 +219,8 @@ impl PerCodecData {
                             .load_be::<u128>() as i64;
                         inner as i128
                     }
-                    128 => {
-                        let inner = self.bits[self.decode_offset..self.decode_offset + bits]
-                            .load_be::<u128>() as i128;
-                        inner as i128
-                    }
+                    128 => self.bits[self.decode_offset..self.decode_offset + bits]
+                        .load_be::<u128>() as i128,
                     _ => {
                         return Err(
                             PerCodecError::new(

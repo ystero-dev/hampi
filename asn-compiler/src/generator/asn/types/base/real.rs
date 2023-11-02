@@ -30,10 +30,10 @@ impl Asn1ResolvedReal {
         generator: &mut Generator,
         input: Option<&String>,
     ) -> Result<Ident, Error> {
-        let unique_name = if input.is_none() {
-            generator.get_unique_name("REAL")
+        let unique_name = if let Some(unique_name) = input {
+            unique_name.to_string()
         } else {
-            input.unwrap().to_string()
+            generator.get_unique_name("REAL")
         };
 
         let item = self.generate(&unique_name, generator)?;
