@@ -140,17 +140,16 @@ pub(super) fn encode_constrained_whole_number_common(
             data.align();
             data.append_bits(bytes[first_non_zero..16].view_bits());
         }
-    } else {
-        if range > 1 {
-            // Minimum number of bits required to encode length is calculated as follows
-            // Let's say range is 100 -> 0b_0000_0000_0110_0100 (Minimum number of bits needed is 7)
-            // Let's say range is 1000 -> 0b_0000_0011_1110_1000 (Minimum number of bits needed is 10)
+    } else if range > 1 {
+        // Minimum number of bits required to encode length is calculated as follows
+        // Let's say range is 100 -> 0b_0000_0000_0110_0100 (Minimum number of bits needed is 7)
+        // Let's say range is 1000 -> 0b_0000_0011_1110_1000 (Minimum number of bits needed is 10)
 
-            let leading_zeros = (range - 1).leading_zeros() as usize;
-            let bytes = value.to_be_bytes();
-            data.append_bits(&bytes.view_bits()[leading_zeros..])
-        }
+        let leading_zeros = (range - 1).leading_zeros() as usize;
+        let bytes = value.to_be_bytes();
+        data.append_bits(&bytes.view_bits()[leading_zeros..])
     }
+
     Ok(())
 }
 

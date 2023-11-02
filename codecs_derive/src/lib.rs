@@ -17,11 +17,10 @@ pub fn derive_aper_codec(input: TokenStream) -> TokenStream {
     let ast = parse_macro_input!(input as DeriveInput);
 
     let codec_params = codec_params_or_err(&ast);
-    if codec_params.is_err() {
-        codec_params.err().unwrap().to_compile_error().into()
-    } else {
-        let codec_params = codec_params.unwrap();
+    if let Ok(codec_params) = codec_params {
         per::generate_codec(&ast, &codec_params, true)
+    } else {
+        codec_params.err().unwrap().to_compile_error().into()
     }
 }
 
@@ -31,11 +30,10 @@ pub fn derive_uper_codec(input: TokenStream) -> TokenStream {
     let ast = parse_macro_input!(input as DeriveInput);
 
     let codec_params = codec_params_or_err(&ast);
-    if codec_params.is_err() {
-        codec_params.err().unwrap().to_compile_error().into()
-    } else {
-        let codec_params = codec_params.unwrap();
+    if let Ok(codec_params) = codec_params {
         per::generate_codec(&ast, &codec_params, false)
+    } else {
+        codec_params.err().unwrap().to_compile_error().into()
     }
 }
 

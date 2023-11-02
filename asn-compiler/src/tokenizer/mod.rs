@@ -547,24 +547,22 @@ fn get_number_token(chars: &[char], line: usize, begin: usize) -> Result<(Token,
             if index == chars.len() {
                 Err(Error::TokenizeError(14, line, begin))
                 // Error (Last .)
+            } else if chars[index + 1] == '.' {
+                // Atleast two .. Return this number, this becomes a parse error later on
+                Ok((
+                    Token {
+                        r#type: TokenType::NumberInt,
+                        span: Span::new(
+                            LineColumn::new(line, begin),
+                            LineColumn::new(line, begin + consumed),
+                        ),
+                        text: chars[..index + neg].iter().collect::<String>(), // include the sign as well
+                    },
+                    index + neg,
+                ))
             } else {
-                if chars[index + 1] == '.' {
-                    // Atleast two .. Return this number, this becomes a parse error later on
-                    Ok((
-                        Token {
-                            r#type: TokenType::NumberInt,
-                            span: Span::new(
-                                LineColumn::new(line, begin),
-                                LineColumn::new(line, begin + consumed),
-                            ),
-                            text: chars[..index + neg].iter().collect::<String>(), // include the sign as well
-                        },
-                        index + neg,
-                    ))
-                } else {
-                    // Error something in weird form like 3.14.159
-                    Err(Error::TokenizeError(14, line, begin))
-                }
+                // Error something in weird form like 3.14.159
+                Err(Error::TokenizeError(14, line, begin))
             }
         } else {
             unreachable!();

@@ -152,7 +152,7 @@ impl Generator {
 
     pub(crate) fn to_type_ident(&self, name: &str) -> Ident {
         Ident::new(
-            &capitalize_first(name).replace('-', "_").replace(' ', "_"),
+            &capitalize_first(name).replace(['-', ' '], "_"),
             Span::call_site(),
         )
     }

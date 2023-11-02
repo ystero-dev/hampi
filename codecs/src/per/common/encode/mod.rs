@@ -110,18 +110,20 @@ pub(crate) fn encode_real_common(
     if value == 0.0 {
         // -0.0 uses a reserved value, and +0.0 uses no data bits
         if f64::is_sign_negative(value) {
-            encoded_data.extend_from_bitslice::<u8, Msb0>(super::NEGATIVE_ZERO.to_be_bytes().as_bits());
+            encoded_data
+                .extend_from_bitslice::<u8, Msb0>(super::NEGATIVE_ZERO.to_be_bytes().as_bits());
         } else {
             // This is +0.0, so there is no need to append any data bits
         }
     } else if value == f64::INFINITY {
         encoded_data.extend_from_bitslice::<u8, Msb0>(super::INFINITY.to_be_bytes().as_bits());
     } else if value == f64::NEG_INFINITY {
-        encoded_data.extend_from_bitslice::<u8, Msb0>(super::NEGATIVE_INFINITY.to_be_bytes().as_bits());
-    } else if value == f64::NAN {
+        encoded_data
+            .extend_from_bitslice::<u8, Msb0>(super::NEGATIVE_INFINITY.to_be_bytes().as_bits());
+    } else if value.is_nan() {
         encoded_data.extend_from_bitslice::<u8, Msb0>(super::NOT_A_NUMBER.to_be_bytes().as_bits());
     } else {
-        // This is a standard non-zero value. For simplicity, always encode 
+        // This is a standard non-zero value. For simplicity, always encode
         // using base 10 encoding based on ISO 6093 NR3.
         // TODO: add in support for binary encoding, which can improve space usage.
         encoded_data.extend_from_bitslice::<u8, Msb0>(super::BASE_10_NR3.to_be_bytes().as_bits());
@@ -211,10 +213,8 @@ pub(crate) fn encode_bitstring_common(
 
     encode_length_determinent_common(data, lb, ub, false, length, aligned)?;
     if length > 0 {
-        if length > 16 {
-            if aligned {
-                data.align();
-            }
+        if length > 16 && aligned {
+            data.align();
         }
         data.append_bits(bit_string);
     }
@@ -257,10 +257,8 @@ pub(crate) fn encode_octet_string_common(
     encode_length_determinent_common(data, lb, ub, false, length, aligned)?;
 
     if length > 0 {
-        if length > 2 {
-            if aligned {
-                data.align();
-            }
+        if length > 2 && aligned {
+            data.align();
         }
         data.append_bits(octet_string.view_bits());
     }
@@ -348,10 +346,8 @@ pub(crate) fn encode_string_common(
         data.encode_bool(extended);
     }
     encode_length_determinent_common(data, lb, ub, false, value.len(), aligned)?;
-    if value.len() > 2 {
-        if aligned {
-            data.align();
-        }
+    if value.len() > 2 && aligned {
+        data.align();
     }
     data.append_bits(value.as_bits());
 
@@ -366,7 +362,19 @@ mod tests {
 
     #[test]
     fn test_encode_real_base_10_nr3() {
-        let expected_data = &[0x0A, super::super::BASE_10_NR3, b'1', b'.', b'5', b'6', b'2', b'5', b'e',b'-', b'1'];
+        let expected_data = &[
+            0x0A,
+            super::super::BASE_10_NR3,
+            b'1',
+            b'.',
+            b'5',
+            b'6',
+            b'2',
+            b'5',
+            b'e',
+            b'-',
+            b'1',
+        ];
         let value = 0.15625f64;
         let mut data = PerCodecData::new_aper();
         let result = encode_real_common(&mut data, value, true);
