@@ -1,9 +1,9 @@
 [package]
 name = "asn1-compiler"
-version = "0.5.9"
+version = "0.6.0"
 authors = ["Abhijit Gadgil <gabhijit@iitbombay.org>"]
 edition = "2018"
-description = "ASN.1 Compiler in Rust."
+description = "ASN.1 Toolkit in Rust. Compiler for ASN.1 specification, ASN.1 codecs and derive macros for ASN.1 Codecs."
 keywords = ["asn1", "per"]
 repository = "https://github.com/gabhijit/hampi.git"
 license = "Apache-2.0 OR MIT"
@@ -15,12 +15,12 @@ maintenance = { status = "actively-developed" }
 
 [dependencies]
 lazy_static = { version = "1.4.0" }
-topological-sort = { version = "0.1" }
+topological-sort = { version = "0.2" }
 proc-macro2 = { version = "1.0" }
 quote = { version = "1.0" }
 heck = { version = "0.4" }
 bitvec = { version = "1.0" }
-clap = { version = "4.0.10", features = ["derive"] }
+clap = { version = "4.4", features = ["derive"] }
 docx-rs = { version = "0.4.5" , optional = true }
 regex = { version = "1.6.0" }
 log = { version = "0.4" }
