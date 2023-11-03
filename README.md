@@ -25,6 +25,18 @@ This project is divided into three crates -
 - APER
 - UPER
 
+## Supported Protocols
+
+Following protocols are currently supported.
+
+1. RANAP - Code generation and RANAP PDU encode/decode.
+2. S1AP - Code generation and S1AP PDU decode.
+3. NGAP - Code generation and NGAP PDU encode/decode.
+4. E2AP - Code generation
+5. SUPL - Code generation
+6. RRC - Code generation and RRC PDU decode.
+7. E2SM - Code generation and encode/decode functionality.
+
 ## Getting Started
 
 ### `build.rs` Support
