@@ -1,6 +1,6 @@
 [package]
 name = "asn1-compiler"
-version = "0.6.0"
+version = "0.6.1"
 authors = ["Abhijit Gadgil <gabhijit@iitbombay.org>"]
 edition = "2018"
 description = "ASN.1 Toolkit in Rust. Compiler for ASN.1 specification, ASN.1 codecs and derive macros for ASN.1 Codecs."

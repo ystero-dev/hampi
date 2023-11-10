@@ -6,6 +6,7 @@ on:
     paths:
       - 'asn-compiler/**'
       - 'codecs/**'
+      - 'codecs_derive/**'
       - '!codecs/specs/**'
       - 'examples/**'
       - '!examples/specs/**'
@@ -17,6 +18,7 @@ on:
     paths:
       - 'asn-compiler/**'
       - 'codecs/**'
+      - 'codecs_derive/**'
       - '!codecs/specs/**'
       - 'examples/**'
       - '!examples/specs/**'
@@ -51,9 +53,9 @@ jobs:
       run: |
         rustc -Vv
         cargo -V
-        cargo build --verbose
+        cargo build --verbose --release
     - name: Run tests
       run: |
         rustc -Vv
         cargo -V
-        cargo test --verbose
+        cargo test --verbose --release
