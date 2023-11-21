@@ -1,7 +1,7 @@
 //! Structs for the resolved Base Types
 use std::collections::{BTreeSet, HashMap};
 
-use crate::resolver::asn::structs::types::constraints::Asn1ConstraintValueSet;
+use crate::resolver::asn::structs::types::{constraints::Asn1ConstraintValueSet, Asn1ResolvedTag};
 
 #[derive(Debug, Clone)]
 pub(crate) enum ResolvedBaseType {
@@ -26,6 +26,7 @@ pub(crate) struct Asn1ResolvedInteger {
     pub(crate) signed: bool,
     pub(crate) resolved_constraints: Option<Asn1ConstraintValueSet>,
     pub(crate) named_values: Option<HashMap<String, i128>>,
+    pub(crate) tag: Option<Asn1ResolvedTag>,
 }
 
 impl Default for Asn1ResolvedInteger {
@@ -35,6 +36,7 @@ impl Default for Asn1ResolvedInteger {
             signed: true,
             named_values: None,
             resolved_constraints: None,
+            tag: None,
         }
     }
 }
@@ -49,6 +51,7 @@ pub(crate) struct Asn1ResolvedEnumerated {
     pub(crate) excepts: Option<BTreeSet<i128>>,
     pub(crate) named_root_values: Vec<(String, i128)>,
     pub(crate) named_ext_values: Vec<(String, i128)>,
+    pub(crate) tag: Option<Asn1ResolvedTag>,
 }
 
 impl Default for Asn1ResolvedEnumerated {
@@ -62,6 +65,7 @@ impl Default for Asn1ResolvedEnumerated {
             excepts: None,
             named_root_values: vec![],
             named_ext_values: vec![],
+            tag: None,
         }
     }
 }
@@ -74,25 +78,34 @@ pub(crate) struct Asn1ResolvedBitString {
 
     // We support only up to 128 named bits, if more than that is required, change this to appropriate. value
     pub(crate) named_values: HashMap<String, u8>,
+
+    pub(crate) tag: Option<Asn1ResolvedTag>,
 }
 
 // Just an empty structure for Resolved `BOOLEAN` type.
 #[derive(Debug, Default, Clone)]
-pub(crate) struct Asn1ResolvedBoolean;
+pub(crate) struct Asn1ResolvedBoolean {
+    pub(crate) tag: Option<Asn1ResolvedTag>,
+}
 
 // Just an empty structure for Resolved `NULL` type.
 #[derive(Debug, Default, Clone)]
-pub(crate) struct Asn1ResolvedNull;
+pub(crate) struct Asn1ResolvedNull {
+    pub(crate) tag: Option<Asn1ResolvedTag>,
+}
 
-// Just an empty structure for Resolved `NULL` type.
+// Just an empty structure for Resolved `REAL` type.
 #[derive(Debug, Default, Clone)]
-pub(crate) struct Asn1ResolvedReal;
+pub(crate) struct Asn1ResolvedReal {
+    pub(crate) tag: Option<Asn1ResolvedTag>,
+}
 
 // A structure representing a Resolved `OCTET STRING`. `SIZE` Constraint is resolved as well. The
 // `CONTAINING` Constraint is not resolved.
 #[derive(Debug, Default, Clone)]
 pub(crate) struct Asn1ResolvedOctetString {
     pub(crate) size: Option<Asn1ConstraintValueSet>,
+    pub(crate) tag: Option<Asn1ResolvedTag>,
 }
 
 // A structure representing a Resolved `CharacterString`. `SIZE` Constraint is resolved as well. The
@@ -100,7 +113,10 @@ pub(crate) struct Asn1ResolvedOctetString {
 pub(crate) struct Asn1ResolvedCharacterString {
     pub(crate) str_type: String,
     pub(crate) size: Option<Asn1ConstraintValueSet>,
+    pub(crate) tag: Option<Asn1ResolvedTag>,
 }
 
 #[derive(Debug, Default, Clone)]
-pub(crate) struct Asn1ResolvedObjectIdentifier;
+pub(crate) struct Asn1ResolvedObjectIdentifier {
+    pub(crate) tag: Asn1ResolvedTag,
+}

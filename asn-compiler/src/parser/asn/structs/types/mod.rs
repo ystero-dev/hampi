@@ -147,8 +147,9 @@ pub(crate) enum Asn1TagMode {
     Implicit,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub(crate) enum Asn1TagClass {
+    #[default]
     Universal,
     Application,
     ContextSpecific,
