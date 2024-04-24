@@ -9,6 +9,7 @@ repository = "https://github.com/gabhijit/hampi.git"
 license = "Apache-2.0 OR MIT"
 readme = "README.md"
 include = ["src/**/*.rs", "README.md", "ARChITECTURE.md", "Cargo.toml", "LICENSE", "LICENSE-MIT", "LICENSE-Apache2"]
+default-run = "hampi-rs-asn1c"
 
 [badges]
 maintenance = { status = "actively-developed" }
