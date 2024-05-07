@@ -78,14 +78,24 @@ impl PerCodecData {
             .iter()
             .all(|b| b == false)
         {
-            Err(PerCodecError::new(
+            // Issue 117: Sometimes the sender doesn't send the bits correctly.
+            // Accept it but log.
+            log::warn!(
+                "{} Padding bits {} at Offset {} not all '0'",
+                remaining,
+                &self.bits[self.decode_offset..self.decode_offset + remaining],
+                self.decode_offset
+            );
+            self.decode_offset += remaining;
+            Ok(())
+            /* Err(PerCodecError::new(
                 PerCodecErrorCause::InvalidAlignment,
                 format!(
                     "{} Padding bits at Offset {} not all '0'.",
                     remaining, self.decode_offset,
                 )
                 .as_str(),
-            ))
+            )) */
         } else {
             self.decode_offset += remaining;
             Ok(())
