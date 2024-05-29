@@ -224,8 +224,30 @@ fn resolve_sequence_classfield_components(
 
     // Get the Object Set first It's the Same Object Set for all components. So if we get the first
     // one that's good enough!
-    let ty = &all_components[0].ty;
-    let constraint = &ty.constraints.as_ref().unwrap()[0];
+    let ty = match all_components.get(0) {
+        Some(c) => &c.ty,
+        None => {
+            return Err(resolve_error!(
+                "all_components is empty. Expected at-least one component!"
+            ));
+        }
+    };
+    eprintln!("all_components: {:#?}", all_components);
+    let constraint = match ty.constraints.as_ref() {
+        Some(c) => match c.get(0) {
+            Some(c) => c,
+            None => {
+                return Err(resolve_error!(
+                    "constraints is empty. Expected at-least one constraint!"
+                ));
+            }
+        },
+        None => {
+            return Err(resolve_error!(
+                "Expected Sequence with at-least one ClassField Reference Component!. Found Empty Sequences"
+            ));
+        }
+    };
 
     let set_reference = constraint.get_set_reference()?;
 
