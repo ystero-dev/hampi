@@ -25,7 +25,16 @@ pub(crate) fn resolve_value(
             match typeref {
                 Asn1ResolvedType::Base(ref b) => match b {
                     ResolvedBaseType::Integer(ref _i) => {
-                        let value = value.parse::<BaseInteger>().unwrap();
+                        let value = match value.parse::<BaseInteger>() {
+                            Ok(v) => v,
+                            Err(e) => {
+                                return Err(resolve_error!(
+                                    "resolve_value: Failed to parse Integer value: {} from {:?}",
+                                    e,
+                                    value
+                                ))
+                            }
+                        };
                         Ok(Asn1ResolvedValue::Base(ResolvedBaseValue::Integer(
                             Asn1ResolvedIntegerValue {
                                 typeref: typeref.clone(),
