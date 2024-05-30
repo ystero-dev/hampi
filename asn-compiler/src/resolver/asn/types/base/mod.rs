@@ -38,7 +38,9 @@ pub(crate) fn resolve_base_type(
             Asn1BuiltinType::BitString(ref b) => Ok(ResolvedBaseType::BitString(
                 Asn1ResolvedBitString::resolve_bit_string(ty, b, resolver)?,
             )),
-            Asn1BuiltinType::Boolean => Ok(ResolvedBaseType::Boolean(Asn1ResolvedBoolean)),
+            Asn1BuiltinType::Boolean => {
+                Ok(ResolvedBaseType::Boolean(Asn1ResolvedBoolean::default()))
+            }
             Asn1BuiltinType::OctetString => Ok(ResolvedBaseType::OctetString(
                 Asn1ResolvedOctetString::resolve_octet_string(ty, resolver)?,
             )),
@@ -46,10 +48,10 @@ pub(crate) fn resolve_base_type(
                 Asn1ResolvedCharacterString::resolve_character_string(ty, resolver)?,
             )),
             Asn1BuiltinType::ObjectIdentifier => Ok(ResolvedBaseType::ObjectIdentifier(
-                Asn1ResolvedObjectIdentifier,
+                Asn1ResolvedObjectIdentifier::default(),
             )),
-            Asn1BuiltinType::Null => Ok(ResolvedBaseType::Null(Asn1ResolvedNull)),
-            Asn1BuiltinType::Real => Ok(ResolvedBaseType::Real(Asn1ResolvedReal)),
+            Asn1BuiltinType::Null => Ok(ResolvedBaseType::Null(Asn1ResolvedNull::default())),
+            Asn1BuiltinType::Real => Ok(ResolvedBaseType::Real(Asn1ResolvedReal::default())),
             _ => Err(resolve_error!(
                 "parse_base_type: Not Implemented! {:#?}",
                 ty
