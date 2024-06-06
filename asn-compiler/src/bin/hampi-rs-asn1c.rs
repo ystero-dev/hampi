@@ -1,7 +1,6 @@
 //! A simple utility to tokenize ASN files.
 
-use std::io;
-
+use anyhow::Result;
 use clap::Parser;
 
 use asn1_compiler::{
@@ -36,14 +35,15 @@ struct Cli {
     derive: Vec<Derive>,
 }
 
-fn main() -> io::Result<()> {
+fn main() -> Result<()> {
     let mut cli = Cli::parse();
 
     if cli.files.is_empty() {
         return Err(std::io::Error::new(
             std::io::ErrorKind::InvalidInput,
             "No Input files Specified",
-        ));
+        )
+        .into());
     }
 
     let derives = if cli.derive.contains(&Derive::All) {

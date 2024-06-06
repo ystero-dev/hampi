@@ -1,7 +1,7 @@
 //! Handling of Information Object Classes, ObjectSets, Objects etc
 use std::collections::HashMap;
 
-use crate::error::Error;
+use anyhow::Result;
 
 use crate::parser::asn::structs::types::ioc::{
     Asn1ObjectFieldSpec, Asn1ObjectSet, Asn1ObjectValue, ObjectSetElement,
@@ -27,13 +27,14 @@ pub(crate) fn resolve_object_set(
     objectset: &Asn1ObjectSet,
     name: &str,
     resolver: &mut Resolver,
-) -> Result<Asn1ResolvedObjectSet, Error> {
+) -> Result<Asn1ResolvedObjectSet> {
     let class = resolver.classes.get(&objectset.class);
     match class {
         None => Err(resolve_error!(
             "Class '{}' definition not found to resolve object set!",
             objectset.class
-        )),
+        )
+        .into()),
         Some(cls) => {
             // if the class has UNIQUE field, create a Map for the values from that field to the
             // Object. Note: it's indeed possible to have more than one unique field, but we are not
@@ -58,10 +59,10 @@ pub(crate) fn resolve_object_set(
                         match resolved {
                             None => {
                                 return Err(resolve_error!(
-                            "Unable to find the Referencing '{}' Object Set while resolving {:#?}",
-                            r,
-                            objectset
-                        ));
+                                                            "Unable to find the Referencing '{}' Object Set while resolving {:#?}",
+                                                            r,
+                                                            objectset
+                                                        ).into());
                             }
                             Some(res) => {
                                 if let Asn1ResolvedDefinition::ObjectSet(ref o) = res {
@@ -72,7 +73,8 @@ pub(crate) fn resolve_object_set(
                                     return Err(resolve_error!(
                                         "Resolved '{}' is not an Object Set!",
                                         r,
-                                    ));
+                                    )
+                                    .into());
                                 }
                             }
                         }
@@ -82,10 +84,10 @@ pub(crate) fn resolve_object_set(
                         match resolved {
                             None => {
                                 return Err(resolve_error!(
-                            "Unable to find the Referencing '{}' Object Set while resolving {:#?}",
-                            r,
-                            objectset
-                        ));
+                                                            "Unable to find the Referencing '{}' Object Set while resolving {:#?}",
+                                                            r,
+                                                            objectset
+                                                        ).into());
                             }
                             Some(res) => {
                                 if let Asn1ResolvedDefinition::Object(ref o) = res {
@@ -129,7 +131,8 @@ pub(crate) fn resolve_object_set(
                                     return Err(resolve_error!(
                                         "Resolved '{}' is not an Object!",
                                         r,
-                                    ));
+                                    )
+                                    .into());
                                 }
                             }
                         }
@@ -184,7 +187,7 @@ pub(crate) fn resolve_object(
     object_name: &str,
     object_value: &Asn1ObjectValue,
     resolver: &mut Resolver,
-) -> Result<Asn1ResolvedObject, Error> {
+) -> Result<Asn1ResolvedObject> {
     let mut resolved_fields = HashMap::new();
     if let Asn1ObjectValue::Asn1ObjectFromClass { fields } = object_value {
         for (k, field) in fields {
@@ -222,9 +225,6 @@ pub(crate) fn resolve_object(
             fields: resolved_fields,
         })
     } else {
-        Err(resolve_error!(
-            "Unsupported Variant while Resolving {:#?}",
-            object_value
-        ))
+        Err(resolve_error!("Unsupported Variant while Resolving {:#?}", object_value).into())
     }
 }

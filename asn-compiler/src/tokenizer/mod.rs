@@ -5,6 +5,7 @@
 pub(crate) mod types;
 
 use crate::error::Error;
+use anyhow::Result;
 
 use types::TokenType;
 
@@ -339,11 +340,11 @@ fn get_string_token(
     chars: &[char],
     line: usize,
     begin: usize,
-) -> Result<(Token, usize, usize, usize), Error> {
+) -> Result<(Token, usize, usize, usize)> {
     let mut last: Option<usize> = None;
 
     if chars.len() == 1 {
-        return Err(Error::TokenizeError(0, line, begin));
+        return Err(Error::TokenizeError(0, line, begin).into());
     }
 
     let mut i = 1;
@@ -382,7 +383,7 @@ fn get_string_token(
 
     // If we didn't find the last '"'
     if last.is_none() {
-        return Err(Error::TokenizeError(5, line, begin));
+        return Err(Error::TokenizeError(5, line, begin).into());
     }
 
     let consumed = last.unwrap() + 1;
@@ -420,20 +421,20 @@ fn get_bit_or_hex_string_token(
     chars: &[char],
     line: usize,
     begin: usize,
-) -> Result<(Token, usize, usize, usize), Error> {
+) -> Result<(Token, usize, usize, usize)> {
     if chars.len() == 1 {
-        return Err(Error::TokenizeError(6, line, begin));
+        return Err(Error::TokenizeError(6, line, begin).into());
     }
 
     let last = chars[1..].iter().position(|&c| c == '\'');
     if last.is_none() {
         // No matching '\'' found till the end of the string. Clearly an error.
-        return Err(Error::TokenizeError(7, line, begin));
+        return Err(Error::TokenizeError(7, line, begin).into());
     }
     let mut consumed = last.unwrap() + 1 + 1;
     if consumed == chars.len() {
         // Matching'\'' found, but the string ends, Error.
-        return Err(Error::TokenizeError(8, line, begin));
+        return Err(Error::TokenizeError(8, line, begin).into());
     }
 
     let c = chars[consumed];
@@ -441,7 +442,7 @@ fn get_bit_or_hex_string_token(
         "h" => TokenType::HexString,
         "b" => TokenType::BitString,
         _ => {
-            return Err(Error::TokenizeError(9, line, begin));
+            return Err(Error::TokenizeError(9, line, begin).into());
         }
     };
 
@@ -456,13 +457,13 @@ fn get_bit_or_hex_string_token(
     text = text.replace(char::is_whitespace, "");
 
     if token_type == TokenType::BitString && !text.replace(&['0', '1', '\''][..], "").is_empty() {
-        return Err(Error::TokenizeError(10, line, begin));
+        return Err(Error::TokenizeError(10, line, begin).into());
     }
 
     if token_type == TokenType::HexString
         && !text.chars().all(|c| c.is_ascii_hexdigit() || c == '\'')
     {
-        return Err(Error::TokenizeError(11, line, begin));
+        return Err(Error::TokenizeError(11, line, begin).into());
     }
 
     consumed += 1; // last 'h' or 'b'
@@ -483,13 +484,9 @@ fn get_bit_or_hex_string_token(
 }
 
 // Get at and component ID list something like @.id or @component.id
-fn get_at_component_id_list(
-    chars: &[char],
-    line: usize,
-    begin: usize,
-) -> Result<(Token, usize), Error> {
+fn get_at_component_id_list(chars: &[char], line: usize, begin: usize) -> Result<(Token, usize)> {
     if chars.len() == 1 {
-        return Err(Error::TokenizeError(12, line, begin));
+        return Err(Error::TokenizeError(12, line, begin).into());
     }
 
     let mut consumed = 1;
@@ -504,7 +501,7 @@ fn get_at_component_id_list(
 
     // Identifier should not end with a '-'
     if ['.', '-'].iter().any(|&c| c == chars[consumed - 1]) {
-        return Err(Error::TokenizeError(13, line, begin));
+        return Err(Error::TokenizeError(13, line, begin).into());
     }
     Ok((
         Token {
@@ -523,11 +520,11 @@ fn get_at_component_id_list(
 // 1..2 => Will return 1 as a number
 // 1.2 => Will return 1.2 as a number
 // -1.2.3 => Will return Error
-fn get_number_token(chars: &[char], line: usize, begin: usize) -> Result<(Token, usize), Error> {
+fn get_number_token(chars: &[char], line: usize, begin: usize) -> Result<(Token, usize)> {
     let neg = (chars[0] == '-') as usize;
 
     if neg > 0 && chars.len() == 1 {
-        return Err(Error::TokenizeError(14, line, begin));
+        return Err(Error::TokenizeError(14, line, begin).into());
     }
 
     let mut consumed = neg;
@@ -545,7 +542,7 @@ fn get_number_token(chars: &[char], line: usize, begin: usize) -> Result<(Token,
         let dot_index = chars[neg..].iter().position(|&x| x == '.');
         if let Some(index) = dot_index {
             if index == chars.len() {
-                Err(Error::TokenizeError(14, line, begin))
+                Err(Error::TokenizeError(14, line, begin).into())
                 // Error (Last .)
             } else if chars[index + 1] == '.' {
                 // Atleast two .. Return this number, this becomes a parse error later on
@@ -562,7 +559,7 @@ fn get_number_token(chars: &[char], line: usize, begin: usize) -> Result<(Token,
                 ))
             } else {
                 // Error something in weird form like 3.14.159
-                Err(Error::TokenizeError(14, line, begin))
+                Err(Error::TokenizeError(14, line, begin).into())
             }
         } else {
             unreachable!();
@@ -591,11 +588,11 @@ fn get_identifier_or_keyword_token(
     chars: &[char],
     line: usize,
     begin: usize,
-) -> Result<(Token, usize), Error> {
+) -> Result<(Token, usize)> {
     let and = (chars[0] == '&') as usize;
 
     if and > 0 && chars.len() == 1 {
-        return Err(Error::TokenizeError(15, line, begin));
+        return Err(Error::TokenizeError(15, line, begin).into());
     }
 
     let mut consumed = and;
@@ -611,17 +608,17 @@ fn get_identifier_or_keyword_token(
 
     // Identifier should not end with a '-'
     if chars[consumed - 1] == '-' {
-        return Err(Error::TokenizeError(16, line, begin));
+        return Err(Error::TokenizeError(16, line, begin).into());
     }
 
     // Free standing '&' this is an error.
     if and > 0 && consumed == 1 {
-        return Err(Error::TokenizeError(17, line, begin));
+        return Err(Error::TokenizeError(17, line, begin).into());
     }
 
     let text = chars[..consumed].iter().collect::<String>();
     if text.contains("--") {
-        return Err(Error::TokenizeError(18, line, begin));
+        return Err(Error::TokenizeError(18, line, begin).into());
     }
 
     let token_type = if and > 0 {
@@ -650,7 +647,7 @@ fn get_range_or_extension_token(
     chars: &[char],
     line: usize,
     begin: usize,
-) -> Result<(Token, usize), Error> {
+) -> Result<(Token, usize)> {
     let (token_type, consumed) = if chars.len() == 1 {
         (TokenType::Dot, 1)
     } else if chars.len() == 2 {
@@ -687,12 +684,12 @@ fn get_assignment_or_colon_token(
     chars: &[char],
     line: usize,
     begin: usize,
-) -> Result<(Token, usize), Error> {
+) -> Result<(Token, usize)> {
     let (token_type, consumed) = if chars.len() == 1 {
         (TokenType::Colon, 1)
     } else if chars.len() == 2 {
         if chars[1] == ':' {
-            return Err(Error::TokenizeError(19, line, begin));
+            return Err(Error::TokenizeError(19, line, begin).into());
         } else {
             (TokenType::Colon, 1)
         }
@@ -700,7 +697,7 @@ fn get_assignment_or_colon_token(
         if chars[2] == '=' {
             (TokenType::Assignment, 3)
         } else {
-            return Err(Error::TokenizeError(20, line, begin));
+            return Err(Error::TokenizeError(20, line, begin).into());
         }
     } else {
         (TokenType::Colon, 1)
@@ -726,7 +723,7 @@ fn get_seq_extension_or_square_brackets_token(
     chars: &[char],
     line: usize,
     begin: usize,
-) -> Result<(Token, usize), Error> {
+) -> Result<(Token, usize)> {
     let (token_type, consumed) = if chars[0] == '[' {
         if chars[1] == '[' {
             (TokenType::AdditionGroupsBegin, 2)
@@ -754,7 +751,7 @@ fn get_seq_extension_or_square_brackets_token(
 // Gets Begin/End of round/curly brackets.
 //
 // Note: square brackets need a special treatment due to "[[" and "]]"
-fn get_single_char_token(token: char, line: usize, begin: usize) -> Result<Token, Error> {
+fn get_single_char_token(token: char, line: usize, begin: usize) -> Result<Token> {
     let token_type: TokenType = match token {
         '{' => TokenType::CurlyBegin,
         '}' => TokenType::CurlyEnd,
@@ -766,7 +763,7 @@ fn get_single_char_token(token: char, line: usize, begin: usize) -> Result<Token
         '|' => TokenType::SetUnionToken,
         '^' => TokenType::SetIntersectionToken,
         '<' => TokenType::LessThan,
-        _ => return Err(Error::TokenizeError(21, line, begin)),
+        _ => return Err(Error::TokenizeError(21, line, begin).into()),
     };
     Ok(Token {
         r#type: token_type,
@@ -789,7 +786,7 @@ fn get_maybe_comment_token(
     chars: &[char], // From the first "--"
     line: usize,
     begin: usize,
-) -> Result<(Option<Token>, usize), Error> {
+) -> Result<(Option<Token>, usize)> {
     if chars[1] != '-' {
         return Ok((None, 0));
     }
@@ -838,7 +835,7 @@ fn get_maybe_comment_token(
 /// This function would work on any input that implements `std::io::Read` trait, but would work
 /// mostly with files because this 'reads the input to end'. We look at the first character of a
 /// non-whitespace sequence and then tokenize that into appropriate tokens.
-pub fn tokenize<T>(mut input: T) -> Result<Vec<Token>, Error>
+pub fn tokenize<T>(mut input: T) -> Result<Vec<Token>>
 where
     T: std::io::Read,
 {
@@ -853,7 +850,7 @@ where
 ///
 /// Tokenize a given 'String' to ASN.1 Tokens. This API Can be used to write simple test cases for
 /// ASN.1 files say.
-pub fn tokenize_string(buffer: &str) -> Result<Vec<Token>, Error> {
+pub fn tokenize_string(buffer: &str) -> Result<Vec<Token>> {
     let chars: Vec<char> = buffer.chars().collect();
 
     let mut column = 0_usize;

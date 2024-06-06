@@ -3,6 +3,7 @@
 #[derive(Debug, Clone)]
 pub(crate) enum NamedValue {
     Number(String),
+    #[allow(dead_code)]
     ValueRef(String),
 }
 

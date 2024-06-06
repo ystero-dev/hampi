@@ -1,6 +1,6 @@
 //! 'defs' Resolver
 
-use crate::error::Error;
+use anyhow::Result;
 
 use crate::parser::asn::structs::defs::{
     Asn1AssignmentKind, Asn1Definition, Asn1ObjectAssignment, Asn1ObjectSetAssignment,
@@ -18,7 +18,7 @@ use super::values::resolve_value;
 pub(crate) fn resolve_definition(
     definition: &Asn1Definition,
     resolver: &mut Resolver,
-) -> Result<Asn1ResolvedDefinition, Error> {
+) -> Result<Asn1ResolvedDefinition> {
     match definition.kind {
         Asn1AssignmentKind::Value(ref v) => resolve_value_definition(v, resolver),
         Asn1AssignmentKind::Type(ref t) => resolve_type_definition(t, resolver),
@@ -26,17 +26,14 @@ pub(crate) fn resolve_definition(
             resolve_object_set_definition(objset, resolver)
         }
         Asn1AssignmentKind::Object(ref object) => resolve_object_definition(object, resolver),
-        _ => Err(resolve_error!(
-            "asn_resolve_def: Not Implemented! {:#?}",
-            definition
-        )),
+        _ => Err(resolve_error!("asn_resolve_def: Not Implemented! {:#?}", definition).into()),
     }
 }
 
 pub(crate) fn resolve_type_definition(
     def: &Asn1TypeAssignment,
     resolver: &mut Resolver,
-) -> Result<Asn1ResolvedDefinition, Error> {
+) -> Result<Asn1ResolvedDefinition> {
     let typeref = resolve_type(&def.typeref, resolver)?;
     Ok(Asn1ResolvedDefinition::Type(typeref))
 }
@@ -44,7 +41,7 @@ pub(crate) fn resolve_type_definition(
 fn resolve_value_definition(
     value: &Asn1ValueAssignment,
     resolver: &mut Resolver,
-) -> Result<Asn1ResolvedDefinition, Error> {
+) -> Result<Asn1ResolvedDefinition> {
     let typeref = resolve_type(&value.typeref, resolver)?;
     let value = resolve_value(&value.value, &typeref, resolver)?;
     Ok(Asn1ResolvedDefinition::Value(value))
@@ -53,7 +50,7 @@ fn resolve_value_definition(
 fn resolve_object_set_definition(
     objectset: &Asn1ObjectSetAssignment,
     resolver: &mut Resolver,
-) -> Result<Asn1ResolvedDefinition, Error> {
+) -> Result<Asn1ResolvedDefinition> {
     let objectset = resolve_object_set(&objectset.set, &objectset.id, resolver)?;
     Ok(Asn1ResolvedDefinition::ObjectSet(objectset))
 }
@@ -61,7 +58,7 @@ fn resolve_object_set_definition(
 fn resolve_object_definition(
     object: &Asn1ObjectAssignment,
     resolver: &mut Resolver,
-) -> Result<Asn1ResolvedDefinition, Error> {
+) -> Result<Asn1ResolvedDefinition> {
     let object = resolve_object(&object.id, &object.object.value, resolver)?;
     Ok(Asn1ResolvedDefinition::Object(object))
 }

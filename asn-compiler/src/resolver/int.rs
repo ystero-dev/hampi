@@ -2,7 +2,7 @@
 
 use std::collections::{BTreeMap, HashMap};
 
-use crate::error::Error;
+use anyhow::Result;
 
 use crate::parser::asn::structs::{defs::Asn1Definition, module::Asn1Module};
 
@@ -47,7 +47,7 @@ impl Resolver {
     //
     // After that we resolve definitions in a Topologically sorted order. Fairly straight forward.
     // We do not need to do any `Pending` definitions, as we were doing before.
-    pub(crate) fn resolve_definitions(&mut self, module: &mut Asn1Module) -> Result<(), Error> {
+    pub(crate) fn resolve_definitions(&mut self, module: &mut Asn1Module) -> Result<()> {
         log::debug!(
             "Resolving Definitions in module: {}",
             module.get_module_name()

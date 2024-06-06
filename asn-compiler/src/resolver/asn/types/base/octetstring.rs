@@ -1,7 +1,7 @@
 //! Functionality for handling Resolved ASN.1 OCTET STRING
 
-use crate::error::Error;
 use crate::resolver::Resolver;
+use anyhow::Result;
 
 use crate::parser::asn::structs::types::Asn1Type;
 use crate::resolver::asn::structs::types::base::Asn1ResolvedOctetString;
@@ -10,7 +10,7 @@ impl Asn1ResolvedOctetString {
     pub(crate) fn resolve_octet_string(
         ty: &Asn1Type,
         resolver: &Resolver,
-    ) -> Result<Asn1ResolvedOctetString, Error> {
+    ) -> Result<Asn1ResolvedOctetString> {
         let mut base = Asn1ResolvedOctetString::default();
 
         if ty.constraints.is_some() {

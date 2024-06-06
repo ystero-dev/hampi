@@ -1,7 +1,7 @@
 //! Parsing "INTEGER" ASN.1 Type
 
-use crate::error::Error;
 use crate::tokenizer::Token;
+use anyhow::Result;
 
 use crate::parser::utils::{expect_keyword, expect_token};
 
@@ -9,11 +9,11 @@ use crate::parser::asn::structs::types::base::Asn1TypeInteger;
 
 use super::utils::parse_named_values;
 
-pub(crate) fn parse_integer_type(tokens: &[Token]) -> Result<(Asn1TypeInteger, usize), Error> {
+pub(crate) fn parse_integer_type(tokens: &[Token]) -> Result<(Asn1TypeInteger, usize)> {
     let mut consumed = 0;
 
     if !expect_keyword(&tokens[consumed..], "INTEGER")? {
-        return Err(unexpected_token!("'INTEGER'", tokens[consumed]));
+        return Err(unexpected_token!("'INTEGER'", tokens[consumed]).into());
     }
     consumed += 1;
 

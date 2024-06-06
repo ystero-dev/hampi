@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 
-use crate::error::Error;
+use anyhow::Result;
 
 use crate::parser::asn::structs::types::{
     constructed::{
@@ -30,7 +30,7 @@ use crate::resolver::{
 pub(crate) fn resolve_constructed_type(
     ty: &Asn1Type,
     resolver: &mut Resolver,
-) -> Result<Asn1ResolvedType, Error> {
+) -> Result<Asn1ResolvedType> {
     if let Asn1TypeKind::Constructed(ref kind) = ty.kind {
         match kind {
             Asn1ConstructedType::Choice(ref c) => resolve_choice_type(c, resolver),
@@ -38,21 +38,18 @@ pub(crate) fn resolve_constructed_type(
             Asn1ConstructedType::SequenceOf(ref so) => resolve_sequence_of_type(so, resolver),
             _ => {
                 eprintln!("ConstructedType: {:#?}", ty);
-                Err(resolve_error!("resolve_constructed_Type: Not Implemented!"))
+                Err(resolve_error!("resolve_constructed_Type: Not Implemented!").into())
             }
         }
     } else {
-        Err(resolve_error!(
-            "Expected Constructed Type. Found '{:#?}'",
-            ty
-        ))
+        Err(resolve_error!("Expected Constructed Type. Found '{:#?}'", ty).into())
     }
 }
 
 fn resolve_choice_type(
     choice: &Asn1TypeChoice,
     resolver: &mut Resolver,
-) -> Result<Asn1ResolvedType, Error> {
+) -> Result<Asn1ResolvedType> {
     let mut root_components = vec![];
     for c in &choice.root_components {
         let ty = resolve_type(&c.ty, resolver)?;
@@ -92,7 +89,7 @@ fn resolve_choice_type(
 fn resolve_sequence_type(
     sequence: &Asn1TypeSequence,
     resolver: &mut Resolver,
-) -> Result<Asn1ResolvedType, Error> {
+) -> Result<Asn1ResolvedType> {
     let mut components = vec![];
 
     eprintln!("sequence: {:#?}", sequence);
@@ -185,7 +182,7 @@ fn resolve_sequence_type(
 fn resolve_sequence_of_type(
     sequence_of: &Asn1TypeSequenceOf,
     resolver: &mut Resolver,
-) -> Result<Asn1ResolvedType, Error> {
+) -> Result<Asn1ResolvedType> {
     let resolved = resolve_type(&sequence_of.ty, resolver)?;
     let size_values = if sequence_of.size.is_some() {
         let size = sequence_of.size.as_ref().unwrap();
@@ -206,7 +203,7 @@ fn resolve_sequence_of_type(
 fn resolve_sequence_classfield_components(
     seq: &Asn1TypeSequence,
     resolver: &mut Resolver,
-) -> Result<Asn1ResolvedType, Error> {
+) -> Result<Asn1ResolvedType> {
     let mut all_components = vec![];
     all_components.extend(seq.root_components.clone());
 
@@ -219,22 +216,43 @@ fn resolve_sequence_classfield_components(
 
     if all_components.is_empty() {
         // It's an Error to try to resolve Empty components with Class Field Ref
-        return Err(resolve_error!("Expected Sequence with at-least one ClassField Reference Component!. Found Empty Sequences"));
+        return Err(resolve_error!("Expected Sequence with at-least one ClassField Reference Component!. Found Empty Sequences").into());
     }
 
     // Get the Object Set first It's the Same Object Set for all components. So if we get the first
     // one that's good enough!
-    let ty = &all_components[0].ty;
-    let constraint = &ty.constraints.as_ref().unwrap()[0];
+    let ty = match all_components.first() {
+        Some(c) => &c.ty,
+        None => {
+            return Err(resolve_error!(
+                "all_components is empty. Expected at-least one component!"
+            )
+            .into());
+        }
+    };
+    eprintln!("all_components: {:#?}", all_components);
+    let constraint = match ty.constraints.as_ref() {
+        Some(c) => match c.first() {
+            Some(c) => c,
+            None => {
+                return Err(resolve_error!(
+                    "constraints is empty. Expected at-least one constraint!"
+                )
+                .into());
+            }
+        },
+        None => {
+            return Err(resolve_error!(
+                "Expected Sequence with at-least one ClassField Reference Component!. Found Empty Sequences"
+            ).into());
+        }
+    };
 
     let set_reference = constraint.get_set_reference()?;
 
     let objects = resolver.resolved_defs.get(&set_reference);
     if objects.is_none() {
-        return Err(resolve_error!(
-            "Object Set '{}' not resolved yet!",
-            set_reference
-        ));
+        return Err(resolve_error!("Object Set '{}' not resolved yet!", set_reference).into());
     }
     let objects = objects.unwrap().clone();
 
@@ -251,10 +269,7 @@ fn resolve_sequence_classfield_components(
             },
         ))
     } else {
-        Err(resolve_error!(
-            "Object Set '{}' not resolved yet!",
-            set_reference
-        ))
+        Err(resolve_error!("Object Set '{}' not resolved yet!", set_reference).into())
     }
 }
 
@@ -263,7 +278,7 @@ fn resolve_seq_components_for_objects(
     set_reference: &str,
     objects: &ResolvedObjectSet,
     resolver: &mut Resolver,
-) -> Result<Vec<ResolvedSeqComponent>, Error> {
+) -> Result<Vec<ResolvedSeqComponent>> {
     if objects.elements.is_empty() {
         return Ok(vec![]);
     }
@@ -338,7 +353,7 @@ fn resolve_seq_components_for_objects(
 fn get_seq_component_for_object_set(
     fieldref: &str,
     objects: &ResolvedObjectSet,
-) -> Result<ResolvedSetTypeMap, Error> {
+) -> Result<ResolvedSetTypeMap> {
     let mut types = BTreeMap::new();
     for (key, object) in &objects.lookup_table {
         if let ResolvedObjectSetElement::Object(ref o) = object {

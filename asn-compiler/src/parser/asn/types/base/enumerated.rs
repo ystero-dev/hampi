@@ -1,7 +1,7 @@
 //! Functionality related to parsing 'ENUMERATED' ASN.1 Type
 
-use crate::error::Error;
 use crate::tokenizer::Token;
+use anyhow::Result;
 
 use crate::parser::utils::{expect_keyword, expect_one_of_tokens, expect_token};
 
@@ -10,7 +10,7 @@ use crate::parser::asn::structs::types::base::{Asn1TypeEnumerated, EnumValue};
 use super::utils::parse_named_maybe_value;
 
 // Parses values in an Enum. Used for parsing values either in the root or extension.
-fn parse_enum_values(tokens: &[Token]) -> Result<(Vec<EnumValue>, usize), Error> {
+fn parse_enum_values(tokens: &[Token]) -> Result<(Vec<EnumValue>, usize)> {
     let mut consumed = 0;
 
     let mut values = vec![];
@@ -40,18 +40,16 @@ fn parse_enum_values(tokens: &[Token]) -> Result<(Vec<EnumValue>, usize), Error>
 }
 
 // Parse an enumerated type
-pub(crate) fn parse_enumerated_type(
-    tokens: &[Token],
-) -> Result<(Asn1TypeEnumerated, usize), Error> {
+pub(crate) fn parse_enumerated_type(tokens: &[Token]) -> Result<(Asn1TypeEnumerated, usize)> {
     let mut consumed = 0;
 
     if !expect_keyword(tokens, "ENUMERATED")? {
-        return Err(unexpected_token!("ENUMERATED", tokens[0]));
+        return Err(unexpected_token!("ENUMERATED", tokens[0]).into());
     }
     consumed += 1;
 
     if !expect_token(&tokens[consumed..], Token::is_curly_begin)? {
-        return Err(unexpected_token!("'{'", tokens[consumed]));
+        return Err(unexpected_token!("'{'", tokens[consumed]).into());
     }
     consumed += 1;
 
@@ -77,7 +75,7 @@ pub(crate) fn parse_enumerated_type(
     consumed += ext_values_consumed;
 
     if !expect_token(&tokens[consumed..], Token::is_curly_end)? {
-        return Err(unexpected_token!("'}'", tokens[consumed]));
+        return Err(unexpected_token!("'}'", tokens[consumed]).into());
     }
     consumed += 1;
 

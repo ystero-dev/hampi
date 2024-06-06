@@ -76,7 +76,13 @@ fn main() -> std::io::Result<()> {
                 Derive::Deserialize,
             ],
         );
-        compiler.compile_files(&specs_files)?;
+        if let Err(_e) = compiler.compile_files(&specs_files) {
+            eprintln!("Error compiling ASN.1 specs: {:#?}", specs_files);
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::Other,
+                "Error compiling ASN.1 specs",
+            ));
+        }
     }
 
     Ok(())

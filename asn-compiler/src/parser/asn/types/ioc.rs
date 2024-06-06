@@ -1,8 +1,8 @@
 //! Parsing of Information Object Class, Objects, Object Sets etc.
 use std::collections::HashMap;
 
-use crate::error::Error;
 use crate::tokenizer::{tokenize, Token};
+use anyhow::Result;
 
 use crate::parser::{
     asn::values::parse_value,
@@ -16,16 +16,16 @@ use crate::parser::asn::structs::types::ioc::*;
 
 use super::parse_type;
 
-pub(crate) fn parse_class(tokens: &[Token]) -> Result<(Asn1ObjectClass, usize), Error> {
+pub(crate) fn parse_class(tokens: &[Token]) -> Result<(Asn1ObjectClass, usize)> {
     let mut consumed = 0;
 
     if !expect_keyword(&tokens[consumed..], "CLASS")? {
-        return Err(unexpected_token!("'CLASS'", tokens[consumed]));
+        return Err(unexpected_token!("'CLASS'", tokens[consumed]).into());
     }
     consumed += 1;
 
     if !expect_token(&tokens[consumed..], Token::is_curly_begin)? {
-        return Err(unexpected_token!("'{'", tokens[consumed]));
+        return Err(unexpected_token!("'{'", tokens[consumed]).into());
     }
     consumed += 1;
 
@@ -43,7 +43,7 @@ pub(crate) fn parse_class(tokens: &[Token]) -> Result<(Asn1ObjectClass, usize), 
             consumed += 1;
             break;
         } else {
-            return Err(unexpected_token!("',' or '}'", tokens[consumed]));
+            return Err(unexpected_token!("',' or '}'", tokens[consumed]).into());
         }
     }
 
@@ -53,23 +53,21 @@ pub(crate) fn parse_class(tokens: &[Token]) -> Result<(Asn1ObjectClass, usize), 
     Ok((Asn1ObjectClass { fields }, consumed))
 }
 
-fn parse_field_spec(tokens: &[Token]) -> Result<(ObjectClassFieldSpec, usize), Error> {
+fn parse_field_spec(tokens: &[Token]) -> Result<(ObjectClassFieldSpec, usize)> {
     if expect_token(tokens, Token::is_value_field_reference)? {
         parse_fixed_type_value_field_spec(tokens)
     } else if expect_token(tokens, Token::is_type_field_reference)? {
         parse_type_field_spec(tokens)
     } else {
-        Err(parse_error!("Unsupported Field Spec in CLASS Definition"))
+        Err(parse_error!("Unsupported Field Spec in CLASS Definition").into())
     }
 }
 
-fn parse_fixed_type_value_field_spec(
-    tokens: &[Token],
-) -> Result<(ObjectClassFieldSpec, usize), Error> {
+fn parse_fixed_type_value_field_spec(tokens: &[Token]) -> Result<(ObjectClassFieldSpec, usize)> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_value_field_reference)? {
-        return Err(unexpected_token!("'VALUE FIELD REF'", tokens[consumed]));
+        return Err(unexpected_token!("'VALUE FIELD REF'", tokens[consumed]).into());
     }
 
     let id = tokens[consumed].text.clone();
@@ -122,9 +120,9 @@ fn parse_fixed_type_value_field_spec(
         }
 
         if default.is_some() && unique {
-            return Err(parse_error!(
-                "Both 'UNIQUE' and 'DEFAULT' cannot be specified together!"
-            ));
+            return Err(
+                parse_error!("Both 'UNIQUE' and 'DEFAULT' cannot be specified together!").into(),
+            );
         }
     }
 
@@ -144,11 +142,11 @@ fn parse_fixed_type_value_field_spec(
     ))
 }
 
-fn parse_type_field_spec(tokens: &[Token]) -> Result<(ObjectClassFieldSpec, usize), Error> {
+fn parse_type_field_spec(tokens: &[Token]) -> Result<(ObjectClassFieldSpec, usize)> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_type_field_reference)? {
-        return Err(unexpected_token!("'TYPE FIELD REF'", tokens[consumed]));
+        return Err(unexpected_token!("'TYPE FIELD REF'", tokens[consumed]).into());
     }
 
     let id = tokens[consumed].text.clone();
@@ -203,7 +201,7 @@ fn parse_type_field_spec(tokens: &[Token]) -> Result<(ObjectClassFieldSpec, usiz
 fn parse_with_syntax_for_fields(
     tokens: &[Token],
     fields: &mut HashMap<String, ObjectClassFieldSpec>,
-) -> Result<usize, Error> {
+) -> Result<usize> {
     let mut consumed = 0;
     if !expect_keywords(&tokens[consumed..], &["WITH", "SYNTAX"])? {
         return Ok(consumed);
@@ -211,7 +209,7 @@ fn parse_with_syntax_for_fields(
     consumed += 2;
 
     if !expect_token(&tokens[consumed..], Token::is_curly_begin)? {
-        return Err(unexpected_token!("'{'", tokens[consumed]));
+        return Err(unexpected_token!("'{'", tokens[consumed]).into());
     }
     consumed += 1;
 
@@ -228,7 +226,7 @@ fn parse_with_syntax_for_fields(
             let words = words.unwrap();
             consumed += words.len();
             if words.iter().any(Token::is_with_syntax_reserved_word) {
-                return Err(parse_error!("Found a WITH SYNTAX RESERVED Word!"));
+                return Err(parse_error!("Found a WITH SYNTAX RESERVED Word!").into());
             }
             let words = words
                 .iter()
@@ -237,7 +235,7 @@ fn parse_with_syntax_for_fields(
                 .join(" ");
 
             if !expect_token(&tokens[consumed..], Token::is_and_identifier)? {
-                return Err(unexpected_token!("'CLASS field'", tokens[consumed]));
+                return Err(unexpected_token!("'CLASS field'", tokens[consumed]).into());
             }
 
             let field = fields.get_mut(&tokens[consumed].text);
@@ -245,7 +243,8 @@ fn parse_with_syntax_for_fields(
                 return Err(parse_error!(
                     "Field {} Not found in Class but found in WITH SYNTAX",
                     tokens[consumed].text
-                ));
+                )
+                .into());
             }
             consumed += 1;
 
@@ -270,7 +269,7 @@ fn parse_with_syntax_for_fields(
                         return Err(parse_error!(
                                 "Optional Group for a field that is not Optional and No default : '{:#?}'",
                                 field
-                            ));
+                            ).into());
                     }
                     *with_syntax = Some(words);
                 }
@@ -284,7 +283,7 @@ fn parse_with_syntax_for_fields(
 
         if expect_token(&tokens[consumed..], Token::is_square_end)? {
             if !in_optional_group {
-                return Err(unexpected_token!("',' or '}' or 'WORD'", tokens[consumed]));
+                return Err(unexpected_token!("',' or '}' or 'WORD'", tokens[consumed]).into());
             }
             in_optional_group = false;
             consumed += 1;
@@ -292,7 +291,7 @@ fn parse_with_syntax_for_fields(
 
         if expect_token(&tokens[consumed..], Token::is_curly_end)? {
             if in_optional_group {
-                return Err(parse_error!("Unmatched ']' for Optional Group",));
+                return Err(parse_error!("Unmatched ']' for Optional Group",).into());
             }
             consumed += 1;
             break;
@@ -302,11 +301,11 @@ fn parse_with_syntax_for_fields(
     Ok(consumed)
 }
 
-pub(crate) fn parse_object_set(tokens: &[Token]) -> Result<(ObjectSet, usize), Error> {
+pub(crate) fn parse_object_set(tokens: &[Token]) -> Result<(ObjectSet, usize)> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_curly_begin)? {
-        return Err(unexpected_token!("'{'", tokens[consumed]));
+        return Err(unexpected_token!("'{'", tokens[consumed]).into());
     }
     consumed += 1;
 
@@ -317,7 +316,7 @@ pub(crate) fn parse_object_set(tokens: &[Token]) -> Result<(ObjectSet, usize), E
         if expect_token(&tokens[consumed..], Token::is_extension)? {
             extension_token_count += 1;
             if extension_token_count > 1 {
-                return Err(parse_error!("More than one extension markers found!"));
+                return Err(parse_error!("More than one extension markers found!").into());
             }
             consumed += 1;
             if expect_token(&tokens[consumed..], Token::is_comma)? {
@@ -384,7 +383,7 @@ pub(crate) fn parse_object_set(tokens: &[Token]) -> Result<(ObjectSet, usize), E
 pub(crate) fn parse_object_set_from_class(
     set: &mut Asn1ObjectSet,
     class: &Asn1ObjectClass,
-) -> Result<(), Error> {
+) -> Result<()> {
     let objectset = &mut set.objects;
 
     let mut root_elements = vec![];
@@ -435,7 +434,7 @@ pub(crate) fn parse_object_set_from_class(
 pub(crate) fn parse_object_from_class(
     value: &str,
     class: &Asn1ObjectClass,
-) -> Result<Asn1ObjectValue, Error> {
+) -> Result<Asn1ObjectValue> {
     let reader = std::io::BufReader::new(std::io::Cursor::new(value));
     let tokens = tokenize(reader)?;
     let mut consumed = 0;
@@ -533,7 +532,7 @@ fn class_fieldspec_from_words<'c>(
 fn value_from_field_spec(
     spec: &ObjectClassFieldSpec,
     tokens: &[Token],
-) -> Result<(Asn1ObjectFieldSpec, usize), Error> {
+) -> Result<(Asn1ObjectFieldSpec, usize)> {
     match spec {
         ObjectClassFieldSpec::Type { .. } => {
             let (ty, ty_consumed) = parse_type(tokens)?;

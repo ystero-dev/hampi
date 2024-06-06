@@ -1,7 +1,7 @@
 //! 'parser' Inernal module, API functions from this module are exported.
 
-use crate::error::Error;
 use crate::tokenizer::Token;
+use anyhow::Result;
 
 use crate::parser::asn::structs::module::Asn1Module;
 
@@ -12,7 +12,7 @@ use super::asn::parse_module;
 /// Token obtained from running [`tokenize`][`crate::tokenizer::tokenize] on an ANS file are parsed
 /// into an internal representation of [`Asn1Module`][`crate::structs::Asn1Module`]. Semantic
 /// errors during parsing the tokens are returned as appropriate variant of `Error`.
-pub fn parse(tokens: &mut Vec<Token>) -> Result<Vec<Asn1Module>, Error> {
+pub fn parse(tokens: &mut Vec<Token>) -> Result<Vec<Asn1Module>> {
     // Get rid of the comments, it complicates things
     tokens.retain(|x| !x.is_comment());
 

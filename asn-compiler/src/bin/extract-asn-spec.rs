@@ -2,6 +2,7 @@
 
 use std::io::{Read, Write};
 
+use anyhow::Result;
 use clap::Parser;
 
 #[derive(Parser, Debug)]
@@ -14,7 +15,7 @@ struct Cli {
     output_file: String,
 }
 
-fn main() -> std::io::Result<()> {
+fn main() -> Result<()> {
     let cli = Cli::parse();
 
     let asn_start = regex::Regex::new("^-- ASN1START$").unwrap();
