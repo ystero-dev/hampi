@@ -1,7 +1,7 @@
 //! Handling of Sequence and Sequence Of Type
 
-use crate::error::Error;
 use crate::tokenizer::Token;
+use anyhow::Result;
 
 use crate::parser::utils::{expect_keyword, expect_one_of_keywords, expect_token};
 
@@ -19,9 +19,9 @@ use crate::parser::asn::{
 
 use super::utils::parse_component;
 
-pub(crate) fn parse_seq_or_seq_of_type(tokens: &[Token]) -> Result<(Asn1TypeKind, usize), Error> {
+pub(crate) fn parse_seq_or_seq_of_type(tokens: &[Token]) -> Result<(Asn1TypeKind, usize)> {
     if !expect_one_of_keywords(tokens, &["SEQUENCE", "SET"])? {
-        return Err(unexpected_token!("'SEQUENCE'", tokens[0]));
+        return Err(unexpected_token!("'SEQUENCE'", tokens[0]).into());
     }
 
     if expect_token(&tokens[1..], Token::is_curly_begin)? {
@@ -31,14 +31,14 @@ pub(crate) fn parse_seq_or_seq_of_type(tokens: &[Token]) -> Result<(Asn1TypeKind
     }
 }
 
-fn parse_sequence_type(tokens: &[Token]) -> Result<(Asn1TypeKind, usize), Error> {
+fn parse_sequence_type(tokens: &[Token]) -> Result<(Asn1TypeKind, usize)> {
     let mut consumed = 0;
     // Initial 'SEQUENCE' is consumed by the caller. We start with '{'
 
     consumed += 1; // For the SEQUENCE
 
     if !expect_token(&tokens[consumed..], Token::is_curly_begin)? {
-        return Err(unexpected_token!("'{'", tokens[consumed]));
+        return Err(unexpected_token!("'{'", tokens[consumed]).into());
     }
     consumed += 1;
 
@@ -74,7 +74,8 @@ fn parse_sequence_type(tokens: &[Token]) -> Result<(Asn1TypeKind, usize), Error>
             } else {
                 return Err(parse_error!(
                     "Addition groups can only be added between first and second extension markers!"
-                ));
+                )
+                .into());
             }
         }
 
@@ -103,10 +104,7 @@ fn parse_sequence_type(tokens: &[Token]) -> Result<(Asn1TypeKind, usize), Error>
 
             loop_count += 1;
             if loop_count == 3 {
-                return Err(parse_error!(
-                    "Parser Stuck at Token: {:?}",
-                    tokens[consumed]
-                ));
+                return Err(parse_error!("Parser Stuck at Token: {:?}", tokens[consumed]).into());
             }
         }
     }
@@ -122,7 +120,7 @@ fn parse_sequence_type(tokens: &[Token]) -> Result<(Asn1TypeKind, usize), Error>
     ))
 }
 
-fn parse_sequence_of_type(tokens: &[Token]) -> Result<(Asn1TypeKind, usize), Error> {
+fn parse_sequence_of_type(tokens: &[Token]) -> Result<(Asn1TypeKind, usize)> {
     let mut consumed = 0;
 
     // Initial SEQUENCE is already consumed.
@@ -135,7 +133,7 @@ fn parse_sequence_of_type(tokens: &[Token]) -> Result<(Asn1TypeKind, usize), Err
     consumed += size_consumed;
 
     if !expect_keyword(&tokens[consumed..], "OF")? {
-        return Err(unexpected_token!("'OF'", tokens[consumed]));
+        return Err(unexpected_token!("'OF'", tokens[consumed]).into());
     }
     consumed += 1;
 
@@ -152,7 +150,7 @@ fn parse_sequence_of_type(tokens: &[Token]) -> Result<(Asn1TypeKind, usize), Err
     ))
 }
 
-fn parse_seq_component(tokens: &[Token]) -> Result<(Option<SeqComponent>, usize), Error> {
+fn parse_seq_component(tokens: &[Token]) -> Result<(Option<SeqComponent>, usize)> {
     let mut consumed = 0;
 
     let (component, component_consumed) = match parse_component(&tokens[consumed..]) {
@@ -179,9 +177,7 @@ fn parse_seq_component(tokens: &[Token]) -> Result<(Option<SeqComponent>, usize)
         };
 
         if default.is_some() && optional {
-            return Err(parse_error!(
-                "Both OPTIONAL and DEFAULT not allowed for a value!"
-            ));
+            return Err(parse_error!("Both OPTIONAL and DEFAULT not allowed for a value!").into());
         }
 
         Ok((
@@ -197,11 +193,11 @@ fn parse_seq_component(tokens: &[Token]) -> Result<(Option<SeqComponent>, usize)
     }
 }
 
-fn parse_seq_addition_group(tokens: &[Token]) -> Result<(SeqAdditionGroup, usize), Error> {
+fn parse_seq_addition_group(tokens: &[Token]) -> Result<(SeqAdditionGroup, usize)> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_addition_groups_begin)? {
-        return Err(unexpected_token!("'[['", tokens[consumed]));
+        return Err(unexpected_token!("'[['", tokens[consumed]).into());
     }
     consumed += 1;
 
@@ -211,7 +207,7 @@ fn parse_seq_addition_group(tokens: &[Token]) -> Result<(SeqAdditionGroup, usize
                 let version = tokens[consumed].text.clone();
                 consumed += 1;
                 if !expect_token(&tokens[consumed..], Token::is_colon)? {
-                    return Err(unexpected_token!("'[['", tokens[consumed]));
+                    return Err(unexpected_token!("'[['", tokens[consumed]).into());
                 }
                 consumed += 1;
                 Some(version)
@@ -237,7 +233,7 @@ fn parse_seq_addition_group(tokens: &[Token]) -> Result<(SeqAdditionGroup, usize
     }
 
     if components.is_empty() {
-        Err(parse_error!("Empty Addition Groups not allowed!"))
+        Err(parse_error!("Empty Addition Groups not allowed!").into())
     } else if expect_token(&tokens[consumed..], Token::is_addition_groups_end)? {
         consumed += 1;
         Ok((
@@ -248,7 +244,7 @@ fn parse_seq_addition_group(tokens: &[Token]) -> Result<(SeqAdditionGroup, usize
             consumed,
         ))
     } else {
-        Err(unexpected_token!("']]'", tokens[consumed]))
+        Err(unexpected_token!("']]'", tokens[consumed]).into())
     }
 }
 

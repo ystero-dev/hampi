@@ -1,7 +1,7 @@
 //! Parser for bitstring type.
 
-use crate::error::Error;
 use crate::tokenizer::Token;
+use anyhow::Result;
 
 use crate::parser::utils::{expect_keywords, expect_token};
 
@@ -9,11 +9,11 @@ use crate::parser::asn::structs::types::base::Asn1TypeBitString;
 
 use super::utils::parse_named_values;
 
-pub(crate) fn parse_bitstring_type(tokens: &[Token]) -> Result<(Asn1TypeBitString, usize), Error> {
+pub(crate) fn parse_bitstring_type(tokens: &[Token]) -> Result<(Asn1TypeBitString, usize)> {
     let mut consumed = 0;
 
     if !expect_keywords(&tokens[consumed..], &["BIT", "STRING"])? {
-        return Err(unexpected_token!("'BIT STRING'", tokens[consumed]));
+        return Err(unexpected_token!("'BIT STRING'", tokens[consumed]).into());
     }
     consumed += 2;
 

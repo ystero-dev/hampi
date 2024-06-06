@@ -2,14 +2,13 @@
 
 use std::collections::HashMap;
 
+use anyhow::Result;
 use heck::{ToShoutySnakeCase, ToSnakeCase};
 use proc_macro2::{Ident, Literal, Span, TokenStream};
-
 use quote::quote;
 
 use lazy_static::lazy_static;
 
-use crate::error::Error;
 use crate::resolver::Resolver;
 
 use crate::resolver::asn::structs::{types::Asn1ResolvedType, values::Asn1ResolvedValue};
@@ -115,7 +114,7 @@ impl Generator {
 
     // Generates the code using the information from the `Resolver`. Returns a String
     // containing all the code (which is basically a `format!` of the `TokenStream`.
-    pub(crate) fn generate(&mut self, resolver: &Resolver) -> Result<String, Error> {
+    pub(crate) fn generate(&mut self, resolver: &Resolver) -> Result<String> {
         // FIXME: Not sure how to make sure the crates defined here are a dependency.
         // May be can just do with documenting it.
 

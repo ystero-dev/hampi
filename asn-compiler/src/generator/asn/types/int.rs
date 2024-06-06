@@ -4,16 +4,16 @@
 use proc_macro2::{Ident, TokenStream};
 use quote::quote;
 
-use crate::error::Error;
 use crate::generator::Generator;
 use crate::resolver::asn::structs::types::{Asn1ResolvedType, ResolvedSetType};
+use anyhow::Result;
 
 impl Asn1ResolvedType {
     pub(crate) fn generate_for_type(
         name: &str,
         ty: &Asn1ResolvedType,
         gen: &mut Generator,
-    ) -> Result<Option<TokenStream>, Error> {
+    ) -> Result<Option<TokenStream>> {
         match ty {
             Asn1ResolvedType::Base(ref b) => Ok(Some(b.generate_for_base_type(name, gen)?)),
             Asn1ResolvedType::Constructed(ref c) => Ok(Some(c.generate(name, gen)?)),
@@ -28,7 +28,7 @@ impl Asn1ResolvedType {
         ty: &Asn1ResolvedType,
         generator: &mut Generator,
         input: Option<&String>,
-    ) -> Result<Ident, Error> {
+    ) -> Result<Ident> {
         match ty {
             Asn1ResolvedType::Base(ref b) => {
                 b.generate_ident_and_aux_type_for_base(generator, input)
@@ -48,7 +48,7 @@ impl Asn1ResolvedType {
     pub(crate) fn generate_ident_for_reference(
         reference: &str,
         gen: &mut Generator,
-    ) -> Result<Ident, Error> {
+    ) -> Result<Ident> {
         Ok(gen.to_type_ident(reference))
     }
 
@@ -56,7 +56,7 @@ impl Asn1ResolvedType {
         name: &str,
         gen: &mut Generator,
         reference: &str,
-    ) -> Result<TokenStream, Error> {
+    ) -> Result<TokenStream> {
         let referring = gen.to_type_ident(name);
         let reference = gen.to_type_ident(reference);
 
@@ -69,11 +69,7 @@ impl Asn1ResolvedType {
 }
 
 impl ResolvedSetType {
-    pub(crate) fn generate(
-        &self,
-        name: &str,
-        generator: &mut Generator,
-    ) -> Result<TokenStream, Error> {
+    pub(crate) fn generate(&self, name: &str, generator: &mut Generator) -> Result<TokenStream> {
         let ty_ident = generator.to_type_ident(name);
         let ty_elements = self.generate_aux_types(generator)?;
 
@@ -92,7 +88,7 @@ impl ResolvedSetType {
         &self,
         generator: &mut Generator,
         input: Option<&String>,
-    ) -> Result<Ident, Error> {
+    ) -> Result<Ident> {
         // FIXME: This is perhaps not right
         let ty_ident = match input {
             None => generator.to_type_ident(&self.setref),
@@ -116,7 +112,7 @@ impl ResolvedSetType {
         Ok(ty_ident)
     }
 
-    fn generate_aux_types(&self, generator: &mut Generator) -> Result<TokenStream, Error> {
+    fn generate_aux_types(&self, generator: &mut Generator) -> Result<TokenStream> {
         let mut variant_tokens = TokenStream::new();
         for (name, ty) in &self.types {
             let variant_ident = generator.to_type_ident(&name.0);

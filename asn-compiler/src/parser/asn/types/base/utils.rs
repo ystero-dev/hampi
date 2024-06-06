@@ -1,7 +1,7 @@
 //! Utility functions used by base types
 
-use crate::error::Error;
 use crate::tokenizer::Token;
+use anyhow::Result;
 
 use crate::parser::utils::expect_token;
 
@@ -10,11 +10,11 @@ use crate::parser::asn::structs::types::base::NamedValue;
 // Parse a name(value). `(value)` component is optional
 pub(crate) fn parse_named_maybe_value(
     tokens: &[Token],
-) -> Result<((String, Option<NamedValue>), usize), Error> {
+) -> Result<((String, Option<NamedValue>), usize)> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_value_reference)? {
-        return Err(unexpected_token!("'IDENTIFIER'", tokens[consumed]));
+        return Err(unexpected_token!("'IDENTIFIER'", tokens[consumed]).into());
     }
     let identifier = tokens[consumed].text.clone();
     consumed += 1;
@@ -33,13 +33,12 @@ pub(crate) fn parse_named_maybe_value(
                     consumed += 1;
                     NamedValue::ValueRef(valueref)
                 } else {
-                    return Err(unexpected_token!(
-                        "'Reference' or 'Number'",
-                        tokens[consumed]
-                    ));
+                    return Err(
+                        unexpected_token!("'Reference' or 'Number'", tokens[consumed]).into(),
+                    );
                 };
                 if !expect_token(&tokens[consumed..], Token::is_round_end)? {
-                    return Err(unexpected_token!("')'", tokens[consumed]));
+                    return Err(unexpected_token!("')'", tokens[consumed]).into());
                 }
                 consumed += 1;
 
@@ -54,13 +53,11 @@ pub(crate) fn parse_named_maybe_value(
     Ok(((identifier, named_value), consumed))
 }
 
-pub(crate) fn parse_named_values(
-    tokens: &[Token],
-) -> Result<(Vec<(String, NamedValue)>, usize), Error> {
+pub(crate) fn parse_named_values(tokens: &[Token]) -> Result<(Vec<(String, NamedValue)>, usize)> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_curly_begin)? {
-        return Err(unexpected_token!("'{", tokens[consumed]));
+        return Err(unexpected_token!("'{", tokens[consumed]).into());
     }
     consumed += 1;
     let mut values = vec![];
@@ -69,7 +66,7 @@ pub(crate) fn parse_named_values(
             parse_named_maybe_value(&tokens[consumed..])?;
 
         if named_value.is_none() {
-            return Err(parse_error!("Name(Value) expected, Value missing!"));
+            return Err(parse_error!("Name(Value) expected, Value missing!").into());
         }
         let named_value = named_value.unwrap();
 
@@ -82,10 +79,7 @@ pub(crate) fn parse_named_values(
             consumed += 1;
             break;
         } else {
-            return Err(unexpected_token!(
-                "'Reference' or 'Number'",
-                tokens[consumed]
-            ));
+            return Err(unexpected_token!("'Reference' or 'Number'", tokens[consumed]).into());
         }
     }
 

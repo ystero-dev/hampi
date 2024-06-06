@@ -1,20 +1,19 @@
 //! Implementation of Code Generation for ASN.1 `SEQUENCE` Type.
 
-use proc_macro2::TokenStream;
-use quote::quote;
-
-use crate::error::Error;
 use crate::generator::Generator;
 use crate::resolver::asn::structs::types::{
     constructed::ResolvedConstructedType, Asn1ResolvedType,
 };
+use anyhow::Result;
+use proc_macro2::TokenStream;
+use quote::quote;
 
 impl ResolvedConstructedType {
     pub(crate) fn generate_sequence(
         &self,
         name: &str,
         generator: &mut Generator,
-    ) -> Result<TokenStream, Error> {
+    ) -> Result<TokenStream> {
         if let ResolvedConstructedType::Sequence {
             ref components,
             ref extensible,

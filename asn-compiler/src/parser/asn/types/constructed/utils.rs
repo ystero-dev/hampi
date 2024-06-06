@@ -1,16 +1,16 @@
 //! Utility functions for Parsing Constructed types
 
-use crate::error::Error;
 use crate::tokenizer::Token;
+use anyhow::Result;
 
 use crate::parser::{asn::types::parse_type, utils::expect_token};
 
 use crate::parser::asn::structs::types::constructed::Component;
 
-pub(crate) fn parse_component(tokens: &[Token]) -> Result<(Component, usize), Error> {
+pub(crate) fn parse_component(tokens: &[Token]) -> Result<(Component, usize)> {
     let mut consumed = 0;
     if !expect_token(&tokens[consumed..], Token::is_value_reference)? {
-        return Err(unexpected_token!("'IDENTIFIER'", tokens[consumed]));
+        return Err(unexpected_token!("'IDENTIFIER'", tokens[consumed]).into());
     }
     let id = tokens[consumed].text.clone();
     consumed += 1;

@@ -1,7 +1,7 @@
 //! Parsing related to "CHOICE" Type
 
-use crate::error::Error;
 use crate::tokenizer::Token;
+use anyhow::Result;
 
 use crate::parser::utils::{expect_keyword, expect_token};
 
@@ -14,16 +14,16 @@ use super::utils::parse_component;
 // The current implementation supports a very simple choice definition, where, everything is dumped
 // into 'root' components. Additional extension components or version groups etc. are not supported
 // for now. May be supported later if needed.
-pub(crate) fn parse_choice_type(tokens: &[Token]) -> Result<(Asn1TypeChoice, usize), Error> {
+pub(crate) fn parse_choice_type(tokens: &[Token]) -> Result<(Asn1TypeChoice, usize)> {
     let mut consumed = 0;
 
     if !expect_keyword(&tokens[consumed..], "CHOICE")? {
-        return Err(unexpected_token!("'CHOICE'", tokens[consumed]));
+        return Err(unexpected_token!("'CHOICE'", tokens[consumed]).into());
     }
     consumed += 1;
 
     if !expect_token(&tokens[consumed..], Token::is_curly_begin)? {
-        return Err(unexpected_token!("'CHOICE'", tokens[consumed]));
+        return Err(unexpected_token!("'CHOICE'", tokens[consumed]).into());
     }
     consumed += 1;
 
@@ -55,7 +55,8 @@ pub(crate) fn parse_choice_type(tokens: &[Token]) -> Result<(Asn1TypeChoice, usi
             if extension_markers != 1 {
                 return Err(parse_error!(
                     "Addition Component can only be present after an Extension Marker!"
-                ));
+                )
+                .into());
             } else {
                 let (addition_group, addition_group_consumed) =
                     parse_choice_addition_group(&tokens[consumed..])?;
@@ -72,9 +73,9 @@ pub(crate) fn parse_choice_type(tokens: &[Token]) -> Result<(Asn1TypeChoice, usi
         if expect_token(&tokens[consumed..], Token::is_extension)? {
             extension_markers += 1;
             if extension_markers > 1 {
-                return Err(parse_error!(
-                    "Only one Extension Marker is allowed in a 'CHOICE')"
-                ));
+                return Err(
+                    parse_error!("Only one Extension Marker is allowed in a 'CHOICE')").into(),
+                );
             }
             consumed += 1;
             if expect_token(&tokens[consumed..], Token::is_comma)? {
@@ -95,7 +96,7 @@ pub(crate) fn parse_choice_type(tokens: &[Token]) -> Result<(Asn1TypeChoice, usi
 
             loop_count += 1;
             if loop_count == 3 {
-                return Err(parse_error!("Parser stuck at Token {:?}", tokens[consumed]));
+                return Err(parse_error!("Parser stuck at Token {:?}", tokens[consumed]).into());
             }
         }
     }
@@ -122,11 +123,11 @@ pub(crate) fn parse_choice_type(tokens: &[Token]) -> Result<(Asn1TypeChoice, usi
     ))
 }
 
-fn parse_choice_addition_group(tokens: &[Token]) -> Result<(ChoiceAdditionGroup, usize), Error> {
+fn parse_choice_addition_group(tokens: &[Token]) -> Result<(ChoiceAdditionGroup, usize)> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_addition_groups_begin)? {
-        return Err(unexpected_token!("'[['", tokens[consumed]));
+        return Err(unexpected_token!("'[['", tokens[consumed]).into());
     }
     consumed += 1;
 
@@ -134,7 +135,7 @@ fn parse_choice_addition_group(tokens: &[Token]) -> Result<(ChoiceAdditionGroup,
         let version = tokens[consumed].text.clone();
         consumed += 1;
         if !expect_token(&tokens[consumed..], Token::is_colon)? {
-            return Err(unexpected_token!("':'", tokens[consumed]));
+            return Err(unexpected_token!("':'", tokens[consumed]).into());
         }
         consumed += 1;
         Some(version)
@@ -173,12 +174,12 @@ fn parse_choice_addition_group(tokens: &[Token]) -> Result<(ChoiceAdditionGroup,
 
             loop_count += 1;
             if loop_count == 3 {
-                return Err(parse_error!("Parser stuck at Token {:?}", tokens[consumed]));
+                return Err(parse_error!("Parser stuck at Token {:?}", tokens[consumed]).into());
             }
         }
     }
     if components.is_empty() {
-        Err(parse_error!("Additional Components cannot be empty!"))
+        Err(parse_error!("Additional Components cannot be empty!").into())
     } else {
         Ok((
             ChoiceAdditionGroup {

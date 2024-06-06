@@ -20,16 +20,16 @@ mod real;
 
 use proc_macro2::{Ident, TokenStream};
 
-use crate::error::Error;
 use crate::generator::Generator;
 use crate::resolver::asn::structs::types::base::ResolvedBaseType;
+use anyhow::Result;
 
 impl ResolvedBaseType {
     pub(crate) fn generate_for_base_type(
         &self,
         name: &str,
         generator: &mut Generator,
-    ) -> Result<TokenStream, Error> {
+    ) -> Result<TokenStream> {
         match self {
             ResolvedBaseType::Integer(ref i) => i.generate(name, generator),
             ResolvedBaseType::Enum(ref e) => e.generate(name, generator),
@@ -47,7 +47,7 @@ impl ResolvedBaseType {
         &self,
         generator: &mut Generator,
         input: Option<&String>,
-    ) -> Result<Ident, Error> {
+    ) -> Result<Ident> {
         match self {
             ResolvedBaseType::Integer(ref i) => i.generate_ident_and_aux_type(generator, input),
             ResolvedBaseType::Enum(ref e) => e.generate_ident_and_aux_type(generator, input),

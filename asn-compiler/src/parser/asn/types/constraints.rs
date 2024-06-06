@@ -1,7 +1,7 @@
 //! Parser for ASN.1 SubType Constraints
 
-use crate::error::Error;
 use crate::tokenizer::Token;
+use anyhow::Result;
 
 use crate::parser::{
     asn::values::parse_value,
@@ -15,7 +15,7 @@ use crate::parser::asn::structs::types::constraints::*;
 
 use super::parse_type;
 
-pub(super) fn parse_constraints(tokens: &[Token]) -> Result<(Vec<Asn1Constraint>, usize), Error> {
+pub(super) fn parse_constraints(tokens: &[Token]) -> Result<(Vec<Asn1Constraint>, usize)> {
     let mut consumed = 0;
 
     let mut constraints = vec![];
@@ -26,7 +26,7 @@ pub(super) fn parse_constraints(tokens: &[Token]) -> Result<(Vec<Asn1Constraint>
     Ok((constraints, consumed))
 }
 
-pub(crate) fn parse_constraint(tokens: &[Token]) -> Result<(Asn1Constraint, usize), Error> {
+pub(crate) fn parse_constraint(tokens: &[Token]) -> Result<(Asn1Constraint, usize)> {
     if let Ok(subtype) = parse_subtype_constraint(tokens) {
         Ok(subtype)
     } else if let Ok(table) = parse_table_constraint(tokens) {
@@ -36,17 +36,15 @@ pub(crate) fn parse_constraint(tokens: &[Token]) -> Result<(Asn1Constraint, usiz
     } else if let Ok(with_components) = parse_with_components_constraint(tokens) {
         Ok(with_components)
     } else {
-        Err(parse_error!(
-            "Parsing of this constraint not yet supported!"
-        ))
+        Err(parse_error!("Parsing of this constraint not yet supported!").into())
     }
 }
 
-fn parse_table_constraint(tokens: &[Token]) -> Result<(Asn1Constraint, usize), Error> {
+fn parse_table_constraint(tokens: &[Token]) -> Result<(Asn1Constraint, usize)> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_round_begin)? {
-        return Err(unexpected_token!("'('", tokens[0]));
+        return Err(unexpected_token!("'('", tokens[0]).into());
     }
     consumed += 1;
 
@@ -61,7 +59,7 @@ fn parse_table_constraint(tokens: &[Token]) -> Result<(Asn1Constraint, usize), E
     )? {
         tokens[consumed + 1].text.clone()
     } else {
-        return Err(parse_error!("Failed to parse Simple Table Constraint."));
+        return Err(parse_error!("Failed to parse Simple Table Constraint.").into());
     };
     consumed += 3;
 
@@ -93,19 +91,19 @@ fn parse_table_constraint(tokens: &[Token]) -> Result<(Asn1Constraint, usize), E
     };
 
     if !expect_token(&tokens[consumed..], Token::is_round_end)? {
-        return Err(unexpected_token!("')'", tokens[consumed]));
+        return Err(unexpected_token!("')'", tokens[consumed]).into());
     }
     consumed += 1;
 
     Ok((constraint, consumed))
 }
 
-fn parse_subtype_constraint(tokens: &[Token]) -> Result<(Asn1Constraint, usize), Error> {
+fn parse_subtype_constraint(tokens: &[Token]) -> Result<(Asn1Constraint, usize)> {
     let (element_set, element_set_consumed, _all_except) = parse_element_set(tokens)?;
     Ok((Asn1Constraint::Subtype(element_set), element_set_consumed))
 }
 
-fn parse_element_set(tokens: &[Token]) -> Result<(ElementSet, usize, bool), Error> {
+fn parse_element_set(tokens: &[Token]) -> Result<(ElementSet, usize, bool)> {
     let mut consumed = 0;
 
     // It is allowed to have constraints on SEQUENCE OF and SIZE OF to be defined without the '('
@@ -119,7 +117,7 @@ fn parse_element_set(tokens: &[Token]) -> Result<(ElementSet, usize, bool), Erro
     let all_except = if expect_keyword(&tokens[consumed..], "ALL")? {
         consumed += 1;
         if !expect_keyword(&tokens[consumed..], "EXCEPT")? {
-            return Err(unexpected_token!("EXCEPT", tokens[consumed]));
+            return Err(unexpected_token!("EXCEPT", tokens[consumed]).into());
         }
         consumed += 1;
         true
@@ -131,7 +129,7 @@ fn parse_element_set(tokens: &[Token]) -> Result<(ElementSet, usize, bool), Erro
     consumed += root_consumed;
 
     if root_elements.elements.is_empty() {
-        return Err(parse_error!("Empty Set in a Constraint!"));
+        return Err(parse_error!("Empty Set in a Constraint!").into());
     }
 
     let mut additional_elements = None;
@@ -140,7 +138,7 @@ fn parse_element_set(tokens: &[Token]) -> Result<(ElementSet, usize, bool), Erro
 
         // Extension Marker
         if !expect_token(&tokens[consumed..], Token::is_extension)? {
-            return Err(unexpected_token!("'...'", tokens[consumed]));
+            return Err(unexpected_token!("'...'", tokens[consumed]).into());
         }
         consumed += 1;
 
@@ -157,13 +155,13 @@ fn parse_element_set(tokens: &[Token]) -> Result<(ElementSet, usize, bool), Erro
 
     if round_begin {
         if !expect_token(&tokens[consumed..], Token::is_round_end)? {
-            return Err(unexpected_token!("')'", tokens[consumed]));
+            return Err(unexpected_token!("')'", tokens[consumed]).into());
         }
         consumed += 1;
     } else {
         // For #47
         if !expect_keyword(&tokens[consumed..], "OF")? {
-            return Err(unexpected_token!("'OF'", tokens[consumed]));
+            return Err(unexpected_token!("'OF'", tokens[consumed]).into());
         }
     }
 
@@ -177,7 +175,7 @@ fn parse_element_set(tokens: &[Token]) -> Result<(ElementSet, usize, bool), Erro
     ))
 }
 
-fn parse_union_set(tokens: &[Token]) -> Result<(UnionSet, usize), Error> {
+fn parse_union_set(tokens: &[Token]) -> Result<(UnionSet, usize)> {
     let mut consumed = 0;
 
     let mut elements = vec![];
@@ -195,7 +193,9 @@ fn parse_union_set(tokens: &[Token]) -> Result<(UnionSet, usize), Error> {
                 }
                 Err(_) => {
                     if expecting_iset {
-                        return Err(parse_error!("Expecting Interesection Set in a Constraint."));
+                        return Err(
+                            parse_error!("Expecting Interesection Set in a Constraint.").into()
+                        );
                     }
                 }
             }
@@ -227,7 +227,7 @@ fn parse_union_set(tokens: &[Token]) -> Result<(UnionSet, usize), Error> {
 //
 // This avoid having to write a lot of boiler-plate code to check for `(` or `)` in a few
 // functions (typically inside `parse_intersection_set`.)
-fn parse_intersection_set(tokens: &[Token]) -> Result<(Elements, usize), Error> {
+fn parse_intersection_set(tokens: &[Token]) -> Result<(Elements, usize)> {
     let mut consumed = 0;
 
     // First try to Parse a Size
@@ -292,7 +292,7 @@ fn parse_intersection_set(tokens: &[Token]) -> Result<(Elements, usize), Error> 
         ));
     }
 
-    Err(parse_error!("parse_intersection_set: Not Implmented"))
+    Err(parse_error!("parse_intersection_set: Not Implmented").into())
 }
 
 // Parses a Range Value, supports all possible formats.
@@ -300,7 +300,7 @@ fn parse_intersection_set(tokens: &[Token]) -> Result<(Elements, usize), Error> 
 // If parsing fails (tokens of not adequate length or tokens don't match) returns an Error. The
 // caller should do the error handling. Note: Typically caller will simply say Oh it didn't match,
 // let's try next.
-fn parse_range_elements(tokens: &[Token]) -> Result<(SubtypeElements, usize), Error> {
+fn parse_range_elements(tokens: &[Token]) -> Result<(SubtypeElements, usize)> {
     let mut consumed = 0;
 
     fn is_min_max_keyword(token: &Token) -> bool {
@@ -315,10 +315,7 @@ fn parse_range_elements(tokens: &[Token]) -> Result<(SubtypeElements, usize), Er
             if expect_token(&tokens[consumed..], is_min_max_keyword)? {
                 (tokens[consumed].text.clone(), 1)
             } else {
-                return Err(unexpected_token!(
-                    "'MIN', 'MAX' or 'Value'",
-                    tokens[consumed]
-                ));
+                return Err(unexpected_token!("'MIN', 'MAX' or 'Value'", tokens[consumed]).into());
             }
         }
     };
@@ -328,7 +325,7 @@ fn parse_range_elements(tokens: &[Token]) -> Result<(SubtypeElements, usize), Er
         &tokens[consumed..],
         &[Token::is_less_than, Token::is_range_separator],
     )? {
-        return Err(unexpected_token!("'<' or '..'", tokens[consumed]));
+        return Err(unexpected_token!("'<' or '..'", tokens[consumed]).into());
     }
 
     let lower_inclusive = if expect_token(&tokens[consumed..], Token::is_less_than)? {
@@ -352,10 +349,7 @@ fn parse_range_elements(tokens: &[Token]) -> Result<(SubtypeElements, usize), Er
             if expect_token(&tokens[consumed..], is_min_max_keyword)? {
                 (tokens[consumed].text.clone(), 1)
             } else {
-                return Err(unexpected_token!(
-                    "'MIN', 'MAX' or 'Value'",
-                    tokens[consumed]
-                ));
+                return Err(unexpected_token!("'MIN', 'MAX' or 'Value'", tokens[consumed]).into());
             }
         }
     };
@@ -372,28 +366,28 @@ fn parse_range_elements(tokens: &[Token]) -> Result<(SubtypeElements, usize), Er
     ))
 }
 
-fn parse_contents_constraint(tokens: &[Token]) -> Result<(Asn1Constraint, usize), Error> {
+fn parse_contents_constraint(tokens: &[Token]) -> Result<(Asn1Constraint, usize)> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_round_begin)? {
-        return Err(unexpected_token!("'('", tokens[consumed]));
+        return Err(unexpected_token!("'('", tokens[consumed]).into());
     }
     consumed += 1;
 
     if !expect_keyword(&tokens[consumed..], "CONTAINING")? {
-        return Err(unexpected_token!("'CONTAINING'", tokens[consumed]));
+        return Err(unexpected_token!("'CONTAINING'", tokens[consumed]).into());
     }
     consumed += 1;
 
     let _containing = if expect_token(&tokens[consumed..], Token::is_type_reference)? {
         tokens[consumed].text.clone()
     } else {
-        return Err(unexpected_token!("'TYPE Reference'", tokens[consumed]));
+        return Err(unexpected_token!("'TYPE Reference'", tokens[consumed]).into());
     };
     consumed += 1;
 
     if !expect_token(&tokens[consumed..], Token::is_round_end)? {
-        return Err(unexpected_token!("')'", tokens[consumed]));
+        return Err(unexpected_token!("')'", tokens[consumed]).into());
     }
     consumed += 1;
 
@@ -407,15 +401,15 @@ fn parse_contents_constraint(tokens: &[Token]) -> Result<(Asn1Constraint, usize)
     ))
 }
 
-fn parse_with_components_constraint(tokens: &[Token]) -> Result<(Asn1Constraint, usize), Error> {
+fn parse_with_components_constraint(tokens: &[Token]) -> Result<(Asn1Constraint, usize)> {
     let mut consumed = 0;
     if !expect_token(&tokens[consumed..], Token::is_round_begin)? {
-        return Err(unexpected_token!("'('", tokens[consumed]));
+        return Err(unexpected_token!("'('", tokens[consumed]).into());
     }
     consumed += 1;
 
     if !expect_keywords(&tokens[consumed..], &["WITH", "COMPONENTS"])? {
-        return Err(unexpected_token!("'WITH COMPONENTS'", tokens[consumed]));
+        return Err(unexpected_token!("'WITH COMPONENTS'", tokens[consumed]).into());
     }
     consumed += 2;
 
@@ -423,7 +417,7 @@ fn parse_with_components_constraint(tokens: &[Token]) -> Result<(Asn1Constraint,
     consumed += value_consumed;
 
     if !expect_token(&tokens[consumed..], Token::is_round_end)? {
-        return Err(unexpected_token!("')'", tokens[consumed]));
+        return Err(unexpected_token!("')'", tokens[consumed]).into());
     }
     consumed += 1;
 

@@ -3,12 +3,12 @@
 use proc_macro2::{Literal, TokenStream};
 use quote::quote;
 
-use crate::error::Error;
 use crate::generator::Generator;
 use crate::resolver::asn::structs::{
     types::{base::ResolvedBaseType, Asn1ResolvedType},
     values::{Asn1ResolvedValue, ResolvedBaseValue},
 };
+use anyhow::Result;
 
 impl Asn1ResolvedValue {
     // This function generates constants for values that are of base types or references to base
@@ -28,7 +28,7 @@ impl Asn1ResolvedValue {
         name: &str,
         value: &Asn1ResolvedValue,
         gen: &mut Generator,
-    ) -> Result<Option<TokenStream>, Error> {
+    ) -> Result<Option<TokenStream>> {
         match value {
             Asn1ResolvedValue::Base(v) => Self::tokens_from_resolved_base_value(name, v, gen),
             Asn1ResolvedValue::ReferencedType { value, .. } => {
@@ -42,7 +42,7 @@ impl Asn1ResolvedValue {
         name: &str,
         base: &ResolvedBaseValue,
         gen: &mut Generator,
-    ) -> Result<Option<TokenStream>, Error> {
+    ) -> Result<Option<TokenStream>> {
         if let ResolvedBaseValue::Integer(i) = base {
             if let Asn1ResolvedType::Base(ResolvedBaseType::Integer(ref typ)) = i.typeref {
                 let const_type = gen.to_inner_type(typ.bits, typ.signed);

@@ -11,6 +11,7 @@ use std::process::{Command, Stdio};
 use topological_sort::TopologicalSort;
 
 use crate::error::Error;
+use anyhow::Result;
 
 use crate::parser::asn::structs::module::Asn1Module;
 
@@ -79,7 +80,7 @@ impl Asn1Compiler {
     /// modules are topologically sorted as well. This makes Error handling for undefined
     /// definitions much easier.
     // FIXME: Support the case where module is imported by a name different from it's actual name.
-    pub fn resolve_modules(&mut self) -> Result<(), Error> {
+    pub fn resolve_modules(&mut self) -> Result<()> {
         log::info!("Resolving imports from all modules.");
         self.resolve_imports()?;
 
@@ -88,7 +89,7 @@ impl Asn1Compiler {
     }
 
     /// Generate the code
-    pub fn generate(&mut self) -> Result<(), Error> {
+    pub fn generate(&mut self) -> Result<()> {
         log::info!("Generating code, writing to file: {}", self.output_filename);
 
         let input_text = self.generator.generate(&self.resolver)?;
@@ -109,7 +110,7 @@ impl Asn1Compiler {
     }
 
     /// Compilation Driver for a String as module(s).
-    pub fn compile_string(&mut self, modules_string: &str, parse_only: bool) -> Result<(), Error> {
+    pub fn compile_string(&mut self, modules_string: &str, parse_only: bool) -> Result<()> {
         let mut tokens = crate::tokenizer::tokenize_string(modules_string)?;
         self.parse_tokens_into_modules(&mut tokens)?;
         if !parse_only {
@@ -121,10 +122,7 @@ impl Asn1Compiler {
     }
 
     /// The Actual compilation driver
-    pub fn compile_files<T: AsRef<Path> + std::fmt::Debug>(
-        &mut self,
-        files: &[T],
-    ) -> Result<(), Error> {
+    pub fn compile_files<T: AsRef<Path> + std::fmt::Debug>(&mut self, files: &[T]) -> Result<()> {
         for file in files {
             log::info!("Processing file: {:?}", file);
             let file = File::open(file).map_err(|e| io_error!("{:#?}", e))?;
@@ -136,7 +134,7 @@ impl Asn1Compiler {
         self.generate()
     }
 
-    fn parse_tokens_into_modules(&mut self, tokens: &mut Vec<Token>) -> Result<(), Error> {
+    fn parse_tokens_into_modules(&mut self, tokens: &mut Vec<Token>) -> Result<()> {
         log::debug!("Parsing {} tokens.", tokens.len());
         let mut modules = crate::parser::parse(tokens)?;
         loop {
@@ -151,7 +149,7 @@ impl Asn1Compiler {
         Ok(())
     }
 
-    fn rustfmt_generated_code(&self, code: &str) -> Result<String, Error> {
+    fn rustfmt_generated_code(&self, code: &str) -> Result<String> {
         log::debug!("Runing `rustfmt` on the generated code.");
         let rustfmt_binary = "rustfmt"; // TODO: Get from `env` , 'custom path' etc.
         let mut cmd = Command::new(rustfmt_binary);
@@ -177,13 +175,13 @@ impl Asn1Compiler {
         match String::from_utf8(output) {
             Ok(formatted_output) => match status.code() {
                 Some(0) => Ok(formatted_output),
-                _ => Err(resolve_error!("`rustfmt` failed to write some bindings.")),
+                _ => Err(resolve_error!("`rustfmt` failed to write some bindings.").into()),
             },
             _ => Ok(stdin_handle.join().unwrap()),
         }
     }
 
-    fn resolve_imports(&self) -> Result<(), Error> {
+    fn resolve_imports(&self) -> Result<()> {
         log::debug!("Resolving imports.");
         for (_, module) in self.modules.iter() {
             for (import, module_name) in module.get_imported_defs() {
@@ -193,7 +191,8 @@ impl Asn1Compiler {
                         "Module '{}', corresponding to definition '{}' not found!",
                         module_name.name_as_str(),
                         import
-                    ));
+                    )
+                    .into());
                 }
             }
         }
@@ -226,7 +225,7 @@ impl Asn1Compiler {
         out_vec
     }
 
-    fn resolve_definitions(&mut self) -> Result<(), Error> {
+    fn resolve_definitions(&mut self) -> Result<()> {
         let module_names = self.sorted_modules();
         for name in module_names {
             let module = self.modules.get_mut(&name).unwrap();

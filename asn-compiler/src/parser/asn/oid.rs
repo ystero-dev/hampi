@@ -4,8 +4,8 @@ use std::collections::HashMap;
 
 use lazy_static::lazy_static;
 
-use crate::error::Error;
 use crate::tokenizer::Token;
+use anyhow::Result;
 
 use crate::parser::utils::{expect_one_of_tokens, expect_token, expect_tokens};
 
@@ -31,9 +31,9 @@ lazy_static! {
 // Parses a named OID component
 //
 // Parses named OID components of the form `iso` or `iso(1)`
-fn parse_named_oid_component(tokens: &[Token]) -> Result<(OIDComponent, usize), Error> {
+fn parse_named_oid_component(tokens: &[Token]) -> Result<(OIDComponent, usize)> {
     if !expect_token(tokens, Token::is_value_reference)? {
-        return Err(unexpected_token!("'IDENTIFIER'", tokens[0]));
+        return Err(unexpected_token!("'IDENTIFIER'", tokens[0]).into());
     }
     let name_token = &tokens[0];
     let name = &name_token.text;
@@ -56,7 +56,7 @@ fn parse_named_oid_component(tokens: &[Token]) -> Result<(OIDComponent, usize), 
             } else {
                 let number = WELL_KNOWN_OID_NAMES.get(name.as_str());
                 if number.is_none() {
-                    return Err(unknown_oid_name!(name_token));
+                    return Err(unknown_oid_name!(name_token).into());
                 }
                 (*number.unwrap(), 1)
             }
@@ -64,7 +64,7 @@ fn parse_named_oid_component(tokens: &[Token]) -> Result<(OIDComponent, usize), 
         Err(_) => {
             let number = WELL_KNOWN_OID_NAMES.get(name.as_str());
             if number.is_none() {
-                return Err(unknown_oid_name!(name_token));
+                return Err(unknown_oid_name!(name_token).into());
             }
             (*number.unwrap(), 1)
         }
@@ -76,7 +76,7 @@ fn parse_named_oid_component(tokens: &[Token]) -> Result<(OIDComponent, usize), 
 // Wrapper for Parsing an OID Component
 //
 // Parses Either Numbered or Named/Numbered OID components
-fn parse_oid_component(tokens: &[Token]) -> Result<(OIDComponent, usize), Error> {
+fn parse_oid_component(tokens: &[Token]) -> Result<(OIDComponent, usize)> {
     let consumed = 0;
 
     if expect_one_of_tokens(
@@ -94,23 +94,18 @@ fn parse_oid_component(tokens: &[Token]) -> Result<(OIDComponent, usize), Error>
             Ok((OIDComponent::new(None, number), 1))
         }
     } else {
-        Err(unexpected_token!(
-            "Expected 'identifier' or 'number'",
-            tokens[0]
-        ))
+        Err(unexpected_token!("Expected 'identifier' or 'number'", tokens[0]).into())
     }
 }
 
 // This is required by 'resolver' to resolve object identifier values (which requires the value
 // which is basically just a string of the form '{ iso ... }' to be parsed (and resolved) there.
 // Hence this module is `pub(crate)`.
-pub(crate) fn parse_object_identifier(
-    tokens: &[Token],
-) -> Result<(ObjectIdentifier, usize), Error> {
+pub(crate) fn parse_object_identifier(tokens: &[Token]) -> Result<(ObjectIdentifier, usize)> {
     let mut consumed = 0;
 
     if !expect_token(&tokens[consumed..], Token::is_curly_begin)? {
-        return Err(unexpected_token!("{", tokens[consumed]));
+        return Err(unexpected_token!("{", tokens[consumed]).into());
     }
     consumed += 1;
 

@@ -10,7 +10,7 @@ mod octetstring;
 
 mod charstring;
 
-use crate::error::Error;
+use anyhow::Result;
 
 use crate::parser::asn::structs::types::{Asn1BuiltinType, Asn1Type, Asn1TypeKind};
 
@@ -26,7 +26,7 @@ use crate::resolver::{
 pub(crate) fn resolve_base_type(
     ty: &Asn1Type,
     resolver: &mut Resolver,
-) -> Result<ResolvedBaseType, Error> {
+) -> Result<ResolvedBaseType> {
     if let Asn1TypeKind::Builtin(ref kind) = ty.kind {
         match kind {
             Asn1BuiltinType::Integer(ref i) => Ok(ResolvedBaseType::Integer(
@@ -50,12 +50,9 @@ pub(crate) fn resolve_base_type(
             )),
             Asn1BuiltinType::Null => Ok(ResolvedBaseType::Null(Asn1ResolvedNull)),
             Asn1BuiltinType::Real => Ok(ResolvedBaseType::Real(Asn1ResolvedReal)),
-            _ => Err(resolve_error!(
-                "parse_base_type: Not Implemented! {:#?}",
-                ty
-            )),
+            _ => Err(resolve_error!("parse_base_type: Not Implemented! {:#?}", ty).into()),
         }
     } else {
-        Err(resolve_error!("Expected Base Type. Found '{:#?}'", ty))
+        Err(resolve_error!("Expected Base Type. Found '{:#?}'", ty).into())
     }
 }

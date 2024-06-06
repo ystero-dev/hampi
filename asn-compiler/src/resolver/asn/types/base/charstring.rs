@@ -1,7 +1,7 @@
 //! Functionality for handling Resolved ASN.1 CharacterString Types.
 
-use crate::error::Error;
 use crate::resolver::Resolver;
+use anyhow::Result;
 
 use crate::parser::asn::structs::types::{Asn1BuiltinType, Asn1Type, Asn1TypeKind};
 use crate::resolver::asn::structs::types::base::Asn1ResolvedCharacterString;
@@ -10,7 +10,7 @@ impl Asn1ResolvedCharacterString {
     pub(crate) fn resolve_character_string(
         ty: &Asn1Type,
         resolver: &Resolver,
-    ) -> Result<Asn1ResolvedCharacterString, Error> {
+    ) -> Result<Asn1ResolvedCharacterString> {
         let mut base = Asn1ResolvedCharacterString::default();
 
         if let Asn1TypeKind::Builtin(Asn1BuiltinType::CharacterString { str_type }) = &ty.kind {

@@ -3,18 +3,18 @@
 use proc_macro2::TokenStream;
 use quote::quote;
 
-use crate::error::Error;
 use crate::generator::Generator;
 use crate::resolver::asn::structs::types::{
     constructed::ResolvedConstructedType, Asn1ResolvedType,
 };
+use anyhow::Result;
 
 impl ResolvedConstructedType {
     pub(crate) fn generate_sequence_of(
         &self,
         name: &str,
         generator: &mut Generator,
-    ) -> Result<TokenStream, Error> {
+    ) -> Result<TokenStream> {
         if let ResolvedConstructedType::SequenceOf {
             ref ty,
             ref size_values,

@@ -1,5 +1,5 @@
-use crate::error::Error;
 use crate::tokenizer::Token;
+use anyhow::Result;
 
 use crate::parser::asn::structs::types::{
     ActualParam, Asn1BuiltinType, Asn1ConstructedType, Asn1Tag, Asn1TagClass, Asn1TagMode,
@@ -17,7 +17,7 @@ use super::{
 };
 
 // Parses the `Type` Expansion in the ASN.1 Grammar.
-pub(crate) fn parse_type(tokens: &[Token]) -> Result<(Asn1Type, usize), Error> {
+pub(crate) fn parse_type(tokens: &[Token]) -> Result<(Asn1Type, usize)> {
     let mut consumed = 0;
 
     // Optional Tag
@@ -32,10 +32,9 @@ pub(crate) fn parse_type(tokens: &[Token]) -> Result<(Asn1Type, usize), Error> {
             Token::is_object_class_reference,
         ],
     )? {
-        return Err(unexpected_token!(
-            "'Type Reference' or 'Builtin Type'",
-            tokens[consumed]
-        ));
+        return Err(
+            unexpected_token!("'Type Reference' or 'Builtin Type'", tokens[consumed]).into(),
+        );
     }
 
     // Now: Parse The Type definition.
@@ -87,7 +86,7 @@ pub(crate) fn parse_type(tokens: &[Token]) -> Result<(Asn1Type, usize), Error> {
         "OBJECT" => {
             log::trace!("Parsing `OBJECT IDENTIFIER` type.");
             if !expect_keywords(&tokens[consumed..], &["OBJECT", "IDENTIFIER"])? {
-                return Err(unexpected_token!("'IDENTIFIER'", tokens[consumed + 1]));
+                return Err(unexpected_token!("'IDENTIFIER'", tokens[consumed + 1]).into());
             }
 
             (Asn1TypeKind::Builtin(Asn1BuiltinType::ObjectIdentifier), 2)
@@ -165,7 +164,7 @@ pub(crate) fn parse_type(tokens: &[Token]) -> Result<(Asn1Type, usize), Error> {
     ))
 }
 
-fn parse_referenced_type(tokens: &[Token]) -> Result<(Asn1TypeKind, usize), Error> {
+fn parse_referenced_type(tokens: &[Token]) -> Result<(Asn1TypeKind, usize)> {
     let mut consumed = 0;
 
     if let Ok(success) = expect_tokens(
@@ -241,10 +240,10 @@ fn parse_referenced_type(tokens: &[Token]) -> Result<(Asn1TypeKind, usize), Erro
     }
 }
 
-fn parse_actual_params(tokens: &[Token]) -> Result<(Vec<ActualParam>, usize), Error> {
+fn parse_actual_params(tokens: &[Token]) -> Result<(Vec<ActualParam>, usize)> {
     let mut consumed = 0;
     if !expect_token(&tokens[consumed..], Token::is_curly_begin)? {
-        return Err(unexpected_token!("'{'", tokens[consumed]));
+        return Err(unexpected_token!("'{'", tokens[consumed]).into());
     }
     consumed += 1;
 
@@ -260,11 +259,11 @@ fn parse_actual_params(tokens: &[Token]) -> Result<(Vec<ActualParam>, usize), Er
                 consumed += 1;
                 param
             } else {
-                return Err(unexpected_token!("'IDENTIFIER'", tokens[consumed]));
+                return Err(unexpected_token!("'IDENTIFIER'", tokens[consumed]).into());
             };
 
             if !expect_token(&tokens[consumed..], Token::is_curly_end)? {
-                return Err(unexpected_token!("'}'", tokens[consumed]));
+                return Err(unexpected_token!("'}'", tokens[consumed]).into());
             };
             consumed += 1;
             params.push(ActualParam::Set(param));
@@ -289,7 +288,7 @@ fn parse_actual_params(tokens: &[Token]) -> Result<(Vec<ActualParam>, usize), Er
     Ok((params, consumed))
 }
 
-fn maybe_parse_tag(tokens: &[Token]) -> Result<(Option<Asn1Tag>, usize), Error> {
+fn maybe_parse_tag(tokens: &[Token]) -> Result<(Option<Asn1Tag>, usize)> {
     match expect_token(tokens, Token::is_square_begin) {
         Ok(success) => {
             if success {
@@ -305,10 +304,10 @@ fn maybe_parse_tag(tokens: &[Token]) -> Result<(Option<Asn1Tag>, usize), Error> 
     }
 }
 
-fn parse_tag(tokens: &[Token]) -> Result<(Asn1Tag, usize), Error> {
+fn parse_tag(tokens: &[Token]) -> Result<(Asn1Tag, usize)> {
     let mut consumed = 0;
     if !expect_token(&tokens[consumed..], Token::is_square_begin)? {
-        return Err(unexpected_token!("[", tokens[consumed]));
+        return Err(unexpected_token!("[", tokens[consumed]).into());
     }
     consumed += 1;
 
@@ -323,14 +322,14 @@ fn parse_tag(tokens: &[Token]) -> Result<(Asn1Tag, usize), Error> {
             "UNIVERSAL" => Asn1TagClass::Universal,
             "APPLICATION" => Asn1TagClass::Application,
             "PRIVATE" => Asn1TagClass::Private,
-            _ => return Err(unexpected_token!("", token)),
+            _ => return Err(unexpected_token!("", token).into()),
         }
     } else {
         Asn1TagClass::ContextSpecific
     };
 
     if !expect_token(&tokens[consumed..], Token::is_numeric)? {
-        return Err(unexpected_token!("<integer>", tokens[consumed]));
+        return Err(unexpected_token!("<integer>", tokens[consumed]).into());
     }
     let number_token = &tokens[consumed];
     let number = number_token
@@ -340,7 +339,7 @@ fn parse_tag(tokens: &[Token]) -> Result<(Asn1Tag, usize), Error> {
     consumed += 1;
 
     if !expect_token(&tokens[consumed..], Token::is_square_end)? {
-        return Err(unexpected_token!("]", tokens[consumed]));
+        return Err(unexpected_token!("]", tokens[consumed]).into());
     }
     consumed += 1;
 
@@ -351,7 +350,7 @@ fn parse_tag(tokens: &[Token]) -> Result<(Asn1Tag, usize), Error> {
         match typestr {
             "IMPLICIT" => Some(Asn1TagMode::Implicit),
             "EXPLICIT" => Some(Asn1TagMode::Explicit),
-            _ => return Err(unexpected_token!("", token)),
+            _ => return Err(unexpected_token!("", token).into()),
         }
     } else {
         None

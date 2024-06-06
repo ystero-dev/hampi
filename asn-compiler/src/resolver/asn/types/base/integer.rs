@@ -1,6 +1,6 @@
 //! Functionality for handling Resolved ASN.1 INTEGER Types
 
-use crate::error::Error;
+use anyhow::Result;
 
 use crate::parser::asn::structs::types::{base::Asn1TypeInteger, Asn1Type};
 use crate::resolver::asn::structs::types::base::Asn1ResolvedInteger;
@@ -12,7 +12,7 @@ impl Asn1ResolvedInteger {
         ty: &Asn1Type,
         _i: &Asn1TypeInteger,
         resolver: &mut Resolver,
-    ) -> Result<Asn1ResolvedInteger, Error> {
+    ) -> Result<Asn1ResolvedInteger> {
         let mut base = Asn1ResolvedInteger::default();
 
         if ty.constraints.is_none() {

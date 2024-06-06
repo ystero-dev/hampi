@@ -2,7 +2,7 @@
 
 use std::collections::HashMap;
 
-use crate::error::Error;
+use anyhow::Result;
 
 use crate::parser::asn::structs::types::{
     base::{Asn1TypeBitString, NamedValue},
@@ -16,7 +16,7 @@ impl Asn1ResolvedBitString {
         ty: &Asn1Type,
         b: &Asn1TypeBitString,
         resolver: &Resolver,
-    ) -> Result<Asn1ResolvedBitString, Error> {
+    ) -> Result<Asn1ResolvedBitString> {
         let mut base = Asn1ResolvedBitString::default();
 
         if ty.constraints.is_some() {

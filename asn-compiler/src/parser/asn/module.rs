@@ -1,8 +1,8 @@
 //! ASN.1 Module Parsing functionality
 use std::collections::HashMap;
 
-use crate::error::Error;
 use crate::tokenizer::Token;
+use anyhow::Result;
 
 use crate::parser::utils::{expect_keyword, expect_one_of_keywords, expect_token};
 
@@ -20,7 +20,7 @@ impl Asn1Module {
     pub(crate) fn resolve_object_classes(
         &mut self,
         object_classes: &HashMap<String, Asn1Definition>,
-    ) -> Result<(), Error> {
+    ) -> Result<()> {
         for def in self.definitions.values_mut() {
             if !def.is_object_or_object_set() {
                 continue;
@@ -32,7 +32,8 @@ impl Asn1Module {
                         "Error Resolving Class '{}' for Definition '{}'",
                         class,
                         def.id()
-                    ));
+                    )
+                    .into());
                 }
                 let class = classdef.unwrap();
                 def.resolve_object_class(class)?;
@@ -42,7 +43,7 @@ impl Asn1Module {
     }
 }
 
-pub(in crate::parser) fn parse_module(tokens: &[Token]) -> Result<(Asn1Module, usize), Error>
+pub(in crate::parser) fn parse_module(tokens: &[Token]) -> Result<(Asn1Module, usize)>
 where
 {
     let mut consumed = 0;
@@ -60,7 +61,7 @@ where
     if expect_keyword(&tokens[consumed..], "DEFINITIONS")? {
         consumed += 1;
     } else {
-        return Err(unexpected_token!("DEFINITIONS", tokens[consumed]));
+        return Err(unexpected_token!("DEFINITIONS", tokens[consumed]).into());
     }
 
     let (tags, tags_consumed) = maybe_parse_header_tags(&tokens[consumed..])?;
@@ -76,12 +77,12 @@ where
     if expect_token(&tokens[consumed..], Token::is_assignment)? {
         consumed += 1;
     } else {
-        return Err(unexpected_token!("::=", tokens[consumed]));
+        return Err(unexpected_token!("::=", tokens[consumed]).into());
     }
     if expect_keyword(&tokens[consumed..], "BEGIN")? {
         consumed += 1;
     } else {
-        return Err(unexpected_token!("BEGIN", tokens[consumed]));
+        return Err(unexpected_token!("BEGIN", tokens[consumed]).into());
     }
 
     // Parse but ignore exports if any (by default everything is exported).
@@ -120,7 +121,7 @@ where
     Ok((module, consumed))
 }
 
-fn parse_module_maybe_exports(tokens: &[Token]) -> Result<((), usize), Error> {
+fn parse_module_maybe_exports(tokens: &[Token]) -> Result<((), usize)> {
     let mut consumed = 0;
     if expect_keyword(&tokens[consumed..], "EXPORTS")? {
         consumed += 1;
@@ -142,9 +143,7 @@ fn parse_module_maybe_exports(tokens: &[Token]) -> Result<((), usize), Error> {
     Ok(((), consumed))
 }
 
-fn parse_module_imports(
-    tokens: &[Token],
-) -> Result<(HashMap<String, Asn1ModuleName>, usize), Error> {
+fn parse_module_imports(tokens: &[Token]) -> Result<(HashMap<String, Asn1ModuleName>, usize)> {
     let mut consumed = 0;
 
     let mut imports = HashMap::new();
@@ -169,7 +168,7 @@ fn parse_module_imports(
 
             for d in imported_defs {
                 if imports.contains_key(&d) {
-                    return Err(parse_error!("Definition '{}' is imported twice", d));
+                    return Err(parse_error!("Definition '{}' is imported twice", d).into());
                 }
                 let _ = imports.insert(d, module_name.clone());
             }
@@ -184,7 +183,7 @@ fn parse_module_imports(
     Ok((imports, consumed))
 }
 
-fn maybe_parse_header_tags(tokens: &[Token]) -> Result<(Asn1ModuleTag, usize), Error> {
+fn maybe_parse_header_tags(tokens: &[Token]) -> Result<(Asn1ModuleTag, usize)> {
     let mut consumed = 0;
 
     let tag =
@@ -195,14 +194,14 @@ fn maybe_parse_header_tags(tokens: &[Token]) -> Result<(Asn1ModuleTag, usize), E
                 "AUTOMATIC" => Asn1ModuleTag::Automatic,
                 _ => {
                     // Will never reach
-                    return Err(parse_error!("Should Never Reach"));
+                    return Err(parse_error!("Should Never Reach").into());
                 }
             };
             consumed += 1;
             if expect_keyword(&tokens[consumed..], "TAGS")? {
                 consumed += 1
             } else {
-                return Err(unexpected_token!("TAGS", tokens[consumed]));
+                return Err(unexpected_token!("TAGS", tokens[consumed]).into());
             }
             tag
         } else {
@@ -211,7 +210,7 @@ fn maybe_parse_header_tags(tokens: &[Token]) -> Result<(Asn1ModuleTag, usize), E
     Ok((tag, consumed))
 }
 
-fn parse_module_name(tokens: &[Token]) -> Result<(Asn1ModuleName, usize), Error> {
+fn parse_module_name(tokens: &[Token]) -> Result<(Asn1ModuleName, usize)> {
     let mut consumed = 0;
     // First Name
 
@@ -221,7 +220,8 @@ fn parse_module_name(tokens: &[Token]) -> Result<(Asn1ModuleName, usize), Error>
         return Err(parse_error!(
             "Module Name '{}' is not a valid Module Reference",
             tokens[consumed].text
-        ));
+        )
+        .into());
     };
     consumed += 1;
 
@@ -233,9 +233,7 @@ fn parse_module_name(tokens: &[Token]) -> Result<(Asn1ModuleName, usize), Error>
     Ok((Asn1ModuleName::new(name, oid), consumed))
 }
 
-fn maybe_parse_object_identifer(
-    tokens: &[Token],
-) -> Result<(Option<ObjectIdentifier>, usize), Error> {
+fn maybe_parse_object_identifer(tokens: &[Token]) -> Result<(Option<ObjectIdentifier>, usize)> {
     match expect_token(tokens, Token::is_curly_begin) {
         Ok(success) => {
             if success {

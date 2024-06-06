@@ -3,17 +3,13 @@
 use proc_macro2::{Ident, TokenStream};
 use quote::quote;
 
-use crate::error::Error;
+use anyhow::Result;
 
 use crate::generator::Generator;
 use crate::resolver::asn::structs::types::base::Asn1ResolvedEnumerated;
 
 impl Asn1ResolvedEnumerated {
-    pub(crate) fn generate(
-        &self,
-        name: &str,
-        generator: &mut Generator,
-    ) -> Result<TokenStream, Error> {
+    pub(crate) fn generate(&self, name: &str, generator: &mut Generator) -> Result<TokenStream> {
         let struct_name = generator.to_type_ident(name);
         let inner_type = generator.to_inner_type(self.bits, self.signed);
 
@@ -43,7 +39,7 @@ impl Asn1ResolvedEnumerated {
         Ok(struct_tokens)
     }
 
-    fn generate_named_values(&self, generator: &Generator) -> Result<TokenStream, Error> {
+    fn generate_named_values(&self, generator: &Generator) -> Result<TokenStream> {
         let mut tokens = TokenStream::new();
         for (name, value) in &self.named_root_values {
             let const_name = generator.to_const_ident(name);
@@ -65,7 +61,7 @@ impl Asn1ResolvedEnumerated {
         &self,
         generator: &mut Generator,
         input: Option<&String>,
-    ) -> Result<Ident, Error> {
+    ) -> Result<Ident> {
         let unique_name = if let Some(unique_name) = input {
             unique_name.to_string()
         } else {

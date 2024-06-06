@@ -3,7 +3,7 @@
 use std::collections::BTreeSet;
 use std::convert::TryInto;
 
-use crate::error::Error;
+use anyhow::Result;
 
 use crate::parser::asn::structs::types::{
     base::{Asn1TypeEnumerated, NamedValue},
@@ -17,7 +17,7 @@ impl Asn1ResolvedEnumerated {
         _ty: &Asn1Type,
         e: &Asn1TypeEnumerated,
         _resolver: &Resolver,
-    ) -> Result<Asn1ResolvedEnumerated, Error> {
+    ) -> Result<Asn1ResolvedEnumerated> {
         let mut base = Asn1ResolvedEnumerated {
             extensible: e.ext_marker_index.is_some(),
             ..Default::default()

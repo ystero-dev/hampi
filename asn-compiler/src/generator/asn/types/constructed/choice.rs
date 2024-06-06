@@ -3,12 +3,12 @@
 use proc_macro2::{Ident, TokenStream};
 use quote::quote;
 
-use crate::error::Error;
 use crate::generator::Generator;
 use crate::resolver::asn::structs::types::{
     constructed::{ResolvedComponent, ResolvedConstructedType},
     Asn1ResolvedType,
 };
+use anyhow::Result;
 
 // Following is a Private structure only used in this module.
 struct ChoiceComponentToken {
@@ -22,7 +22,7 @@ impl ResolvedConstructedType {
         &self,
         name: &str,
         generator: &mut Generator,
-    ) -> Result<TokenStream, Error> {
+    ) -> Result<TokenStream> {
         if let ResolvedConstructedType::Choice {
             ref root_components,
             ref additions,
@@ -63,7 +63,7 @@ impl ResolvedConstructedType {
 
             Ok(choice_tokens)
         } else {
-            Err(code_generate_error!("Constructed Type is not a `CHOICE`"))
+            Err(code_generate_error!("Constructed Type is not a `CHOICE`").into())
         }
     }
 
@@ -73,7 +73,7 @@ impl ResolvedConstructedType {
         addition_tokens: &Option<Vec<ChoiceComponentToken>>,
         vis: TokenStream,
         dir: TokenStream,
-    ) -> Result<TokenStream, Error> {
+    ) -> Result<TokenStream> {
         let mut root_comp_tokens = TokenStream::new();
         for token in root_tokens {
             let variant_ident = token.variant.clone();
@@ -137,7 +137,7 @@ impl ResolvedConstructedType {
         components: &[ResolvedComponent],
         name: &str,
         generator: &mut Generator,
-    ) -> Result<Vec<ChoiceComponentToken>, Error> {
+    ) -> Result<Vec<ChoiceComponentToken>> {
         let mut out_components = vec![];
         for (i, c) in components.iter().enumerate() {
             let comp_variant_ident = generator.to_type_ident(&c.id);

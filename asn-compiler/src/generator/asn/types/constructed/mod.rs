@@ -9,20 +9,16 @@ mod seq;
 
 use proc_macro2::{Ident, TokenStream};
 
-use crate::error::Error;
 use crate::generator::Generator;
 use crate::resolver::asn::structs::types::constructed::ResolvedConstructedType;
+use anyhow::Result;
 
 impl ResolvedConstructedType {
     // The main `generate` function for the constucted types
     //
     // This function simply calls the appropriate `generate_{sequence|choice|sequence_of}` function
     // for therespective types.
-    pub(crate) fn generate(
-        &self,
-        name: &str,
-        generator: &mut Generator,
-    ) -> Result<TokenStream, Error> {
+    pub(crate) fn generate(&self, name: &str, generator: &mut Generator) -> Result<TokenStream> {
         match self {
             ResolvedConstructedType::Sequence { .. } => self.generate_sequence(name, generator),
             ResolvedConstructedType::Choice { .. } => self.generate_choice(name, generator),
@@ -56,7 +52,7 @@ impl ResolvedConstructedType {
         &self,
         generator: &mut Generator,
         input: Option<&String>,
-    ) -> Result<Ident, Error> {
+    ) -> Result<Ident> {
         let unique_name = match self {
             ResolvedConstructedType::Sequence { name, .. } => match input {
                 Some(ref inp) => inp.to_string(),

@@ -1,7 +1,7 @@
 //! Constraint Resolution Implementation
 use std::ops::Range;
 
-use crate::error::Error;
+use anyhow::Result;
 
 use crate::parser::asn::structs::types::constraints::*;
 
@@ -17,26 +17,24 @@ impl Asn1Constraint {
     ///
     /// This function should be called for Single Value Subtype Constraints or Simple Table
     /// constraints only.
-    pub(crate) fn get_single_string_value(&self) -> Result<String, Error> {
+    pub(crate) fn get_single_string_value(&self) -> Result<String> {
         if !self.is_subtype() || !self.is_single_value() || !self.is_simple_table_constraint() {
             Err(constraint_error!(
                 "Require a Single Value Subtype or Table Constraint. Found '{:#?}'.",
                 self
-            ))
+            )
+            .into())
         } else if let Asn1Constraint::Subtype(ref e) = self {
             e.get_single_string_value()
         } else if let Asn1Constraint::Table(ref t) = self {
             t.get_single_string_value()
         } else {
-            Err(constraint_error!(
-                "Single Value not supported for '{:#?}'",
-                self
-            ))
+            Err(constraint_error!("Single Value not supported for '{:#?}'", self).into())
         }
     }
 
     /// Returns the 'Set Reference' trimming the leading '{' and trailing '}'
-    pub(crate) fn get_set_reference(&self) -> Result<String, Error> {
+    pub(crate) fn get_set_reference(&self) -> Result<String> {
         match self.get_single_string_value() {
             Ok(v) => Ok(v
                 .trim_matches(|c| matches!(c, '{' | '}'))
@@ -52,7 +50,8 @@ impl Asn1Constraint {
                     Err(resolve_error!(
                         "Constraint is not a component Relation Constraint! '{:#?}'",
                         self
-                    ))
+                    )
+                    .into())
                 }
             }
         }
@@ -84,13 +83,14 @@ impl Asn1Constraint {
     pub(crate) fn get_integer_valueset(
         &self,
         resolver: &Resolver,
-    ) -> Result<Asn1ConstraintValueSet, Error> {
+    ) -> Result<Asn1ConstraintValueSet> {
         match self {
             Self::Subtype(ref e) => e.get_integer_valueset(resolver),
             _ => Err(constraint_error!(
                 "Integer Values not supported for the constraint '{:#?}'",
                 self
-            )),
+            )
+            .into()),
         }
     }
     // Returns whether this constraint is a Subtype Constraint
@@ -125,10 +125,7 @@ impl Asn1Constraint {
         }
     }
 
-    pub(crate) fn get_size_valueset(
-        &self,
-        resolver: &Resolver,
-    ) -> Result<Asn1ConstraintValueSet, Error> {
+    pub(crate) fn get_size_valueset(&self, resolver: &Resolver) -> Result<Asn1ConstraintValueSet> {
         if let Self::Subtype(ref e) = self {
             let iset = e.get_inner_elements();
             if iset.len() == 1 {
@@ -139,21 +136,22 @@ impl Asn1Constraint {
                         }
                         _ => Err(constraint_error!(
                             "The Constraint for the Type is not a Size Constraint."
-                        )),
+                        )
+                        .into()),
                     },
                     _ => Err(constraint_error!(
                         "The Constraint for the type is not a size Constraint."
-                    )),
+                    )
+                    .into()),
                 }
             } else {
-                Err(constraint_error!(
-                    "The Constraint for the type is not a size Constraint."
-                ))
+                Err(
+                    constraint_error!("The Constraint for the type is not a size Constraint.")
+                        .into(),
+                )
             }
         } else {
-            Err(constraint_error!(
-                "The Constraint for the type is not a size Constraint."
-            ))
+            Err(constraint_error!("The Constraint for the type is not a size Constraint.").into())
         }
     }
 }
@@ -163,7 +161,7 @@ impl ElementSet {
         &self.root_elements.elements
     }
 
-    fn get_single_string_value(&self) -> Result<String, Error> {
+    fn get_single_string_value(&self) -> Result<String> {
         let inner_elements = self.get_inner_elements();
         if inner_elements.len() == 1 {
             let e = &inner_elements[0];
@@ -173,11 +171,12 @@ impl ElementSet {
             Err(constraint_error!(
                 "The Length of the element set is {}, while expected length is 1.",
                 inner_elements.len()
-            ))
+            )
+            .into())
         }
     }
 
-    fn get_integer_valueset(&self, resolver: &Resolver) -> Result<Asn1ConstraintValueSet, Error> {
+    fn get_integer_valueset(&self, resolver: &Resolver) -> Result<Asn1ConstraintValueSet> {
         let mut root_values = ConstraintValues::new();
         for element in self.get_inner_elements() {
             let element_values = element.get_integer_valueset(resolver)?;
@@ -219,25 +218,24 @@ impl ElementSet {
 }
 
 impl IntersectionSet {
-    fn get_single_string_value(&self) -> Result<String, Error> {
+    fn get_single_string_value(&self) -> Result<String> {
         if self.elements.len() == 1 {
             let element = &self.elements[0];
             if let Elements::Subtype(SubtypeElements::SingleValue { value }) = element {
                 Ok(value.clone())
             } else {
-                Err(constraint_error!(
-                    "The Element is not a SingleValue Subtype Element!"
-                ))
+                Err(constraint_error!("The Element is not a SingleValue Subtype Element!").into())
             }
         } else {
             Err(constraint_error!(
                 "The Length of the element set is {}, while expected length is 1.",
                 self.elements.len()
-            ))
+            )
+            .into())
         }
     }
 
-    fn get_integer_valueset(&self, resolver: &Resolver) -> Result<ConstraintValues, Error> {
+    fn get_integer_valueset(&self, resolver: &Resolver) -> Result<ConstraintValues> {
         let mut value_set = ConstraintValues::new();
         for element in &self.elements {
             let element_set = element.get_integer_valueset(resolver)?;
@@ -270,22 +268,22 @@ impl IntersectionSet {
 }
 
 impl TableConstraint {
-    fn get_single_string_value(&self) -> Result<String, Error> {
+    fn get_single_string_value(&self) -> Result<String> {
         if let TableConstraint::Simple(ObjectSet::DefinedObjectSet(ref s)) = self {
             Ok(s.clone())
         } else {
-            Err(constraint_error!("Shouldn't Reach here!"))
+            Err(constraint_error!("Shouldn't Reach here!").into())
         }
     }
 }
 
 impl Elements {
-    fn get_integer_valueset(&self, resolver: &Resolver) -> Result<ConstraintValues, Error> {
+    fn get_integer_valueset(&self, resolver: &Resolver) -> Result<ConstraintValues> {
         match self {
             Self::Subtype(ref s) => s.get_integer_valueset(resolver),
-            Self::Set(ref _s) => Err(constraint_error!(
-                "get_integer_valueset: Set Variant: Not Supported!"
-            )),
+            Self::Set(ref _s) => {
+                Err(constraint_error!("get_integer_valueset: Set Variant: Not Supported!").into())
+            }
         }
     }
 
@@ -298,7 +296,7 @@ impl Elements {
 }
 
 impl SubtypeElements {
-    fn get_integer_valueset(&self, resolver: &Resolver) -> Result<ConstraintValues, Error> {
+    fn get_integer_valueset(&self, resolver: &Resolver) -> Result<ConstraintValues> {
         let mut value_set = ConstraintValues::new();
         match self {
             Self::SingleValue { value } => {
@@ -337,16 +335,13 @@ impl SubtypeElements {
                 }
             }
             _ => {
-                return Err(constraint_error!(
-                    "Unexpected Constraint Type '{:#?}'",
-                    self
-                ));
+                return Err(constraint_error!("Unexpected Constraint Type '{:#?}'", self).into());
             }
         }
         Ok(value_set)
     }
 
-    fn parse_or_resolve_value(value: &str, resolver: &Resolver) -> Result<i128, Error> {
+    fn parse_or_resolve_value(value: &str, resolver: &Resolver) -> Result<i128> {
         // FIXME : do the 'resolve part'
         let parsed = value.parse::<i128>();
         match parsed {
@@ -354,10 +349,9 @@ impl SubtypeElements {
             Err(_) => {
                 let resolved = resolver.resolved_defs.get(value);
                 match resolved {
-                    None => Err(constraint_error!(
-                        "Unable To Resolve '{}'. Not Found!",
-                        value
-                    )),
+                    None => {
+                        Err(constraint_error!("Unable To Resolve '{}'. Not Found!", value).into())
+                    }
                     Some(res) => {
                         if let Asn1ResolvedDefinition::Value(Asn1ResolvedValue::Base(
                             ResolvedBaseValue::Integer(ref i),
@@ -365,10 +359,10 @@ impl SubtypeElements {
                         {
                             Ok(i.value)
                         } else {
-                            Err(constraint_error!(
-                                "Resolved Value {:#?} of different type!",
-                                res
-                            ))
+                            Err(
+                                constraint_error!("Resolved Value {:#?} of different type!", res)
+                                    .into(),
+                            )
                         }
                     }
                 }
