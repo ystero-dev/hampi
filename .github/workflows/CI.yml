@@ -49,6 +49,8 @@ jobs:
         sh rustup-init.sh -y --default-toolchain none
         rustup target add ${{ matrix.target }}
         rustup default ${{ matrix.cfg_release_channel }}
+    - name: Set up cargo cache
+      uses: Swatinem/rust-cache@v2
     - name: Build
       run: |
         rustc -Vv
