@@ -1,11 +1,12 @@
 [package]
 name = "asn1-compiler"
 version = "0.7.0"
-authors = ["Abhijit Gadgil <gabhijit@iitbombay.org>"]
+authors = ["Ystero Project Developers <hello@ystero.dev>"]
 edition = "2018"
-description = "ASN.1 Toolkit in Rust. Compiler for ASN.1 specification, ASN.1 codecs and derive macros for ASN.1 Codecs."
+description = "Compiler for compiling ASN.1 specs to Rust, with PER Codec support and derive macros for PER Codecs."
 keywords = ["asn1", "per"]
 repository = "https://github.com/gabhijit/hampi.git"
+homepage = "https://ystero.dev"
 license = "Apache-2.0 OR MIT"
 readme = "README.md"
 include = [
@@ -40,7 +41,7 @@ anyhow = "1.0.86"
 rs-specs-gen = [ "docx-rs"]
 
 [[bin]]
-name = "hampi-rs-asn1c"
+name = "rs-asn1c"
 path = "src/bin/hampi-rs-asn1c.rs"
 
 [[bin]]
