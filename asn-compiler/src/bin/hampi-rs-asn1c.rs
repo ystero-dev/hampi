@@ -9,30 +9,43 @@ use asn1_compiler::{
 };
 
 #[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
+#[command(
+    name = "rs-asn1c",
+    author,
+    version,
+    about,
+    help_template = "\
+{name}: v{version} by {author-with-newline}
+{about-with-newline}
+{usage-heading} {usage}
+
+{all-args}\n"
+)]
 struct Cli {
-    #[arg(last = true)]
+    /// ASN.1 files to compile
+    #[arg(last = true, required = true)]
     files: Vec<String>,
 
-    /// Name of the Rust Module to write generated code to.
+    /// Name of the Rust Module to write generated code to
     #[arg(short, long)]
     module: String,
-
-    #[arg(short, action=clap::ArgAction::Count)]
-    debug: u8,
 
     /// Visibility of Generated Structures and members:
     #[arg(long, value_enum, default_value_t=Visibility::Public)]
     visibility: Visibility,
 
-    /// ASN.1 Codecs to be Supported during code generation.
+    /// ASN.1 Codecs to be Supported during code generation
     /// Specify multiple times for multiple codecs. (eg. --codec aper --codec uper)
     #[arg(long, required = true)]
     codec: Vec<Codec>,
 
-    /// Generate code for these derive macros during code generation.
+    /// Generate code for these derive macros during code generation
     #[arg(long)]
     derive: Vec<Derive>,
+
+    /// Log verbosity (default: info, -d: debug, -dd...: trace)
+    #[arg(short, action=clap::ArgAction::Count)]
+    debug: u8,
 }
 
 fn main() -> Result<()> {

@@ -2,11 +2,12 @@
 name = "asn1-codecs"
 version = "0.7.0"
 description = "ASN.1 Codecs for Rust Types representing ASN.1 Types."
-authors = ["Abhijit Gadgil <gabhijit@iitbombay.org>"]
+authors = ["Ystero Project Developers <hello@ystero.dev>"]
 keywords = ["asn1", "per", "decoder", "encoder"]
 edition = "2018"
 license = "Apache-2.0 OR MIT"
 repository = "https://github.com/gabhijit/hampi.git"
+homepage = "https://ystero.dev"
 readme = "README.md"
 include = ["src/**/*.rs", "Cargo.toml", "LICENSE", "LICENSE-MIT", "LICENSE-Apache2", "README.md"]
 
