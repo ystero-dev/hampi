@@ -8,7 +8,16 @@ keywords = ["asn1", "per"]
 repository = "https://github.com/gabhijit/hampi.git"
 license = "Apache-2.0 OR MIT"
 readme = "README.md"
-include = ["src/**/*.rs", "README.md", "ARChITECTURE.md", "Cargo.toml", "LICENSE", "LICENSE-MIT", "LICENSE-Apache2"]
+include = [
+	"tests/**/*.rs",
+	"src/**/*.rs",
+	"README.md",
+	"ARCHITECTURE.md",
+	"Cargo.toml",
+	"LICENSE",
+	"LICENSE-MIT",
+	"LICENSE-Apache2"
+]
 
 [badges]
 maintenance = { status = "actively-developed" }
