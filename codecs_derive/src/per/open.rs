@@ -83,12 +83,14 @@ pub(super) fn generate_per_codec_for_asn_open_type(
 
                 let key = data.get_key().unwrap();
 
-                match key {
+                let result = match key {
                     #(#variant_decode_tokens)*
                     _ => Err(asn1_codecs::PerCodecError::new(
                             asn1_codecs::PerCodecErrorCause::Generic,
                             format!("Key {} Not Found", key).as_str()))
-                }
+                }?;
+                data.decode_align()?;
+                Ok(result)
             }
 
             fn #codec_encode_fn(&self, data: &mut asn1_codecs::PerCodecData) -> Result<(), asn1_codecs::PerCodecError> {
