@@ -48,7 +48,7 @@ Typically the compiler can be invoked also using `build.rs` mechanism. An exampl
 A tool `hampi-rs-asn1c` can be installed using `cargo install asn1-compiler` and then following the CLI usage.
 ```shell
 cargo install asn1-compiler
-hampi-rs-asn1c --help
+rs-asn1c --help
 ```
 
 ### Running Test Cases
