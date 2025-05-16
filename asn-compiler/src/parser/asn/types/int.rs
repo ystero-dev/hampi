@@ -38,6 +38,7 @@ pub(crate) fn parse_type(tokens: &[Token]) -> Result<(Asn1Type, usize)> {
     }
 
     // Now: Parse The Type definition.
+    log::trace!("Current token: {:#?}", &tokens[consumed]);
     let token = &tokens[consumed];
     let typestr = token.text.as_str();
     let (kind, kind_consumed) = match typestr {

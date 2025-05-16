@@ -32,7 +32,7 @@ pub struct LPPa_PDU(Vec<u8>);
 pub struct ENB_UE_S1AP_ID(u32);
 
 #[derive(Debug, AperCodec, UperCodec, Eq, PartialEq)]
-#[asn(type = "ENUMERATED", extensible = true, lb = "0", ub = "1")]
+#[asn(type = "ENUMERATED", extensible = false, lb = "0", ub = "1")]
 pub struct GUAMIType(pub u8);
 impl GUAMIType {
     pub const NATIVE: u8 = 0u8;
@@ -70,10 +70,12 @@ pub struct UplinkUEAssociatedLPPaTransportprotocolIEsItem {
     sz_lb = "1",
     sz_ub = "256"
 )]
-pub struct UplinkUEAssociatedLPPaTransportprotocolList(pub Vec<UplinkUEAssociatedLPPaTransportprotocolItem>);
+pub struct UplinkUEAssociatedLPPaTransportprotocolList(
+    pub Vec<UplinkUEAssociatedLPPaTransportprotocolItem>,
+);
 
 #[derive(Debug, AperCodec, UperCodec, Eq, PartialEq)]
-#[asn(type = "SEQUENCE", extensible = true, optional_fields = 1)]
+#[asn(type = "SEQUENCE", extensible = false, optional_fields = 1)]
 pub struct UplinkUEAssociatedLPPaTransportprotocolItem {
     #[asn(optional_idx = 0)]
     pub ie_extensions: Option<UplinkUEAssociatedLPPaTransportprotocolIEsItem>,
@@ -85,9 +87,9 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     use asn1_codecs::aper::AperCodec;
     use asn1_codecs::PerCodecData;
-    use super::*;
 
     /// Test whether encoding and then decoding a list of optional extensions that include an open
     /// enumeration type results in the same object.
@@ -96,31 +98,34 @@ mod tests {
     /// #[126](https://github.com/ystero-dev/hampi/issues/126).
     #[test]
     fn test_encode_decode_open_type() {
-        let original_test_value = UplinkUEAssociatedLPPaTransportprotocolList(vec![UplinkUEAssociatedLPPaTransportprotocolItem {
-            ie_extensions: Some(
-                UplinkUEAssociatedLPPaTransportprotocolIEsItem {
+        let original_test_value = UplinkUEAssociatedLPPaTransportprotocolList(vec![
+            UplinkUEAssociatedLPPaTransportprotocolItem {
+                ie_extensions: Some(UplinkUEAssociatedLPPaTransportprotocolIEsItem {
                     id: ProtocolIE_ID(176),
                     criticality: Criticality(0),
                     value: UplinkUEAssociatedLPPaTransportprotocolIEsItemvalue::Id_GUAMIType(
-                        GUAMIType(0)
+                        GUAMIType(0),
                     ),
-                }
-            ),
-        }, UplinkUEAssociatedLPPaTransportprotocolItem {
-            ie_extensions: Some(
-                UplinkUEAssociatedLPPaTransportprotocolIEsItem {
+                }),
+            },
+            UplinkUEAssociatedLPPaTransportprotocolItem {
+                ie_extensions: Some(UplinkUEAssociatedLPPaTransportprotocolIEsItem {
                     id: ProtocolIE_ID(176),
                     criticality: Criticality(0),
                     value: UplinkUEAssociatedLPPaTransportprotocolIEsItemvalue::Id_GUAMIType(
-                        GUAMIType(0)
+                        GUAMIType(0),
                     ),
-                }
-            ),
-        }]);
+                }),
+            },
+        ]);
         let mut test_value_encoded = PerCodecData::new_aper();
-        original_test_value.aper_encode(&mut test_value_encoded).unwrap();
+        original_test_value
+            .aper_encode(&mut test_value_encoded)
+            .unwrap();
 
-        let test_value_decoded = UplinkUEAssociatedLPPaTransportprotocolList::aper_decode(&mut test_value_encoded).unwrap();
+        let test_value_decoded =
+            UplinkUEAssociatedLPPaTransportprotocolList::aper_decode(&mut test_value_encoded)
+                .unwrap();
         assert_eq!(original_test_value, test_value_decoded);
     }
 }

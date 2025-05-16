@@ -66,6 +66,42 @@ pub fn decode_sequence_header_common(
     Ok((bitmap, extended))
 }
 
+// Common extensions skip
+pub fn decode_sequence_extensions_skip_bits(
+    data: &mut PerCodecData,
+    aligned: bool,
+) -> Result<(), PerCodecError> {
+    log::warn!("Skipping Extensions Decoding....");
+    let bitmap_length = decode_length_determinent_common(data, None, None, true, aligned)?;
+    log::trace!("Found a bitmap of '{}' extensions.", bitmap_length);
+
+    let mut bitmap: BitVec<u8, Msb0> = BitVec::new();
+    if bitmap_length > 0 {
+        bitmap.extend(data.get_bitvec(bitmap_length)?);
+
+        let present_extensions = bitmap.iter_ones().len();
+        log::trace!("Present extensions: {}", present_extensions);
+        let mut extension_no = 0;
+        while present_extensions > extension_no {
+            extension_no += 1;
+            let octets = decode_length_determinent_common(data, None, None, false, aligned)?;
+            log::trace!(
+                "Extension #: {}, Open Type Encoded in '{}' Octets",
+                extension_no,
+                octets
+            );
+            data.advance_maybe_err(octets * 8, false)?;
+        }
+        log::warn!("Skipped decoding {} Extensions.", present_extensions);
+        Ok(())
+    } else {
+        Err(PerCodecError::new(
+            PerCodecErrorCause::Generic,
+            "Extension Bit set, but extensions length zero!",
+        ))
+    }
+}
+
 // Common function to decode INTEGER.
 pub fn decode_integer_common(
     data: &mut PerCodecData,
