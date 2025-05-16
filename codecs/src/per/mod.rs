@@ -7,7 +7,7 @@ pub mod aper;
 
 pub mod uper;
 
-mod common;
+pub(crate) mod common;
 
 pub use error::Error as PerCodecError;
 pub use error::ErrorCause as PerCodecErrorCause;

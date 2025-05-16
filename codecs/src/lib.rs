@@ -17,3 +17,7 @@ pub use per::aper;
 
 #[doc(inline)]
 pub use per::uper;
+
+// For now making this public, eventually when we have a proper sequence extensions support, this
+// will not be required anyways.
+pub use per::common::decode::decode_sequence_extensions_skip_bits;

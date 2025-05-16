@@ -43,6 +43,8 @@ pub(super) fn generate_per_codec_for_asn_sequence(
         syn::LitInt::new("0", proc_macro2::Span::call_site())
     };
 
+    let aligned = syn::LitBool::new(aligned, proc_macro2::Span::call_site());
+
     let field_tokens = generate_seq_field_codec_tokens_using_attrs(
         ast,
         codec_encode_fn.clone(),
@@ -63,8 +65,16 @@ pub(super) fn generate_per_codec_for_asn_sequence(
             fn #codec_decode_fn(data: &mut asn1_codecs::PerCodecData) -> Result<Self::Output, asn1_codecs::PerCodecError> {
                 log::trace!(concat!("decode: ", stringify!(#name)));
 
-                let (bitmap, _extensions_present) = #ty_decode_path(data, #ext, #opt_count)?;
-                Ok(Self{#(#fld_decode_tokens)*})
+                let (bitmap, extensions_present) = #ty_decode_path(data, #ext, #opt_count)?;
+                if !extensions_present {
+                    Ok(Self{#(#fld_decode_tokens)*})
+                } else {
+                    let ty = Self {
+                        #(#fld_decode_tokens)*
+                    };
+                    asn1_codecs::decode_sequence_extensions_skip_bits(data, #aligned)?;
+                    Ok(ty)
+                }
             }
 
             fn #codec_encode_fn(&self, data: &mut asn1_codecs::PerCodecData) -> Result<(), asn1_codecs::PerCodecError> {
