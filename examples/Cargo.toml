@@ -1,6 +1,6 @@
 [package]
 name = "hampi-examples"
-version = "0.7.0"
+version = "0.7.1"
 authors = ["Abhijit Gadgil <gabhijit@iitbombay.org>"]
 edition = "2018"
 description = "Examples for usage of ASN.1 Compiler and Codecs."
