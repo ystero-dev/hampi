@@ -38,6 +38,9 @@ pub struct Asn1Compiler {
 
     // Holds the file name for the output module.
     output_filename: String,
+
+    // Whether to use `rustfmt` on the generated code before writing it to a file.
+    rustfmt_generated_code: bool,
 }
 
 impl Default for Asn1Compiler {
@@ -59,6 +62,7 @@ impl Asn1Compiler {
             resolver: Resolver::new(),
             generator: Generator::new(visibility, codecs, derives), // FIXME: Hard coded
             output_filename: output.to_string(),
+            rustfmt_generated_code: true,
         }
     }
 
@@ -70,6 +74,16 @@ impl Asn1Compiler {
         self.modules
             .insert(module.get_module_name(), module)
             .is_some()
+    }
+
+    /// Whether to use `rustfmt` to format the generated code after it is made.
+    ///
+    /// # Arguments
+    ///
+    /// * `rustfmt_generated_code` - Whether to format the generated code with `rustfmt` when calling the `generate`
+    ///   method. If set to `false`, `rustfmt` will not be used.
+    pub fn set_rustfmt_generated_code(&mut self, rustfmt_generated_code: bool) {
+        self.rustfmt_generated_code = rustfmt_generated_code;
     }
 
     /// Resolve Modules order and definitions within those modules.
@@ -93,7 +107,12 @@ impl Asn1Compiler {
         log::info!("Generating code, writing to file: {}", self.output_filename);
 
         let input_text = self.generator.generate(&self.resolver)?;
-        let output_text = self.rustfmt_generated_code(&input_text)?;
+
+        let output_text = if self.rustfmt_generated_code {
+            self.rustfmt_generated_code(&input_text)?
+        } else {
+            input_text
+        };
 
         let mut output_file = File::create(&self.output_filename).map_err(|e| {
             let errorstr = format!("Error {} Creating File: {}", e, self.output_filename);
