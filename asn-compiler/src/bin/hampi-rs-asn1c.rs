@@ -46,6 +46,10 @@ struct Cli {
     /// Log verbosity (default: info, -d: debug, -dd...: trace)
     #[arg(short, action=clap::ArgAction::Count)]
     debug: u8,
+
+    /// Whether to disable `rustfmt` formatting of the generated files.
+    #[arg(long, default_value_t = false)]
+    no_rustfmt: bool,
 }
 
 fn main() -> Result<()> {
@@ -90,6 +94,11 @@ fn main() -> Result<()> {
         cli.codec.clone(),
         derives.clone(),
     );
+
+    if cli.no_rustfmt {
+        compiler.set_rustfmt_generated_code(false);
+    }
+
     compiler.compile_files(&cli.files)?;
 
     Ok(())
