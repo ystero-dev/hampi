@@ -1,0 +1,22 @@
+World3d DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+Color ::= SEQUENCE {
+    r INTEGER (0..255),
+    g INTEGER (0..255),
+    b INTEGER (0..255),
+    a INTEGER (0..65335)
+}
+
+Column ::= SEQUENCE {
+    elements SEQUENCE (SIZE(10)) OF Color
+}
+
+Plane ::= SEQUENCE {
+    rows SEQUENCE (SIZE(10)) OF Column
+}
+
+World ::= SEQUENCE {
+    depth SEQUENCE (SIZE(10)) OF Plane
+}
+
+END

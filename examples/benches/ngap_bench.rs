@@ -8,7 +8,7 @@ mod ngap {
     include!(concat!(env!("OUT_DIR"), "/ngap.rs"));
 }
 
-pub fn ngap_decode_bench(c: &mut Criterion) {
+fn ngap_decode_bench(c: &mut Criterion) {
     let ngap_data = hex::decode(
         "0015404a000004001b00084002f898000000000052400f06004d79206c6974746c6520674e420066001f01000000000002f8980001000800800000010002f8390001001881c00013880015400140",
     ).unwrap();
@@ -21,7 +21,7 @@ pub fn ngap_decode_bench(c: &mut Criterion) {
     });
 }
 
-pub fn ngap_codec_roundtrip_bench(c: &mut Criterion) {
+fn ngap_codec_roundtrip_bench(c: &mut Criterion) {
     let ngap_data = hex::decode(
         "0015404a000004001b00084002f898000000000052400f06004d79206c6974746c6520674e420066001f01000000000002f8980001000800800000010002f8390001001881c00013880015400140",
     ).unwrap();
@@ -37,7 +37,7 @@ pub fn ngap_codec_roundtrip_bench(c: &mut Criterion) {
     });
 }
 
-pub fn ngap_encode_bench(c: &mut Criterion) {
+fn ngap_encode_bench(c: &mut Criterion) {
     let ngap_data = hex::decode(
         "0015404a000004001b00084002f898000000000052400f06004d79206c6974746c6520674e420066001f01000000000002f8980001000800800000010002f8390001001881c00013880015400140",
     ).unwrap();

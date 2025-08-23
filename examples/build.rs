@@ -42,9 +42,18 @@ fn get_specs_files(
 }
 
 fn main() -> std::io::Result<()> {
-    let specs = vec!["ranap", "s1ap", "ngap", "e2ap", "e2sm", "supl", "rrc"];
+    let specs = vec![
+        "ranap", "s1ap", "ngap", "e2ap", "e2sm", "supl", "rrc", "world3d",
+    ];
     let modules = vec![
-        "ranap.rs", "s1ap.rs", "ngap.rs", "e2ap.rs", "e2sm.rs", "supl.rs", "rrc.rs",
+        "ranap.rs",
+        "s1ap.rs",
+        "ngap.rs",
+        "e2ap.rs",
+        "e2sm.rs",
+        "supl.rs",
+        "rrc.rs",
+        "world3d.rs",
     ];
     let mut codecs_map = HashMap::new();
     codecs_map.insert("ranap.rs", vec![Codec::Aper]);
@@ -54,12 +63,12 @@ fn main() -> std::io::Result<()> {
     codecs_map.insert("e2sm.rs", vec![Codec::Aper]);
     codecs_map.insert("supl.rs", vec![Codec::Uper]);
     codecs_map.insert("rrc.rs", vec![Codec::Uper]);
+    codecs_map.insert("world3d.rs", vec![Codec::Uper]);
 
     for (spec, module) in std::iter::zip(specs, modules) {
         let specs_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap())
             .join("specs")
             .join(spec);
-        eprintln!("{:#?}", specs_dir);
 
         let specs_files = get_specs_files(spec, specs_dir, &spec.to_ascii_uppercase())?;
 
