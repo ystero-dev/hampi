@@ -24,3 +24,7 @@ serde = { version = "1.0" , features = ["derive"]}
 [[bench]]
 name = "ngap_bench"
 harness = false
+
+[[bench]]
+name = "codecs_benches_sample"
+harness = false
