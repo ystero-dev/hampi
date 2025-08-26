@@ -32,13 +32,17 @@ impl PerCodecData {
     pub fn new_aper() -> Self {
         Self {
             aligned: true,
+            bits: BitVec::with_capacity(1024),
             ..Self::default()
         }
     }
 
     /// Default `PerCodecData` for UperCodec
     pub fn new_uper() -> Self {
-        Self::default()
+        Self {
+            bits: BitVec::with_capacity(1024),
+            ..Self::default()
+        }
     }
 
     /// Create Our `PerCodecData` Structure from a slice of u8 for AperCodec
