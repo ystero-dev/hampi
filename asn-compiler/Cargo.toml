@@ -1,6 +1,6 @@
 [package]
 name = "asn1-compiler"
-version = "0.7.1"
+version = "0.7.2"
 authors = ["Ystero Project Developers <hello@ystero.dev>"]
 edition = "2018"
 description = "Compiler for compiling ASN.1 specs to Rust, with PER Codec support and derive macros for PER Codecs."
