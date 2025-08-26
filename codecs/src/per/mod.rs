@@ -392,6 +392,7 @@ impl PerCodecData {
     }
 
     /// Add bits to the encoding buffer.
+    #[inline]
     fn append_bits(&mut self, bits: &BitSlice<u8, Msb0>) {
         self.bits.extend_from_bitslice(bits);
     }
