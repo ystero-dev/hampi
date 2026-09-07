@@ -140,6 +140,8 @@ const WITH_SYNTAX_RESERVED_WORDS: &[&str] = &[
     "UNION",
 ];
 
+const CHARS_COMMENT: &[char] = &['-', '-'];
+
 /// Line and Column in the source where the token begins.
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub(crate) struct LineColumn {
@@ -596,14 +598,21 @@ fn get_identifier_or_keyword_token(
     }
 
     let mut consumed = and;
-    let last = chars[and..]
+
+    // bound scan at comment-open
+    let end = chars
+        .windows(CHARS_COMMENT.len())
+        .position(|p| p == CHARS_COMMENT)
+        .unwrap_or(chars.len());
+
+    let last = chars[and..end]
         .iter()
         .position(|&x| !(x.is_ascii_alphanumeric() || x == '-'));
 
     if let Some(lst) = last {
         consumed += lst;
     } else {
-        consumed += chars[and..].len();
+        consumed += chars[and..end].len();
     }
 
     // Identifier should not end with a '-'
@@ -1031,6 +1040,15 @@ mod tests {
         assert!(result.is_ok());
         let tokens = result.unwrap();
         assert!(tokens.len() == 1, "{:#?}", tokens);
+    }
+
+    #[test]
+    fn tokenize_comment_no_separating_whitespace() {
+        let reader = std::io::BufReader::new(std::io::Cursor::new(b"Hello-- World!"));
+        let result = tokenize(reader);
+        assert!(result.is_ok());
+        let tokens = result.unwrap();
+        assert!(tokens.len() == 2, "{:#?}", tokens);
     }
 
     #[test]
