@@ -83,7 +83,10 @@ impl ResolvedConstructedType {
                 ty_tokens.extend(quote! { , optional_fields = #optflds });
             }
 
-            let dir = generator.generate_derive_tokens();
+            let dir = generator.generate_derive_tokens_skip_eq(
+                &type_name.to_string(),
+                generator.constructed_type_has_real(self),
+            );
             Ok(quote! {
                 #dir
                 #[asn(#ty_tokens)]

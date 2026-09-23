@@ -49,7 +49,10 @@ impl ResolvedConstructedType {
             };
 
             let vis = generator.get_visibility_tokens();
-            let dir = generator.generate_derive_tokens();
+            let dir = generator.generate_derive_tokens_skip_eq(
+                &type_name.to_string(),
+                generator.constructed_type_has_real(self),
+            );
             let struct_tokens =
                 ResolvedConstructedType::generate_struct_tokens_for_asn_choice_type(
                     &type_name,

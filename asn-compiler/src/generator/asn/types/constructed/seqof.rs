@@ -41,7 +41,10 @@ impl ResolvedConstructedType {
             )?;
 
             let vis = generator.get_visibility_tokens();
-            let dir = generator.generate_derive_tokens();
+            let dir = generator.generate_derive_tokens_skip_eq(
+                &seq_of_type_ident.to_string(),
+                generator.constructed_type_has_real(self),
+            );
 
             Ok(quote! {
                 #dir

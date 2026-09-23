@@ -1,6 +1,6 @@
 //! Code Generation module
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use anyhow::Result;
 use heck::{ToShoutySnakeCase, ToSnakeCase};
@@ -11,7 +11,13 @@ use lazy_static::lazy_static;
 
 use crate::resolver::Resolver;
 
-use crate::resolver::asn::structs::{types::Asn1ResolvedType, values::Asn1ResolvedValue};
+use crate::resolver::asn::structs::{
+    types::{
+        base::ResolvedBaseType, constructed::ResolvedConstructedType, Asn1ResolvedType,
+        ResolvedSetType,
+    },
+    values::Asn1ResolvedValue,
+};
 
 /// Supported Codecs
 #[derive(clap::ValueEnum, Clone, Debug, PartialEq, Eq, Hash)]
@@ -98,6 +104,10 @@ pub(crate) struct Generator {
 
     // Derives
     pub(crate) derives: Vec<Derive>,
+
+    // Names of the resolved types that contain a `REAL` (directly or through a
+    // reference). `f64` is not `Eq`, so `Eq` must not be derived for these types.
+    pub(crate) real_types: HashSet<String>,
 }
 
 impl Generator {
@@ -109,6 +119,7 @@ impl Generator {
             visibility: visibility.clone(),
             codecs,
             derives,
+            real_types: HashSet::new(),
         }
     }
 
@@ -127,8 +138,12 @@ impl Generator {
             }
         }
 
+        // Find out the types that have a `REAL` in them before generating any code.
+        let resolved_types = resolver.get_resolved_types();
+        self.real_types = Self::find_types_containing_real(&resolved_types);
+
         // Now get the types
-        for (k, t) in resolver.get_resolved_types() {
+        for (k, t) in resolved_types {
             let item = Asn1ResolvedType::generate_for_type(k, t, self)?;
             if let Some(it) = item {
                 items.push(it)
@@ -223,6 +238,13 @@ impl Generator {
     }
 
     pub(crate) fn generate_derive_tokens(&self) -> TokenStream {
+        self.generate_derive_tokens_skip_eq("", false)
+    }
+
+    // Same as `generate_derive_tokens`, but leaves out `Eq` when `skip_eq` is true. Used for
+    // types that contain a `REAL` (`f64`), which can only be `PartialEq`. `name` is the name of
+    // the type being generated, used for the warning when `Eq` is asked for but is skipped.
+    pub(crate) fn generate_derive_tokens_skip_eq(&self, name: &str, skip_eq: bool) -> TokenStream {
         let mut tokens = vec![];
         for codec in &self.codecs {
             let codec_token = CODEC_TOKENS.get(codec).unwrap();
@@ -231,9 +253,22 @@ impl Generator {
 
         for derive in &self.derives {
             if derive == &Derive::All {
-                for derive_token in DERIVE_TOKENS.values() {
+                for (d, derive_token) in DERIVE_TOKENS.iter() {
+                    if skip_eq && d == &Derive::Eq {
+                        log::warn!(
+                            "Not deriving `Eq` for type `{}` as it contains a `REAL`.",
+                            name
+                        );
+                        continue;
+                    }
                     tokens.push(derive_token.to_string());
                 }
+            } else if skip_eq && derive == &Derive::Eq {
+                log::warn!(
+                    "Not deriving `Eq` for type `{}` as it contains a `REAL`.",
+                    name
+                );
+                continue;
             } else {
                 let derive_token = DERIVE_TOKENS.get(derive).unwrap();
                 tokens.push(derive_token.to_string());
@@ -245,6 +280,72 @@ impl Generator {
         let derive_token_string = format!("#[derive({})]\n", token_string);
         let derive_token_stream: TokenStream = derive_token_string.parse().unwrap();
         derive_token_stream
+    }
+
+    // A type can refer to another type that contains a `REAL`, which in turn can be referred
+    // by some other type and so on. So we keep going over all the types till no new type
+    // gets added to the set.
+    fn find_types_containing_real(types: &[(&String, &Asn1ResolvedType)]) -> HashSet<String> {
+        let mut found = HashSet::new();
+        loop {
+            let mut changed = false;
+            for (name, ty) in types {
+                if !found.contains(*name) && Self::type_has_real(ty, &found) {
+                    found.insert((*name).clone());
+                    changed = true;
+                }
+            }
+            if !changed {
+                break;
+            }
+        }
+        found
+    }
+
+    fn type_has_real(ty: &Asn1ResolvedType, real_types: &HashSet<String>) -> bool {
+        match ty {
+            Asn1ResolvedType::Base(ResolvedBaseType::Real(..)) => true,
+            Asn1ResolvedType::Base(..) => false,
+            Asn1ResolvedType::Reference(ref r) => real_types.contains(r),
+            Asn1ResolvedType::Constructed(ref c) => Self::constructed_has_real(c, real_types),
+            Asn1ResolvedType::Set(ref s) => Self::set_has_real(s, real_types),
+        }
+    }
+
+    fn constructed_has_real(c: &ResolvedConstructedType, real_types: &HashSet<String>) -> bool {
+        match c {
+            ResolvedConstructedType::Choice {
+                root_components,
+                additions,
+                ..
+            } => root_components
+                .iter()
+                .chain(additions.iter().flatten())
+                .any(|comp| Self::type_has_real(&comp.ty, real_types)),
+            ResolvedConstructedType::Sequence {
+                components,
+                additions,
+                ..
+            } => components
+                .iter()
+                .chain(additions.iter().flatten())
+                .any(|comp| Self::type_has_real(&comp.component.ty, real_types)),
+            ResolvedConstructedType::SequenceOf { ty, .. } => Self::type_has_real(ty, real_types),
+        }
+    }
+
+    fn set_has_real(s: &ResolvedSetType, real_types: &HashSet<String>) -> bool {
+        s.types
+            .values()
+            .any(|(_, ty)| Self::type_has_real(ty, real_types))
+    }
+
+    pub(crate) fn constructed_type_has_real(&self, c: &ResolvedConstructedType) -> bool {
+        Self::constructed_has_real(c, &self.real_types)
+    }
+
+    pub(crate) fn set_type_has_real(&self, s: &ResolvedSetType) -> bool {
+        Self::set_has_real(s, &self.real_types)
     }
 }
 

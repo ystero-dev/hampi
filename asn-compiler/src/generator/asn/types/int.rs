@@ -74,7 +74,10 @@ impl ResolvedSetType {
         let ty_elements = self.generate_aux_types(generator)?;
 
         let vis = generator.get_visibility_tokens();
-        let dir = generator.generate_derive_tokens();
+        let dir = generator.generate_derive_tokens_skip_eq(
+            &ty_ident.to_string(),
+            generator.set_type_has_real(self),
+        );
 
         Ok(quote! {
             #dir
@@ -97,7 +100,10 @@ impl ResolvedSetType {
         let ty_elements = self.generate_aux_types(generator)?;
 
         let vis = generator.get_visibility_tokens();
-        let dir = generator.generate_derive_tokens();
+        let dir = generator.generate_derive_tokens_skip_eq(
+            &ty_ident.to_string(),
+            generator.set_type_has_real(self),
+        );
 
         let set_ty = quote! {
             #dir

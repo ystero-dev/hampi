@@ -12,7 +12,8 @@ impl Asn1ResolvedReal {
         let type_name = generator.to_type_ident(name);
 
         let vis = generator.get_visibility_tokens();
-        let dir = generator.generate_derive_tokens();
+        // `f64` is not `Eq`, so never derive `Eq` for a `REAL`.
+        let dir = generator.generate_derive_tokens_skip_eq(&type_name.to_string(), true);
 
         Ok(quote! {
             #dir
